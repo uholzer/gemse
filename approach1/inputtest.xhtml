@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+          "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+
+<head>
+    <title>Gemse 1</title>
+    <style><![CDATA[
+        div { border: 1px; }
+    ]]></style>
+    <script><![CDATA[
+        function processKey(event) {
+            document.getElementById("reflect").firstChild.nodeValue += String.fromCharCode(event.charCode);
+        }
+        function processInput() {
+            document.getElementById("reflect").firstChild.nodeValue += document.getElementById("input").value;
+            document.getElementById("input").value = "";
+        }
+    ]]></script>
+</head>
+
+<body onkeypress="processKey(event)">
+
+<h1>Gemse 1</h1>
+
+<div id="reflect">Your input: </div>
+
+<form>
+<input id="input" onkeypress="processInput()"></input>
+</form>
+
+</body>
+
+</html>
