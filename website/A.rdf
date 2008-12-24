@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:agv="http://u.andonyar.com/ageneralvoc/"
+         xmlns:doap="http://usefulinc.com/ns/doap#"
+         xmlns:progress="http://example.org/progress#">
+
+  <rdf:Description rdf:about="http://www.andonyar.com/rec/2008-12/gemse/">
+    <rdf:type rdf:resource="http://u.andonyar.com/ageneralvoc/RecPub"/>
+  
+    <agv:aspec rdf:resource="http://www.andonyar.com/rec/2007-01/aspec/rec1"/>
+
+    <agv:licenseCategory rdf:resource="http://u.andonyar.com/ageneralvoc/LicenseFree"/>
+    <!-- or LicenseFree, LicensePublicDomain -->
+    <dcterms:rightsHolder>Urs Holzer</dcterms:rightsHolder>
+    <dcterms:dateCopyrighted>2008-12-24</dcterms:dateCopyrighted>
+
+    <dc:creator>Urs Holzer</dc:creator>
+
+    <dc:description xml:lang="en">The intention is to create fast
+editors for mathematical formulas. At the moment, a first approach for
+such an editor is in development. It handles only Presentation MathML,
+i.e. it is only an editor for the appearance of a formula, not for
+its semantics. It is highly inspired by the text editor vi.</dc:description>
+    <!--<dc:subject></dc:subject>-->
+
+    <dcterms:created>2008-12-24</dcterms:created>
+    <dcterms:modified>2008-12-24</dcterms:modified>
+
+  </rdf:Description>
+
+  <!-- About the project -->
+  <doap:Project rdf:about="http://www.andonyar.com/rec/2008-12/gemse/Project" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <doap:name>Gemse</doap:name>
+    <doap:created>2008-12-24</doap:created>
+    <doap:shortdesc xml:lang="en">General Math Structure Editor</doap:shortdesc>
+    <doap:description xml:lang="en">The intention is to create fast
+editors for mathematical formulas. At the moment, a first approach for
+such an editor is in development. It handles only Presentation MathML,
+i.e. it is only an editor for the appearance of a formula, not for
+its semantics. It is highly inspired by the text editor vi.</doap:description>
+    <doap:homepage rdf:resource="http://www.andonyar.com/rec/2008-12/gemse/" />
+    <!--<license rdf:resource="http://usefulinc.com/doap/licenses/mit" />-->
+    <!--<maintainer>
+    <foaf:Person>
+      <foaf:name>Urs Holzer</foaf:name>
+      <foaf:homepage rdf:resource="http://www.andonyar.com" />
+      <foaf:mbox rdf:resource="mailto:urs@andonyar.com" />
+      <foaf:mbox_sha1sum>4952c76c53675443f085b808c3a44c7f21f8d1de</foaf:mbox_sha1sum>
+    </foaf:Person>
+    </maintainer>-->
+    <progress:progress>0.1</progress:progress>
+  </doap:Project>
+
+
+</rdf:RDF>

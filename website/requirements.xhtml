@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+      "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Requirements for gemse</title>
+  <link rel="stylesheet" href="" type="text/css" />
+  <style type="text/css">
+ </style>
+</head>
+
+<body>
+<p>Here I collect requirements for the gemse. These are whishes from future
+users of gemse.</p>
+
+<h1>Basic features</h1>
+<ul>
+  <li>Capturing and editing of the semantics of mathematical formulas</li>
+  <li>Support for <a href="http://www.openmath.org/">OpenMath</a> and
+    (content) <a href="http://www.w3.org/Math/">MathML</a></li>
+</ul>
+
+<h1>Various things</h1>
+<ul>
+  <li>Navigation through content dictionary entries and signs must be
+  fast.</li>
+  <li>Every feature should be accessible by mouse and by keyboard. (In hope
+    that gemse will be fast with a pen on a tablet PC also.)</li>
+  <li>gemse must produce OpenMath and Content MathML (if MathML can represent
+    all content dictionaries).</li>
+  <li>it must be posible to create presentational MathML, automatically
+    derived from the semantics or influenced by the user. gemse must be able
+    to synchronise semantics and presentation</li>
+  <li>keyboard control should be fully configurable</li>
+  <li>One should be able to create keyboard shortcuts and shortcut buttons
+    while editing. This should be very dynamic. One should for example also
+    be able to link the greek alphabet to the key G while editing.</li>
+  <li>Various XSLT stylesheets for conversions from OpenMath and MathML to
+    other languages should be available. (Though this hasn't to do anything
+    with gemse itself.)</li>
+  <li>It should be easy to change the layout of the elements of the user
+    interface. (If gemse will use XUL, the user can simply edit the XUL
+    description of the user interface.)</li>
+  <li>The content dictionary browser should be able to handle <em>all</em>
+    content dictionaries. It probably has to fetch some of them directly from
+    the internet.</li>
+  <li>The content dictionary browser also should be able to show the
+    description of a content dictionary entry. This could be very useful as
+    help for the user.</li>
+  <li>It would be very great if gemse could be part of <a
+    href="http://www.w3.org/Amaya/">Amaya</a>.</li>
+  <li>Gemse should also be an authoring tool for <a
+    href="http://www.omdoc.org/">OMDoc</a>.</li>
+</ul>
+
+<h1>graphical interface</h1>
+
+<p>A short description of the parts that should be in the user interface:</p>
+<ul>
+  <li>Most important, on the top, a big view of the structure of the formula,
+    i.e. the OpenMath document structure displayed as nested boxes.</li>
+  <li>On the bottom, the presentation of the formula, i.e. the rendering of
+    the content MathML.</li>
+  <li>The bar on the right (and perhaps also one on the left) will be used to
+    offer content dictionary entries, signs, operations on the semantic
+    structure and operations on the presentational structure to the user.</li>
+</ul>
+</body>
+</html>
