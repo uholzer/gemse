@@ -18,6 +18,7 @@
 
     <dc:creator>Urs Holzer</dc:creator>
 
+    <dc:title xml:lang="en">Gemse: General Math Structure Editor</dc:title>
     <dc:description xml:lang="en">The intention is to create fast
 editors for mathematical formulas. At the moment, a first approach for
 such an editor is in development. It handles only Presentation MathML,
@@ -31,7 +32,7 @@ its semantics. It is highly inspired by the text editor vi.</dc:description>
   </rdf:Description>
 
   <!-- About the project -->
-  <doap:Project rdf:about="http://www.andonyar.com/rec/2008-12/gemse/Project" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <doap:Project rdf:about="http://www.andonyar.com/rec/2008-12/gemse/Project">
     <doap:name>Gemse</doap:name>
     <doap:created>2008-12-24</doap:created>
     <doap:shortdesc xml:lang="en">General Math Structure Editor</doap:shortdesc>
