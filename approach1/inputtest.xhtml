@@ -11,7 +11,13 @@
     ]]></style>
     <script><![CDATA[
         function processKey(event) {
-            document.getElementById("reflect").firstChild.nodeValue += String.fromCharCode(event.charCode);
+            document.getElementById("reflect").firstChild.nodeValue += "(charCode: " + event.charCode + ", keyCode: " + event.keyCode + ")";
+            if (event.ctrlKey) {
+                document.getElementById("reflect").firstChild.nodeValue += "[ctrlKey]";
+                event.preventDefault();
+            }
+            //String.fromCharCode(event.charCode)
+            if (event.keyCode == 13) { event.preventDefault() }; // Prevent Enter from sending the form
         }
         function processInput() {
             document.getElementById("reflect").firstChild.nodeValue += document.getElementById("input").value;
@@ -20,14 +26,14 @@
     ]]></script>
 </head>
 
-<body onkeypress="processKey(event)">
+<body>
 
 <h1>Gemse 1</h1>
 
 <div id="reflect">Your input: </div>
 
 <form>
-<input id="input" onkeypress="processInput()"></input>
+<input id="input" onkeypress="processKey(event)" oninput="processInput()"></input>
 </form>
 
 </body>

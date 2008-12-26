@@ -400,8 +400,15 @@
             this.focus = 0; // Number of equation that has the focus
             this.inputElement; // A dom element that receives user input
 
-            this.inputEvent = function (event) {
-                this.equations[this.focus].mode.inputHandler(event);
+            this.inputEvent = function () {
+                // Is called when the input buffer supposedly changed
+                this.equations[this.focus].mode.inputHandler();
+            };
+            this.keyEvent = function (event) {
+                // Is called when a key gets hit. This also is called
+                // if the key does not cause a character to be entered
+                // into the input element (i.e. the input buffer).
+                this.equations[this.focus].mode.keyHandler(event);
             };
             this.__defineGetter__("inputBuffer", function() { return this.inputElement.value; });
             this.__defineSetter__("inputBuffer", function(x) { this.inputElement.value = x; });
@@ -428,45 +435,17 @@
             editor.inputElement = document.getElementById("input");
         }
 
+        /* Event processing */
+        // The curent event processing is completely broken. Perhaps I
+        // should use XUL right away to clean up the mess?
+
         function processKey(event) {
-            editor.inputEvent(event);
+            editor.keyEvent(event);
         }
 
-        function updateSelectionInfo() {
-            document.getElementById("SelectionInfo").textContent = cursor.pos.localName;
+        function processInput() {
+            editor.inputEvent();
         }
-
-        function updateModeInfo() {
-            document.getElementById("ModeInfo").textContent = cursor.mode;
-            document.getElementById("ModeInfo").className = cursor.mode;
-        }
-
-
-        /* Operations */
-
-        function removeElement(element) {
-            var parent = element.parentNode;
-            parent.removeChild(element);
-            mml_fix(parent);
-            return element;
-        }
-
-
-        /* Methods for fixing elements that are in an invalid state */
-
-        function mml_fix(element) {
-            // Inserts dummy at places were elements are missing
-            
-        }
-
-        function mml_dummyElement() {
-            // Creates and returns a dummy element
-        }
-
-        function mml_fix_simple(element, childcount) {
-
-        }
-
 
     ]]></script>
 </head>
@@ -476,7 +455,7 @@
 <h1>Gemse 1</h1>
 
 <form>
-    <input id="input" oninput="processKey(event)"></input>
+    <input id="input" onkeypress="processKey(event)" oninput="processInput()"></input>
 </form>
 
 <div id="equationEnv">

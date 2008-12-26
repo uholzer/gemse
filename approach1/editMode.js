@@ -24,7 +24,14 @@ function EditMode(editor, equationEnv) {
     }
     this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.cursor; }); // Required for every mode
-    this.inputHandler = function(event) {
+    this.keyHandler = function(event) {
+        if (event.keyCode == KeyEvent.DOM_VK_ESCAPE) {
+            //event.preventDefault();
+            var dest = mml_firstChild(this.cursor);
+            editor.inputBuffer = "";
+        }
+    }
+    this.inputHandler = function() {
         // Temporary history managment XXX
         var change = null;
         // Check whether the input buffer contains a complete
