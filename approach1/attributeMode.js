@@ -52,7 +52,10 @@ function AttributeMode(editor, equationEnv, element) {
     }
     this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.element }); // XXX: good like this?
-    this.inputHandler = function(event) {
+    this.keyHandler = function(event) {
+
+    }
+    this.inputHandler = function() {
         if (editor.inputBuffer == "j") {
             if (this.cursor!=null && this.cursor < this.attributes.length-1) {
                 this.moveCursor(this.cursor + 1);
