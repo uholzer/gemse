@@ -25,21 +25,22 @@ function EditMode(editor, equationEnv) {
     this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.cursor; }); // Required for every mode
     this.keyHandler = function(event) {
-        if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT }
-        if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL }
-        //if (event.metaKey) { editor.inputBuffer += KEYMOD_META }
+        if (event.altKey)  { this.editor.inputBuffer += KEYMOD_ALT }
+        if (event.ctrlKey) { this.editor.inputBuffer += KEYMOD_CONTROL }
+        //if (event.metaKey) { this.editor.inputBuffer += KEYMOD_META }
         editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
             // event.which does not seem to work, it returns 0 for the escape Key
         //if (event.keyCode) { event.preventDefault(); }
         event.preventDefault();
         event.stopPropagation();
-        editor.inputEvent();
+        this.editor.inputEvent();
     }
     this.inputHandler = function() {
         command = editor.inputBuffer;
-        if (command[command.length-1] == Event.DOM_VK_ESCAPE) {
+        if (command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
+            // KeyEvent.DOM_VK_ESCAPE should be 0x1b
             //event.preventDefault();
-            editor.inputBuffer = "";
+            this.editor.inputBuffer = "";
             return;
         }
         commandObject = editModeCommands[command];
