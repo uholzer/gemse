@@ -28,8 +28,10 @@ function EditMode(editor, equationEnv) {
         if (event.altKey)  { this.editor.inputBuffer += KEYMOD_ALT }
         if (event.ctrlKey) { this.editor.inputBuffer += KEYMOD_CONTROL }
         //if (event.metaKey) { this.editor.inputBuffer += KEYMOD_META }
-        editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
-            // event.which does not seem to work, it returns 0 for the escape Key
+        if (event.charCode || event.keyCode) {
+            editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
+                // event.which does not seem to work, it returns 0 for the escape Key
+        }
         //if (event.keyCode) { event.preventDefault(); }
         event.preventDefault();
         event.stopPropagation();

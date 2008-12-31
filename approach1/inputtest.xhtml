@@ -16,8 +16,10 @@
             if (event.altKey)  { inputElement.value += KEYMOD_ALT }
             if (event.ctrlKey) { inputElement.value += KEYMOD_CONTROL }
             //if (event.metaKey) { inputElement.value += KEYMOD_META }
-            inputElement.value += String.fromCharCode(event.charCode || event.keyCode);
-                // event.which does not seem to work, it returns 0 for the escape Key
+            if (event.charCode || event.keyCode) {
+                inputElement.value += String.fromCharCode(event.charCode || event.keyCode);
+                    // event.which does not seem to work, it returns 0 for the escape Key
+            }
             reflectElement.nodeValue = inputElement.value + " ";
             for (var i=0; i<inputElement.value.length; ++i) {
                 reflectElement.nodeValue += inputElement.value.charCodeAt(i);
