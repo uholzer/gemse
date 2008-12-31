@@ -25,29 +25,30 @@ function EditMode(editor, equationEnv) {
     this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.cursor; }); // Required for every mode
     this.keyHandler = function(event) {
-        if (event.keyCode == KeyEvent.DOM_VK_ESCAPE) {
+        if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT }
+        if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL }
+        //if (event.metaKey) { editor.inputBuffer += KEYMOD_META }
+        editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
+            // event.which does not seem to work, it returns 0 for the escape Key
+        //if (event.keyCode) { event.preventDefault(); }
+        event.preventDefault();
+        event.stopPropagation();
+        editor.inputEvent();
+    }
+    this.inputHandler = function() {
+        command = editor.inputBuffer;
+        if (command[command.length-1] == Event.DOM_VK_ESCAPE) {
             //event.preventDefault();
-            var dest = mml_firstChild(this.cursor);
             editor.inputBuffer = "";
+            return;
         }
-        var code = event.which; // Equivalent to event.keyCode || event.charCode ?
-        var char = String.fromCharCode(code);
-        var commandName = 
-            char + 
-            (event.ctrlKey ? "+ctrl" : "") +
-            (event.altKey  ? "+alt"  : "") +
-            (event.metaKey ? "+meta" : ""); // What about shiftKey?
-        command = editModeCommands[commandName];
-        if (command) {
-            command.execute(this)
+        commandObject = editModeCommands[command];
+        if (commandObject) {
+            commandObject.execute(this)
         }
         else {
             throw "Command not found";
         }
-        event.preventDefault();
-    }
-    this.inputHandler = function() {
-        editor.inputBuffer = "";
     };
     this.calledModeReturned = function () {
         this.infoAboutCalledMode.change.recordAfter(this.equationEnv.equation,this.infoAboutCalledMode.changeElement);
@@ -93,11 +94,6 @@ editModeCommands = {
         type: "action",
         execute: editModeCommand_undo
     },
-    //"r+ctrl": {
-    "r": {
-        type: "action",
-        execute: editModeCommand_redo
-    },
     "@": {
         type: "action",
         execute: editModeCommand_attributeMode
@@ -106,6 +102,10 @@ editModeCommands = {
         type: "long",
         execute: editModeCommand_set
     }
+};
+editModeCommands[KEYMOD_CONTROL + "r"] = {
+        type: "action",
+        execute: editModeCommand_redo
 };
 
 editModeOptions = { // Default values of options

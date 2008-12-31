@@ -6,22 +6,38 @@
 
 <head>
     <title>Gemse 1</title>
-    <style><![CDATA[
-        div { border: 1px; }
-    ]]></style>
     <script><![CDATA[
+        const KEYMOD_ALT = String.fromCharCode(KeyEvent.DOM_VK_ALT);
+        const KEYMOD_CONTROL = String.fromCharCode(KeyEvent.DOM_VK_CONTROL);
+        //const KEYMOD_META = KEYMOD_ALT;
         function processKey(event) {
-            document.getElementById("reflect").firstChild.nodeValue += "(charCode: " + event.charCode + ", keyCode: " + event.keyCode + ")";
-            if (event.ctrlKey) {
-                document.getElementById("reflect").firstChild.nodeValue += "[ctrlKey]";
-                event.preventDefault();
+            var inputElement = document.getElementById("input");
+            var reflectElement = document.getElementById("reflect").firstChild;
+            if (event.altKey)  { inputElement.value += KEYMOD_ALT }
+            if (event.ctrlKey) { inputElement.value += KEYMOD_CONTROL }
+            //if (event.metaKey) { inputElement.value += KEYMOD_META }
+            inputElement.value += String.fromCharCode(event.charCode || event.keyCode);
+                // event.which does not seem to work, it returns 0 for the escape Key
+            reflectElement.nodeValue = inputElement.value + " ";
+            for (var i=0; i<inputElement.value.length; ++i) {
+                reflectElement.nodeValue += inputElement.value.charCodeAt(i);
             }
-            //String.fromCharCode(event.charCode)
-            if (event.keyCode == 13) { event.preventDefault() }; // Prevent Enter from sending the form
+            reflectElement.nodeValue += 
+                " [" + 
+                event.charCode + ", " +
+                event.keyCode + ", " +
+                event.which +
+                "] ";
+            //if (event.keyCode) { event.preventDefault(); }
+            event.preventDefault();
+            event.stopPropagation();
+            processInput(true);
         }
-        function processInput() {
-            document.getElementById("reflect").firstChild.nodeValue += document.getElementById("input").value;
-            document.getElementById("input").value = "";
+        function processInput(artificial) {
+            var inputElement = document.getElementById("input");
+            var parsedElement = document.getElementById("parsed").firstChild;
+            parsedElement.nodeValue = inputElement.value;
+            if (artificial) { parsedElement.nodeValue += "(artificial)" }
         }
     ]]></script>
 </head>
@@ -33,8 +49,10 @@
 <div id="reflect">Your input: </div>
 
 <form>
-<input id="input" onkeypress="processKey(event)" oninput="processInput()"></input>
+<textarea id="input" onkeypress="processKey(event)" oninput="processInput()"/>
 </form>
+
+<pre id="parsed">Parse result: </pre>
 
 </body>
 

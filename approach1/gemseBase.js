@@ -1,4 +1,7 @@
 const NS_internal = "http://www.andonyar.com/math/editor";
+const KEYMOD_ALT = KeyEvent.VK_ALT;
+const KEYMOD_CONTROL = KeyEvent.VK_CONTROL;
+const KEYMOD_META = KeyEvent.VK_META;
 
 function EquationEnv(editor, container) {
     this.container = container;
