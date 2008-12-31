@@ -1,6 +1,9 @@
 const NS_internal = "http://www.andonyar.com/math/editor";
-const KEYMOD_ALT = KeyEvent.VK_ALT;
-const KEYMOD_CONTROL = KeyEvent.VK_CONTROL;
+//const KEYMOD_ALT = String.fromCharCode(KeyEvent.DOM_VK_ALT);
+//const KEYMOD_CONTROL = String.fromCharCode(KeyEvent.DOM_VK_CONTROL);
+//XXX: Knows the heck why KeyEvent.DOM_VK_* are undefined here ...
+const KEYMOD_ALT = String.fromCharCode(18);
+const KEYMOD_CONTROL = String.fromCharCode(17);
 const KEYMOD_META = KeyEvent.VK_META;
 
 function EquationEnv(editor, container) {
