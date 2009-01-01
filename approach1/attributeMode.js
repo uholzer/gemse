@@ -52,35 +52,110 @@ function AttributeMode(editor, equationEnv, element) {
     }
     this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.element }); // XXX: good like this?
-    this.keyHandler = function(event) {
-
-    }
+    this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
     this.inputHandler = function() {
-        if (editor.inputBuffer == "j") {
-            if (this.cursor!=null && this.cursor < this.attributes.length-1) {
-                this.moveCursor(this.cursor + 1);
-            }
-            editor.inputBuffer = "";
+        command = this.editor.inputBuffer;
+        if (command.length > 1 && command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
+            // KeyEvent.DOM_VK_ESCAPE should be 0x1b
+            //event.preventDefault();
+            this.editor.inputBuffer = "";
+            return;
         }
-        else if (editor.inputBuffer == "k") {
-            if (this.cursor!=null && this.cursor > 0) {
-                this.moveCursor(this.cursor - 1);
-            }
-            editor.inputBuffer = "";
+        commandObject = attributeModeCommands[command];
+        if (commandObject) {
+            commandObject.execute(this)
         }
-        else if (editor.inputBuffer == "x") {
-            if (this.cursor==null) { return; }
-            this.element.removeAttributeNode(this.attributes[this.cursor]);
-            this.attributes.splice(this.cursor,1);
-            if (this.attributes.length == 0) { this.moveCursor(null) }
-            else if (this.cursor >= this.attributes.length) { this.moveCursor(this.cursor-1) }
-            else { this.moveCursor(this.cursor) }
-            editor.inputBuffer = "";
-        }
-        else if (editor.inputBuffer == "e") { // XXX: Change this to <ESC>
-            editor.inputBuffer = "";
-            this.finish();
+        else {
+            throw "Command not found";
         }
     };
+}
+
+attributeModeCommands = {
+    "j": {
+        type: "movement",
+        execute: attributeModeCommand_down
+    },
+    "k": {
+        type: "movement",
+        execute: attributeModeCommand_up
+    },
+    "x": {
+        type: "action",
+        execute: attributeModeCommand_kill
+    }
+    "c": {
+        type: "action",
+        execute: attributeModeCommand_changeValue
+    }
+    "C": {
+        type: "action",
+        execute: attributeModeCommand_changeName
+    }
+    "n": {
+        type: "action",
+        execute: attributeModeCommand_changeNS
+    }
+    "i": {
+        type: "action",
+        execute: attributeModeCommand_insertMathML
+    }
+    "I": {
+        type: "action",
+        execute: attributeModeCommand_insertForeign
+    }
+}
+attributeModeCommands[String.fromCharCode(0x1b)] = { // Escape
+    type: "action",
+    execute: attributeModeCommand_exit
+}
+
+function attributeModeCommand_exit(mode) {
+    mode.editor.inputBuffer = "";
+    mode.finish();
+}
+
+function attributeModeCommand_up(mode) {
+    if (mode.cursor!=null && mode.cursor > 0) {
+        mode.moveCursor(mode.cursor - 1);
+    }
+    editor.inputBuffer = "";
+}
+
+function attributeModeCommand_down(mode) {
+    if (mode.cursor!=null && mode.cursor < mode.attributes.length-1) {
+        mode.moveCursor(mode.cursor + 1);
+    }
+    editor.inputBuffer = "";
+}
+
+function attributeModeCommand_kill(mode) {
+    if (mode.cursor==null) { return; }
+    mode.element.removeAttributeNode(mode.attributes[mode.cursor]);
+    mode.attributes.splice(mode.cursor,1);
+    if (mode.attributes.length == 0) { mode.moveCursor(null) }
+    else if (mode.cursor >= mode.attributes.length) { mode.moveCursor(mode.cursor-1) }
+    else { mode.moveCursor(mode.cursor) }
+    editor.inputBuffer = "";
+}
+
+function attributeModeCommand_changeValue(mode) {
+    
+}
+
+function attributeModeCommand_changeName(mode) {
+    
+}
+
+function attributeModeCommand_changeNS(mode) {
+    
+}
+
+function attributeModeCommand_insertMathML(mode) {
+    
+}
+
+function attributeModeCommand_insertForeign(mode) {
+    
 }
 

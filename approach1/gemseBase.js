@@ -359,4 +359,20 @@ function GemsePEditor() {
     this.pool = null;
 }
 
+function standardKeyHandler(event,editor) {
+    // This procedure can be used as a method by a mode object. 
+
+    if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT }
+    if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL }
+    //if (event.metaKey) { editor.inputBuffer += KEYMOD_META }
+    if (event.charCode || event.keyCode) {
+        editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
+            // event.which does not seem to work, it returns 0 for the escape Key
+    }
+    //if (event.keyCode) { event.preventDefault(); }
+    event.preventDefault();
+    event.stopPropagation();
+    editor.inputEvent();
+}
+
 

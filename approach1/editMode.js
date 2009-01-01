@@ -24,21 +24,9 @@ function EditMode(editor, equationEnv) {
     }
     this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.cursor; }); // Required for every mode
-    this.keyHandler = function(event) {
-        if (event.altKey)  { this.editor.inputBuffer += KEYMOD_ALT }
-        if (event.ctrlKey) { this.editor.inputBuffer += KEYMOD_CONTROL }
-        //if (event.metaKey) { this.editor.inputBuffer += KEYMOD_META }
-        if (event.charCode || event.keyCode) {
-            editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
-                // event.which does not seem to work, it returns 0 for the escape Key
-        }
-        //if (event.keyCode) { event.preventDefault(); }
-        event.preventDefault();
-        event.stopPropagation();
-        this.editor.inputEvent();
-    }
+    this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
     this.inputHandler = function() {
-        command = editor.inputBuffer;
+        command = this.editor.inputBuffer;
         if (command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
             // KeyEvent.DOM_VK_ESCAPE should be 0x1b
             //event.preventDefault();
@@ -110,6 +98,10 @@ editModeCommands[KEYMOD_CONTROL + "r"] = {
         type: "action",
         execute: editModeCommand_redo
 };
+editModeCommands[KEYMOD_CONTROL + "l"] = {
+        type: "action",
+        execute: editModeCommand_redisplay
+};
 
 editModeOptions = { // Default values of options
 
@@ -141,6 +133,7 @@ function editModeCommand_moveDown(mode) {
 
 function editModeCommand_undo(mode) {
     // The glorious undo
+    mode.hideCursor();
     if (!mode.equationEnv.history.goBack(mode.equationEnv)) {
         throw "undo failed";
     }
@@ -150,6 +143,7 @@ function editModeCommand_undo(mode) {
 
 function editModeCommand_redo(mode) {
     // The inverse of the glorious undo
+    mode.hideCursor();
     if (!mode.equationEnv.history.goForward(mode.equationEnv)) {
         throw "redo failed";
     }
@@ -183,6 +177,11 @@ function editModeCommand_attributeMode(mode) {
 
 function editModeCommand_set(mode, argString) {
 
+}
+
+function editModeCommand_redisplay(mode) {
+    mode.moveCursor(mode.cursor);
+    mode.editor.inputBuffer = "";
 }
 
 /* Child, Parent, Forward, Backward movements */
