@@ -1,4 +1,5 @@
 const NS_internal = "http://www.andonyar.com/math/editor";
+const NS_MathML = "http://www.w3.org/1998/Math/MathML";
 //const KEYMOD_ALT = String.fromCharCode(KeyEvent.DOM_VK_ALT);
 //const KEYMOD_CONTROL = String.fromCharCode(KeyEvent.DOM_VK_CONTROL);
 //XXX: Knows the heck why KeyEvent.DOM_VK_* are undefined here ...
@@ -335,8 +336,9 @@ function Change() {
 function GemsePEditor() {
     this.registers = {}; // Maps unicode characters to register objects
     this.equations = []; // Array of EquationEnv objects.
-    this.focus = 0; // Number of equation that has the focus
+    this.focus = -1; // Number of equation that has the focus
     this.inputElement; // A dom element that receives user input
+    this.containerTemplate; // A dom element that can be sed to create new containers
 
     this.inputEvent = function () {
         // Is called when the input buffer supposedly changed
@@ -351,10 +353,73 @@ function GemsePEditor() {
     this.__defineGetter__("inputBuffer", function() { return this.inputElement.value; });
     this.__defineSetter__("inputBuffer", function(x) { this.inputElement.value = x; });
 
-    this.attach = function (element) {
-        var newEquation = new EquationEnv(editor, element);
-        newEquation.init();
-        editor.equations.push(newEquation);
+    this.attachNewEquationEnvToElement = function (element) {
+        // Attaches a new EquationEnv to an already present element in
+        // the document
+        var newEquationEnv = new EquationEnv(this, element);
+        newEquationEnv.init();
+        this.equations.push(newEquationEnv);
+        this.moveFocusTo(this.equations.length-1);
+    }
+    this.newEquation = function (equation) {
+        // Creates a new EquationEnv and also a new Element in the
+        // document. If the argument equation is not given, an empty
+        // one gets created.
+        if (!this.containerTemplate) { throw "No template defined" }
+        var pool = document.getElementById("pool");
+        if (!pool) { throw "No pool element present" }
+        // Create new container in the XML document
+        var newContainer = this.containerTemplate.cloneNode(true);
+        pool.appendChild(newContainer);
+        // Attach element to it
+        var newEquationEnv = new EquationEnv(this, newContainer);
+        newEquationEnv.init();
+        this.equations.push(newEquationEnv);
+        if (equation) {
+            newEquationEnv.replaceEquation(equation);
+            newEquationEnv.reInit();
+        }
+        this.moveFocusTo(this.equations.length-1);
+    }
+    this.loadURI = function (uri, elementId, xpathString) {
+        // Fetches the uri. If elementId and xpathString are empty, it
+        // uses the root element as the MathML element. If elementId
+        // is given, it uses the element with this id. Else, if
+        // xpathString is given (and elementId is null), it evaluates
+        // this xpath expression and uses the first result.
+        // This is done using an XMLHttpRequest. This also works for
+        // local files.
+        var request = new XMLHttpRequest();
+        request.open("GET", "chrome://passwdmaker/content/people.xml", false); 
+        request.send(null);
+        var doc = req.responseXML;
+        
+        var mathElement = null;
+        if (elementId) {
+            mathElement = doc.getElementById(elementId);
+        }
+        else if (xpathString) {
+            throw "XPath not yet supported";
+        }
+        else {
+            mathElement = doc.documentElement;
+        }
+
+        if (mathElement.localName != "math" || mathElement.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
+            throw "The element you load should be a math element in the MathML namespace";
+        }
+
+        // Create new environment using a deep copy
+        this.new(document.importNode(mathElement, true));
+    }
+    this.moveFocusTo = function(dest) {
+        if (dest >= this.equations.length) { return false }
+        if (dest < 0) { return false }
+        if (this.focus >= 0) {
+            this.equations[this.focus].container.removeAttributeNS(NS_internal, "selected");
+        }
+        this.focus = dest;
+        this.equations[this.focus].container.setAttributeNS(NS_internal, "selected", "equationFocus");
     }
 
     // The DOM element that horts all equation Environments is

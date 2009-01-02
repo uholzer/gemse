@@ -96,7 +96,19 @@ editModeCommands = {
     ":serialize": {
         type: "long",
         execute: editModeCommand_serialize
-    }
+    },
+    ":new": {
+        type: "long",
+        execute: editModeCommand_newEquation
+    },
+    ":next": {
+        type: "long",
+        execute: editModeCommand_nextEquation
+    },
+    ":previous": {
+        type: "long",
+        execute: editModeCommand_previousEquation
+    },
 };
 editModeCommands[KEYMOD_CONTROL + "r"] = {
         type: "action",
@@ -194,6 +206,31 @@ function editModeCommand_serialize(mode, argString) {
     //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
 
     mode.equationEnv.notificationDisplay.textContent = xmlString;
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_newEquation(mode) {
+    mode.editor.newEquation(null);
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_nextEquation(mode) {
+    if (mode.editor.focus >= mode.editor.equations.length-1) { 
+        mode.editor.moveFocusTo(0)
+    }
+    else {
+        mode.editor.moveFocusTo(mode.editor.focus+1);
+    }
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_previousEquation(mode) {
+    if (mode.editor.focus <= 0) { 
+        mode.editor.moveFocusTo(mode.editor.equations.length-1);
+    }
+    else {
+        mode.editor.moveFocusTo(mode.editor.focus-1);
+    }
     mode.editor.inputBuffer = "";
 }
 

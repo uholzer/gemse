@@ -55,6 +55,12 @@
         *[internal|function="modeName"] {
             color: white; background-color: black;
         }
+        *[internal|function="container"] {
+            opacity: 0.4;
+        }
+        *[internal|selected="equationFocus"] {
+            opacity: 1;
+        }
         #input {
             position: relative;
             left: 40%; 
@@ -79,9 +85,14 @@
 
         function start() {
             editor = new GemsePEditor();
-            editor.attach(document.getElementById("equationEnv"));
+            editor.containerTemplate = document.getElementById("containerTemplate");
+            editor.attachNewEquationEnvToElement(document.getElementById("equationEnv"));
             editor.inputElement = document.getElementById("input");
             editor.inputElement.focus();
+
+            // Detach containerTemplate from document:
+            editor.containerTemplate.parentNode.removeChild(editor.containerTemplate);
+            editor.containerTemplate.removeAttribute("id");
         }
 
         /* Event processing */
@@ -107,7 +118,9 @@
     <textarea id="input" onkeypress="processKey(event)" oninput="processInput()"/>
 </form>
 
-<div id="equationEnv">
+<div id="pool">
+
+<div internal:function="container" id="equationEnv">
     <div internal:function="equation">
         <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
             <mrow>
@@ -137,6 +150,23 @@
                 <mi>b</mi>
             </mfenced>
             </mrow> 
+        </math>
+    </div>
+    <div internal:function="treeView">
+
+    </div>
+    <div internal:function="attributeView">
+
+    </div>
+    <div internal:function="modeName"></div>
+    <pre internal:function="notificationDisplay"></pre>
+</div>
+
+</div>
+
+<div internal:function="container" id="containerTemplate">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
         </math>
     </div>
     <div internal:function="treeView">
