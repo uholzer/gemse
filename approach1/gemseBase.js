@@ -34,6 +34,9 @@ function EquationEnv(editor, container) {
     // The modeName element shows the name of the current mode
     this.modeNameIndicator = document.evaluate(".//.[@internal:function='modeName']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
+    // The notificationDisplay element
+    this.notificationDisplay = document.evaluate(".//.[@internal:function='notificationDisplay']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+
     /* Methods */
 
     // Getting and setting the equation 
@@ -281,6 +284,7 @@ function Change() {
     this.oldNode = null;
     this.newNode = null;
     this.treePointer = [];
+    this.command = null; // Please set that, otherwise the command '.' will not work
     this.ready = false;
     this.recordBefore = function (equation,toBeChangedElement) {
         if (toBeChangedElement.nodeType != Node.ELEMENT_NODE) {

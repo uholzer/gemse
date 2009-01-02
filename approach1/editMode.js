@@ -92,6 +92,10 @@ editModeCommands = {
     ":set": {
         type: "long",
         execute: editModeCommand_set
+    },
+    ":serialize": {
+        type: "long",
+        execute: editModeCommand_serialize
     }
 };
 editModeCommands[KEYMOD_CONTROL + "r"] = {
@@ -181,6 +185,15 @@ function editModeCommand_set(mode, argString) {
 
 function editModeCommand_redisplay(mode) {
     mode.moveCursor(mode.cursor);
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_serialize(mode, argString) {
+    var serializer = new XMLSerializer();
+    var xmlString = serializer.serializeToString(mode.equationEnv.equation);
+    //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
+
+    mode.equationEnv.notificationDisplay.textContent = xmlString;
     mode.editor.inputBuffer = "";
 }
 
