@@ -54,7 +54,8 @@ function EditMode(editor, equationEnv) {
             else { return null }
         };
         this.cursor = document.evaluate(".//.[@internal:selected='editcursor']", this.equationEnv.equation, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
-        if (!this.cursor) { this.cursor = this.equationEnd.equation }
+        if (!this.cursor) { this.cursor = this.equationEnv.equation }
+        this.moveCursor(this.cursor); // In order to update all views
     }
 }
 
@@ -108,6 +109,10 @@ editModeCommands = {
     ":previous": {
         type: "long",
         execute: editModeCommand_previousEquation
+    },
+    ":load": {
+        type: "long",
+        execute: editModeCommand_load
     },
 };
 editModeCommands[KEYMOD_CONTROL + "r"] = {
@@ -211,6 +216,12 @@ function editModeCommand_serialize(mode, argString) {
 
 function editModeCommand_newEquation(mode) {
     mode.editor.newEquation(null);
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_load(mode, argString) {
+    // mode.editor.loadURI(argString);
+    mode.editor.loadURI("testdoc1.xhtml",null,"//m:math");
     mode.editor.inputBuffer = "";
 }
 

@@ -7,6 +7,14 @@ const KEYMOD_ALT = String.fromCharCode(18);
 const KEYMOD_CONTROL = String.fromCharCode(17);
 const KEYMOD_META = KeyEvent.VK_META;
 
+function standardNSResolver(prefix) {
+    if (prefix == "internal") { return NS_internal }
+    else if (prefix == "m") { return NS_MathML }
+    else if (prefix == "math") { return NS_MathML }
+    else if (prefix == "mathml") { return NS_MathML }
+    else { return null }
+}
+
 function EquationEnv(editor, container) {
     this.container = container;
 
@@ -377,7 +385,7 @@ function GemsePEditor() {
         this.equations.push(newEquationEnv);
         if (equation) {
             newEquationEnv.replaceEquation(equation);
-            newEquationEnv.reInit();
+            newEquationEnv.mode.reInit(); //XXX: Find better solution
         }
         this.moveFocusTo(this.equations.length-1);
     }
@@ -390,27 +398,35 @@ function GemsePEditor() {
         // This is done using an XMLHttpRequest. This also works for
         // local files.
         var request = new XMLHttpRequest();
-        request.open("GET", "chrome://passwdmaker/content/people.xml", false); 
+        request.open("GET", uri, false); 
         request.send(null);
-        var doc = req.responseXML;
+        var doc = request.responseXML;
         
-        var mathElement = null;
+        var mathElements = [];
         if (elementId) {
-            mathElement = doc.getElementById(elementId);
+            mathElements[0] = doc.getElementById(elementId);
         }
         else if (xpathString) {
-            throw "XPath not yet supported";
+            var xpathResult = doc.evaluate(xpathString, doc, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+            var resultNode;
+            while (resultNode = xpathResult.iterateNext()) { mathElements.push(resultNode) }
         }
         else {
-            mathElement = doc.documentElement;
+            mathElements[0] = doc.documentElement;
         }
 
-        if (mathElement.localName != "math" || mathElement.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
-            throw "The element you load should be a math element in the MathML namespace";
-        }
+        for (var i=0; i<mathElements.length; i++) {
+            if (mathElements[i].localName != "math" || mathElements[i].namespaceURI != "http://www.w3.org/1998/Math/MathML") {
+                throw "The element you load should be a math element in the MathML namespace";
+            }
 
-        // Create new environment using a deep copy
-        this.new(document.importNode(mathElement, true));
+            // Create new environment using a deep copy
+            this.newEquation(document.importNode(mathElements[i], true));
+        }
+    }
+    this.loadAll = function(uri) {
+        // Loads all equations found in the file uri
+        this.loadURI(uri,null,"//m:math");
     }
     this.moveFocusTo = function(dest) {
         if (dest >= this.equations.length) { return false }
