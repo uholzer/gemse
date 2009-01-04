@@ -46,6 +46,16 @@ function EquationEnv(editor, container) {
     // The notificationDisplay element
     this.notificationDisplay = document.evaluate(".//.[@internal:function='notificationDisplay']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
+    // The origin is an object that describes where exactly the
+    // equation has been loaded from. If there is no origin, this
+    // property should be set to null. This may happen for example
+    // when the user creates a new equation. The write command uses
+    // this property to find out where to write the equation by
+    // default. This description of the origin must be stable in the
+    // sense, that it must stay valid even if other equations in the
+    // same document are modified.
+    this.origin = null;
+
     /* Methods */
 
     // Getting and setting the equation 
@@ -194,6 +204,14 @@ function EquationEnv(editor, container) {
         this.modeStack[this.modeStack.length-1].calledModeReturned();
     }
     this.__defineGetter__("mode", function() { return this.modeStack[this.modeStack.length-1]; });
+
+    this.save = function(destinationURI) {
+        // Saves the equation to its origin if destination is empty.
+        // Otherwise it will save it to destinationURI, creating a new
+        // XML file with the math element as a root node. 
+
+        // TODO
+    }
 
     /* Additional objects */
 
@@ -363,16 +381,17 @@ function GemsePEditor() {
 
     this.attachNewEquationEnvToElement = function (element) {
         // Attaches a new EquationEnv to an already present element in
-        // the document
+        // the document. Returns the newly created EquationEnv.
         var newEquationEnv = new EquationEnv(this, element);
         newEquationEnv.init();
         this.equations.push(newEquationEnv);
         this.moveFocusTo(this.equations.length-1);
+        return newEquationEnv;
     }
     this.newEquation = function (equation) {
         // Creates a new EquationEnv and also a new Element in the
         // document. If the argument equation is not given, an empty
-        // one gets created.
+        // one gets created. Returns the newly created EquationEnv.
         if (!this.containerTemplate) { throw "No template defined" }
         var pool = document.getElementById("pool");
         if (!pool) { throw "No pool element present" }
@@ -388,6 +407,7 @@ function GemsePEditor() {
             newEquationEnv.mode.reInit(); //XXX: Find better solution
         }
         this.moveFocusTo(this.equations.length-1);
+        return newEquationEnv;
     }
     this.loadURI = function (uri, elementId, xpathString) {
         // Fetches the uri. If elementId and xpathString are empty, it
@@ -398,21 +418,37 @@ function GemsePEditor() {
         // This is done using an XMLHttpRequest. This also works for
         // local files.
         var request = new XMLHttpRequest();
-        request.open("GET", uri, false); 
+        request.open("GET", uri, false);
         request.send(null);
         var doc = request.responseXML;
         
         var mathElements = [];
+        var origins = [];
         if (elementId) {
             mathElements[0] = doc.getElementById(elementId);
+            origins[0] = {
+                uri: uri,
+            }
         }
         else if (xpathString) {
             var xpathResult = doc.evaluate(xpathString, doc, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
             var resultNode;
-            while (resultNode = xpathResult.iterateNext()) { mathElements.push(resultNode) }
+            var i=0;
+            while (resultNode = xpathResult.iterateNext()) { 
+                mathElements.push(resultNode);
+                origins.push({
+                    uri: uri,
+                    path: xpathString,
+                    num: i
+                });
+                ++i;
+            }
         }
         else {
             mathElements[0] = doc.documentElement;
+            origins[0] = {
+                uri: uri,
+            }
         }
 
         for (var i=0; i<mathElements.length; i++) {
@@ -421,7 +457,10 @@ function GemsePEditor() {
             }
 
             // Create new environment using a deep copy
-            this.newEquation(document.importNode(mathElements[i], true));
+            var newEquationEnv = this.newEquation(document.importNode(mathElements[i], true));
+
+            // Create Origin object
+            newEquationEnv.origin = origins[i];
         }
     }
     this.loadAll = function(uri) {

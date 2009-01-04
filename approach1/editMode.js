@@ -26,16 +26,32 @@ function EditMode(editor, equationEnv) {
     this.__defineGetter__("contextNode", function() { return this.cursor; }); // Required for every mode
     this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
     this.inputHandler = function() {
-        command = this.editor.inputBuffer;
+        var command = this.editor.inputBuffer;
+        var commandArg = null;
         if (command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
             // KeyEvent.DOM_VK_ESCAPE should be 0x1b
             //event.preventDefault();
             this.editor.inputBuffer = "";
             return;
         }
+        if (command[0] == ":") { // Treate this as a long command
+            var inf = /(:\S*)(\s+(.*))?\n$/.exec(command);
+            if (inf) {
+                command = inf[1];
+                commandArg = inf[3];
+            }
+            else {
+                return
+            }
+        }
         commandObject = editModeCommands[command];
         if (commandObject) {
-            commandObject.execute(this)
+            if (commandObject.type == "long") {
+                commandObject.execute(this,commandArg)
+            }
+            else {
+                commandObject.execute(this)
+            }
         }
         else {
             throw "Command not found";
@@ -113,6 +129,18 @@ editModeCommands = {
     ":load": {
         type: "long",
         execute: editModeCommand_load
+    },
+    ":loadid": {
+        type: "long",
+        execute: editModeCommand_loadById
+    },
+    ":loadxpath": {
+        type: "long",
+        execute: editModeCommand_loadByXPath
+    },
+    ":loadall": {
+        type: "long",
+        execute: editModeCommand_loadAll
     },
 };
 editModeCommands[KEYMOD_CONTROL + "r"] = {
@@ -220,8 +248,27 @@ function editModeCommand_newEquation(mode) {
 }
 
 function editModeCommand_load(mode, argString) {
-    // mode.editor.loadURI(argString);
-    mode.editor.loadURI("testdoc1.xhtml",null,"//m:math");
+    mode.editor.loadURI(argString);
+    mode.editor.inputBuffer = "";
+}
+function editModeCommand_loadById(mode, argString) {
+    var inf = argString.match(/^(\S+)\s(.*)$/);
+    if (!inf) { throw "Wrong argument format" }
+    var uri = inf[1];
+    var id = inf[2];
+    mode.editor.loadURI(uri, id);
+    mode.editor.inputBuffer = "";
+}
+function editModeCommand_loadByXPath(mode, argString) {
+    var inf = argString.match(/^(\S+)\s(.*)$/);
+    if (!inf) { throw "Wrong argument format" }
+    var uri = inf[1];
+    var xpathString = inf[2];
+    mode.editor.loadURI(uri,null,xpathString);
+    mode.editor.inputBuffer = "";
+}
+function editModeCommand_loadAll(mode, argString) {
+    mode.editor.loadURI(argString,null,"//m:math");
     mode.editor.inputBuffer = "";
 }
 
