@@ -210,7 +210,42 @@ function EquationEnv(editor, container) {
         // Otherwise it will save it to destinationURI, creating a new
         // XML file with the math element as a root node. 
 
+        if (!destinationURI) { throw "Saving without URI not yet supported." }
+
+        // Create a new document and copy the math element into it
+        var doc = document.implementation.createDocument(null, null, null);
+        doc.appendChild(doc.importNode(this.equation, true));
+
+        // Kill all attributes in the internal namespace
+        // (Using TreeWalker, since createNodeIterator has been
+        // introduced in firefox 3.1)
+        var iterator = doc.createTreeWalker(
+            doc,
+            NodeFilter.SHOW_ELEMENT,
+            { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT } },
+            false
+        );
+        var n;
+        while (n = iterator.nextNode()) {
+            var attrs = n.attributes;
+            for (var i=0; i < attrs.length; ++i) {
+                if (attrs[i].namespaceURI == NS_internal) { n.removeAttributeNode(attrs[i]) }
+            }
+        }
+
+        // Serialize to a string
+        var serializer = new XMLSerializer();
+        var xmlString = serializer.serializeToString(doc);
+        //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
+        this.notificationDisplay.textContent = xmlString;
+
         // TODO
+        /*
+        var request = new XMLHttpRequest();
+        request.open("PUT", destinationURI, false);
+        request.setRequestHeader("Content-type", "text/plain");
+        request.send(xmlString);
+        */
     }
 
     /* Additional objects */

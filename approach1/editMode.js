@@ -142,6 +142,10 @@ editModeCommands = {
         type: "long",
         execute: editModeCommand_loadAll
     },
+    ":save": {
+        type: "long",
+        execute: editModeCommand_save
+    },
 };
 editModeCommands[KEYMOD_CONTROL + "r"] = {
         type: "action",
@@ -269,6 +273,11 @@ function editModeCommand_loadByXPath(mode, argString) {
 }
 function editModeCommand_loadAll(mode, argString) {
     mode.editor.loadURI(argString,null,"//m:math");
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_save(mode, argString) {
+    mode.equationEnv.save(argString); // argString may be null
     mode.editor.inputBuffer = "";
 }
 
