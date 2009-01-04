@@ -61,6 +61,17 @@
         *[internal|selected="equationFocus"] {
             opacity: 1;
         }
+        /**[internal|function="container"]:not([internal|selected="equationFocus"]) > * {
+            display: none;
+        }
+        *[internal|function="container"]:not([internal|selected="equationFocus"]) *[internal|function="equation"] {
+            display: block;
+            font-size: small;
+            color: black; background-color: white;
+        }
+        *[internal|function="container"]:not([internal|selected="equationFocus"]) *[internal|function="equation"] * {
+            color: inherit; background-color: inherit;
+        }*/
         #input {
             position: relative;
             left: 40%; 
