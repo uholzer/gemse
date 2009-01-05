@@ -146,6 +146,10 @@ editModeCommands = {
         type: "long",
         execute: editModeCommand_save
     },
+    ":close": {
+        type: "long",
+        execute: editModeCommand_close
+    },
 };
 editModeCommands[KEYMOD_CONTROL + "r"] = {
         type: "action",
@@ -278,6 +282,11 @@ function editModeCommand_loadAll(mode, argString) {
 
 function editModeCommand_save(mode, argString) {
     mode.equationEnv.save(argString); // argString may be null
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_close(mode, argString) {
+    mode.equationEnv.close();
     mode.editor.inputBuffer = "";
 }
 

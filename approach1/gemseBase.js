@@ -17,6 +17,7 @@ function standardNSResolver(prefix) {
 
 function EquationEnv(editor, container) {
     this.container = container;
+    this.editor = editor;
 
     /* The container must provide some elements. They are
       located by the function attribute. */
@@ -54,7 +55,14 @@ function EquationEnv(editor, container) {
     // default. This description of the origin must be stable in the
     // sense, that it must stay valid even if other equations in the
     // same document are modified.
+    // (How this object has to look like is defined by the save method
+    // below.)
     this.origin = null;
+
+    // The working directory is used if the user provides a relative URI for
+    // load or save or whatever. XXX: Load does not yet know about
+    // this.
+    this.__defineGetter__("workingDirectory", function() { return this.editor.workingDirectory; });
 
     /* Methods */
 
@@ -205,47 +213,121 @@ function EquationEnv(editor, container) {
     }
     this.__defineGetter__("mode", function() { return this.modeStack[this.modeStack.length-1]; });
 
-    this.save = function(destinationURI) {
+    this.stringToURI = function(s) {
+        // Given a URI as a string, returns an uri object. 
+        // The string may be a relative URI.
+        var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                .getService(Components.interfaces.nsIIOService);
+        return ios.newURI(s,null,ios.newURI(this.workingDirectory,null,null));
+    }
+    this.save = function(destinationURIString) {
         // Saves the equation to its origin if destination is empty.
         // Otherwise it will save it to destinationURI, creating a new
         // XML file with the math element as a root node. 
 
-        if (!destinationURI) { throw "Saving without URI not yet supported." }
+        // Some useful rutines
 
-        // Create a new document and copy the math element into it
-        var doc = document.implementation.createDocument(null, null, null);
-        doc.appendChild(doc.importNode(this.equation, true));
-
-        // Kill all attributes in the internal namespace
-        // (Using TreeWalker, since createNodeIterator has been
-        // introduced in firefox 3.1)
-        var iterator = doc.createTreeWalker(
-            doc,
-            NodeFilter.SHOW_ELEMENT,
-            { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT } },
-            false
-        );
-        var n;
-        while (n = iterator.nextNode()) {
-            var attrs = n.attributes;
-            for (var i=0; i < attrs.length; ++i) {
-                if (attrs[i].namespaceURI == NS_internal) { n.removeAttributeNode(attrs[i]) }
+        var clean = function(doc,root) {
+            // Kills all attributes in the internal namespace
+            // (Using TreeWalker, since createNodeIterator has been
+            // introduced in firefox 3.1)
+            var iterator = doc.createTreeWalker(
+                root,
+                NodeFilter.SHOW_ELEMENT,
+                { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT } },
+                false
+            );
+            var n;
+            while (n = iterator.nextNode()) {
+                var attrs = n.attributes;
+                for (var i=0; i < attrs.length; ++i) {
+                    if (attrs[i].namespaceURI == NS_internal) { n.removeAttributeNode(attrs[i]) }
+                }
             }
         }
 
-        // Serialize to a string
-        var serializer = new XMLSerializer();
-        var xmlString = serializer.serializeToString(doc);
-        //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
-        this.notificationDisplay.textContent = xmlString;
+        // We have to distinguish between several cases
 
-        // TODO
-        /*
-        var request = new XMLHttpRequest();
-        request.open("PUT", destinationURI, false);
-        request.setRequestHeader("Content-type", "text/plain");
-        request.send(xmlString);
-        */
+        if (!destinationURIString) {
+            var uri = this.stringToURI(this.origin.uri);
+            if (this.origin.doc && this.origin.element && uri.scheme == "file") { // Element in a local file
+                // Modify the element (which has to be part of the
+                // document), serialize the document and save it to the
+                // file (which must be a file object)
+                var newElement = this.origin.doc.importNode(this.equation, true);
+                this.origin.element.parentNode.replaceChild(
+                    newElement,
+                    this.origin.element
+                );
+                clean(this.origin.doc, newElement);
+                var serializer = new XMLSerializer();
+                var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
+                   .createInstance(Components.interfaces.nsIFileOutputStream);
+                var file = uri.QueryInterface(Components.interfaces.nsIFileURL).file;
+                foStream.init(file, 0x02 | 0x08 | 0x20, 0664, 0);
+                serializer.serializeToStream(this.origin.doc, foStream, "")
+            }
+            else if (this.origin.doc && this.origin.element && this.origin.uri) { // Element in a remote file
+                // Modify the element, serialize the document and PUT it
+                // to uri
+                var newElement = this.origin.doc.importNode(this.equation, true);
+                this.origin.element.parentNode.replaceChild(
+                    newElement,
+                    this.origin.element
+                );
+                clean(this.origin.doc, newElement);
+                var serializer = new XMLSerializer();
+                var xmlString = serializer.serializeToString(doc);
+                //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
+                var request = new XMLHttpRequest();
+                request.open("PUT", this.origin.uri, false);
+                request.setRequestHeader("Content-type", "application/xml"); //XXX: What is the correct Content-type?
+                request.send(xmlString);
+            }
+            else if (this.origin.uri) { // Local or remote file containing only the equation
+                destinationURIString = this.origin.uri;
+            }
+            else {
+                throw "Can not save to origin";
+            }
+        }
+        
+        // destinationURIString may have been provided by the user or by one
+        // of the cases above. If it is set, the target document
+        // must contain only the equation. 
+        if (destinationURIString) {
+            // Create a new document and copy the math element into it
+            var doc = document.implementation.createDocument(null, null, null);
+            doc.appendChild(doc.importNode(this.equation, true));
+            // Kill all attributes in the internal namespace
+            clean(doc,doc);
+
+            var destinationURI = this.stringToURI(destinationURIString);
+            
+            if (destinationURI.scheme == "file") { // Write to a file
+                var serializer = new XMLSerializer();
+                var file = destinationURI.QueryInterface(Components.interfaces.nsIFileURL).file;
+                var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
+                   .createInstance(Components.interfaces.nsIFileOutputStream);
+                foStream.init(file, 0x02 | 0x08 | 0x20, 0664, 0);
+                serializer.serializeToStream(doc, foStream, "")
+            }
+            else { // Try PUT
+                var serializer = new XMLSerializer();
+                var xmlString = serializer.serializeToString(doc);
+                //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
+                var request = new XMLHttpRequest();
+                request.open("PUT", destinationURI, false);
+                request.setRequestHeader("Content-type", "application/mathml+xml");
+                request.send(xmlString);
+            }
+            this.origin = { uri: destinationURIString };
+        }
+
+    }
+    this.close = function() {
+        this.editor.eliminateEquationEnv(this);
+        // TODO: Check whether changes are saved to file.
     }
 
     /* Additional objects */
@@ -401,6 +483,15 @@ function GemsePEditor() {
     this.inputElement; // A dom element that receives user input
     this.containerTemplate; // A dom element that can be sed to create new containers
 
+    // Find out the current working directory
+    var ios = Components.classes["@mozilla.org/network/io-service;1"].
+                     getService(Components.interfaces.nsIIOService);
+    var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
+                     getService(Components.interfaces.nsIProperties).
+                     get("CurWorkD", Components.interfaces.nsIFile);
+    this.workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
+
+    /* Methods */
     this.inputEvent = function () {
         // Is called when the input buffer supposedly changed
         this.equations[this.focus].mode.inputHandler();
@@ -414,6 +505,21 @@ function GemsePEditor() {
     this.__defineGetter__("inputBuffer", function() { return this.inputElement.value; });
     this.__defineSetter__("inputBuffer", function(x) { this.inputElement.value = x; });
 
+    this.eliminateEquationEnv = function (equationEnv) {
+        // This method must only be called by methods of equationEnv.
+        // The equationEnv gets dropped from this.equations and this.focus
+        // gets adjusted if needed.
+        var index = this.equations.indexOf(equationEnv);
+        if (index < 0) { throw "This equationEnv is not even registered!" }
+
+        var pool = document.getElementById("pool");
+        pool.removeChild(this.equations[index].container);
+        this.equations.splice(index,1);
+        if (this.focus > index) { this.moveFocusTo(this.focus-1) }
+        if (this.focus == index && index > 0) { --this.focus; this.moveFocusTo(this.focus) }
+        else { this.moveFocusTo(this.focus) }
+        // TODO: What to do if all equations are gone?
+    }
     this.attachNewEquationEnvToElement = function (element) {
         // Attaches a new EquationEnv to an already present element in
         // the document. Returns the newly created EquationEnv.
@@ -452,6 +558,14 @@ function GemsePEditor() {
         // this xpath expression and uses the first result.
         // This is done using an XMLHttpRequest. This also works for
         // local files.
+
+        // Check whether uri is relative. Make an absolute one out of it.
+        // XXX: Stupid hack:
+        var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                .getService(Components.interfaces.nsIIOService);
+        uri = ios.newURI(uri,null,ios.newURI(this.workingDirectory,null,null)).spec;
+
+        // Create request
         var request = new XMLHttpRequest();
         request.open("GET", uri, false);
         request.send(null);
@@ -463,6 +577,8 @@ function GemsePEditor() {
             mathElements[0] = doc.getElementById(elementId);
             origins[0] = {
                 uri: uri,
+                doc: doc,
+                element: mathElements[0]
             }
         }
         else if (xpathString) {
@@ -473,8 +589,8 @@ function GemsePEditor() {
                 mathElements.push(resultNode);
                 origins.push({
                     uri: uri,
-                    path: xpathString,
-                    num: i
+                    doc: doc,
+                    element: resultNode
                 });
                 ++i;
             }
@@ -482,7 +598,7 @@ function GemsePEditor() {
         else {
             mathElements[0] = doc.documentElement;
             origins[0] = {
-                uri: uri,
+                uri: uri
             }
         }
 
