@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <bindings xmlns="http://www.mozilla.org/xbl">
-    <binding id="buttonBindingForGemse">
+    <binding id="mathBindingForGemse">
         <handlers>
-            <handler event="mouseup" action="this.editWithGemse();"/>
+            <handler event="mouseup" modifiers="control" action="this.editWithGemse();"/>
         </handlers>
 
         <implementation>
