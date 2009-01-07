@@ -324,10 +324,21 @@ function EquationEnv(editor, container) {
             this.origin = { uri: destinationURIString };
         }
 
+        // Tell the history object that we saved the current state
+        this.history.reportSaving();
     }
-    this.close = function() {
+    this.close = function(force) {
+        // Closes this equation environment if their are no unsaved
+        // changes or if force is set to true
+
+        // Check whether there are unsaved changes
+        if (this.history.hasChanges() && !force) {
+            return false;
+            // TODO: Inform user
+        }
+
+        // close
         this.editor.eliminateEquationEnv(this);
-        // TODO: Check whether changes are saved to file.
     }
 
     /* Additional objects */
@@ -360,6 +371,8 @@ function Register(name, content, type) {
 
 function History() {
     this.position = -1; // Alway points to the last change applied
+    this.savedState = -2; // Always points to the last change saved to disk
+        // (Set to -2 so that -1!=-2 at the beginning)
     this.goBack = function (equationEnv) {
         if (this.position < 0) { return false; }
         this[this.position].undo(equationEnv);
@@ -380,6 +393,14 @@ function History() {
         this.length = this.position + 1; // Chop off succeeding changes
         this.push(change);
         ++this.position;
+    }
+    this.reportSaving = function() {
+        // Marks the current state as saved
+        this.savedState = this.position;
+    }
+    this.hasChanges = function() {
+        // Returns false if the current state has been written to file
+        return !(this.savedState == this.position);
     }
 }
 History.prototype = new Array();
@@ -612,6 +633,10 @@ function GemsePEditor() {
 
             // Create Origin object
             newEquationEnv.origin = origins[i];
+
+            // Tell the history object that this new equation is already
+            // saved.
+            newEquationEnv.history.reportSaving();
         }
     }
     this.loadAll = function(uri) {
