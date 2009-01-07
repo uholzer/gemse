@@ -104,6 +104,9 @@
             // Detach containerTemplate from document:
             editor.containerTemplate.parentNode.removeChild(editor.containerTemplate);
             editor.containerTemplate.removeAttribute("id");
+
+            // Give the window a name:
+            window.name = "globalGemseInstance";
         }
 
         /* Event processing */

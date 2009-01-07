@@ -639,6 +639,23 @@ function GemsePEditor() {
             newEquationEnv.history.reportSaving();
         }
     }
+    this.loadFromOpenDocument = function(doc,element) {
+        // If the element to edit is part of an already open document,
+        // call this method to load it
+        if (element.localName != "math" || element.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
+            throw "The element you load should be a math element in the MathML namespace";
+        }
+
+        // Create new environment using a deep copy
+        var newEquationEnv = this.newEquation(document.importNode(element, true));
+
+        // Create Origin object
+        newEquationEnv.origin = { uri: doc.URL, doc: doc, element: element }
+
+        // Tell the history object that this new equation is already
+        // saved.
+        newEquationEnv.history.reportSaving();
+    }
     this.loadAll = function(uri) {
         // Loads all equations found in the file uri
         this.loadURI(uri,null,"//m:math");
