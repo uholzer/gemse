@@ -1,0 +1,78 @@
+@namespace internal "http://www.andonyar.com/math/editor";
+div {
+    background-color: rgba(255,255,255,0.7);
+    color: #000;
+    -moz-border-radius: 3px;
+}
+table {
+    border-collapse: collapse;
+}
+*[internal|selected="editcursor"] { color: red; background-color: yellow; }
+*[internal|selected="attributeCursor"] { color: white; background-color: black; }
+*[internal|selected="parent"] { background-color: #ddd; }
+*[internal|selected="selection"] { background-color: #aaf; }
+*[internal|selected="attributeCursor selection"] { color: white; background-color: #227; }
+*[internal|selected="insertCursorIn"] { background-color: #dfd; }
+*[internal|selected="insertCursorBefore"] { border-left: 3px solid #050 !important }
+*[internal|selected="insertCursorAfter"] { border-right: 3px solid #050 !important }
+*[internal|function="equation"] {
+    border: 1px solid black;
+    text-align: center;
+    font-size: x-large;
+}
+*[internal|function="treeView"] {
+    border: 1px solid black;
+    margin: 1px; padding: 1px 1px 5ex 1px;
+    text-align: center;
+    font-size: small;
+}
+*[internal|function="treeView"] div.element {
+    display: inline-block;
+    border: 1px solid black;
+    margin: 1px; padding: 1px;
+    position: relative;
+    top: 5px;
+    text-align: center;
+}
+*[internal|function="treeView"] div.nodeValue {
+    color: blue;
+    font-size: larger;
+}
+*[internal|function="attributeView"] * {
+    border: 1px solid black;
+}
+*[internal|function="modeName"] {
+    color: white; background-color: black;
+}
+*[internal|function="container"] {
+    opacity: 0.4;
+}
+*[internal|selected="equationFocus"] {
+    opacity: 1;
+}
+/**[internal|function="container"]:not([internal|selected="equationFocus"]) > * {
+    display: none;
+}
+*[internal|function="container"]:not([internal|selected="equationFocus"]) *[internal|function="equation"] {
+    display: block;
+    font-size: small;
+    color: black; background-color: white;
+}
+*[internal|function="container"]:not([internal|selected="equationFocus"]) *[internal|function="equation"] * {
+    color: inherit; background-color: inherit;
+}*/
+#input {
+    position: relative;
+    left: 40%; 
+    right: 40%;
+}
+*.edit {
+    background-color: yellow;
+}
+*.insert {
+    background-color: green;
+}
+*.visual {
+    background-color: blue;
+}
+
