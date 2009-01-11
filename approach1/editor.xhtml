@@ -25,7 +25,9 @@
         *[internal|selected="parent"] { background-color: #ddd; }
         *[internal|selected="selection"] { background-color: #aaf; }
         *[internal|selected="attributeCursor selection"] { color: white; background-color: #227; }
-        *[internal|selected="insertcursor"] { background-color: #ddd; }
+        *[internal|selected="insertCursorIn"] { background-color: #dfd; }
+        *[internal|selected="insertCursorBefore"] { border-left: 3px solid #050 !important }
+        *[internal|selected="insertCursorAfter"] { border-right: 3px solid #050 !important }
         *[internal|function="equation"] {
             border: 1px solid black;
             text-align: center;
@@ -90,6 +92,7 @@
     <script src="gemseBase.js"/>
     <script src="editMode.js"/>
     <script src="attributeMode.js"/>
+    <script src="trivialInsertMode.js"/>
     <!-- <script src="elementDescriptors.js"/> -->
     <script><![CDATA[
         var editor;

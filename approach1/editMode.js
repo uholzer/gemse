@@ -106,6 +106,14 @@ editModeCommands = {
         type: "action",
         execute: editModeCommand_attributeMode
     },
+    "i": {
+        type: "action",
+        execute: editModeCommand_insertBefore
+    },
+    "a": {
+        type: "action",
+        execute: editModeCommand_insertAfter
+    },
     ":set": {
         type: "long",
         execute: editModeCommand_set
@@ -227,6 +235,30 @@ function editModeCommand_attributeMode(mode) {
     };
     mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor);
     var newMode = new AttributeMode(mode.editor, mode.equationEnv, mode.cursor);
+    newMode.init();
+    mode.equationEnv.callMode(newMode);
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_insertBefore(mode) {
+    mode.infoAboutCalledMode = {
+        change: mode.equationEnv.history.createChange(),
+        changeElement: mode.cursor.parentNode
+    };
+    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor);
+    var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor.parentNode, mode.cursor);
+    newMode.init();
+    mode.equationEnv.callMode(newMode);
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_insertAfter(mode) {
+    mode.infoAboutCalledMode = {
+        change: mode.equationEnv.history.createChange(),
+        changeElement: mode.cursor
+    };
+    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor);
+    var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor.parentNode, mml_nextSibling(mode.cursor));
     newMode.init();
     mode.equationEnv.callMode(newMode);
     mode.editor.inputBuffer = "";
