@@ -27,7 +27,7 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
             }
         }
         else if (mml_lastChild(this.cursor.inElement)) {
-            mml_lastChild(this.cursor.inElement).removeAttribute(NS_internal,"selected");
+            mml_lastChild(this.cursor.inElement).removeAttributeNS(NS_internal,"selected");
         }
     }
     this.showCursor = function() {
@@ -39,7 +39,7 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
             }
         }
         else if (mml_lastChild(this.cursor.inElement)) {
-            mml_lastChild(this.cursor.inElement).setAttribute(NS_internal,"selected","insertCursorAfter");
+            mml_lastChild(this.cursor.inElement).setAttributeNS(NS_internal,"selected","insterCursorAfter");
         }
     }
     this.moveCursor = function(newCursor) {
@@ -167,5 +167,7 @@ function trivialInsertModeCommandTool_elementWithLongText(mode,elementName) {
             mode.editor.inputBuffer.substring(1,mode.editor.inputBuffer.length-1)
         )
     );
+    mode.editor.inputBuffer = "";
+    return true;
 }
 
