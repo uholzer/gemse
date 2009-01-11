@@ -15,7 +15,7 @@ mtext
     contains text
 mrow
     any number of children, (consider inferred mrows)
-mfraq
+mfrac
     2 children
 msqrt
     any number of children, inferred mrow

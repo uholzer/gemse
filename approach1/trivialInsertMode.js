@@ -66,20 +66,30 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
             throw "Command not found";
         }
     };
-    this.putElement = function(ns, name) {
-        if (ns==null) { ns = NS_MathML }
-        // Hide cursor
-        this.hideCursor();
-        // Create the new element
-        newElement = document.createElementNS(ns, name);
-        for (var i = 2; i < arguments.length; ++i) {
-            newElement.appendChild(arguments[i]);
+    this.putElement = function() {
+        if (arguments.length > 1) {
+            var ns = arguments[0];
+            var name = arguments[1];
+            if (ns==null) { ns = NS_MathML }
+            // Hide cursor
+            this.hideCursor();
+            // Create the new element
+            newElement = document.createElementNS(ns, name);
+            for (var i = 2; i < arguments.length; ++i) {
+                newElement.appendChild(arguments[i]);
+            }
+            // Put element into the equation
+            this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
+            // Position the cursor
+            // TODO: Where? I guess where it already is
+            this.moveCursor(this.cursor);
         }
-        // Put element into the equation
-        this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
-        // Position the cursor
-        // TODO: Where? I guess where it already is
-        this.moveCursor(this.cursor);
+        else {
+            var newElement = arguments[0];
+            this.hideCursor();
+            this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
+            this.moveCursor(this.cursor);
+        }
     }
 }
 
@@ -105,6 +115,30 @@ trivialInsertModeCommands = {
     "t": {
         execute: trivialInsertModeCommand_mtext
     },
+    "/": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mfrac") }
+    },
+    "e": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"menclose") }
+    },
+    "^": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msup") }
+    },
+    "_": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msub") }
+    },
+    "=": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msubsup") }
+    },
+    "u": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"munder") }
+    },
+    "v": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mover") }
+    },
+    "U": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"munderover") }
+    },
 }
 trivialInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
     execute: trivialInsertModeCommand_exit
@@ -122,12 +156,27 @@ function trivialInsertModeCommand_miLong(mode) {
 
 function trivialInsertModeCommand_mnNormal(mode) {
     // Inserts a mn element, containg a number of the form /^[+-]?[0-9.]+$/
-    throw "Not yet implemented";
+    var c = mode.editor.inputBuffer;
+    var res = /^.([+-]?[0-9.]+)( ?(.*))$/.exec(c);
+    if (res[2]) { 
+        mode.putElement(
+            null, 
+            "mn",
+            document.createTextNode(
+                res[1]
+            )
+        );
+        mode.editor.inputBuffer = res[3];
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 function trivialInsertModeCommand_mnLong(mode) {
     // Inserts an mn element containing anything
-    trivialInsertModeCommandTool_elementWithLongText(mode,"mi");
+    trivialInsertModeCommandTool_elementWithLongText(mode,"mn");
 }
 
 function trivialInsertModeCommand_moNormal(mode) {
@@ -145,6 +194,24 @@ function trivialInsertModeCommand_mtext(mode) {
     trivialInsertModeCommandTool_elementWithLongText(mode,"mtext");
 }
 
+function trivialInsertModeCommand_insertDescribedElement(mode, elementName) {
+    // Inserts an mtext element
+    var description = elementDescriptions[elementName];
+    var placeholder = document.createElementNS(NS_MathML, "mi");
+    placeholder.setAttributeNS(NS_internal, "missing", "1")
+    placeholder.appendChild(document.createTextNode("□"));
+    if (description.type != "fixedChildren") {
+        throw description.type + " not yet supported by inserDescribedElement";
+    }
+    var newElement = document.createElementNS(description.namespace, description.name);
+    for (var i=0; i<description.childCount; ++i) {
+        newElement.appendChild(placeholder.cloneNode(true));
+    }
+    mode.putElement(newElement);
+    mode.editor.inputBuffer = "";
+    return true;
+}
+
 function trivialInsertModeCommand_exit(mode) {
     mode.editor.inputBuffer = "";
     mode.finish();
@@ -159,8 +226,7 @@ function trivialInsertModeCommandTool_elementWithSingleCharacter(mode,elementNam
 }
 
 function trivialInsertModeCommandTool_elementWithLongText(mode,elementName) {
-    if (mode.editor.inputBuffer[mode.editor.inputBuffer.length-1] != "\n") { return false }
-    mode.putElement(
+    if (mode.editor.inputBuffer[mode.editor.inputBuffer.length-1] != "\n") { return false } mode.putElement(
         null, 
         elementName,
         document.createTextNode(
