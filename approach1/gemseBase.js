@@ -515,13 +515,23 @@ function GemsePEditor() {
     /* Methods */
     this.inputEvent = function () {
         // Is called when the input buffer supposedly changed
-        this.equations[this.focus].mode.inputHandler();
+        try {
+            this.equations[this.focus].mode.inputHandler();
+        }
+        catch (e) {
+            this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
+        }
     };
     this.keyEvent = function (event) {
         // Is called when a key gets hit. This also is called
         // if the key does not cause a character to be entered
         // into the input element (i.e. the input buffer).
-        this.equations[this.focus].mode.keyHandler(event);
+        try {
+            this.equations[this.focus].mode.keyHandler(event);
+        }
+        catch (e) {
+            this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
+        }
     };
     this.__defineGetter__("inputBuffer", function() { return this.inputElement.value; });
     this.__defineSetter__("inputBuffer", function(x) { this.inputElement.value = x; });
