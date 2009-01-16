@@ -458,6 +458,13 @@ function Change() {
         // Derive a pointer into the tree where the element is located
         this.treePointer = this.deriveTreePointer(equation, toBeChangedElement);
 
+        // For debugging
+        if (this.applyTreePointer(equation, this.treePointer) != toBeChangedElement) {
+            throw "Tree pointer does not resolve to the element it has been creted for. (Bug in implementation.) "
+                + "applyTreePointer returns a " + this.applyTreePointer(equation, this.treePointer).localName
+                + " expected is a " + toBeChangedElement.localName;
+        }
+
         // Make deep copy
         this.oldNode = toBeChangedElement.cloneNode(true);
     }
@@ -479,6 +486,7 @@ function Change() {
     }
     this.deriveTreePointer = function (equation, target) {
         var pointer = [];
+        // We go from the target _backwards_ to the equation node
         while (equation != target) {
             var siblingNumber = 0;
             var sibling = target;
@@ -490,9 +498,9 @@ function Change() {
     }
     this.applyTreePointer = function (equation, pointer) {
         var target = equation;
-        while (pointer.length) {
-            target = target.childNodes[pointer.shift()];
-        }
+        pointer.forEach(function(siblingNumber) {
+            target = target.childNodes[siblingNumber];
+        });
         return target;
     }
 }
