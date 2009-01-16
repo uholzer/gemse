@@ -36,13 +36,434 @@ directly edits the XML structure of presentation MathML.</p>
 if you have installed Firefox 3 you are already lucky. Otherwise I can
 not help for the moment.</p>
 
+<p>After loading <code>example01.xml</code> you see something like
+that:</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" internal:selected="editcursor">
+    <mrow>
+        <mi>exp</mi>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element" internal:selected="editcursor">math<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div>
+    <div internal:function="attributeView"><table><tr><td>http://www.w3.org/2000/xmlns/</td><td>xmlns</td><td>http://www.w3.org/1998/Math/MathML</td></tr></table></div>
+    <div internal:function="modeName">edit</div>
+    <pre internal:function="notificationDisplay"/>
+</div>
+</div>
+
+<p>The first box contains the rendering of the current equation,
+whereas the second box shows the MathML tree structure of it. After
+the second box, you can see a table which shows the attributes of the
+selected element. At the bottom, there is a status line which informs
+you about the current state the editor is in. In the following
+sections you will learn what all this means.</p>
+
+<p>From now on, I will show you only those boxes that I think are
+important.</p>
+
 <h2>Moving around</h2>
+
+<p>The most important thing is the cursor. It highlights an element of
+the equation. If you issue a command, it gets applied on the
+highlighted element. Currently, the cursor is at the <code>math</code>
+element, the topmost element of the equation.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" internal:selected="editcursor">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element" internal:selected="editcursor">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p> You can move the cursor
+around using the keys <kbd>h</kbd>, <kbd>j</kbd>, <kbd>k</kbd>,
+<kbd>l</kbd>. (Well, I am actually writing what you have to enter. So
+<kbd>J</kbd> means that you have to press the shift key and the key
+with the letter J on it. When I write <kbd>j</kbd> you have to press
+the key with the J on it, which enters a lower case j.) <kbd>h</kbd>
+moves the cursor to the left, <kbd>l</kbd> moves it to the right. Of
+course, the math element does not have an element to the right nor one
+to the left. It has no siblings, if you want to express it in XML
+terms. <kbd>k</kbd> moves the cursor to the parent of the currently
+highlighted element. However, the <code>math</code> element is the
+topmost element. Now press <kbd>j</kbd>.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" internal:selected="parent">
+<mrow internal:selected="editcursor">
+    <mrow>
+        <mi>exp</mi>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element" internal:selected="editcursor">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>It seems that nothing has changed. In order to see what happened,
+look at the tree view in the box below the equation. Press
+<kbd>j</kbd> again.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow internal:selected="parent">
+    <mrow internal:selected="editcursor">
+        <mi>exp</mi>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element" internal:selected="editcursor">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p><kbd>j</kbd> moves the cursor to the first child element. Now you
+can press <kbd>l</kbd> to move the cursor to the next sibling. Now the
+<code>mo</code> element with the <code>=</code> in it is higlighted.
+<kbd>h</kbd> moves the cursor to the previous sibling, usually the
+element to the left. Now use these command several times to get used
+to it.</p>
+
+<p>Observe that <kbd>h</kbd>, <kbd>l</kbd> do not always mean <q>to
+the right</q> or <q>to the left</q> respectively. For example, select
+the <code>frac</code> element. You can reach it my putting the cursor
+over the <code>math</code> element by using <kbd>k</kbd> several times
+followed by <kbd>jjlljl</kbd>. (Note that I sometimes join commands
+that you have to enter together. This for example means that you have
+to hit <kbd>j</kbd>, then <kbd>j</kbd>, then <kbd>l</kbd> and so on.)
+Now hit <kbd>j</kbd> once again. This selects the first child of the
+<code>frac</code> element.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac internal:selected="parent">
+            <msup internal:selected="editcursor"><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element" internal:selected="parent">mfrac<div class="element" internal:selected="editcursor">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>In MathML, the first child of a <code>frac</code> element is the
+enumerator of the fraction. The second one is its denominator. So
+enumerator and denominator are siblings in the XML tree. That means
+that you have to use <kbd>h</kbd> and <kbd>l</kbd> to switch between
+the two. <kbd>j</kbd> and <kbd>k</kbd> do have a different meaning in
+this context: <kbd>k</kbd> moves to the parent, i.e. the
+<code>frac</code> element. <kbd>j</kbd> moves to the first element
+contained in the enumerator or denominator respectively. Try it. Also
+try to find out what happens on the <code>msup</code> and
+<code>munderover</code> elements.</p>
+
+<p>Now you now how to move around. You also have seen that movements
+are relative to the XML tree structure, not to relative where
+something appears in the rendered equation. There are and will be many
+more commands to move around faster, but what you have seen should
+suffice for now.</p>
 
 <h2>Deleting</h2>
 
+<p>We start with the easy thing. Its deleting. (Who would have thought
+that it is something desctructive?) If you hit <kbd>x</kbd> the
+element that is highlighted by the curser gets removed, including all
+its descendants. Move the cursor to the <code>(</code> after the
+<code>exp</code> and hit <kbd>x</kbd>. What you get is</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow internal:selected="parent">
+        <mi>exp</mi>
+        
+        <mi internal:selected="editcursor">x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element" internal:selected="parent">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element" internal:selected="editcursor">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Do the same with the closing bracket <code>)</code> by
+<kbd>lx</kbd>. Now you have</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow internal:selected="parent">
+        <mi>exp</mi>
+        
+        <mi internal:selected="editcursor">x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element" internal:selected="parent">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element" internal:selected="editcursor">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Beware: <kbd>x</kbd> is dangerous. This may be configurable in a
+future version of Gemse. Select the denominator of the fraction by
+hitting <kbd>klljljl</kbd>. Now hit <kbd>x</kbd> to delete it. You
+immediately see that this was not good.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac internal:selected="parent">
+            <msup internal:selected="editcursor"><mi>x</mi><mi>k</mi></msup>
+            
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element" internal:selected="parent">mfrac<div class="element" internal:selected="editcursor">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>What does cause this? Well, some MathML elements must have a fixed
+number of elements, in case of <code>frac</code> this number is two.
+If a <code>frac</code> element does not have two children, it is
+invalid. The MathML renderer no longer understands what is meaned by
+the <code>frac</code> element and can not render the equation
+completely. If something like this happens, you have to look at the
+tree view in order to fix the problem, since the rendering of the
+equation is incomplete. You can also fix it by undoing your mistake,
+as you will learn in the next section.</p>
+
 <h2>Undo and redo</h2>
 
+<p>Of course, Gemse has also undo and redo commands. <kbd>u</kbd>
+undoes your last change. <kbd>CTRL+r</kbd> undoes your last undo.
+(<kbd>CTRL+r</kbd> means that you have to hold down the control key
+and hit r. Something like <kbd>ALT+abALT+c</kbd> says that you have to
+hold control, hit a, releae control, hit b, hold down ALT, hit c and
+releaste alt.) Now hit <kbd>u</kbd>. The denominator you just deleted
+is back.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac internal:selected="parent">
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow internal:selected="editcursor"><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element" internal:selected="parent">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element" internal:selected="editcursor">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>You can not only undo the last change, you can even undo changes
+before it. For this hit <kbd>uu</kbd>. Now the two brackets you
+deleted are back too.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow internal:selected="parent">
+        <mi>exp</mi>
+        <mo internal:selected="editcursor">(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element" internal:selected="parent">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element" internal:selected="editcursor">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>If you have undone too many changes, you can reapply them by
+hitting <kbd>CTRL+r</kbd>. Now, do that twice. The brackets are gone
+again.</p>
+
+<div class="documentationScreenshot">
+<!-- Buggy :-( -->
+</div>
+
+<p>Of course, you can undo again what you have redone, and so on.</p>
+
 <h2>Inserting</h2>
+
+<p>Being destructive is fun, but being constructive is even more
+fun.</p>
+
+<!-- Idea: change the infinite sum into a limes of partial sums. -->
 
 <h2>Copying and Pasting</h2>
 

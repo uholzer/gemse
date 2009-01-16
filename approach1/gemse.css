@@ -76,3 +76,10 @@ table {
     background-color: blue;
 }
 
+/* Additional rules for the documentation */
+div.documentationScreenshot {
+    border: 0.2em dashed #aaf;
+    margin: 2ex 5em 2ex 5em;
+    padding: 1ex 1em 1ex 1em;
+}
+

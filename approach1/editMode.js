@@ -158,6 +158,10 @@ editModeCommands = {
         type: "long",
         execute: editModeCommand_close
     },
+    ":help": {
+        type: "long",
+        execute: editModeCommand_help
+    },
 };
 editModeCommands[KEYMOD_CONTROL + "r"] = {
         type: "action",
@@ -338,6 +342,16 @@ function editModeCommand_previousEquation(mode) {
     }
     else {
         mode.editor.moveFocusTo(mode.editor.focus-1);
+    }
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_help(mode, argString) {
+    if (argString == "tutorial") {
+        window.open("doc/tutorial.xhtml", "_blank");
+    }
+    else {
+        window.open("doc/index.xhtml", "_blank");
     }
     mode.editor.inputBuffer = "";
 }
