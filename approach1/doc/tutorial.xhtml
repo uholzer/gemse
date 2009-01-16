@@ -453,10 +453,41 @@ hitting <kbd>CTRL+r</kbd>. Now, do that twice. The brackets are gone
 again.</p>
 
 <div class="documentationScreenshot">
-<!-- Buggy :-( -->
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow internal:selected="parent">
+    <mrow internal:selected="editcursor">
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element" internal:selected="editcursor">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
 </div>
 
 <p>Of course, you can undo again what you have redone, and so on.</p>
+
+<p>Vim provides history information in form of a whole history tree.
+Gemse only stores changes in a linear fashion. In vim, if you make
+changes after an undo, the undone change gets remembered. Gemse
+forgets all undone changes if you make new changes.</p>
 
 <h2>Inserting</h2>
 
