@@ -475,7 +475,8 @@ function Change() {
         // Check the pointer, it must be the same as computed
         // by recordBefore().
         if (this.treePointer.join(',') != this.deriveTreePointer(equation, changedElement).join(',')) {
-            throw "Position of the element is not the same as recorded before";
+            throw "Position of the element is not the same as recorded before: "
+                + this.treePointer.join(',') + " != " + this.deriveTreePointer(equation, changedElement).join(',');
         }
 
         // Make deep copy

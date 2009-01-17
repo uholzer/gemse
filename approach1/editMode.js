@@ -249,7 +249,7 @@ function editModeCommand_insertBefore(mode) {
         change: mode.equationEnv.history.createChange(),
         changeElement: mode.cursor.parentNode
     };
-    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor);
+    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
     var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor.parentNode, mode.cursor);
     newMode.init();
     mode.equationEnv.callMode(newMode);
@@ -259,9 +259,9 @@ function editModeCommand_insertBefore(mode) {
 function editModeCommand_insertAfter(mode) {
     mode.infoAboutCalledMode = {
         change: mode.equationEnv.history.createChange(),
-        changeElement: mode.cursor
+        changeElement: mode.cursor.parentNode
     };
-    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor);
+    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
     var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor.parentNode, mml_nextSibling(mode.cursor));
     newMode.init();
     mode.equationEnv.callMode(newMode);
