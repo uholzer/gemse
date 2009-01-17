@@ -494,6 +494,87 @@ forgets all undone changes if you make new changes.</p>
 <p>Being destructive is fun, but being constructive is even more
 fun.</p>
 
+<p>Well, to insert something, you have to switch from the edit mode to
+the insert mode. This can be done with various commands, depending
+where you want to insert something. <kbd>a</kbd> (think: append)
+calls the insert mode such that it inserts new elements behind the
+current cursor. If you want to insert before it, you have to use
+<kbd>i</kbd>. The insert mode also has a cursor quite like the edit
+mode, but it looks different. Well, it doesn't only look different, it
+has a further very important difference: It lies between two elements,
+not on an element.</p>
+
+<p>Position the cursor over the <code>munderover</code> element of the
+sum sign, like this:</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow internal:selected="parent">
+        <munderover internal:selected="editcursor">
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="parent">mrow<div class="element" internal:selected="editcursor">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Now hit <kbd>i</kbd>. Do you see the cursor? It is right in front
+of the sum sign, or more precicely, in front of the
+<code>munderover</code> element.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow internal:selected="insertCursorIn">
+        <munderover internal:selected="insertCursorBefore">
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="insertCursorIn">mrow<div class="element" internal:selected="insertCursorBefore">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>However, for the moment we let it be. Press <kbd>ESCAPE</kbd>.
+(Well, here you have to hit the escape key, not E then S then C and so
+on.) This puts you right back into edit mode.</p>
+
 <!-- Idea: change the infinite sum into a limes of partial sums. -->
 
 <h2>Copying and Pasting</h2>
