@@ -28,11 +28,17 @@ function EditMode(editor, equationEnv) {
     this.inputHandler = function() {
         var command = this.editor.inputBuffer;
         var commandArg = null;
+        var singleCharacterArgs = [];
         if (command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
             // KeyEvent.DOM_VK_ESCAPE should be 0x1b
             //event.preventDefault();
             this.editor.inputBuffer = "";
             return;
+        }
+        while (command[0] == '"') {
+            if (command.length < 2) { return } // Returns if the user has not yet entered the character
+            singleCharacterArgs.push(command[1]);
+            command = command.substring(2);
         }
         if (command[0] == ":") { // Treate this as a long command
             var inf = /(:\S*)(\s+(.*))?\n$/.exec(command);
@@ -50,7 +56,7 @@ function EditMode(editor, equationEnv) {
                 commandObject.execute(this,commandArg)
             }
             else {
-                commandObject.execute(this)
+                commandObject.execute(this,command,singleCharacterArgs,null)
             }
         }
         else {
@@ -397,13 +403,19 @@ function editModeCommand_help(mode, argString) {
     mode.editor.inputBuffer = "";
 }
 
-function editModeCommand_putAfter(mode) {
-    mode.cursor.parentNode.insertBefore(mode.editor.registers[""].content[0].cloneNode(true), mml_nextSibling(mode.cursor));
+function editModeCommand_putAfter(mode,commandString,args) {
+    var registerName = "";
+    if (args != null) { registerName = args[0]; }
+    mode.cursor.parentNode.insertBefore(mode.editor.registers[registerName].content[0].cloneNode(true), mml_nextSibling(mode.cursor));
     mode.editor.inputBuffer = "";
 }
 
-function editModeCommand_copyToRegister(mode) {
-    mode.editor.registers[""] = new Register ("", [mode.cursor.cloneNode(true)]);
+function editModeCommand_copyToRegister(mode,commandString,args) {
+    var registerName = "";
+    if (args != null) { registerName = args[0]; }
+    mode.hideCursor();
+    mode.editor.registers[registerName] = new Register (registerName, [mode.cursor.cloneNode(true)]);
+    mode.showCursor();
     mode.editor.inputBuffer = "";
 }
 
