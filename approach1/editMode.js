@@ -378,8 +378,18 @@ function editModeCommand_previousEquation(mode) {
 }
 
 function editModeCommand_help(mode, argString) {
-    if (argString == "tutorial") {
+    var args = argString.split(/\s+/);
+    if (args[0] == "tutorial") {
         window.open("doc/tutorial.xhtml", "_blank");
+    }
+    else if (args[0] == "element") {
+        if (args[1] == null) { args[1] = mode.cursor.localName }
+        if (elementDescriptions[args[1]]) {
+            window.open(elementDescriptions[args[1]].help, "_blank");
+        }
+        else {
+            throw "No description found for element " + args[1];
+        }
     }
     else {
         window.open("doc/index.xhtml", "_blank");
