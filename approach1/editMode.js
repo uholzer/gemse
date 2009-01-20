@@ -58,8 +58,12 @@ function EditMode(editor, equationEnv) {
         }
     };
     this.calledModeReturned = function () {
-        this.infoAboutCalledMode.change.recordAfter(this.equationEnv.equation,this.infoAboutCalledMode.changeElement);
-        this.equationEnv.history.reportChange(this.infoAboutCalledMode.change);
+        if (this.infoAboutCalledMode) {
+            if (this.infoAboutCalledMode.change) {
+                this.infoAboutCalledMode.change.recordAfter(this.equationEnv.equation,this.infoAboutCalledMode.changeElement);
+                this.equationEnv.history.reportChange(this.infoAboutCalledMode.change);
+            }
+        }
         delete this.infoAboutCalledMode;
         this.moveCursor(this.cursor); // In order to update all views
     }
@@ -113,6 +117,10 @@ editModeCommands = {
     "a": {
         type: "action",
         execute: editModeCommand_insertAfter
+    },
+    "v": {
+        type: "action",
+        execute: editModeCommand_visualMode
     },
     ":set": {
         type: "long",
@@ -239,6 +247,20 @@ function editModeCommand_attributeMode(mode) {
     };
     mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor);
     var newMode = new AttributeMode(mode.editor, mode.equationEnv, mode.cursor);
+    newMode.init();
+    mode.equationEnv.callMode(newMode);
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_visualMode(mode) {
+    /* TODO: How to handle changes in visual mode?
+    mode.infoAboutCalledMode = {
+        change: mode.equationEnv.history.createChange(),
+        changeElement: mode.cursor
+    };
+    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor);
+    */
+    var newMode = new VisualSelectionMode(mode.editor, mode.equationEnv, mode.cursor);
     newMode.init();
     mode.equationEnv.callMode(newMode);
     mode.editor.inputBuffer = "";

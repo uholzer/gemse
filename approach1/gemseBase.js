@@ -527,7 +527,7 @@ function GemsePEditor() {
         try {
             this.equations[this.focus].mode.inputHandler();
         }
-        catch (e) {
+        catch (e if false) {
             this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
         }
     };
@@ -538,7 +538,7 @@ function GemsePEditor() {
         try {
             this.equations[this.focus].mode.keyHandler(event);
         }
-        catch (e) {
+        catch (e if false) {
             this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
         }
     };
