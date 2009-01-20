@@ -122,6 +122,14 @@ editModeCommands = {
         type: "action",
         execute: editModeCommand_visualMode
     },
+    "y": {
+        type: "action",
+        execute: editModeCommand_copyToRegister
+    },
+    "p": {
+        type: "action",
+        execute: editModeCommand_putAfter
+    },
     ":set": {
         type: "long",
         execute: editModeCommand_set
@@ -378,7 +386,15 @@ function editModeCommand_help(mode, argString) {
     mode.editor.inputBuffer = "";
 }
 
-/* Child, Parent, Forward, Backward movements */
+function editModeCommand_putAfter(mode) {
+    mode.cursor.parentNode.insertBefore(mode.editor.registers[""].content[0].cloneNode(true), mml_nextSibling(mode.cursor));
+    mode.editor.inputBuffer = "";
+}
+
+function editModeCommand_copyToRegister(mode) {
+    mode.editor.registers[""] = new Register ("", [mode.cursor.cloneNode(true)]);
+    mode.editor.inputBuffer = "";
+}
 
 /* They all return null if there is no more node in this direction */
 
