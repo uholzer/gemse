@@ -237,13 +237,14 @@ function editModeCommand_redo(mode) {
 }
 
 function editModeCommand_kill(mode) {
-    var change = mode.equationEnv.history.createChange();
-    change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
     var target = mode.cursor;
-    mode.moveCursor(mode.cursor.parentNode);
+    var parentOfTarget = target.parentNode;
+    var change = mode.equationEnv.history.createChange();
+    change.recordBefore(mode.equationEnv.equation,parentOfTarget);
+    mode.moveCursor(mml_nextSibling(target) || mml_previousSibling(target) || parentOfTarget);
     target.parentNode.removeChild(target);
     mode.editor.inputBuffer = "";
-    change.recordAfter(mode.equationEnv.equation,mode.cursor);
+    change.recordAfter(mode.equationEnv.equation,parentOfTarget);
     mode.moveCursor(mode.cursor); // In order to update all views
     mode.equationEnv.history.reportChange(change);
 }
