@@ -39,7 +39,7 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
             }
         }
         else if (mml_lastChild(this.cursor.inElement)) {
-            mml_lastChild(this.cursor.inElement).setAttributeNS(NS_internal,"selected","insterCursorAfter");
+            mml_lastChild(this.cursor.inElement).setAttributeNS(NS_internal,"selected","insertCursorAfter");
         }
     }
     this.moveCursor = function(newCursor) {
@@ -121,6 +121,15 @@ trivialInsertModeCommands = {
     "e": {
         execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"menclose") }
     },
+    "R": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msqrt") }
+    },
+    "r": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mroot") }
+    },
+    "f": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mfenced") }
+    },
     "^": {
         execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msup") }
     },
@@ -200,12 +209,20 @@ function trivialInsertModeCommand_insertDescribedElement(mode, elementName) {
     var placeholder = document.createElementNS(NS_MathML, "mi");
     placeholder.setAttributeNS(NS_internal, "missing", "1")
     placeholder.appendChild(document.createTextNode("□"));
-    if (description.type != "fixedChildren") {
-        throw description.type + " not yet supported by inserDescribedElement";
-    }
     var newElement = document.createElementNS(description.namespace, description.name);
-    for (var i=0; i<description.childCount; ++i) {
+    if (description.type == "fixedChildren") {
+        for (var i=0; i<description.childCount; ++i) {
+            newElement.appendChild(placeholder.cloneNode(true));
+        }
+    }
+    else if (description.type == "inferred_mrow") {
         newElement.appendChild(placeholder.cloneNode(true));
+    }
+    else if (description.type == "childList") {
+        // Let it stay empty
+    }
+    else {
+        throw description.type + " not yet supported by inserDescribedElement";
     }
     mode.putElement(newElement);
     mode.editor.inputBuffer = "";

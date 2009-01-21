@@ -72,6 +72,9 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         }
         else {
             throw "Command not found";
+            // TODO: Handle the command as editMode command. If it
+            // gets processed as such, leave visual mode, otherwise
+            // stay in visual mode.
         }
     };
     this.cancel = function() {
