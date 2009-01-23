@@ -206,10 +206,10 @@ function EquationEnv(editor, container) {
         this.modeStack[this.modeStack.length-1] = mode;
         this.updateViews();
     }
-    this.finishMode = function () {
+    this.finishMode = function (returnValue) {
         // Closes the curent mode and reverts to the old one
         this.modeStack.pop();
-        this.modeStack[this.modeStack.length-1].calledModeReturned();
+        this.modeStack[this.modeStack.length-1].calledModeReturned(returnValue);
     }
     this.__defineGetter__("mode", function() { return this.modeStack[this.modeStack.length-1]; });
 

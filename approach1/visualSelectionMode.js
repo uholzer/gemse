@@ -55,26 +55,47 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         this.hideCursor();
         this.cursor = newCursor;
         this.showCursor();
+        this.equationEnv.updateViews();
     }
     this.__defineGetter__("contextNode", function() { /*TODO*/ }); // TODO
     this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
     this.inputHandler = function() {
+        // Call handleOneCommandFromInputBuffer as long as it can extract and execute a
+        // full command from the input buffer.
+        while (editor.inputBuffer.length > 0 && this.handleOneCommandFromInputBuffer()) {}
+    }
+    this.handleOneCommandFromInputBuffer = function() {
         command = this.editor.inputBuffer;
         if (command.length > 1 && command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
             // KeyEvent.DOM_VK_ESCAPE should be 0x1b
             //event.preventDefault();
             this.editor.inputBuffer = "";
-            return;
+            return false;
         }
         commandObject = visiualSelectionModeCommands[command[0]];
         if (commandObject) {
             commandObject.execute(this,command[0])
+            this.editor.inputBuffer = this.editor.inputBuffer.slice(1);
+            return true;
         }
         else {
-            throw "Command not found";
             // TODO: Handle the command as editMode command. If it
             // gets processed as such, leave visual mode, otherwise
             // stay in visual mode.
+
+            // Check whether it is an editMode command (XXX: Assuming editMode)
+            candidateCommand = command[0];
+            while (candidateCommand.length < command.length && !editModeCommands[candidateCommand]) {
+                candidateCommand = command.slice(0,candidateCommand.length + 1);
+            }
+            if (editModeCommands[candidateCommand]) {
+                // If yes, dispatch
+                this.dispatch()
+            }
+            else {
+                throw "Command not found";
+                return false;
+            }
         }
     };
     this.cancel = function() {
@@ -83,9 +104,13 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         this.equationEnv.finishMode();
     }
     this.dispatch = function() {
-        // Exits this mode and runs the editMode command
-        //TODO
-        this.cancel();
+        // Exits this mode and tells the underlying mode the selection 
+        // for the next command
+        this.hideCursor();
+        this.equationEnv.finishMode({userSelection: this.cursor});
+        // editMode should now automatically execute the next command in
+        // the buffer. (But we will enforce it now. XXX: Perhaps this is bad)
+        this.equationEnv.mode.inputHandler();
     }
 }
 
@@ -124,7 +149,6 @@ function visualSelectionModeCommand_moveLeft(mode) {
         if (newCursor.startElement == null) { newCursor.startElement = mode.cursor.startElement }
     }
     mode.moveCursor(newCursor);
-    mode.editor.inputBuffer = "";
 }
 
 function visualSelectionModeCommand_moveRight(mode) {
@@ -146,7 +170,6 @@ function visualSelectionModeCommand_moveRight(mode) {
         if (newCursor.endElement == null) { newCursor.endElement = mode.cursor.endElement }
     }
     mode.moveCursor(newCursor);
-    mode.editor.inputBuffer = "";
 }
 
 function visualSelectionModeCommand_switchMoving(mode) {
@@ -158,11 +181,9 @@ function visualSelectionModeCommand_switchMoving(mode) {
         newCursor.moving = mode.START;
     }
     mode.moveCursor(newCursor);
-    mode.editor.inputBuffer = "";
 }
 
 function visualSelectionModeCommand_cancel(mode) {
     mode.cancel();
-    mode.editor.inputBuffer = "";
 }
 

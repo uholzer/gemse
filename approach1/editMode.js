@@ -3,6 +3,7 @@ function EditMode(editor, equationEnv) {
     this.name = "edit";
     this.editor = editor;
     this.equationEnv = equationEnv;
+    this.userSelectionForNextCommand = null; // This is set after visual mode. Otherwise allways null.
     this.init = function() {
         this.moveCursor(this.equationEnv.equation); // the element the cursor points to
     }
@@ -78,10 +79,17 @@ function EditMode(editor, equationEnv) {
                 editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
             }
             else {
-                var executionResult = commandObject.execute(this,command,singleCharacterArgs,null)
+                if (this.userSelectionForNextCommand) {
+                    // For debugging purposes:
+                    if (!(this.userSelectionForNextCommand.startElement && this.userSelectionForNextCommand.endElement)) {
+                        throw "A selection must have a startElement and an endElement.";
+                    }
+                }
+                var executionResult = commandObject.execute(this,command,singleCharacterArgs,this.userSelectionForNextCommand);
                 // TODO: Only clear buffer if it returns true?
                 editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
             }
+            this.userSelectionForNextCommand = null;
             return true; // TODO: Or should it return executionResult?
         }
         else {
@@ -89,12 +97,15 @@ function EditMode(editor, equationEnv) {
             return false;
         }
     };
-    this.calledModeReturned = function () {
+    this.calledModeReturned = function (returnValue) {
         if (this.infoAboutCalledMode) {
             if (this.infoAboutCalledMode.change) {
                 this.infoAboutCalledMode.change.recordAfter(this.equationEnv.equation,this.infoAboutCalledMode.changeElement);
                 this.equationEnv.history.reportChange(this.infoAboutCalledMode.change);
             }
+        }
+        if (returnValue && returnValue.userSelection) {
+            this.userSelectionForNextCommand = returnValue.userSelection;
         }
         delete this.infoAboutCalledMode;
         this.moveCursor(this.cursor); // In order to update all views
@@ -143,8 +154,12 @@ editModeCommands = {
         execute: editModeCommand_moveToLastSibling
     },
     "x": {
-        type: "operator",
+        type: "action",
         execute: editModeCommand_kill
+    },
+    "d": {
+        type: "operator",
+        execute: editModeCommand_delete
     },
     "u": {
         type: "action",
@@ -319,6 +334,28 @@ function editModeCommand_kill(mode) {
     mode.moveCursor(mml_nextSibling(target) || mml_previousSibling(target) || parentOfTarget);
     target.parentNode.removeChild(target);
     change.recordAfter(mode.equationEnv.equation,parentOfTarget);
+    mode.moveCursor(mode.cursor); // In order to update all views
+    mode.equationEnv.history.reportChange(change);
+    return true;
+}
+
+function editModeCommand_delete(mode,command,singleCharacterArgs,userSelection) {
+    var from = userSelection.startElement; // \ Those two must be siblings, in the right order!
+    var to = userSelection.endElement;     // /
+    if (!(from && to)) {
+        throw "Delete wants a startElement and an endElement in the selection!";
+    }
+    var parentOfTargets = userSelection.startElement.parentNode;
+    var change = mode.equationEnv.history.createChange();
+    change.recordBefore(mode.equationEnv.equation,parentOfTargets);
+    TODO: mode.moveCursor(mml_nextSibling(to) || mml_previousSibling(from) || parentOfTargets);
+    while (from != to) {
+        var nextFrom = mml_nextSibling(from);
+        parentOfTargets.removeChild(from);
+        from = nextFrom;
+    }
+    parentOfTargets.removeChild(to);
+    change.recordAfter(mode.equationEnv.equation,parentOfTargets);
     mode.moveCursor(mode.cursor); // In order to update all views
     mode.equationEnv.history.reportChange(change);
     return true;
