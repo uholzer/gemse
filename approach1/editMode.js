@@ -26,6 +26,13 @@ function EditMode(editor, equationEnv) {
     this.__defineGetter__("contextNode", function() { return this.cursor; }); // Required for every mode
     this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
     this.inputHandler = function() {
+        // Call handleOneCommandFromInputBuffer as long as it can extract and execute a
+        // full command from the input buffer.
+        while (editor.inputBuffer.length > 0 && this.handleOneCommandFromInputBuffer()) {}
+    }
+    this.handleOneCommandFromInputBuffer = function() {
+        // Returns true if it succeeded to execute the first command from the
+        // input buffer. Else, it returns false.
         var command = this.editor.inputBuffer;
         var endOfCommandIndex = 0; // Points to the end of the command in the input buffer
         var commandArg = null;
@@ -35,7 +42,7 @@ function EditMode(editor, equationEnv) {
             // KeyEvent.DOM_VK_ESCAPE should be 0x1b
             //event.preventDefault();
             this.editor.inputBuffer = "";
-            return;
+            return false; //XXX: Or true?
         }
         while (command[0] == '"') {
             if (command.length < 2) { return } // Returns if the user has not yet entered the character
@@ -75,9 +82,11 @@ function EditMode(editor, equationEnv) {
                 // TODO: Only clear buffer if it returns true?
                 editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
             }
+            return true; // TODO: Or should it return executionResult?
         }
         else {
             throw "Command not found";
+            return false;
         }
     };
     this.calledModeReturned = function () {
