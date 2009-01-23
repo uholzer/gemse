@@ -115,6 +115,9 @@ trivialInsertModeCommands = {
     "t": {
         execute: trivialInsertModeCommand_mtext
     },
+    " ": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mrow") }
+    },
     "/": {
         execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mfrac") }
     },
@@ -219,6 +222,9 @@ function trivialInsertModeCommand_insertDescribedElement(mode, elementName) {
         newElement.appendChild(placeholder.cloneNode(true));
     }
     else if (description.type == "childList") {
+        // Let it stay empty
+    }
+    else if (description.type == "mrow") {
         // Let it stay empty
     }
     else {

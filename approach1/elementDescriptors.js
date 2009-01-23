@@ -36,7 +36,7 @@ mtext: {
 mrow: {
     name: "mrow",
     namespace: NS_MathML,
-    type: "special",
+    type: "mrow",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mrow",
 },
 

@@ -27,7 +27,9 @@ function EditMode(editor, equationEnv) {
     this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
     this.inputHandler = function() {
         var command = this.editor.inputBuffer;
+        var endOfCommandIndex = 0; // Points to the end of the command in the input buffer
         var commandArg = null;
+        var forceFlag = false;
         var singleCharacterArgs = [];
         if (command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
             // KeyEvent.DOM_VK_ESCAPE should be 0x1b
@@ -38,29 +40,40 @@ function EditMode(editor, equationEnv) {
         while (command[0] == '"') {
             if (command.length < 2) { return } // Returns if the user has not yet entered the character
             singleCharacterArgs.push(command[1]);
-            command = command.substring(2);
+            command = command.slice(2);
+            endOfCommandIndex += 2;
         }
         if (command[0] == ":") { // Treate this as a long command
-            var inf = /(:\S*)(\s+(.*))?\n$/.exec(command);
+            var inf = /^(:[^\s\n!]*)(!?)(\s+([^\n]*))?\n$/.exec(command);
             if (inf) {
                 command = inf[1];
-                commandArg = inf[3];
+                if (inf[2]) { forceFlag = true }
+                commandArg = inf[4];
+                endOfCommandIndex += inf[0].length + 1;
             }
             else {
-                return
+                return false;
             }
+        }
+        else {
+            var firstCommand = command.slice(0,1);
+            while (!editModeCommands[firstCommand] && firstCommand.length < command.length) { 
+                firstCommand = command.slice(0,firstCommand.length + 1);
+            }
+            command = firstCommand;
+            endOfCommandIndex += firstCommand.length;
         }
         commandObject = editModeCommands[command];
         if (commandObject) {
             if (commandObject.type == "long") {
-                return commandObject.execute(this,commandArg)
-                // TODO: clear buffer if it returns true?
+                var executionResult = commandObject.execute(this,commandArg,forceFlag)
+                // TODO: Only clear buffer if it returns true?
+                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
             }
             else {
-                return commandObject.execute(this,command,singleCharacterArgs,null)
-                // TODO: clear buffer if it returns true?
-                // (perhaps not, because there might be further
-                // commands in the buffer.)
+                var executionResult = commandObject.execute(this,command,singleCharacterArgs,null)
+                // TODO: Only clear buffer if it returns true?
+                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
             }
         }
         else {
@@ -209,6 +222,10 @@ editModeCommands = {
         execute: editModeCommand_help
     },
 };
+editModeCommands[KEYMOD_CONTROL + "i"] = {
+        type: "action",
+        execute: editModeCommand_insertIn
+};
 editModeCommands[KEYMOD_CONTROL + "r"] = {
         type: "action",
         execute: editModeCommand_redo
@@ -225,28 +242,24 @@ editModeOptions = { // Default values of options
 function editModeCommand_moveLeft(mode) {
     var dest = mml_previousSibling(mode.cursor);
     if (dest) { mode.moveCursor(dest); }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
 function editModeCommand_moveRight(mode) {
     var dest = mml_nextSibling(mode.cursor);
     if (dest) { mode.moveCursor(dest); }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
 function editModeCommand_moveUp(mode) {
     var dest = mml_parent(mode.cursor);
     if (dest) { mode.moveCursor(dest); }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
 function editModeCommand_moveDown(mode) {
     var dest = mml_firstChild(mode.cursor);
     if (dest) { mode.moveCursor(dest); }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -254,21 +267,18 @@ function editModeCommand_moveDownLast(mode) {
     // Moves to the last child
     var dest = mml_lastChild(mode.cursor);
     if (dest) { mode.moveCursor(dest); }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
 function editModeCommand_moveToFirstSibling(mode) {
     var dest = mml_firstSibling(mode.cursor);
     if (dest) { mode.moveCursor(dest); }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
 function editModeCommand_moveToLastSibling(mode) {
     var dest = mml_lastSibling(mode.cursor);
     if (dest) { mode.moveCursor(dest); }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -278,7 +288,6 @@ function editModeCommand_undo(mode) {
     if (!mode.equationEnv.history.goBack(mode.equationEnv)) {
         throw "undo failed";
     }
-    mode.editor.inputBuffer = "";
     mode.moveCursor(mode.cursor); // In order to update all views
     return true;
 }
@@ -289,7 +298,6 @@ function editModeCommand_redo(mode) {
     if (!mode.equationEnv.history.goForward(mode.equationEnv)) {
         throw "redo failed";
     }
-    mode.editor.inputBuffer = "";
     mode.moveCursor(mode.cursor); // In order to update all views
     return true;
 }
@@ -301,7 +309,6 @@ function editModeCommand_kill(mode) {
     change.recordBefore(mode.equationEnv.equation,parentOfTarget);
     mode.moveCursor(mml_nextSibling(target) || mml_previousSibling(target) || parentOfTarget);
     target.parentNode.removeChild(target);
-    mode.editor.inputBuffer = "";
     change.recordAfter(mode.equationEnv.equation,parentOfTarget);
     mode.moveCursor(mode.cursor); // In order to update all views
     mode.equationEnv.history.reportChange(change);
@@ -317,7 +324,6 @@ function editModeCommand_attributeMode(mode) {
     var newMode = new AttributeMode(mode.editor, mode.equationEnv, mode.cursor);
     newMode.init();
     mode.equationEnv.callMode(newMode);
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -332,7 +338,6 @@ function editModeCommand_visualMode(mode) {
     var newMode = new VisualSelectionMode(mode.editor, mode.equationEnv, mode.cursor);
     newMode.init();
     mode.equationEnv.callMode(newMode);
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -345,7 +350,6 @@ function editModeCommand_insertBefore(mode) {
     var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor.parentNode, mode.cursor);
     newMode.init();
     mode.equationEnv.callMode(newMode);
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -358,7 +362,20 @@ function editModeCommand_insertAfter(mode) {
     var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor.parentNode, mml_nextSibling(mode.cursor));
     newMode.init();
     mode.equationEnv.callMode(newMode);
-    mode.editor.inputBuffer = "";
+    return true;
+}
+
+function editModeCommand_insertIn(mode) {
+    // Thought for inserting into empty elements
+    // (should be used seldomly)
+    mode.infoAboutCalledMode = {
+        change: mode.equationEnv.history.createChange(),
+        changeElement: mode.cursor.parentNode
+    };
+    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
+    var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor, null);
+    newMode.init();
+    mode.equationEnv.callMode(newMode);
     return true;
 }
 
@@ -378,7 +395,6 @@ function editModeCommand_set(mode, argString) {
 
 function editModeCommand_redisplay(mode) {
     mode.moveCursor(mode.cursor);
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -388,19 +404,16 @@ function editModeCommand_serialize(mode, argString) {
     //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
 
     mode.equationEnv.notificationDisplay.textContent = xmlString;
-    mode.editor.inputBuffer = "";
     return true;
 }
 
 function editModeCommand_newEquation(mode) {
     mode.editor.newEquation(null);
-    mode.editor.inputBuffer = "";
     return true;
 }
 
 function editModeCommand_load(mode, argString) {
     mode.editor.loadURI(argString);
-    mode.editor.inputBuffer = "";
     return true;
 }
 function editModeCommand_loadById(mode, argString) {
@@ -409,7 +422,6 @@ function editModeCommand_loadById(mode, argString) {
     var uri = inf[1];
     var id = inf[2];
     mode.editor.loadURI(uri, id);
-    mode.editor.inputBuffer = "";
     return true;
 }
 function editModeCommand_loadByXPath(mode, argString) {
@@ -418,24 +430,20 @@ function editModeCommand_loadByXPath(mode, argString) {
     var uri = inf[1];
     var xpathString = inf[2];
     mode.editor.loadURI(uri,null,xpathString);
-    mode.editor.inputBuffer = "";
     return true;
 }
 function editModeCommand_loadAll(mode, argString) {
     mode.editor.loadURI(argString,null,"//m:math");
-    mode.editor.inputBuffer = "";
     return true;
 }
 
 function editModeCommand_save(mode, argString) {
     mode.equationEnv.save(argString); // argString may be null
-    mode.editor.inputBuffer = "";
     return true;
 }
 
-function editModeCommand_close(mode, argString) {
-    mode.equationEnv.close();
-    mode.editor.inputBuffer = "";
+function editModeCommand_close(mode, argString, forceFlag) {
+    mode.equationEnv.close(forceFlag);
     return true;
 }
 
@@ -446,7 +454,6 @@ function editModeCommand_nextEquation(mode) {
     else {
         mode.editor.moveFocusTo(mode.editor.focus+1);
     }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -457,7 +464,6 @@ function editModeCommand_previousEquation(mode) {
     else {
         mode.editor.moveFocusTo(mode.editor.focus-1);
     }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -478,7 +484,6 @@ function editModeCommand_help(mode, argString) {
     else {
         window.open("doc/index.xhtml", "_blank");
     }
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -486,7 +491,6 @@ function editModeCommand_putAfter(mode,commandString,args) {
     var registerName = "";
     if (args != null) { registerName = args[0]; }
     mode.cursor.parentNode.insertBefore(mode.editor.registers[registerName].content[0].cloneNode(true), mml_nextSibling(mode.cursor));
-    mode.editor.inputBuffer = "";
     return true;
 }
 
@@ -496,7 +500,6 @@ function editModeCommand_copyToRegister(mode,commandString,args) {
     mode.hideCursor();
     mode.editor.registers[registerName] = new Register (registerName, [mode.cursor.cloneNode(true)]);
     mode.showCursor();
-    mode.editor.inputBuffer = "";
     return true;
 }
 
