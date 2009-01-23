@@ -56,7 +56,7 @@ function EditMode(editor, equationEnv) {
             if (inf) {
                 command = inf[1];
                 if (inf[2]) { forceFlag = true }
-                commandArg = inf[4];
+                commandArg = inf[4] || ""; // Prevent commandArg from being null (XXX: is this good?)
                 endOfCommandIndex += inf[0].length + 1;
             }
             else {
@@ -84,6 +84,12 @@ function EditMode(editor, equationEnv) {
                     if (!(this.userSelectionForNextCommand.startElement && this.userSelectionForNextCommand.endElement)) {
                         throw "A selection must have a startElement and an endElement.";
                     }
+                }
+                if (commandObject.type == "operator" && !this.userSelectionForNextCommand) {
+                    // An operator expects a selection, so if none is present,
+                    // take the cursor as the only selected element.
+                    // This will be revised later.
+                    this.userSelectionForNextCommand = {startElement: this.cursor, endElement: this.cursor};
                 }
                 var executionResult = commandObject.execute(this,command,singleCharacterArgs,this.userSelectionForNextCommand);
                 // TODO: Only clear buffer if it returns true?
@@ -161,6 +167,10 @@ editModeCommands = {
         type: "operator",
         execute: editModeCommand_delete
     },
+    "c": {
+        type: "operator",
+        execute: editModeCommand_change
+    },
     "u": {
         type: "action",
         execute: editModeCommand_undo
@@ -190,7 +200,7 @@ editModeCommands = {
         execute: editModeCommand_visualMode
     },
     "y": {
-        type: "action",
+        type: "operator",
         execute: editModeCommand_copyToRegister
     },
     "p": {
@@ -358,6 +368,13 @@ function editModeCommand_delete(mode,command,singleCharacterArgs,userSelection) 
     change.recordAfter(mode.equationEnv.equation,parentOfTargets);
     mode.moveCursor(mode.cursor); // In order to update all views
     mode.equationEnv.history.reportChange(change);
+    return true;
+}
+
+function editModeCommand_change(mode,command,singleCharacterArgs,userSelection) {
+    // TODO: This is broken :-(
+    editModeCommand_delete(mode,command,singleCharacterArgs,userSelection);
+    editModeCommand_insertBefore(mode);
     return true;
 }
 
@@ -536,15 +553,32 @@ function editModeCommand_help(mode, argString) {
 function editModeCommand_putAfter(mode,commandString,args) {
     var registerName = "";
     if (args != null) { registerName = args[0]; }
-    mode.cursor.parentNode.insertBefore(mode.editor.registers[registerName].content[0].cloneNode(true), mml_nextSibling(mode.cursor));
+    var position = mml_nextSibling(mode.cursor);
+    var change = mode.equationEnv.history.createChange();
+    change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
+    mode.editor.registers[registerName].content.forEach(function (e) {
+        mode.cursor.parentNode.insertBefore(e.cloneNode(true), position);
+    });
+    change.recordAfter(mode.equationEnv.equation,position.parentNode);
+    mode.equationEnv.history.reportChange(change);
+    // Put cursor on the last inserted element
+    mode.moveCursor(position ? mml_previousSibling(position) : mml_lastChild(mode.cursor.parentNode));
     return true;
 }
 
-function editModeCommand_copyToRegister(mode,commandString,args) {
+function editModeCommand_copyToRegister(mode,commandString,args,userSelection) {
     var registerName = "";
     if (args != null) { registerName = args[0]; }
+    var from = userSelection.startElement; // \ Those two must be siblings, in the right order!
+    var to = userSelection.endElement;     // /
+    var registerContent = [];
     mode.hideCursor();
-    mode.editor.registers[registerName] = new Register (registerName, [mode.cursor.cloneNode(true)]);
+    while (from != to) {
+        registerContent.push(from.cloneNode(true));
+        from = mml_nextSibling(from);
+    }
+    registerContent.push(to.cloneNode(true));
+    mode.editor.registers[registerName] = new Register (registerName, registerContent);
     mode.showCursor();
     return true;
 }
