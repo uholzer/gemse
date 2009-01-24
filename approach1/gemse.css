@@ -84,3 +84,11 @@ div.documentationScreenshot {
     padding: 1ex 1em 1ex 1em;
 }
 
+kbd {
+    display: inline-block;
+    border: 1px solid black;
+    -moz-border-radius: 3px;
+    background-color: #ddd;
+    color: black;
+}
+

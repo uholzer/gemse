@@ -577,6 +577,208 @@ on.) This puts you right back into edit mode.</p>
 
 <!-- Idea: change the infinite sum into a limes of partial sums. -->
 
+<p>What is an infinite sum? Well, it is the limes of partial sums.
+Now, let us write it as such. First, let us change the
+<math><mi>∞</mi></math> to <math><mi>n</mi></math>. Hit
+<kbd>jll</kbd>. Press <kbd>x</kbd> to remove the infinity sign, then
+press <kbd>a</kbd> to open the insert mode. Remember that now, the
+munderover is not valid, it has not enough children, but we will
+immmediately add one.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover internal:selected="insertCursorIn">
+            <mo>∑</mo>
+            <mrow internal:selected="insertCursorAfter"><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element" internal:selected="insertCursorIn">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element" internal:selected="insertCursorAfter">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Press <kbd>in</kbd>. <kbd>i</kbd> tells the
+insert mode that you want to insert an identifier that consists of one
+sign. Then you enter the sign, which is n in this case. Now close the
+insert mode with <kbd>ESCAPE</kbd>.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover internal:selected="parent">
+            <mo>∑</mo>
+            <mrow internal:selected="editcursor"><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element" internal:selected="parent">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element" internal:selected="editcursor">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Now press <kbd>k</kbd> in order to put the cursor on the
+<code>munderover</code> element. Now we are going to insert the
+limes.</p>
+
+<h2>Saving your work</h2>
+
+<p>I think we have done enough to get a break. I will now tell you how
+to save your work, so you can continue later, without doing everything
+again from the beginning.</p>
+
+<p>TODO</p>
+
+<h2>The visual mode</h2>
+
+<p>Sometimes you want to do something not only with the element the
+cursor is on, but with a whole sequence of element. Using the visual
+mode (name inspired by vim), you can select a set of siblings.</p>
+
+<p>Put the cursor on the <code>munderover</code> element of the sum
+sign. We are going to put the <code>munderover</code> element and the
+following <code>mfrac</code> element into an mrow element. This makes
+sense, since they together form the argument of the lim operator.</p>
+
+<p>Press <kbd>v</kbd>. This throws you directly into visual mode.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow internal:selected="parent">
+        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder><munderover internal:selected="userSelectionCursor">
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="parent">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element" internal:selected="userSelectionCursor">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+    <div internal:function="modeName">visual</div>
+</div>
+</div>
+
+<p>If you use the standard skin, you now see a beautiful blue. You can
+now use <kbd>l</kbd>, <kbd>h</kbd> and <kbd>o</kbd>. Find out yourself
+what they do. Be careful not to hit any other key. Now select the sum
+and the fraction.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow internal:selected="parent">
+        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder><munderover internal:selected="userSelection">
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac internal:selected="userSelectionCursor">
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="parent">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element" internal:selected="userSelection">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element" internal:selected="userSelectionCursor">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Now you can hit a command from the editMode. In this case, execute
+the command <kbd>SPACE</kbd> (i.e. hit the space bar). This
+command puts an <code>mrow</code> element around the selected
+elements.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow internal:selected="parent">
+        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
+        <mrow internal:selected="editcursor"><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover><mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac></mrow>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="parent">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element" internal:selected="editcursor">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>You are back in the edit mode. In the tree view you can see the
+new mrow element. The cursor is currently on it.</p>
+
 <h2>Copying and Pasting</h2>
 
 <h2>The attribute mode</h2>
