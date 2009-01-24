@@ -207,6 +207,14 @@ editModeCommands = {
         type: "action",
         execute: editModeCommand_putAfter
     },
+    "P": {
+        type: "action",
+        execute: editModeCommand_putBefore
+    },
+    " ": {
+        type: "operator",
+        execute: editModeCommand_mrowEnvelop
+    },
     ":set": {
         type: "long",
         execute: editModeCommand_set
@@ -247,6 +255,10 @@ editModeCommands = {
         type: "long",
         execute: editModeCommand_save
     },
+    ":write": { // synonym for :save
+        type: "long",
+        execute: editModeCommand_save
+    },
     ":close": {
         type: "long",
         execute: editModeCommand_close
@@ -267,6 +279,10 @@ editModeCommands[KEYMOD_CONTROL + "r"] = {
 editModeCommands[KEYMOD_CONTROL + "l"] = {
         type: "action",
         execute: editModeCommand_redisplay
+};
+editModeCommands[KEYMOD_CONTROL + "p"] = {
+        type: "action",
+        execute: editModeCommand_putIn
 };
 
 editModeOptions = { // Default values of options
@@ -563,6 +579,67 @@ function editModeCommand_putAfter(mode,commandString,args) {
     mode.equationEnv.history.reportChange(change);
     // Put cursor on the last inserted element
     mode.moveCursor(position ? mml_previousSibling(position) : mml_lastChild(mode.cursor.parentNode));
+    return true;
+}
+
+function editModeCommand_putBefore(mode,commandString,args) {
+    var registerName = "";
+    if (args != null) { registerName = args[0]; }
+    var position = mode.cursor;
+    var change = mode.equationEnv.history.createChange();
+    change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
+    mode.editor.registers[registerName].content.forEach(function (e) {
+        mode.cursor.parentNode.insertBefore(e.cloneNode(true), position);
+    });
+    change.recordAfter(mode.equationEnv.equation,position.parentNode);
+    mode.equationEnv.history.reportChange(change);
+    // Put cursor on the last inserted element
+    mode.moveCursor(position ? mml_previousSibling(position) : mml_lastChild(mode.cursor.parentNode));
+    return true;
+}
+
+function editModeCommand_putIn(mode,commandString,args) {
+    // Put the content of a register into an _empty_ element
+    var registerName = "";
+    if (args != null) { registerName = args[0]; }
+    var position = null;
+    var change = mode.equationEnv.history.createChange();
+    change.recordBefore(mode.equationEnv.equation,mode.cursor);
+    mode.editor.registers[registerName].content.forEach(function (e) {
+        mode.cursor.insertBefore(e.cloneNode(true), position);
+    });
+    change.recordAfter(mode.equationEnv.equation,mode.cursor);
+    mode.equationEnv.history.reportChange(change);
+    // Put cursor on the last inserted element
+    mode.moveCursor(mml_lastChild(mode.cursor));
+    return true;
+}
+
+function editModeCommand_mrowEnvelop(mode,commandString,args,userSelection) {
+    // Put an mrow element around the selection
+    var change = mode.equationEnv.history.createChange();
+    var parentNode = userSelection.startElement.parentNode;
+    var positionInParentNode = userSelection.endElement.nextSibling;
+    change.recordBefore(mode.equationEnv.equation,parentNode);
+
+    var newMrow = document.createElementNS(NS_MathML, "mrow");
+    
+    // Fill the new mrow
+    var pos = userSelection.startElement;
+    while (pos != userSelection.endElement) {
+        var nextPos = mml_nextSibling(pos);
+        newMrow.appendChild(pos);
+        pos = nextPos;
+    }
+    newMrow.appendChild(userSelection.endElement);
+
+    // Put the mrow where it belongs
+    parentNode.insertBefore(newMrow, positionInParentNode);
+
+    change.recordAfter(mode.equationEnv.equation,parentNode);
+    mode.equationEnv.history.reportChange(change);
+    // Put cursor on the last inserted element
+    mode.moveCursor(newMrow);
     return true;
 }
 
