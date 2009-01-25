@@ -10,6 +10,10 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         inElement: inElement,
         beforeElement: beforeElement
     };
+    this.cursorStack = [{
+        inElement: this.cursor.inElement,
+        beforeElement: this.cursor.beforeElement
+    }];
     this.init = function() {
         this.moveCursor(this.cursor);
     }
@@ -67,6 +71,23 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         }
     };
     this.putElement = function() {
+        // Puts an element where the cursor is located. If an element
+        // follows which is marked with the missing attribute, it gets
+        // deleted
+
+        // First delete a possibly present element with attribute
+        // missing
+        if (this.cursor.beforeElement && this.cursor.beforeElement.getAttributeNS(NS_internal, "missing")) {
+            var elementToBeDeleted = this.cursor.beforeElement;
+            this.moveCursor({ 
+                beforeElement: mml_nextSibling(elementToBeDeleted), 
+                inElement: this.cursor.inElement 
+            });
+            elementToBeDeleted.parentNode.removeChild(elementToBeDeleted);
+        }
+ 
+        // Add new element
+        var newElement;
         if (arguments.length > 1) {
             var ns = arguments[0];
             var name = arguments[1];
@@ -78,16 +99,31 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
             for (var i = 2; i < arguments.length; ++i) {
                 newElement.appendChild(arguments[i]);
             }
-            // Put element into the equation
-            this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
-            // Position the cursor
-            // TODO: Where? I guess where it already is
-            this.moveCursor(this.cursor);
         }
         else {
             var newElement = arguments[0];
             this.hideCursor();
-            this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
+        }
+        // Put element into the equation
+        this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
+        // Position the cursor
+        if (mml_firstChild(newElement) && mml_firstChild(newElement).getAttributeNS(NS_internal, "missing")) {
+            // If the element contains a "missing element" marker, put the 
+            // cursor before it. But we must put a cursor behind the new
+            // element on the stack.
+            // XXX: Instead of looking for "missing element" marker elements,
+            // we perhaps should look at the element description?
+            this.cursorStack.push({
+                beforeElement: this.cursor.beforeElement,
+                inElement: this.cursor.inElement
+            })
+            this.moveCursor({
+                beforeElement: mml_firstChild(newElement),
+                inElement: newElement
+            });
+        }
+        else {
+            // Otherwise put it behind it (that's where it is already)
             this.moveCursor(this.cursor);
         }
     }
@@ -151,6 +187,9 @@ trivialInsertModeCommands = {
     "U": {
         execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"munderover") }
     },
+    "\n": {
+        execute: trivialInsertModeCommand_cursorJump
+    },
 }
 trivialInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
     execute: trivialInsertModeCommand_exit
@@ -169,8 +208,11 @@ function trivialInsertModeCommand_miLong(mode) {
 function trivialInsertModeCommand_mnNormal(mode) {
     // Inserts a mn element, containg a number of the form /^[+-]?[0-9.]+$/
     var c = mode.editor.inputBuffer;
-    var res = /^.([+-]?[0-9.]+)( ?(.*))$/.exec(c);
-    if (res[2]) { 
+    var res = /^.([+-]?[0-9.]+)( ?([\S\s]*))$/.exec(c);
+        //                         ^^^^^^ capture all characters, including \n
+        //                               ^ This one is needed so res[3]
+        //                                 contains the whole next command string
+    if (res && res[2]) { 
         mode.putElement(
             null, 
             "mn",
@@ -178,7 +220,7 @@ function trivialInsertModeCommand_mnNormal(mode) {
                 res[1]
             )
         );
-        mode.editor.inputBuffer = res[3];
+        mode.editor.inputBuffer = res[3]; // thats why the + in the regex is needed
         return true;
     }
     else {
@@ -222,10 +264,10 @@ function trivialInsertModeCommand_insertDescribedElement(mode, elementName) {
         newElement.appendChild(placeholder.cloneNode(true));
     }
     else if (description.type == "childList") {
-        // Let it stay empty
+        newElement.appendChild(placeholder.cloneNode(true));
     }
     else if (description.type == "mrow") {
-        // Let it stay empty
+        newElement.appendChild(placeholder.cloneNode(true));
     }
     else {
         throw description.type + " not yet supported by inserDescribedElement";
@@ -235,11 +277,19 @@ function trivialInsertModeCommand_insertDescribedElement(mode, elementName) {
     return true;
 }
 
+function trivialInsertModeCommand_cursorJump(mode) {
+    if (mode.cursorStack.length<1) { 
+        // If the stack is empty, the user is done with inserting, so exit
+        return trivialInsertModeCommand_exit(mode);
+    }
+    mode.moveCursor(mode.cursorStack.pop());
+    mode.editor.inputBuffer = "";
+}
+
 function trivialInsertModeCommand_exit(mode) {
     mode.editor.inputBuffer = "";
     mode.finish();
 }
-
 
 function trivialInsertModeCommandTool_elementWithSingleCharacter(mode,elementName) {
     if (mode.editor.inputBuffer.length < 2) { return false }
@@ -259,4 +309,5 @@ function trivialInsertModeCommandTool_elementWithLongText(mode,elementName) {
     mode.editor.inputBuffer = "";
     return true;
 }
+
 
