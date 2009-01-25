@@ -3,6 +3,7 @@
 <html
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:internal="http://www.andonyar.com/math/editor"
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
     xml:lang="de"
     internal:function="documentation"
 >
@@ -579,7 +580,7 @@ on.) This puts you right back into edit mode.</p>
 
 <p>What is an infinite sum? Well, it is the limes of partial sums.
 Now, let us write it as such. First, let us change the
-<math><mi>∞</mi></math> to <math><mi>n</mi></math>. Hit
+<m:math><m:mi>∞</m:mi></m:math> to <m:math><m:mi>n</m:mi></m:math>. Hit
 <kbd>jll</kbd>. Press <kbd>x</kbd> to remove the infinity sign, then
 press <kbd>a</kbd> to open the insert mode. Remember that now, the
 munderover is not valid, it has not enough children, but we will
@@ -652,7 +653,195 @@ insert mode with <kbd>ESCAPE</kbd>.</p>
 
 <p>Now press <kbd>k</kbd> in order to put the cursor on the
 <code>munderover</code> element. Now we are going to insert the
-limes.</p>
+limes. Press <kbd>i</kbd>.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow internal:selected="insertCursorIn">
+        <munderover internal:selected="insertCursorBefore">
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="insertCursorIn">mrow<div class="element" internal:selected="insertCursorBefore">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Well, the currently implemented insert mode is not intelligent. The
+main problem is, that if you want to write
+<m:math><m:msup><m:mi>a</m:mi><m:mn>2</m:mn></m:msup></m:math>, you have to tell it,
+that you want to put the two 2 into superposition before you enter the
+a. But if you write down a formula on paper, you first think of the a.
+Also, the insert mode does not find out whether a character denotes an
+indentifier, operator or number, you always have to tell it.
+Nonetheless, the insert mode has some nice features.</p>
+
+<p>We want to insert an operator <m:math><m:mo>limes</m:mo></m:math> 
+and under it we want to have the identifier 
+<m:math><m:mi>n</m:mi></m:math>, the operator 
+<m:math><m:mo>→</m:mo></m:math> and the identifier
+<m:math><m:mi>∞</m:mi></m:math>.</p>
+
+<p>To do that we need an <code>munder</code> element. Press
+<kbd>u</kbd> to tell the insert mode that you want to have such an
+element.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munder internal:selected="insertCursorIn"><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi><mi internal:missing="1">□</mi></munder><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element" internal:selected="insertCursorIn">munder<div class="element" internal:selected="insertCursorBefore">mi<div class="nodeValue">□</div></div><div class="element">mi<div class="nodeValue">□</div></div></div><div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>You can see it already. When you now continue to insert elements,
+they will replace the boxes you can see. Now press <kbd>O</kbd>. This
+says that you are going to insert an operator. <kbd>o</kbd> means the
+same thing, but only works for operators which consist of one
+character. Now press <kbd>lim</kbd>. If you had used <kbd>o</kbd>
+instead of <kbd>O</kbd>, the insert mode would have taken <q>l</q> as
+the content of the operator. In our case however, the mode waits until
+you press <kbd>ENTER</kbd>. Do that now.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munder internal:selected="insertCursorIn"><mi internal:selected="insertCursorAfter">lim</mi><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi></munder><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element" internal:selected="insertCursorIn">munder<div class="element" internal:selected="insertCursorAfter">mi<div class="nodeValue">lim</div></div><div class="element" internal:selected="insertCursorBefore">mi<div class="nodeValue">□</div></div></div><div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Good. Since what we want to write below the limes consists of
+multiple elements, we have to insert an <code>mrow</code> element. Do
+that by hitting <kbd>␣<!--U+2423--></kbd> (denoting the space bar).</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munder><mi>lim</mi><mrow internal:selected="insertCursorIn"><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi></mrow></munder><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element" internal:selected="insertCursorIn">mrow<div class="element" internal:selected="insertCursorBefore">mi<div class="nodeValue">□</div></div></div></div><div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Now press <kbd>in</kbd>. Again, the i says that you insert an
+identifier consisting of one character. Then press <kbd>o→</kbd> and
+finally <kbd>i∞</kbd>.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munder><mi>lim</mi><mrow internal:selected="insertCursorIn"><mi>n</mi><mo>→</mo><mi internal:selected="insertCursorAfter">∞</mi></mrow></munder><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element" internal:selected="insertCursorIn">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element" internal:selected="insertCursorAfter">mi<div class="nodeValue">∞</div></div></div></div><div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Now hit <kbd>ESCAPE</kbd> and we are done.</p>
 
 <h2>Saving your work</h2>
 
@@ -661,6 +850,12 @@ to save your work, so you can continue later, without doing everything
 again from the beginning.</p>
 
 <p>TODO</p>
+
+<h2>More fun with the insert mdoe</h2>
+
+<!-- Idea: Start new equation, insert
+sqrt(a^2 + 2ab + b^2) = sqrt((a+b)^2) = (a+b)
+-->
 
 <h2>The visual mode</h2>
 
