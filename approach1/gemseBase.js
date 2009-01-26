@@ -514,12 +514,15 @@ function GemsePEditor() {
     this.containerTemplate; // A dom element that can be sed to create new containers
 
     // Find out the current working directory
-    var ios = Components.classes["@mozilla.org/network/io-service;1"].
-                     getService(Components.interfaces.nsIIOService);
-    var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
-                     getService(Components.interfaces.nsIProperties).
-                     get("CurWorkD", Components.interfaces.nsIFile);
-    this.workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
+    this.__defineGetter__("workingDirectory", function() {
+        var ios = Components.classes["@mozilla.org/network/io-service;1"].
+                         getService(Components.interfaces.nsIIOService);
+        var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
+                         getService(Components.interfaces.nsIProperties).
+                         get("CurWorkD", Components.interfaces.nsIFile);
+        var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
+        return workingDirectory;
+    });
 
     /* Methods */
     this.inputEvent = function () {
