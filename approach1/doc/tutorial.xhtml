@@ -1159,7 +1159,109 @@ this:</p>
 <p>Now hit <kbd>y</kbd>. Now, a copy of those two elements is in the
 default register. Now select the term on the left and the equal sign
 and press <kbd>"ay</kbd>. This puts those two elements into the register
-a.</p>
+a. <em>Beware:</em> In visual mode, if you start to a command that is
+longer than one character (for example <kbd>"ay</kbd>) it seems as if
+the selection is lost (i.e. the visual mode disappears too soon), but
+it is not. Indeed, if you finish to enter the command, the selection
+will be applied. This is a problem that will hopefully be removed in
+future versions.</p>
+
+<p>Ok, now we want to know! Move the cursor to the right end 
+for example by pressing <kbd>$</kbd>. The command <kbd>p</kbd> puts
+the content of the default register after the cursor. Try it.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow internal:selected="parent">
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
+        <mrow><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover><mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac></mrow>
+    </mrow>
+<mo>=</mo><mrow internal:selected="editcursor">
+        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
+        <mrow><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover><mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac></mrow>
+    </mrow></mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="editcursor">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Now put the cursor at the beginning, using for example
+<kbd>0</kbd>. The command <kbd>"aP</kbd> puts the content of the
+register a before the cursor. So this yields</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow internal:selected="parent">
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow><mo internal:selected="editcursor">=</mo><mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
+        <mrow><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover><mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac></mrow>
+    </mrow>
+<mo>=</mo><mrow>
+        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
+        <mrow><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover><mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac></mrow>
+    </mrow></mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element" internal:selected="editcursor">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p><kbd>uu</kbd> cleans up the mess we created. Like
+<kbd>&ctrl;i</kbd> there is also <kbd>&ctrl;p</kbd> which puts the
+content of a register into an empty element.</p>
 
 <h2>The attribute mode</h2>
 
@@ -1188,8 +1290,13 @@ changes.</p>
 name of the commands, you have to look into the javascript file
 belonging to the mode you want to change. So for the edit mode, you
 have to open <code>editMode.js</code> and look for the definition of the
-<code>editModeCommands</code>. Their you can change the keys used for
+<code>editModeCommands</code>. There you can change the keys used for
 these commands.</p>
+
+<h2>How to go on?</h2>
+
+<p>We reached the end of the tutorial. Now you perhaps want to read in
+the rest of the documentation.</p>
 
 </body>
 
