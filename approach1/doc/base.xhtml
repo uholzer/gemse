@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html [
+  <!ENTITY  enter  "↵">
+  <!ENTITY  esc    "ESC">
+  <!ENTITY  ctrl   "CRTL+">
+  <!ENTITY  alt    "ALT+">
+  <!ENTITY  space  "␣">
+]>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/math/editor"
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xml:lang="de"
+    internal:function="documentation"
+>
+
+<head>
+    <title>Gemse Base</title>
+    <link rel="stylesheet" href="../gemse.css" type="text/css" />
+</head>
+
+<body>
+
+<h1>Gemse Base</h1>
+
+<h2>Accessibility</h2>
+
+<p>First, Gemse is only useful to people who can see. On the other
+hand, I want that also people who can see something but still are
+visually impaired, for example because of color blindness. The
+solution is to provide different stylesheets. In the future their will
+be a monochrome stylesheet and perhaps also a black/white one.</p>
+
+<p>Persons who have problems using a keyboard can perhaps still use
+gemse. The names of the commands can be adapted. The requirement is
+that the user can insert unicode characters in some way. However,
+Gemse can not be used with a pointing device. (Except if you use the
+pointing device to stear an on-screen keyboard which generates unicode
+input for Gemse.)</p>
+
+<h2>Input</h2>
+
+<p>Somehow you must be able to insert all the unicode characters you
+need. For example, if you need a ∀ in a formula, you must be able to
+insert it. Gemse does not contain a way to turn something like
+<code>forall</code> into a ∀. If you need that (for example because
+you do not have a ∀ key), you have to configure your operating system
+so it can do that for you. I do not know about Windows or Mac, but for
+Linux, I can provide <a href="http://www.andonyar.com/rec/2008-03/mathinput/">a solution</a>.
+</p>
+
+<p>In the future, such functionality will perhaps be integrated into
+Gemse. It should not be too difficult. Of course, directly inserting
+any unicode character will stay possible.</p>
+
+</body>
+
+</html>
