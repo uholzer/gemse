@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!DOCTYPE html [
+  <!ENTITY  enter  "↵">
+  <!ENTITY  esc    "ESC">
+  <!ENTITY  ctrl   "CRTL+">
+  <!ENTITY  alt    "ALT+">
+  <!ENTITY  space  "␣">
+]>
+
 <html
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:internal="http://www.andonyar.com/math/editor"
@@ -378,9 +386,9 @@ as you will learn in the next section.</p>
 <h2>Undo and redo</h2>
 
 <p>Of course, Gemse has also undo and redo commands. <kbd>u</kbd>
-undoes your last change. <kbd>CTRL+r</kbd> undoes your last undo.
-(<kbd>CTRL+r</kbd> means that you have to hold down the control key
-and hit r. Something like <kbd>ALT+abALT+c</kbd> says that you have to
+undoes your last change. <kbd>&ctrl;r</kbd> undoes your last undo.
+(<kbd>&ctrl;r</kbd> means that you have to hold down the control key
+and hit r. Something like <kbd>&alt;ab&alt;+c</kbd> says that you have to
 hold control, hit a, releae control, hit b, hold down ALT, hit c and
 releaste alt.) Now hit <kbd>u</kbd>. The denominator you just deleted
 is back.</p>
@@ -450,7 +458,7 @@ deleted are back too.</p>
 </div>
 
 <p>If you have undone too many changes, you can reapply them by
-hitting <kbd>CTRL+r</kbd>. Now, do that twice. The brackets are gone
+hitting <kbd>&ctrl;r</kbd>. Now, do that twice. The brackets are gone
 again.</p>
 
 <div class="documentationScreenshot">
@@ -572,7 +580,7 @@ of the sum sign, or more precicely, in front of the
 </div>
 </div>
 
-<p>However, for the moment we let it be. Press <kbd>ESCAPE</kbd>.
+<p>However, for the moment we let it be. Press <kbd>&esc;</kbd>.
 (Well, here you have to hit the escape key, not E then S then C and so
 on.) This puts you right back into edit mode.</p>
 
@@ -619,7 +627,7 @@ immmediately add one.</p>
 <p>Press <kbd>in</kbd>. <kbd>i</kbd> tells the
 insert mode that you want to insert an identifier that consists of one
 sign. Then you enter the sign, which is n in this case. Now close the
-insert mode with <kbd>ESCAPE</kbd>.</p>
+insert mode with <kbd>&esc;</kbd>.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -775,7 +783,7 @@ you press <kbd>ENTER</kbd>. Do that now.</p>
 
 <p>Good. Since what we want to write below the limes consists of
 multiple elements, we have to insert an <code>mrow</code> element. Do
-that by hitting <kbd>␣<!--U+2423--></kbd> (denoting the space bar).</p>
+that by hitting <kbd>&space;</kbd> (denoting the space bar).</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -841,7 +849,7 @@ finally <kbd>i∞</kbd>.</p>
 </div>
 </div>
 
-<p>Now hit <kbd>ESCAPE</kbd> and we are done.</p>
+<p>Now hit <kbd>&esc;</kbd> and we are done.</p>
 
 <h2>Saving your work</h2>
 
@@ -849,13 +857,138 @@ finally <kbd>i∞</kbd>.</p>
 to save your work, so you can continue later, without doing everything
 again from the beginning.</p>
 
-<p>TODO</p>
+<p><em>Important:</em> <strong>Be careful!</strong> This software is
+very young and the implementation of laoding and saving is rather a
+hack. For example, it will overwrite existing files without moaning.
+If you give the save or load commands a relative URI, then it is
+considered to be relative to the current working directory, as
+indicated by firefox. Also be aware, that if you are using gemse
+directly from the web, for example if you are using the demo from
+gemse's website, it has no permission to write to your harddisk. (You
+can always use <kbd>:serialize&enter;</kbd> to get the XML code of the
+equation. However, at the moment, this command does not delete
+internal information from the XML tree.)</p>
 
-<h2>More fun with the insert mdoe</h2>
+<p>For saving you simply write <kbd>:save&space;</kbd>, followed by the
+URI where you want to save your equation, followed by
+<kbd>&enter;</kbd>. The URI may be a relative one, which then is
+interpreted as reltive to the current working directory. If the
+URI points to a remote resource on a HTTP server, Gemse tries to save
+the file using the PUT method. However, if the URI points to a local
+file, Gemse will use the filesystem to save it.</p>
 
-<!-- Idea: Start new equation, insert
-sqrt(a^2 + 2ab + b^2) = sqrt((a+b)^2) = (a+b)
--->
+<p>So you can write <kbd>:save example.xml&enter;</kbd> to save the equation
+as an XML file in your current working directory. Or use something like
+<kbd>:save file:///home/urs/math/example.xml&enter;</kbd> to give an
+absolute path. Depending on your operating system, this looks a little
+bit different.</p>
+
+<p>If you have loaded the equation from a file, Gemse remembers that.
+In such a case you can use <kbd>:save&enter;</kbd> to write it back
+into this file.</p>
+
+<p><kbd>:load</kbd> folowed by an URI loads a file. This must be an
+XML file containing a <code>math</code> element as root element.
+However, you can also load equations contained in XHTML or OMDoc
+files. One option is to use <kbd>:loadid</kbd> followed by an URI and
+an id. Like this, gemse will load the resource and extract the element
+with the given id. When you save later on, the equation will be put
+back into the document and the document will be saved. If the element
+you want to load has no id, you can use an xpath expression instead,
+with the command <kbd>:loadxpath</kbd>. The most crazy load command is
+<kbd>:loadalla</kbd> followed by a URI. It will load all equation it
+can find in the given document.</p>
+
+<p>Please be aware, that every of the load commands load the document
+into memory, not only the equation. Later, when you save your
+equation, the whole document from memory gets written.
+So if you load one equation out of
+a large document, and the document gets changed somewhere else, this
+changes will get lost when you save your work later on.</p>
+
+<h2>More fun with the insert mode</h2>
+
+<p>Let us construct the following formula:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt><msup><mrow><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow><mn>2</mn></msup></msqrt><mo>=</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow></mrow></math>
+
+<p>Nothing easier than that. First, create a new equation with
+<kbd>:new&enter;</kbd>. Your other equation is still here, with
+<kbd>:previous&enter;</kbd> and <kbd>:next&enter;</kbd> you can switch
+between the two. Here, I show you only the new one.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="editcursor">
+            <mrow/>
+        </math>
+    </div>
+    <div internal:function="treeView"><div><div class="element" internal:selected="editcursor">math<div class="element">mrow</div></div></div></div>
+</div>
+</div>
+
+<p>The newly created equation is a <code>math</code> element
+containing an mrow element. Move the cursor to the mrow element.
+Unfortunately, we can not use <kbd>i</kbd> nor <kbd>a</kbd>, since
+they would insert before or after the <code>mrow</code> element. We want to insert
+<em>in</em> the <code>mrow</code>. To do this, there is the command
+<kbd>&ctrl;i</kbd>, which you now perform.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+            <mrow internal:selected="insertCursorIn"/>
+        </math>
+    </div>
+    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element" internal:selected="insertCursorIn">mrow</div></div></div></div>
+</div>
+</div>
+
+<p>Press <kbd>r</kbd>. This creates a squareroot. (<kbd>R</kbd> would
+give you a general root.) Now type <kbd>^ian2&space;&enter;</kbd>.
+(The &space; should be optional, but if you are going to hit <kbd>&enter;</kbd>, it
+is required because of a bug.) Then <kbd>o+&space;</kbd>. Here, the spacebar
+creates an <code>mrow</code> element. Go on with
+<kbd>n2iaib&enter;o+^ibn2&space;</kbd>.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow internal:selected="insertCursorIn"><msqrt internal:selected="insertCursorAfter"><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt></mrow>
+        </math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="insertCursorIn">mrow<div class="element" internal:selected="insertCursorAfter">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>And now <kbd>r^&space;o(&space;iao+ib&enter;o)&enter;n2&space;&enter;&enter;o=</kbd>.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow internal:selected="insertCursorIn"><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt><msup><mrow><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow><mn>2</mn></msup></msqrt><mo internal:selected="insertCursorAfter">=</mo></mrow>
+        </math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="insertCursorIn">mrow<div class="element">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">msqrt<div class="element">msup<div class="element">mrow<div class="element">mo<div class="nodeValue">(</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element" internal:selected="insertCursorAfter">mo<div class="nodeValue">=</div></div></div></div></div></div>
+</div>
+</div>
+
+<p>To finish the whole thing, press <kbd>&space;o(&space;iao+ib&enter;o)&enter;&enter;</kbd>.
+Actually, the last hit of the enter key terminates the insert mode,
+you also could have used <kbd>&esc;</kbd> instead.</p>
+
+<p>Done. Note that at certain places, we could have skipped the
+insertion of an mrow. As you will see in the next section, such
+optional mrows can be added easely later on in edit mode.</p>
+
+<p>You can now close this equation. Since you do not have saved your
+changes, <kbd>:close&enter;</kbd> will not work. Instead, use
+<kbd>:close!&enter;</kbd>, which will throw away all unsaved
+changes.</p>
 
 <h2>The visual mode</h2>
 
@@ -937,7 +1070,7 @@ and the fraction.</p>
 </div>
 
 <p>Now you can hit a command from the editMode. In this case, execute
-the command <kbd>SPACE</kbd> (i.e. hit the space bar). This
+the command <kbd>&space;</kbd> (i.e. hit the space bar). This
 command puts an <code>mrow</code> element around the selected
 elements.</p>
 
