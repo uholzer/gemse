@@ -1034,7 +1034,7 @@ sense, since they together form the argument of the lim operator.</p>
 </div>
 </div>
 
-<p>If you use the standard skin, you now see a beautiful blue. You can
+<p>If you use the default skin, you now see a beautiful blue. You can
 now use <kbd>l</kbd>, <kbd>h</kbd> and <kbd>o</kbd>. Find out yourself
 what they do. Be careful not to hit any other key. Now select the sum
 and the fraction.</p>
@@ -1109,7 +1109,73 @@ new mrow element. The cursor is currently on it.</p>
 
 <h2>Copying and Pasting</h2>
 
+<p>Since you now know how the visual mode works, copying is no more
+difficult. Gemse uses the command <kbd>y</kbd> for copying the
+(with visual mode) selected elements into a register. A register is
+simply a place where copied elements are stored. If you use a command
+that works on a register and you do not say on which one, it will use
+the default register. Except the default register, every register
+has a name consisting of exactly one character. (Unlike in vim, you
+can use every unicode character as name. This extends the amount of
+available registers far beyond 26. Gemse's register names are case
+sensitive, for example, register A and a are distinct registers.) By
+prefixing a command with <kbd>"</kbd> followed by the name of the
+regiter, you can tell it to use that register. Let's try it:</p>
+
+<p>Place the cursor on the equal sign and press <kbd>v</kbd> to start
+the visual mode. Select the equal sign and the term on its right, like
+this:</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow internal:selected="parent">
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo internal:selected="userSelection">=</mo>
+    <mrow internal:selected="userSelectionCursor">
+        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
+        <mrow><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover><mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac></mrow>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element" internal:selected="userSelection">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="userSelectionCursor">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Now hit <kbd>y</kbd>. Now, a copy of those two elements is in the
+default register. Now select the term on the left and the equal sign
+and press <kbd>"ay</kbd>. This puts those two elements into the register
+a.</p>
+
 <h2>The attribute mode</h2>
+
+<p>In MathML, one can put various attributes on elements. They control
+their semantically significant appeareance. It is also possible to put
+attributes of a foreign namespace on them. One useful example for this
+are attributes from XLink, which allow you to make links out of MathML
+elements.</p>
+
+<p>In edit mode, you can call the attribute mode which allows you to
+edit the attributes of this element. At the moment, the attribute mode
+is called witch <kbd>@</kbd>. This may change in the future, since in
+vim, <kbd>@</kbd> has another meaning, which could be important for
+gemse too. Up to now, the attribute mode does not much. You can delete
+attributes, but not more. The commands in attribute mode are the usual
+<kbd>j</kbd>, <kbd>k</kbd> and <kbd>x</kbd>.</p>
 
 <h2>Customizing</h2>
 
