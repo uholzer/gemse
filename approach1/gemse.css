@@ -10,8 +10,8 @@ table {
 *[internal|selected="editcursor"] { color: red; background-color: yellow; }
 *[internal|selected="attributeCursor"] { color: white; background-color: black; }
 *[internal|selected="parent"] { background-color: #ddd; }
-*[internal|selected="userSelection"] { background-color: #aaf; }
-*[internal|selected="userSelectionCursor"] { background-color: #88d; }
+*[internal|selected="userSelection"] { background-color: #7af; }
+*[internal|selected="userSelectionCursor"] { background-color: #66f; }
 *[internal|selected="attributeCursor selection"] { color: white; background-color: #227; }
 *[internal|selected="insertCursorIn"] { background-color: #dfd; }
 *[internal|selected="insertCursorBefore"] { border-left: 3px solid #050 !important }

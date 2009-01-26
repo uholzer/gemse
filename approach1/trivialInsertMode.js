@@ -10,10 +10,7 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         inElement: inElement,
         beforeElement: beforeElement
     };
-    this.cursorStack = [{
-        inElement: this.cursor.inElement,
-        beforeElement: this.cursor.beforeElement
-    }];
+    this.cursorStack = [];
     this.init = function() {
         this.moveCursor(this.cursor);
     }
@@ -160,10 +157,10 @@ trivialInsertModeCommands = {
     "e": {
         execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"menclose") }
     },
-    "R": {
+    "r": {
         execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msqrt") }
     },
-    "r": {
+    "R": {
         execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mroot") }
     },
     "f": {
