@@ -84,7 +84,18 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
             // stay in visual mode.
 
             // Check whether it is an editMode command (XXX: Assuming editMode)
-            candidateCommand = command[0];
+            // TODO: Right now, there is no way to tell wether a
+            // command exists, since the edit mode has a complex
+            // command parsing. So, for the moment, we will always
+            // assume that it exists. This can cause the visual mode
+            // to terminate too soon. The command still gets executed
+            // on the selection as soon as it has been entered
+            // completely. Unfortunately it is not intutive for
+            // the user. If he enters a nonexistant command, the
+            // visual mode seems gone, but the selection will be
+            // applied on the next command.
+            this.dispatch();
+            /*candidateCommand = command[0];
             while (candidateCommand.length < command.length && !editModeCommands[candidateCommand]) {
                 candidateCommand = command.slice(0,candidateCommand.length + 1);
             }
@@ -95,7 +106,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
             else {
                 throw "Command not found";
                 return false;
-            }
+            }*/
         }
     };
     this.cancel = function() {

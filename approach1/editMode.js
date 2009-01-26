@@ -575,7 +575,7 @@ function editModeCommand_putAfter(mode,commandString,args) {
     mode.editor.registers[registerName].content.forEach(function (e) {
         mode.cursor.parentNode.insertBefore(e.cloneNode(true), position);
     });
-    change.recordAfter(mode.equationEnv.equation,position.parentNode);
+    change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
     mode.equationEnv.history.reportChange(change);
     // Put cursor on the last inserted element
     mode.moveCursor(position ? mml_previousSibling(position) : mml_lastChild(mode.cursor.parentNode));
@@ -591,7 +591,7 @@ function editModeCommand_putBefore(mode,commandString,args) {
     mode.editor.registers[registerName].content.forEach(function (e) {
         mode.cursor.parentNode.insertBefore(e.cloneNode(true), position);
     });
-    change.recordAfter(mode.equationEnv.equation,position.parentNode);
+    change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
     mode.equationEnv.history.reportChange(change);
     // Put cursor on the last inserted element
     mode.moveCursor(position ? mml_previousSibling(position) : mml_lastChild(mode.cursor.parentNode));
