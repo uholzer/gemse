@@ -1,4 +1,4 @@
-const NS_internal = "http://www.andonyar.com/math/editor";
+const NS_internal = "http://www.andonyar.com/rec/2008-12/gemse/internalns";
 const NS_MathML = "http://www.w3.org/1998/Math/MathML";
 //const KEYMOD_ALT = String.fromCharCode(KeyEvent.DOM_VK_ALT);
 //const KEYMOD_CONTROL = String.fromCharCode(KeyEvent.DOM_VK_CONTROL);
