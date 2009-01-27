@@ -25,6 +25,9 @@
 
 <h1>Gemse Tutorial</h1>
 
+<p><em>I would be happy to hear from you, if you have problems, so I can
+improve this tutorial.</em></p>
+
 <p>Gemse is inspired by the texteditor 
 <a href="http://www.vim.org/">Vim</a>. It is difficult to learn, but
 hopefully will be a powerful tool once it is finished. However, I am
@@ -45,8 +48,28 @@ directly edits the XML structure of presentation MathML.</p>
 if you have installed Firefox 3 you are already lucky. Otherwise I can
 not help for the moment.</p>
 
-<p>After loading <code>example01.xml</code> you see something like
-that:</p>
+<p>You can start Gemse by starting the demo on Gemse's website or by
+downloading and extracting a Gemse release on your computer. In the
+latter case, you have to open the file <code>editor.xhtml</code> in
+Firefox. (I guess I do not need to mention that you have to turn on
+JavaScript.)</p>
+
+<p>There is an input box at the top. The cursor should be placed there
+automatically. If not, do that manually, for example by clicking in
+the box. Now you can start typing commands. As soon as you have
+entered a complete command, it will be executed and the box will be
+cleared. If you typed something wrong, the box can be cleared manually
+by hitting the escape key. The first command you have to type is for
+loading an equation we will use in this tutorial. Type <kbd>:load
+doc/example01.xml</kbd> and hit enter. Now you should see something like shown below.</p>
+
+<p>Maybe it does not work. In this case try to give the full URI of
+the file <code>doc/example01.xml</code>. If you installed Gemse
+locally the URI is <code>file://</code> followed by the full path of
+the file. If you use the demo, this should be
+<code>http://www.andonyar.com/rec/2008-12/gemse/approach1/demo/doc/example01.xml</code>.
+If you installed Gemse in to the chrome, you must use
+<code>chrome://gemse/content/doc/example01.xml</code>.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
