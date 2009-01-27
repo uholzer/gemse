@@ -604,9 +604,17 @@ function GemsePEditor() {
 
         // Check whether uri is relative. Make an absolute one out of it.
         // XXX: Stupid hack:
-        var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                .getService(Components.interfaces.nsIIOService);
-        uri = ios.newURI(uri,null,ios.newURI(this.workingDirectory,null,null)).spec;
+        // (Fails, if the preivileges for accessing Components.classes
+        // are missing. In such a case, do not make the uri absolute
+        // and let that handle by the XMLHttpRequest. I think this
+        // means that then the location of the editor.xhtml is taken
+        // as base by XMLHttpRequest.)
+        try {
+            var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService);
+            uri = ios.newURI(uri,null,ios.newURI(this.workingDirectory,null,null)).spec;
+        }
+        catch (e) { }
 
         // Create request
         var request = new XMLHttpRequest();
