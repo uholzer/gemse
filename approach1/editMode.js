@@ -489,7 +489,7 @@ function editModeCommand_serialize(mode, argString) {
         var doc = document.implementation.createDocument(null, null, null);
         rootNode = doc.importNode(mode.equationEnv.equation, true);
         doc.appendChild(rootNode);
-        mode.equationEnv.cleanSubtreeOfDocument(doc, doc);
+        mode.equationEnv.cleanSubtreeOfDocument(doc, rootNode);
     }
     var xmlString = serializer.serializeToString(rootNode);
     //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();

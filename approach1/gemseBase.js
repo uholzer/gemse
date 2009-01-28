@@ -231,12 +231,13 @@ function EquationEnv(editor, container) {
             { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT } },
             false
         );
-        var n;
-        while (n = iterator.nextNode()) {
+        var n = iterator.currentNode;
+        while (n) {
             var attrs = n.attributes;
             for (var i=0; i < attrs.length; ++i) {
                 if (attrs[i].namespaceURI == NS_internal) { n.removeAttributeNode(attrs[i]) }
             }
+            n =  iterator.nextNode();
         }
     }
     this.save = function(destinationURIString) {
