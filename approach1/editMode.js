@@ -259,6 +259,14 @@ editModeCommands = {
         type: "long",
         execute: editModeCommand_save
     },
+    ":saveall": {
+        type: "long",
+        execute: editModeCommand_saveAll
+    },
+    ":writeall": { // synonym for :save
+        type: "long",
+        execute: editModeCommand_saveAll
+    },
     ":close": {
         type: "long",
         execute: editModeCommand_close
@@ -530,6 +538,13 @@ function editModeCommand_loadAll(mode, argString) {
 
 function editModeCommand_save(mode, argString) {
     mode.equationEnv.save(argString); // argString may be null
+    return true;
+}
+
+function editModeCommand_saveAll(mode, argString) {
+    mode.editor.equations.forEach(function (e) {
+        e.save();
+    });
     return true;
 }
 
