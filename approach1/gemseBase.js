@@ -224,7 +224,7 @@ function EquationEnv(editor, container) {
         // Kills all attributes in the internal namespace
         // (Using TreeWalker, since createNodeIterator has been
         // introduced in firefox 3.1)
-        // XXX: Broken if root!=doc ?
+        // TODO: How to remove namespace desclarations?
         var iterator = doc.createTreeWalker(
             root,
             NodeFilter.SHOW_ELEMENT,
