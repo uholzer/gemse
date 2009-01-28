@@ -479,7 +479,19 @@ function editModeCommand_redisplay(mode) {
 
 function editModeCommand_serialize(mode, argString) {
     var serializer = new XMLSerializer();
-    var xmlString = serializer.serializeToString(mode.equationEnv.equation);
+    var rootNode;
+    if (argString == "raw") {
+        rootNode = mode.equationEnv.equation;
+    }
+    else {
+        // Create new document, since cleanSubtreeOfDocument requires
+        // a document.
+        var doc = document.implementation.createDocument(null, null, null);
+        rootNode = doc.importNode(mode.equationEnv.equation, true);
+        doc.appendChild(rootNode);
+        mode.equationEnv.cleanSubtreeOfDocument(doc, doc);
+    }
+    var xmlString = serializer.serializeToString(rootNode);
     //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
 
     mode.equationEnv.notificationDisplay.textContent = xmlString;

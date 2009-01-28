@@ -220,31 +220,29 @@ function EquationEnv(editor, container) {
                 .getService(Components.interfaces.nsIIOService);
         return ios.newURI(s,null,ios.newURI(this.workingDirectory,null,null));
     }
+    this.cleanSubtreeOfDocument = function(doc,root) {
+        // Kills all attributes in the internal namespace
+        // (Using TreeWalker, since createNodeIterator has been
+        // introduced in firefox 3.1)
+        // XXX: Broken if root!=doc ?
+        var iterator = doc.createTreeWalker(
+            root,
+            NodeFilter.SHOW_ELEMENT,
+            { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT } },
+            false
+        );
+        var n;
+        while (n = iterator.nextNode()) {
+            var attrs = n.attributes;
+            for (var i=0; i < attrs.length; ++i) {
+                if (attrs[i].namespaceURI == NS_internal) { n.removeAttributeNode(attrs[i]) }
+            }
+        }
+    }
     this.save = function(destinationURIString) {
         // Saves the equation to its origin if destination is empty.
         // Otherwise it will save it to destinationURI, creating a new
         // XML file with the math element as a root node. 
-
-        // Some useful rutines
-
-        var clean = function(doc,root) {
-            // Kills all attributes in the internal namespace
-            // (Using TreeWalker, since createNodeIterator has been
-            // introduced in firefox 3.1)
-            var iterator = doc.createTreeWalker(
-                root,
-                NodeFilter.SHOW_ELEMENT,
-                { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT } },
-                false
-            );
-            var n;
-            while (n = iterator.nextNode()) {
-                var attrs = n.attributes;
-                for (var i=0; i < attrs.length; ++i) {
-                    if (attrs[i].namespaceURI == NS_internal) { n.removeAttributeNode(attrs[i]) }
-                }
-            }
-        }
 
         // We have to distinguish between several cases
 
@@ -259,7 +257,7 @@ function EquationEnv(editor, container) {
                     newElement,
                     this.origin.element
                 );
-                clean(this.origin.doc, newElement);
+                this.cleanSubtreeOfDocument(this.origin.doc, newElement);
                 var serializer = new XMLSerializer();
                 var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
                    .createInstance(Components.interfaces.nsIFileOutputStream);
@@ -275,7 +273,7 @@ function EquationEnv(editor, container) {
                     newElement,
                     this.origin.element
                 );
-                clean(this.origin.doc, newElement);
+                this.cleanSubtreeOfDocument(this.origin.doc, newElement);
                 var serializer = new XMLSerializer();
                 var xmlString = serializer.serializeToString(doc);
                 //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
@@ -300,7 +298,7 @@ function EquationEnv(editor, container) {
             var doc = document.implementation.createDocument(null, null, null);
             doc.appendChild(doc.importNode(this.equation, true));
             // Kill all attributes in the internal namespace
-            clean(doc,doc);
+            this.cleanSubtreeOfDocument(doc,doc);
 
             var destinationURI = this.stringToURI(destinationURIString);
             
