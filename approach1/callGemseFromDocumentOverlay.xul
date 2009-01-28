@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+
+<overlay id="callGemseFromDocumentOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script><![CDATA[
+  function editInGemse() {
+    var NS_MathML = "http://www.w3.org/1998/Math/MathML";
+    
+    var doc = reference.ownerDocument;
+
+    var mathElements = [];
+    
+    // Collect Elements
+    // Make distinction between these two cases
+    if (gContextMenu.isContentSelected) { // If the user has made a selection
+        // I do not know how to do it right, but this should work:
+        // First find out the window
+        var focusedWindow = document.commandDispatcher.focusedWindow;
+        if (focusedWindow == window) focusedWindow = content;
+        // Get its selection
+        var selection = focusedWindow.getSelection();
+        // Now iterate over all descendants of the lower 
+        // most common ancestor of the selected elements. If a
+        // node is part of the selection accept it, otherwise
+        // skip it (but also check its descendants, so do not reject.)
+        var iterator = doc.createTreeWalker(
+            selection.getRangeAt(0).commonAncestorContainer,
+            NodeFilter.SHOW_ELEMENT,
+            { acceptNode: function(node) { 
+                if (selection.containsNode(node, true)) {
+                    return NodeFilter.FILTER_ACCEPT 
+                }
+                else {
+                    return NodeFilter.FILTER_SKIP 
+                }
+            } },
+            false
+        );
+        // Now go through all elements returned by the TreeWalker and
+        // Check whether they are math elements.
+        var n = iterator.currentNode;
+        while (n) {
+            if (n.namespaceURI == NS_MathML && n.localName == "math") {
+                mathElements.push({ doc: doc, element: n });
+            }
+            n = iterator.nextNode();
+        }
+    }
+    else { // If the user has not made any selection
+        // Find the element the user clicked as he opened the popup
+        var reference = gContextMenu.target;
+        // Now derive the MathML element(s) from reference.
+        // If there is an ancestor which is a math element, use it.
+        var ancestor = reference;
+        while (ancestor && !(ancestor.namespaceURI == NS_MathML && ancestor.localName == "math")) {
+            ancestor = ancestor.parentNode;
+        }
+        if (ancestor) {
+            mathElements.push({ doc: doc, element: ancestor });
+        }
+        else {
+            // Otherwise, collect all descendants which are math elements
+            // (Like this, the user can for example select all math elements
+            // in an OMDoc CMP by clicking the CMP.)
+            var iterator = doc.createTreeWalker(
+                reference,
+                NodeFilter.SHOW_ELEMENT,
+                { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT } },
+                false
+            );
+            var n = iterator.currentNode;
+            while (n) {
+                if (n.namespaceURI == NS_MathML && n.localName == "math") {
+                    mathElements.push({ doc: doc, element: n });
+                }
+                n = iterator.nextNode();
+            }
+        }
+    }
+
+    // Now open a new Gemse editor. Inform it about the elements to load
+    window.openDialog("chrome://gemse/content/editor.xhtml",
+                      "_blank", "scrollbars,resizable,chrome,dialog=no",
+                      mathElements);
+  }
+]]></script>
+
+<popup id="contentAreaContextMenu">
+    <menuitem id="context-editInGemse"
+                    label="edit in gemse"
+                    oncommand="editInGemse();"/>
+<!-- Useful:
+                    accesskey="&viewPartialSourceCmd.accesskey;"
+-->
+</popup>
+
+</overlay>
