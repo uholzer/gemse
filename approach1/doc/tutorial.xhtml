@@ -25,7 +25,7 @@
 
 <h1>Gemse Tutorial</h1>
 
-<p><em>I would be happy to hear from you, if you have problems, so I can
+<p><em>I would be happy to hear from you if you have problems, so I can
 improve this tutorial.</em></p>
 
 <p>Gemse is inspired by the texteditor 
@@ -44,8 +44,8 @@ directly edits the XML structure of presentation MathML.</p>
 
 <h2>Starting Gemse</h2>
 
-<p>Gemse 1 is an application written in Javascript using mozilla. So,
-if you have installed Firefox 3 you are already lucky. Otherwise I can
+<p>Gemse 1 is an application written in Javascript using Mozilla. So,
+if you have installed Firefox 3, you are already lucky. Otherwise I can
 not help for the moment.</p>
 
 <p>You can start Gemse by starting the demo on Gemse's website or by
@@ -235,13 +235,13 @@ to it.</p>
 
 <p>Observe that <kbd>h</kbd>, <kbd>l</kbd> do not always mean <q>to
 the right</q> or <q>to the left</q> respectively. For example, select
-the <code>frac</code> element. You can reach it my putting the cursor
+the <code>mfrac</code> element. You can reach it my putting the cursor
 over the <code>math</code> element by using <kbd>k</kbd> several times
 followed by <kbd>jjlljl</kbd>. (Note that I sometimes join commands
 that you have to enter together. This for example means that you have
 to hit <kbd>j</kbd>, then <kbd>j</kbd>, then <kbd>l</kbd> and so on.)
 Now hit <kbd>j</kbd> once again. This selects the first child of the
-<code>frac</code> element.</p>
+<code>mfrac</code> element.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -273,19 +273,19 @@ Now hit <kbd>j</kbd> once again. This selects the first child of the
 </div>
 </div>
 
-<p>In MathML, the first child of a <code>frac</code> element is the
+<p>In MathML, the first child of an <code>mfrac</code> element is the
 enumerator of the fraction. The second one is its denominator. So
 enumerator and denominator are siblings in the XML tree. That means
 that you have to use <kbd>h</kbd> and <kbd>l</kbd> to switch between
 the two. <kbd>j</kbd> and <kbd>k</kbd> do have a different meaning in
 this context: <kbd>k</kbd> moves to the parent, i.e. the
-<code>frac</code> element. <kbd>j</kbd> moves to the first element
+<code>mfrac</code> element. <kbd>j</kbd> moves to the first element
 contained in the enumerator or denominator respectively. Try it. Also
 try to find out what happens on the <code>msup</code> and
 <code>munderover</code> elements.</p>
 
-<p>Now you now how to move around. You also have seen that movements
-are relative to the XML tree structure, not to relative where
+<p>Now you know how to move around. You also have seen that movements
+are relative to the XML tree structure, not relative to where
 something appears in the rendered equation. There are and will be many
 more commands to move around faster, but what you have seen should
 suffice for now.</p>
@@ -293,8 +293,8 @@ suffice for now.</p>
 <h2>Deleting</h2>
 
 <p>We start with the easy thing. Its deleting. (Who would have thought
-that it is something desctructive?) If you hit <kbd>x</kbd> the
-element that is highlighted by the curser gets removed, including all
+that it is something destructive?) If you hit <kbd>x</kbd> the
+element that is highlighted by the cursor gets removed, including all
 its descendants. Move the cursor to the <code>(</code> after the
 <code>exp</code> and hit <kbd>x</kbd>. What you get is</p>
 
@@ -397,10 +397,10 @@ immediately see that this was not good.</p>
 </div>
 
 <p>What does cause this? Well, some MathML elements must have a fixed
-number of elements, in case of <code>frac</code> this number is two.
-If a <code>frac</code> element does not have two children, it is
+number of children, in case of <code>mfrac</code> this number is two.
+If a <code>mfrac</code> element does not have two children, it is
 invalid. The MathML renderer no longer understands what is meaned by
-the <code>frac</code> element and can not render the equation
+the <code>mfrac</code> element and can not render the equation
 completely. If something like this happens, you have to look at the
 tree view in order to fix the problem, since the rendering of the
 equation is incomplete. You can also fix it by undoing your mistake,
@@ -411,7 +411,7 @@ as you will learn in the next section.</p>
 <p>Of course, Gemse has also undo and redo commands. <kbd>u</kbd>
 undoes your last change. <kbd>&ctrl;r</kbd> undoes your last undo.
 (<kbd>&ctrl;r</kbd> means that you have to hold down the control key
-and hit r. Something like <kbd>&alt;ab&alt;+c</kbd> says that you have to
+and hit r. Something like <kbd>&alt;ab&alt;c</kbd> says that you have to
 hold control, hit a, releae control, hit b, hold down ALT, hit c and
 releaste alt.) Now hit <kbd>u</kbd>. The denominator you just deleted
 is back.</p>
@@ -731,6 +731,10 @@ and under it we want to have the identifier
 <m:math><m:mo>→</m:mo></m:math> and the identifier
 <m:math><m:mi>∞</m:mi></m:math>.</p>
 
+<p>If you make a mistake in the insert mode, you can hit
+<kbd>&esc;</kbd> (maybe twice) to leave the insert mode and then use
+<kbd>u</kbd> and try again.</p>
+
 <p>To do that we need an <code>munder</code> element. Press
 <kbd>u</kbd> to tell the insert mode that you want to have such an
 element.</p>
@@ -889,8 +893,7 @@ indicated by firefox. Also be aware, that if you are using gemse
 directly from the web, for example if you are using the demo from
 gemse's website, it has no permission to write to your harddisk. (You
 can always use <kbd>:serialize&enter;</kbd> to get the XML code of the
-equation. However, at the moment, this command does not delete
-internal information from the XML tree.)</p>
+equation.)</p>
 
 <p>For saving you simply write <kbd>:save&space;</kbd>, followed by the
 URI where you want to save your equation, followed by
@@ -938,7 +941,8 @@ changes will get lost when you save your work later on.</p>
 <p>Nothing easier than that. First, create a new equation with
 <kbd>:new&enter;</kbd>. Your other equation is still here, with
 <kbd>:previous&enter;</kbd> and <kbd>:next&enter;</kbd> you can switch
-between the two. Here, I show you only the new one.</p>
+between the two. (And <kbd>:close&enter;</kbd> or
+<kbd>:close!&enter;</kbd> gets rid of one.) Here, I show you only the new one.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -974,7 +978,8 @@ give you a general root.) Now type <kbd>^ian2&space;&enter;</kbd>.
 (The &space; should be optional, but if you are going to hit <kbd>&enter;</kbd>, it
 is required because of a bug.) Then <kbd>o+&space;</kbd>. Here, the spacebar
 creates an <code>mrow</code> element. Go on with
-<kbd>n2iaib&enter;o+^ibn2&space;</kbd>.</p>
+<kbd>n2iaib&enter;</kbd>, <kbd>o+^ibn2&space;&enter;&enter;</kbd>,
+<kbd>o=</kbd>.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -1016,7 +1021,7 @@ changes.</p>
 <h2>The visual mode</h2>
 
 <p>Sometimes you want to do something not only with the element the
-cursor is on, but with a whole sequence of element. Using the visual
+cursor is on, but with a whole sequence of elements. Using the visual
 mode (name inspired by vim), you can select a set of siblings.</p>
 
 <p>Put the cursor on the <code>munderover</code> element of the sum
@@ -1143,7 +1148,7 @@ can use every unicode character as name. This extends the amount of
 available registers far beyond 26. Gemse's register names are case
 sensitive, for example, register A and a are distinct registers.) By
 prefixing a command with <kbd>"</kbd> followed by the name of the
-regiter, you can tell it to use that register. Let's try it:</p>
+register, you can tell it to use that register. Let's try it:</p>
 
 <p>Place the cursor on the equal sign and press <kbd>v</kbd> to start
 the visual mode. Select the equal sign and the term on its right, like
@@ -1182,7 +1187,7 @@ this:</p>
 <p>Now hit <kbd>y</kbd>. Now, a copy of those two elements is in the
 default register. Now select the term on the left and the equal sign
 and press <kbd>"ay</kbd>. This puts those two elements into the register
-a. <em>Beware:</em> In visual mode, if you start to a command that is
+a. <em>Beware:</em> In visual mode, if you start to enter a command that is
 longer than one character (for example <kbd>"ay</kbd>) it seems as if
 the selection is lost (i.e. the visual mode disappears too soon), but
 it is not. Indeed, if you finish to enter the command, the selection
