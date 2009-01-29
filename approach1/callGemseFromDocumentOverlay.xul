@@ -6,6 +6,9 @@
   function editInGemse() {
     var NS_MathML = "http://www.w3.org/1998/Math/MathML";
     
+    // Find the element the user clicked as he opened the popup
+    var reference = gContextMenu.target;
+    // Find the document
     var doc = reference.ownerDocument;
 
     var mathElements = [];
@@ -47,8 +50,6 @@
         }
     }
     else { // If the user has not made any selection
-        // Find the element the user clicked as he opened the popup
-        var reference = gContextMenu.target;
         // Now derive the MathML element(s) from reference.
         // If there is an ancestor which is a math element, use it.
         var ancestor = reference;
