@@ -19,7 +19,7 @@ function generateCommandInfo() {
     while (documentation = documentations.iterateNext()) {
         var commandEntry = {};
         commandEntry.documentation = documentation;
-        commandEntry.functionName = commandEntry.id = documentation.getAttribute("xml:id");
+        commandEntry.functionName = commandEntry.id = documentation.getAttribute("id");
         commandEntry.titleElement = document.evaluate(
             ".//.[@class='commandTitle']", 
             documentation, 
