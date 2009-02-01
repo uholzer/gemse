@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html [
+  <!ENTITY  enter  "↵">
+  <!ENTITY  esc    "ESC">
+  <!ENTITY  ctrl   "CRTL+">
+  <!ENTITY  alt    "ALT+">
+  <!ENTITY  space  "␣">
+]>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xml:lang="de"
+    internal:function="documentation"
+>
+
+<head>
+    <title>Gemse Base</title>
+    <link rel="stylesheet" href="../gemse.css" type="text/css" />
+    <script src="../gemseBase.js"/>
+    <script src="../editMode.js"/>
+    <script src="commandListProcessing.js"/>
+</head>
+
+<body onload="init()">
+
+<h1>Edit Mode</h1>
+
+<div id="commands">
+<h2>Commands</h2>
+
+<table>
+<thead><tr><th>Command</th><th>title</th><th>Function name</th><th>type</th></tr></thead>
+<tbody id="commandTableBody">
+
+</tbody>
+</table>
+
+<div class="commandDocumentation" xml:id="editModeCommand_moveDown">
+<h3 class="commandTitle">Move down</h3>
+
+<p>foo bar.</p>
+</div>
+
+</div>
+
+</body>
+
+</html>
