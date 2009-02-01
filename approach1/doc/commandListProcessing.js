@@ -76,9 +76,30 @@ function createCommandTable(sortedBy) {
     var tableBody = document.getElementById("commandTableBody");
     while (tableBody.hasChildNodes()) { tableBody.removeChild(tableBody.firstChild) }
     commandInfo.sort(function(a, b) {
-        if (a.command < b.command) return -1;
-        else if (a.command > b.command) return 1;
-        else if (a.command == b.command) return 0;
+        var aKey; 
+        var bKey;
+        if (sortedBy == "command" || sortedBy == null) {
+            aKey = a.associatedCommands.sort()[0];
+            bKey = b.associatedCommands.sort()[0];
+        }
+        else if (sortedBy == "title") {
+            aKey = a.title;
+            bKey = b.title;
+        }
+        else if (sortedBy == "functionName") {
+            aKey = a.functionName;
+            bKey = b.functionName;
+        }
+        else if (sortedBy == "type") {
+            aKey = a.type;
+            bKey = b.type;
+        }
+        else {
+            throw "Unknown sort key: " + sortedBy;
+        }
+        if (aKey < bKey) return -1;
+        else if (aKey > bKey) return 1;
+        else if (aKey == bKey) return 0;
     });
     commandInfo.forEach(function(c) {
         var td_command = document.createElement("td");
