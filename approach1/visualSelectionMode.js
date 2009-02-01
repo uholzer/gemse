@@ -64,6 +64,27 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         // full command from the input buffer.
         while (editor.inputBuffer.length > 0 && this.handleOneCommandFromInputBuffer()) {}
     }
+    this.isSibling = function(e1,e2) {
+        // Returns true iff e1 and e2 are siblings
+        return (e1.parentNode == e2.parentNode);
+    }
+    this.compareSiblings = function(e1, e2) {
+        // Returns 0 if the siblings are equal, 1 if if e1 comes before e2,
+        // and -1 if e2 precedes e1. -2 indicates that e1 and e2 are not Siblings
+        if (e1.parentNode != e2.parentNode) { return -2 }
+        if (e1 == e2) { return 0 }
+        var parentNode = e1.parentNode;
+        var nodeList = parentNode.childNodes;
+        for (var i=0; i<nodeList.length; ++i) {
+            if (nodeList[i] == e1) {
+                return 1;
+            }
+            else if (nodeList[i] == e2) {
+                return -1
+            }
+        }
+        throw "Never reached!";
+    }
     this.handleOneCommandFromInputBuffer = function() {
         command = this.editor.inputBuffer;
         if (command.length > 1 && command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
@@ -72,9 +93,44 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
             this.editor.inputBuffer = "";
             return false;
         }
-        commandObject = visiualSelectionModeCommands[command[0]];
-        if (commandObject) {
-            commandObject.execute(this,command[0])
+        visualCommandObject = visiualSelectionModeCommands[command[0]];
+        editCommandObject = editModeCommands[command[0]];
+        if (visualCommandObject) {
+            visualCommandObject.execute(this,command[0])
+            this.editor.inputBuffer = this.editor.inputBuffer.slice(1);
+            return true;
+        }
+        else if (editCommandObject.type == "movement") {
+            var newCursor = this.createCursor();
+            var destNode = editCommandObject.execute(
+                this,
+                (this.cursor.moving == this.START) ? this.cursor.startElement : this.cursor.endElement
+            )
+            // We only move the cursor if the new element is a
+            // sibling of the current ones
+            if (destNode && this.isSibling(destNode,this.cursor.startElement)) {
+                if (this.cursor.moving == this.START) { // move start node
+                    if (this.compareSiblings(destNode,this.cursor.endElement) >= 0) { 
+                        newCursor.startElement = destNode;
+                    }
+                    else {
+                        newCursor.startElement = newCursor.endElement;
+                        newCursor.endElement = destNode;
+                        newCursor.moving = this.END;
+                    }
+                }
+                else { // move end node
+                    if (this.compareSiblings(this.cursor.startElement,destNode) >= 0) { 
+                        newCursor.endElement = destNode;
+                    }
+                    else {
+                        newCursor.endElement = newCursor.startElement;
+                        newCursor.startElement = destNode;
+                        newCursor.moving = this.START;
+                    }
+                }
+                this.moveCursor(newCursor);
+            }
             this.editor.inputBuffer = this.editor.inputBuffer.slice(1);
             return true;
         }
@@ -126,61 +182,12 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
 }
 
 visiualSelectionModeCommands = {
-    "h": {
-        execute: visualSelectionModeCommand_moveLeft
-    },
-    "l": {
-        execute: visualSelectionModeCommand_moveRight
-    },
     "o": {
         execute: visualSelectionModeCommand_switchMoving
     }
 }
 visiualSelectionModeCommands[String.fromCharCode(0x1b)] = { // Escape
     execute: visualSelectionModeCommand_cancel
-}
-
-
-function visualSelectionModeCommand_moveLeft(mode) {
-    var newCursor = mode.createCursor();
-    if (mode.cursor.moving == mode.END) {
-        // Move rigth end
-        if (mode.cursor.endElement == mode.cursor.startElement) {
-            // Right end goes over left end, so move left end instead
-            newCursor.moving = mode.START;
-        }
-        else {
-            newCursor.endElement = mml_previousSibling(mode.cursor.endElement);
-            if (newCursor.endElement == null) { newCursor.endElement = mode.cursor.endElement }
-        }
-    }
-    if (newCursor.moving == mode.START) {
-        // Move left end (could also have to be done if mode.cursor.moving was mode.START)
-        newCursor.startElement = mml_previousSibling(mode.cursor.startElement);
-        if (newCursor.startElement == null) { newCursor.startElement = mode.cursor.startElement }
-    }
-    mode.moveCursor(newCursor);
-}
-
-function visualSelectionModeCommand_moveRight(mode) {
-    var newCursor = mode.createCursor();
-    if (mode.cursor.moving == mode.START) {
-        // Move left end
-        if (mode.cursor.endElement == mode.cursor.startElement) {
-            // Left end goes over right end, so move right end instead
-            newCursor.moving = mode.END;
-        }
-        else {
-            newCursor.startElement = mml_nextSibling(mode.cursor.startElement);
-            if (newCursor.startElement == null) { newCursor.startElement = mode.cursor.startElement }
-        }
-    }
-    if (newCursor.moving == mode.END) {
-        // Move rigth end (could also have to be done if mode.cursor.moving was mode.START)
-        newCursor.endElement = mml_nextSibling(mode.cursor.endElement);
-        if (newCursor.endElement == null) { newCursor.endElement = mode.cursor.endElement }
-    }
-    mode.moveCursor(newCursor);
 }
 
 function visualSelectionModeCommand_switchMoving(mode) {

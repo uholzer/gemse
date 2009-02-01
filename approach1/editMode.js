@@ -78,6 +78,18 @@ function EditMode(editor, equationEnv) {
                 // TODO: Only clear buffer if it returns true?
                 editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
             }
+            else if (commandObject.type == "movement") {
+                var executionResult = commandObject.execute(this,this.cursor)
+                // A movement method must return a node or null
+                // (A movement command is not allowed to have side
+                // effect.)
+                if (executionResult) {
+                    this.moveCursor(executionResult);
+                }
+                // If executionResult is null, we do not move the
+                // cursor
+                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
+            }
             else {
                 if (this.userSelectionForNextCommand) {
                     // For debugging purposes:
@@ -297,47 +309,32 @@ editModeOptions = { // Default values of options
 
 }
 
-function editModeCommand_moveLeft(mode) {
-    var dest = mml_previousSibling(mode.cursor);
-    if (dest) { mode.moveCursor(dest); }
-    return true;
+function editModeCommand_moveLeft(mode,currentElement) {
+    return mml_previousSibling(currentElement);
 }
 
-function editModeCommand_moveRight(mode) {
-    var dest = mml_nextSibling(mode.cursor);
-    if (dest) { mode.moveCursor(dest); }
-    return true;
+function editModeCommand_moveRight(mode,currentElement) {
+    return mml_nextSibling(currentElement);
 }
 
-function editModeCommand_moveUp(mode) {
-    var dest = mml_parent(mode.cursor);
-    if (dest) { mode.moveCursor(dest); }
-    return true;
+function editModeCommand_moveUp(mode,currentElement) {
+    return mml_parent(currentElement);
 }
 
-function editModeCommand_moveDown(mode) {
-    var dest = mml_firstChild(mode.cursor);
-    if (dest) { mode.moveCursor(dest); }
-    return true;
+function editModeCommand_moveDown(mode,currentElement) {
+    return mml_firstChild(currentElement);
 }
 
-function editModeCommand_moveDownLast(mode) {
-    // Moves to the last child
-    var dest = mml_lastChild(mode.cursor);
-    if (dest) { mode.moveCursor(dest); }
-    return true;
+function editModeCommand_moveDownLast(mode,currentElement) {
+    return mml_lastChild(currentElement);
 }
 
-function editModeCommand_moveToFirstSibling(mode) {
-    var dest = mml_firstSibling(mode.cursor);
-    if (dest) { mode.moveCursor(dest); }
-    return true;
+function editModeCommand_moveToFirstSibling(mode,currentElement) {
+    return mml_firstSibling(currentElement);
 }
 
-function editModeCommand_moveToLastSibling(mode) {
-    var dest = mml_lastSibling(mode.cursor);
-    if (dest) { mode.moveCursor(dest); }
-    return true;
+function editModeCommand_moveToLastSibling(mode,currentElement) {
+    return mml_lastSibling(currentElement);
 }
 
 function editModeCommand_undo(mode) {
