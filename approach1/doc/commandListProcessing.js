@@ -94,6 +94,11 @@ function createCommandTable(sortedBy) {
             aKey = a.type;
             bKey = b.type;
         }
+        else if (sortedBy == "documentOrder") {
+            // Does not change the order of the elements. (Well, I
+            // hope JavaScripts sort algorithm is stable.)
+            return 0;
+        }
         else {
             throw "Unknown sort key: " + sortedBy;
         }
