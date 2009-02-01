@@ -181,14 +181,6 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
     }
 }
 
-visiualSelectionModeCommands = {
-    "o": {
-        execute: visualSelectionModeCommand_switchMoving
-    }
-}
-visiualSelectionModeCommands[String.fromCharCode(0x1b)] = { // Escape
-    execute: visualSelectionModeCommand_cancel
-}
 
 function visualSelectionModeCommand_switchMoving(mode) {
     var newCursor = mode.createCursor();
