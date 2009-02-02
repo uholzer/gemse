@@ -93,7 +93,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
             this.editor.inputBuffer = "";
             return false;
         }
-        visualCommandObject = visiualSelectionModeCommands[command[0]];
+        visualCommandObject = visualSelectionModeCommands[command[0]];
         editCommandObject = editModeCommands[command[0]];
         if (visualCommandObject) {
             visualCommandObject.execute(this,command[0])
