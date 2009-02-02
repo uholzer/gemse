@@ -1,4 +1,5 @@
 var commandInfo = [];
+var modeCommands;
 
 function init() {
     generateCommandInfo();
@@ -30,34 +31,34 @@ function generateCommandInfo() {
         commandEntry.title = commandEntry.titleElement.textContent;
                         
         commandEntry.associatedCommands = [];
-        for (s in editModeCommands) {
-            if (editModeCommands[s].execute.name == commandEntry.functionName) {
+        for (s in modeCommands) {
+            if (modeCommands[s].execute.name == commandEntry.functionName) {
                 commandEntry.associatedCommands.push(s);
                 // Remember the type (which does not always is the same in this loop)
                 if (commandEntry.type) {
-                    if (commandEntry.type.indexOf(editModeCommands[s].type) == -1) {
-                        commandEntry.type += ", " + editModeCommands[s].type;
+                    if (commandEntry.type.indexOf(modeCommands[s].type) == -1) {
+                        commandEntry.type += ", " + modeCommands[s].type;
                     }
                 }
                 else {
-                    commandEntry.type = editModeCommands[s].type;
+                    commandEntry.type = modeCommands[s].type;
                 }
-                delete editModeCommands[s];
+                delete modeCommands[s];
             }
         }
 
         commandInfo.push(commandEntry);
     }
     // Undocumented commands
-    for (s in editModeCommands) {
+    for (s in modeCommands) {
         var commandEntry = {};
         commandEntry.documentation = null;
-        commandEntry.functionName = commandEntry.id = editModeCommands[s].execute.name;
+        commandEntry.functionName = commandEntry.id = modeCommands[s].execute.name;
         commandEntry.titleElement = null;
         commandEntry.title = "NOT DOCUMENTED!";
                         
         commandEntry.associatedCommands = [s];
-        commandEntry.type = editModeCommands[s].type;
+        commandEntry.type = modeCommands[s].type;
         commandInfo.push(commandEntry);
     }            
     
