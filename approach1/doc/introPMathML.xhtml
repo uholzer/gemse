@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html [
+  <!ENTITY  enter  "↵">
+  <!ENTITY  esc    "ESC">
+  <!ENTITY  ctrl   "CRTL+">
+  <!ENTITY  alt    "ALT+">
+  <!ENTITY  space  "␣">
+]>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xml:lang="en"
+    internal:function="documentation"
+>
+
+<head>
+    <title>Introduction to Presentation MathML</title>
+    <link rel="stylesheet" href="../gemse.css" type="text/css" />
+</head>
+
+<body>
+
+<h1>Introduction to Presentation MathML</h1>
+
+<p>Mathematicians usually have good knowledge of LaTeX. Because this
+is probably not true for MathML and because I want mathematicians to
+be able to use Gemse, I give here a very short introduction to
+Presentation MathML.</p>
+
+<p>While it is quite practical to write LaTeX with a text editor, to
+write MathML is not. This is the reason why there is Gemse.</p>
+
+<h2>Tree concepts</h2>
+
+<p>We will often use the words child, descendant, parent,
+ancestor and sibling. You should know what they mean.</p>
+
+<p>A mathematical formula is basically a tree structure. This
+immediately yields the idea to encode it with XML. What the heck is
+XML you may ask. You will see. Usually, one learns the basics of XML
+by learning something else. In the case, the something else is
+MathML.</p>
+
+<h2>Unicode</h2>
+
+<p>To represent text in a computer, you have to use a mapping between
+numbers and characters. Unicode is an approach to do that. It is a
+mapping between numbers and characters of many scripts used on earth.
+Unicode includes a huge amount of mathematical signs. A text file is
+basically a sequence of such characters. LaTeX files are also text
+files, but they use traditionally ASCII instead of Unicode. ASCII maps
+characters to exactly one byte, which can obviously not be enough.
+This means that in a LaTeX file you have to write <code>\phi</code>
+instead of writing <code>φ</code> directly. In MathML, we will write
+every Character directly. (One has to add, that LaTeX is able to
+handle Unicode files, but it needs an additional effort.)</p>
+
+<h2>Tags and Elements</h2>
+
+<p>If you know XML, you can skip this section.</p>
+
+<p>Let us directly look at an example:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <msup>
+        <mrow><mo>(</mo><mi>a</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow>
+        <mi>n</mi>
+    </msup>
+    <mo>=</mo>
+    <munderover>
+        <mo>∑</mo>
+        <mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>
+        <mi>n</mi>
+    </munderover>
+    <mrow>
+        <mo>(</mo>
+        <mfrac linethickness="0"><mi>n</mi><mi>k</mi></mfrac>
+        <mo>)</mo>
+    </mrow>
+    <msup>
+        <mi>a</mi>
+        <mi>k</mi>
+    </msup>
+    <msup>
+        <mi>b</mi>
+        <mrow><mi>n</mi><mo>-</mo><mi>k</mi></mrow>
+    </msup>
+</mrow>
+</math>
+
+<p>This formulated in MathML looks like the following:</p>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <msup>
+        <mrow><mo>(</mo><mi>a</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow>
+        <mi>n</mi>
+    </msup>
+    <mo>=</mo>
+    <munderover>
+        <mo>∑</mo>
+        <mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>
+        <mi>n</mi>
+    </munderover>
+    <mrow>
+        <mo>(</mo>
+        <mfrac linethickness="0"><mi>n</mi><mi>k</mi></mfrac>
+        <mo>)</mo>
+    </mrow>
+    <msup>
+        <mi>a</mi>
+        <mi>k</mi>
+    </msup>
+    <msup>
+        <mi>b</mi>
+        <mrow><mi>n</mi><mo>-</mo><mi>k</mi></mrow>
+    </msup>
+</mrow>
+</math>
+]]>
+</pre>
+
+<p>Those parts that begin with a <code>&lt;</code> and end with the
+next <code>&gt;</code> are called tags. There are two sorts of tags:
+Opening tags and closing tags. Those that begin with
+<code>&lt;/</code> are the closing ones, the others are opening tags.
+For example, <code>&lt;mrow&gt;</code> is an opening tag and
+<code>&lt;/mrow&gt;</code> is a closing one. (There is also a sort of
+tags which are of both kinds at the same time, opening and closing.
+Such a tag is for example <code>&lt;mrow /&gt;</code>.)</p>
+
+<p>Every opening tag must have a corresponging end tag. Together with
+the text between them, they form an element. The text between the tags
+is called the content of the element. The content can consist of other
+elements or plain text. The name of the element is given by the tags. Consider
+<code><![CDATA[<mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>]]></code>.
+This is an element with the name <code>mrow</code>. It contains three
+elements which have the names <code>mi</code>, <code>mo</code> and
+<code>mi</code>. We will call an element with the a name
+<code>A</code> an <code>A</code> element.</p>
+
+<p>I hope you see now that the elements form a tree structure. Indeed,
+in the case of
+<code><![CDATA[<mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>]]></code>,
+We have an <code>mrow</code> element with 3 children. Please be aware
+that the order of the children does matter. Changing their order does
+change the meaning. This is important for MathML as we will later see.</p>
+
+<p>But there is more: Every element can have attributes. Attributes
+are just key/value pairs. A key must not turn up in more than one
+attribute. Unlike for children of an element, the order of the
+attributes does not matter. An attribute has the form
+<code>key="value"</code> and is placed in the starting tag of the
+element. In the example you can spot an <code>mfrac</code> element
+wich has a <code>linethickness</code> attribute with value
+<code>0</code>.</p>
+
+<h2>Identifiers, operators and numbers</h2>
+
+<p>In LaTeX, if we want to have a φ, we can write a φ, without a
+special containment. In MathML this is not possible. We have to put
+the φ into an <code>mi</code> element, like this:
+<code>&lt;mi&gt;φ&lt;/mi&gt;</code>. For an identifier we use an
+<code>mi</code> element. For an operators we have to use an
+<code>mo</code> element. The <code>mn</code> element is for literal
+numbers. (With <q>literal</q>, I want to stress that
+an <code>mn</code> element is not suited for <m:math><m:mi>a</m:mi></m:math> 
+even if <m:math><m:mi>a</m:mi><m:mo>∈</m:mo><m:mi>ℝ</m:mi></m:math>.
+In this case, you must use <code>mi</code>.)</p>
+
+<h2>Superscripts and subscripts</h2>
+
+<p>Look at the following part of our example:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <msup>
+        <mi>b</mi>
+        <mrow><mi>n</mi><mo>-</mo><mi>k</mi></mrow>
+    </msup>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <msup>
+        <mi>b</mi>
+        <mrow><mi>n</mi><mo>-</mo><mi>k</mi></mrow>
+    </msup>
+</math>
+]]>
+</pre>
+
+<p>The first child of the <code>msup</code> element is the base, the
+second is the superscript. In this case, the superscript does not only
+consist of an identifier or a number but is a whole expression
+consisting of more than one element, so we have to put it in an
+mrow. Subscripts are done with <code>msub</code>:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <msub>
+        <mi>a</mi>
+        <mrow><mi>i</mi><mi>k</mi></mrow>
+    </msub>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <msub>
+        <mi>a</mi>
+        <mrow><mi>i</mi><mi>k</mi></mrow>
+    </msub>
+</math>
+]]>
+</pre>
+
+<p><code>msub</code> and <code>msup</code> can be combined:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <msup>
+        <msub>
+            <mi>x</mi>
+            <mn>1</mn>
+        </msub>
+        <mn>2</mn>
+    </msup>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <msup>
+        <msub>
+            <mi>x</mi>
+            <mn>1</mn>
+        </msub>
+        <mn>2</mn>
+    </msup>
+</math>
+]]>
+</pre>
+
+<p>But that's perhaps not what you want. In order to put subscript and
+superscript tight to the base, use <code>msubsup</code>. This element
+has three children.</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <msubsup>
+        <mi>x</mi>
+        <mn>1</mn>
+        <mn>2</mn>
+    </msubsup>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <msubsup>
+        <mi>x</mi>
+        <mn>1</mn>
+        <mn>2</mn>
+    </msubsup>
+</math>
+]]>
+</pre>
+
+<h2>munder and mover</h2>
+
+<p>For integrals, sums, products and so on, you want to put the limits
+above and below the sign. This is done by <code>munder</code>,
+<code>mover</code> and <code>munderover</code>.</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <munder>
+        <mo>∑</mo>
+        <mrow><mi>i</mi><mo>∈</mo><mi>ℕ</mi></mrow>
+    </munder>
+    <mfrac>
+        <mn>1</mn>
+        <mi>i</mi>
+    </mfrac>
+</mrow>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <munder>
+        <mo>∑</mo>
+        <mrow><mi>i</mi><mo>∈</mo><mi>ℕ</mi></mrow>
+    </munder>
+    <mfrac>
+        <mn>1</mn>
+        <mi>i</mi>
+    </mfrac>
+</mrow>
+</math>
+]]>
+</pre>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <munderover>
+        <mo>∫</mo>
+        <mi>a</mi>
+        <mi>b</mi>
+    </munderover>
+</mrow>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <munderover>
+        <mo>∫</mo>
+        <mi>a</mi>
+        <mi>b</mi>
+    </munderover>
+</mrow>
+</math>
+]]>
+</pre>
+
+<p>Look how <code>munder</code>, <code>mover</code> and
+<code>munderover</code> change their behavious when you change the
+value of the display attribute of the MathML element to
+<code>inline</code>:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
+<mrow>
+    <munderover>
+        <mo>∫</mo>
+        <mi>a</mi>
+        <mi>b</mi>
+    </munderover>
+</mrow>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
+<mrow>
+    <mounderver>
+        <mo>∫</mo>
+        <mi>a</mi>
+        <mi>b</mi>
+    </munderover>
+</mrow>
+</math>
+]]>
+</pre>
+
+<p>Actually, <code>inline</code> is the default. So
+omitting this attribute has the same effect as setting it to
+<code>inline</code>. You use <code>inline</code> if your formula
+flows inside the text. If you want to set it apart from the text of
+the paragraph on its own line, you use <code>block</code>.</p>
+
+<h2>Examples</h2>
+
+<p>I will here give you a waterfall of examples. They are mainly
+transcribed from <q>The Not So Short Introduction To LateX2e</q> using
+Gemse.</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <munder>
+        <mi>lim</mi>
+        <mrow>
+            <mi>n</mi>
+            <mo>→</mo>
+            <mi>∞</mi>
+        </mrow>
+    </munder>
+    <munderover>
+        <mo>∑</mo>
+        <mrow>
+            <mi>k</mi>
+            <mo>=</mo>
+            <mi>1</mi>
+        </mrow>
+        <mi>n</mi>
+    </munderover>
+    <mfrac>
+        <mn>1</mn>
+        <msup>
+            <mi>k</mi>
+            <mn>2</mn>
+        </msup>
+    </mfrac>
+    <mo>=</mo>
+    <mfrac>
+        <msup>
+            <mi>π</mi>
+            <mn>2</mn>
+        </msup>
+        <mn>6</mn>
+    </mfrac>
+</mrow>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <munder>
+        <mi>lim</mi>
+        <mrow>
+            <mi>n</mi>
+            <mo>→</mo>
+            <mi>∞</mi>
+        </mrow>
+    </munder>
+    <munderover>
+        <mo>∑</mo>
+        <mrow>
+            <mi>k</mi>
+            <mo>=</mo>
+            <mi>1</mi>
+        </mrow>
+        <mi>n</mi>
+    </munderover>
+    <mfrac>
+        <mn>1</mn>
+        <msup>
+            <mi>k</mi>
+            <mn>2</mn>
+        </msup>
+    </mfrac>
+    <mo>=</mo>
+    <mfrac>
+        <msup>
+            <mi>π</mi>
+            <mn>2</mn>
+        </msup>
+        <mn>6</mn>
+    </mfrac>
+</mrow>
+</math>
+]]></pre>
+
+</body>
+
+</html>

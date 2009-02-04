@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html [
+  <!ENTITY  enter  "↵">
+  <!ENTITY  esc    "ESC">
+  <!ENTITY  ctrl   "CRTL+">
+  <!ENTITY  alt    "ALT+">
+  <!ENTITY  space  "␣">
+]>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xml:lang="en"
+    internal:function="documentation"
+>
+
+<head>
+    <title>Trivial Insert Mode</title>
+    <link rel="stylesheet" href="../gemse.css" type="text/css" />
+    <script src="../const.js"/>
+    <script src="../trivialInsertMode.js"/>
+    <script src="../trivialInsertMode_commandTable.js"/>
+    <script src="commandListProcessing.js"/>
+</head>
+
+<body onload="modeCommands = trivialInsertModeCommands; init()">
+
+<h1>Trivial Insert Mode</h1>
+
+<div id="commands">
+<h2>Commands</h2>
+
+<table>
+<thead><tr><th>Command</th><th>title</th><th>Function name</th><th>type</th></tr></thead>
+<tbody id="commandTableBody">
+
+</tbody>
+</table>
+
+<div class="commandDocumentation" id="editModeCommand_miSingle">
+    <h3 class="commandTitle">Single character identifier</h3>
+
+    <p>Inserts an identifier (an <code>mi</code> element) containing a
+    single character. Simply type the command and then the
+    character.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_miLong">
+    <h3 class="commandTitle">Multi character identifier</h3>
+
+    <p>Inserts an identifier (an <code>mi</code> element) containing
+    as many characters as you want. Type the command, then the
+    characters the element should contain. Terminate with
+    <kbd>&enter;</kbd>.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_mnNormal">
+    <h3 class="commandTitle">Normal Number</h3>
+
+    <p>Inserts a number (an <code>mn</code> element) containing
+    a number which may begin with <code>+</code> or <code>-</code> and
+    consists otherwise only of digits (0 to 9) and a (dezimal)
+    point. After typeing the command, you can type the number right
+    away. When you type a character that can not belong to the number,
+    the insert mode detects that the number is complete and will
+    insert it. The last character inserted will be considered for the
+    next command. If you are not going to insert another character
+    behind the number (for example because you want to terminate the mode),
+    you can use the space bar to force termination. Be aware that
+    because of a bug, if you want to hit <kbd>&enter;</kbd> afterwards,
+    you must use <kbd>&space;</kbd> first.</p>
+</div>
+
+</div>
+</body>
+</html>

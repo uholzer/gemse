@@ -12,7 +12,7 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
     xmlns:m="http://www.w3.org/1998/Math/MathML"
-    xml:lang="de"
+    xml:lang="en"
     internal:function="documentation"
 >
 
@@ -25,7 +25,7 @@
     <script src="commandListProcessing.js"/>
 </head>
 
-<body onload="init()">
+<body onload="modeCommands = editModeCommands; init()">
 
 <h1>Edit Mode</h1>
 
@@ -51,8 +51,46 @@
     <p>Moves the cursor to the last child of the current one.</p>
 </div>
 
+<div class="commandDocumentation" id="editModeCommand_kill">
+    <h3 class="commandTitle">Delete Element</h3>
+
+    <p>Deletes the element the cursor is on.</p>
 </div>
 
-</body>
+<div class="commandDocumentation" id="editModeCommand_delete">
+    <h3 class="commandTitle">Delete selection</h3>
 
+    <p>Deletes all (by visual mode) selected elements.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_change">
+    <h3 class="commandTitle">Change selection</h3>
+
+    <p>Deletes all (by visual mode) selected elements and opens the
+    insert mode.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_undo">
+    <h3 class="commandTitle">Undo</h3>
+
+    <p>Makes your last change undone. You can undo multiple changes.
+    The <a href="#editModeCommand_redoc">redo</a> command can be 
+    used to apply them again, to undo the undo, so to say.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_redo">
+    <h3 class="commandTitle">Redo</h3>
+
+    <p>Reapplies the last undone change. This is only possible if you
+    have made no changes since the undo. A redo can be undone again.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_mrowEnvelop">
+    <h3 class="commandTitle">Put mrow around selection</h3>
+
+    <p>Places an mrow element around the selected elements.</p>
+</div>
+
+</div>
+</body>
 </html>
