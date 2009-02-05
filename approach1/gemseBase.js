@@ -217,8 +217,13 @@ function EquationEnv(editor, container) {
         var n = iterator.currentNode;
         while (n) {
             var attrs = n.attributes;
-            for (var i=0; i < attrs.length; ++i) {
-                if (attrs[i].namespaceURI == NS_internal) { n.removeAttributeNode(attrs[i]) }
+            if (attrs) {
+                // It seems that the property "attributes" of document
+                // objects are sometimes undefined in firefox. That's
+                // the reason for this if.
+                for (var i=0; i < attrs.length; ++i) {
+                    if (attrs[i].namespaceURI == NS_internal) { n.removeAttributeNode(attrs[i]) }
+                }
             }
             n =  iterator.nextNode();
         }
