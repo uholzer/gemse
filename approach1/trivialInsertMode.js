@@ -67,6 +67,12 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
             throw "Command not found";
         }
     };
+    this.getNewPlaceholderElement = function() {
+        var placeholder = document.createElementNS(NS_MathML, "mi");
+        placeholder.setAttributeNS(NS_internal, "missing", "1")
+        placeholder.appendChild(document.createTextNode("□"));
+        return placeholder;
+    }
     this.putElement = function() {
         // Puts an element where the cursor is located. If an element
         // follows which is marked with the missing attribute, it gets
@@ -181,12 +187,30 @@ function trivialInsertModeCommand_mtext(mode) {
     trivialInsertModeCommandTool_elementWithLongText(mode,"mtext");
 }
 
+function trivialInsertModeCommand_table(mode) {
+    // Inserts an mtr element if the parent is an mtable element, an
+    // mtd element if the parent is an mtr element and otherwise an
+    // mtable element.
+    if (mode.cursor.inElement.localName=="mtable") {
+        //insert an mtr
+        mode.putElement(null, "mtr", mode.getNewPlaceholderElement());
+    }
+    else if (mode.cursor.inElement.localName=="mtr") {
+        //insert an mtd
+        mode.putElement(null, "mtd", mode.getNewPlaceholderElement());
+    }
+    else {
+        //insert an mtable
+        mode.putElement(null, "mtable", mode.getNewPlaceholderElement());
+    }
+    mode.editor.inputBuffer = "";
+    return true;
+}
+
 function trivialInsertModeCommand_insertDescribedElement(mode, elementName) {
     // Inserts an mtext element
     var description = elementDescriptions[elementName];
-    var placeholder = document.createElementNS(NS_MathML, "mi");
-    placeholder.setAttributeNS(NS_internal, "missing", "1")
-    placeholder.appendChild(document.createTextNode("□"));
+    var placeholder = mode.getNewPlaceholderElement();
     var newElement = document.createElementNS(description.namespace, description.name);
     if (description.type == "fixedChildren") {
         for (var i=0; i<description.childCount; ++i) {
@@ -198,6 +222,10 @@ function trivialInsertModeCommand_insertDescribedElement(mode, elementName) {
     }
     else if (description.type == "childList") {
         newElement.appendChild(placeholder.cloneNode(true));
+    }
+    else if (description.type == "empty") {
+        // Let it empty. This also causes mode.putElement to position
+        // the cursor behind the new element
     }
     else if (description.type == "mrow") {
         newElement.appendChild(placeholder.cloneNode(true));

@@ -57,6 +57,18 @@ trivialInsertModeCommands = {
     "U": {
         execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"munderover") }
     },
+    "m": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mmultiscripts") }
+    },
+    ".": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"none") }
+    },
+    "p": {
+        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mprescripts") }
+    },
+    "t": {
+        execute: trivialInsertModeCommand_table // For inserting table, tr or td elements
+    },
     "\n": {
         execute: trivialInsertModeCommand_cursorJump
     },

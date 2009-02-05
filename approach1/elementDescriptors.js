@@ -130,32 +130,44 @@ munderover: {
 // Crazy elements
 
 mmultiscripts: {
-    
+    name: "mmultiscripts",
+    namespace: NS_MathML,
+    type: "childList",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mmultiscripts",
 },
 
 mprescripts: {
-
+    name: "mprescripts",
+    namespace: NS_MathML,
+    type: "empty",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mprescripts",
 },
 
 none: {
-
+    name: "none", // Indeed, it is called "none", not "mnone".
+    namespace: NS_MathML,
+    type: "empty",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.none",
 },
 
 mtable: {
-
+    name: "mtable",
+    namespace: NS_MathML,
+    type: "childList",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mtable",
 },
 
 mtr: {
-
+    name: "mtr",
+    namespace: NS_MathML,
+    type: "childList",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mtr",
 },
 
 mtd: {
-
+    name: "mtd",
+    namespace: NS_MathML,
+    type: "childList",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mtd",
 },
 
