@@ -28,6 +28,10 @@ editModeCommands = {
         type: "movement",
         execute: editModeCommand_moveToLastSibling
     },
+    "gg": {
+        type: "movement",
+        execute: editModeCommand_moveToRoot
+    },
     "x": {
         type: "action",
         execute: editModeCommand_kill

@@ -173,6 +173,10 @@ function editModeCommand_moveToLastSibling(mode,currentElement) {
     return mml_lastSibling(currentElement);
 }
 
+function editModeCommand_moveToRoot(mode, currentElelment) {
+    return mode.equationEnv.equation;
+}
+
 function editModeCommand_undo(mode) {
     // The glorious undo
     mode.hideCursor();
@@ -321,7 +325,7 @@ function editModeCommand_redisplay(mode) {
 function editModeCommand_serialize(mode, argString) {
     var serializer = new XMLSerializer();
     var rootNode;
-    if (argString == "raw") {
+    if (argString.indexOf("raw") != -1) { //argString contains "raw"
         rootNode = mode.equationEnv.equation;
     }
     else {
@@ -332,8 +336,12 @@ function editModeCommand_serialize(mode, argString) {
         doc.appendChild(rootNode);
         mode.equationEnv.cleanSubtreeOfDocument(doc, rootNode);
     }
-    var xmlString = serializer.serializeToString(rootNode);
-    //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
+    if (argString.indexOf("pretty") != -1) {
+        var xmlString = XML(serializer.serializeToString(rootNode)).toXMLString();
+    }
+    else {
+        var xmlString = serializer.serializeToString(rootNode);
+    }
 
     mode.equationEnv.notificationDisplay.textContent = xmlString;
     return true;
