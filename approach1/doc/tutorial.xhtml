@@ -1314,12 +1314,17 @@ the file <code>gemse.css</code>. Note that the documentation also uses this
 stylesheet file, so the examples in it are always consistent with your
 changes.</p>
 
+<p>For example, if you want to change the size of the renderings of
+the formula, open gemse.css in a text editor, look out for
+<code>*[internal|function="equation"]</code> and change the
+<code>font-size</code> for example to <code>large</code>.</p>
+
 <p>If you do not like the keyboard layout, i.e. you want to change the
 name of the commands, you have to look into the javascript file
-belonging to the mode you want to change. So for the edit mode, you
-have to open <code>editMode.js</code> and look for the definition of the
-<code>editModeCommands</code>. There you can change the keys used for
-these commands.</p>
+for the table for the respective mode. For example, if you want to
+change the commands of the attribute mode, open the file
+<code>attributeMode_commandTable.js</code>. Those files are not
+exactly self-explaining, but you can try to change it.</p>
 
 <h2>How to go on?</h2>
 

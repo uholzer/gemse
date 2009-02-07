@@ -265,6 +265,42 @@ has three children.</p>
 ]]>
 </pre>
 
+<p>But the full power you can get with the <code>mmultipscripts</code>
+element. It can not only place multiple subscripts and superstcripts
+behind a base but also before it:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <mmultiscripts>
+        <mi>A</mi>
+        <mn>1</mn>
+        <mn>2</mn>
+        <mprescripts/>
+        <none/>
+        <mi>a</mi>
+        <mi>c</mi>
+        <mi>b</mi>
+        <mi>d</mi>
+        <none/>
+    </mmultiscripts>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <mmultiscripts>
+        <mi>A</mi>
+        <mn>1</mn>
+        <mn>2</mn>
+        <mprescripts/>
+        <none/>
+        <mi>a</mi>
+        <mi>c</mi>
+        <mi>b</mi>
+        <mi>d</mi>
+        <none/>
+    </mmultiscripts>
+</math>
+]]></pre>
+
 <h2>munder and mover</h2>
 
 <p>For integrals, sums, products and so on, you want to put the limits
@@ -357,6 +393,60 @@ omitting this attribute has the same effect as setting it to
 flows inside the text. If you want to set it apart from the text of
 the paragraph on its own line, you use <code>block</code>.</p>
 
+<h2>Fractions</h2>
+
+<p>For this there is the <code>mfrac</code> element.</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mfrac>
+        <mn>1</mn>
+        <mn>2</mn>
+    </mfrac>
+</mrow>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mfrac>
+        <mn>1</mn>
+        <mn>2</mn>
+    </mfrac>
+</mrow>
+</math>
+]]></pre>
+
+<p>You can use fractions to write biniomial coefficients:</p>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>(</mo>
+    <mfrac linethickness="0">
+      <mi>n</mi>
+      <mi>k</mi>
+    </mfrac>
+    <mo>)</mo>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>(</mo>
+    <mfrac linethickness="0">
+      <mi>n</mi>
+      <mi>k</mi>
+    </mfrac>
+    <mo>)</mo>
+  </mrow>
+</math>
+]]></pre>
+
+<p>The <code>linethickness</code> attribute suppresses the horizontal
+bar of the fraction.</p>
+
+
 <h2>Examples</h2>
 
 <p>I will here give you a waterfall of examples. They are mainly
@@ -436,6 +526,290 @@ Gemse.</p>
         <mn>6</mn>
     </mfrac>
 </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>∀</mo>
+    <mrow>
+      <mi>x</mi>
+      <mo>∈</mo>
+      <mi>ℝ</mi>
+    </mrow>
+    <mo>:</mo>
+    <mrow>
+      <msup>
+        <mi>x</mi>
+        <mn>2</mn>
+      </msup>
+      <mo>≥</mo>
+      <mn>0</mn>
+    </mrow>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>∀</mo>
+    <mrow>
+      <mi>x</mi>
+      <mo>∈</mo>
+      <mi>ℝ</mi>
+    </mrow>
+    <mo>:</mo>
+    <mrow>
+      <msup>
+        <mi>x</mi>
+        <mn>2</mn>
+      </msup>
+      <mo>≥</mo>
+      <mn>0</mn>
+    </mrow>
+  </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <msup>
+      <mi>ℯ</mi>
+      <msup>
+        <mi>x</mi>
+        <mn>2</mn>
+      </msup>
+    </msup>
+    <mo>≠</mo>
+    <msup>
+      <msup>
+        <mi>ℯ</mi>
+        <mi>x</mi>
+      </msup>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <msup>
+      <mi>ℯ</mi>
+      <msup>
+        <mi>x</mi>
+        <mn>2</mn>
+      </msup>
+    </msup>
+    <mo>≠</mo>
+    <msup>
+      <msup>
+        <mi>ℯ</mi>
+        <mi>x</mi>
+      </msup>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+<mover>
+  <mrow>
+    <mi>m</mi>
+    <mo>+</mo>
+    <mi>n</mi>
+  </mrow>
+  <mo>¯</mo>
+</mover>
+</mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+<mover>
+  <mrow>
+    <mi>m</mi>
+    <mo>+</mo>
+    <mi>n</mi>
+  </mrow>
+  <mo>¯</mo>
+</mover>
+</mrow>
+</math>
+]]></pre>
+
+<p>In the above I am not shure whether one should use 
+‾ (OVERLINE U+203E) or as above ¯ (MACRON U+00AF). Firefox stretches
+only the latter.</p>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <munder accentunder="true">
+      <mrow>
+        <mi>a</mi>
+        <mo>+</mo>
+        <mi>b</mi>
+        <mo>+</mo>
+        <mo>⋯</mo>
+        <mo>+</mo>
+        <mi>z</mi>
+      </mrow>
+      <mo>⏟</mo>
+    </munder>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <munder accentunder="true">
+      <mrow>
+        <mi>a</mi>
+        <mo>+</mo>
+        <mi>b</mi>
+        <mo>+</mo>
+        <mo>⋯</mo>
+        <mo>+</mo>
+        <mi>z</mi>
+      </mrow>
+      <mo>⏟</mo>
+    </munder>
+  </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mover accent="true">
+      <mrow>
+        <mi>A</mi>
+        <mi>B</mi>
+      </mrow>
+      <mo>→</mo>
+    </mover>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mover accent="true">
+      <mrow>
+        <mi>A</mi>
+        <mi>B</mi>
+      </mrow>
+      <mo>→</mo>
+    </mover>
+  </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>(</mo>
+    <mfrac linethickness="0">
+      <mi>n</mi>
+      <mi>k</mi>
+    </mfrac>
+    <mo>)</mo>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>(</mo>
+    <mfrac linethickness="0">
+      <mi>n</mi>
+      <mi>k</mi>
+    </mfrac>
+    <mo>)</mo>
+  </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>∫</mo>
+    <mrow>
+      <msub>
+        <mi>f</mi>
+        <mi>N</mi>
+      </msub>
+      <mo>(</mo>
+      <mi>x</mi>
+      <mo>)</mo>
+    </mrow>
+    <mover>
+      <mo>=</mo>
+      <mo>!</mo>
+    </mover>
+    <mn>1</mn>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>∫</mo>
+    <mrow>
+      <msub>
+        <mi>f</mi>
+        <mi>N</mi>
+      </msub>
+      <mo>(</mo>
+      <mi>x</mi>
+      <mo>)</mo>
+    </mrow>
+    <mover>
+      <mo>=</mo>
+      <mo>!</mo>
+    </mover>
+    <mn>1</mn>
+  </mrow>
+</math>
+]]></pre>
+
+<p>Look what happens when we do not use an <code>mrow</code> element:</p>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>∫</mo>
+      <msub>
+        <mi>f</mi>
+        <mi>N</mi>
+      </msub>
+      <mo>(</mo>
+      <mi>x</mi>
+      <mo>)</mo>
+    <mover>
+      <mo>=</mo>
+      <mo>!</mo>
+    </mover>
+    <mn>1</mn>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mo>∫</mo>
+      <msub>
+        <mi>f</mi>
+        <mi>N</mi>
+      </msub>
+      <mo>(</mo>
+      <mi>x</mi>
+      <mo>)</mo>
+    <mover>
+      <mo>=</mo>
+      <mo>!</mo>
+    </mover>
+    <mn>1</mn>
+  </mrow>
 </math>
 ]]></pre>
 
