@@ -51,6 +51,9 @@ table {
 *[internal|selected="equationFocus"] {
     opacity: 1;
 }
+*.defaultAttribute * {
+    color: black; background-color: #afa;
+}
 /**[internal|function="container"]:not([internal|selected="equationFocus"]) > * {
     display: none;
 }

@@ -26,7 +26,7 @@ attributeModeCommands = {
     },
     "i": {
         type: "action",
-        execute: attributeModeCommand_insertMathML
+        execute: attributeModeCommand_insertDefault
     },
     "I": {
         type: "action",

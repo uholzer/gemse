@@ -159,6 +159,9 @@ function EquationEnv(editor, container) {
 
         // Generate table
         var table = document.createElement("table");
+        var caption = document.createElement("caption");
+        caption.appendChild(document.createTextNode("attributes"));
+        table.appendChild(caption);
         for (var i = 0; i < attributes.length; i++) {
             table.appendChild(generateRow(
                 attributes[i].namespaceURI,
@@ -169,6 +172,30 @@ function EquationEnv(editor, container) {
             ));
         }
         this.attributeView.appendChild(table);
+
+        // Generate table of default attributes
+        if (elementDescriptions[forElement.localName] && elementDescriptions[forElement.localName].attributes) {
+            table = document.createElement("table");
+            table.setAttribute("class", "defaultAttribute");
+            var caption = document.createElement("caption");
+            caption.appendChild(document.createTextNode("default attributes"));
+            table.appendChild(caption);
+            var defaultAttributesHash = elementDescriptions[forElement.localName].attributes;
+            var defaultAttributes = [];
+            for (a in defaultAttributesHash) {
+                defaultAttributes.push(defaultAttributesHash[a]);
+            }
+            for (var i = 0; i < defaultAttributes.length; i++) {
+                table.appendChild(generateRow(
+                    defaultAttributes[i].namespace || "",
+                    defaultAttributes[i].name,
+                    defaultAttributes[i].defaultValue,
+                    false,
+                    false
+                ));
+            }
+            this.attributeView.appendChild(table);
+        }
     }
 
     this.init = function() {
