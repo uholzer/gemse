@@ -58,12 +58,6 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         this.equationEnv.updateViews();
     }
     this.__defineGetter__("contextNode", function() { /*TODO*/ }); // TODO
-    this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
-    this.inputHandler = function() {
-        // Call handleOneCommandFromInputBuffer as long as it can extract and execute a
-        // full command from the input buffer.
-        while (editor.inputBuffer.length > 0 && this.handleOneCommandFromInputBuffer()) {}
-    }
     this.isSibling = function(e1,e2) {
         // Returns true iff e1 and e2 are siblings
         return (e1.parentNode == e2.parentNode);
@@ -85,14 +79,8 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         }
         throw "Never reached!";
     }
-    this.handleOneCommandFromInputBuffer = function() {
+    this.inputHandler = function() {
         command = this.editor.inputBuffer;
-        if (command.length > 1 && command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
-            // KeyEvent.DOM_VK_ESCAPE should be 0x1b
-            //event.preventDefault();
-            this.editor.inputBuffer = "";
-            return false;
-        }
         visualCommandObject = visualSelectionModeCommands[command[0]];
         editCommandObject = editModeCommands[command[0]];
         if (visualCommandObject) {
@@ -100,7 +88,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
             this.editor.inputBuffer = this.editor.inputBuffer.slice(1);
             return true;
         }
-        else if (editCommandObject.type == "movement") {
+        else if (editCommandObject && editCommandObject.type == "movement") {
             var newCursor = this.createCursor();
             var destNode = editCommandObject.execute(
                 this,
@@ -151,6 +139,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
             // visual mode seems gone, but the selection will be
             // applied on the next command.
             this.dispatch();
+            return true;
             /*candidateCommand = command[0];
             while (candidateCommand.length < command.length && !editModeCommands[candidateCommand]) {
                 candidateCommand = command.slice(0,candidateCommand.length + 1);
