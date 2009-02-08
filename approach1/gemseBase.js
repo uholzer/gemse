@@ -542,7 +542,22 @@ function GemsePEditor() {
     this.inputEvent = function () {
         // Is called when the input buffer supposedly changed
         try {
-            this.equations[this.focus].mode.inputHandler();
+            // Call the input handler as long as it finds commands.
+            // (If the inputBuffer is empty, it can not find one, so,
+            // for efficiency, do not call it)
+            // This can cause an endless loop, so all modes must
+            // correctly implement their inputHandler. The
+            // inputHandler must return true if it found a command. In
+            // this case, it must remove the command from the input
+            // buffer. It must not remove following commands.
+            while (this.inputBuffer && this.equations[this.focus].mode.inputHandler()) {};
+            // Now, if there is still something in the buffer, it is
+            // either an incomplete command or an invalid command. So,
+            // if the remeining string ends with ESCAPE, the user
+            // wants to clear the input buffer.
+            if (this.inputBuffer.charCodeAt(this.inputBuffer.length-1) == KeyEvent.DOM_VK_ESCAPE) {
+                this.inputBuffer = "";
+            }
         }
         catch (e if false) {
             this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
@@ -552,12 +567,18 @@ function GemsePEditor() {
         // Is called when a key gets hit. This also is called
         // if the key does not cause a character to be entered
         // into the input element (i.e. the input buffer).
-        try {
-            this.equations[this.focus].mode.keyHandler(event);
+
+        if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT }
+        if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL }
+        //if (event.metaKey) { editor.inputBuffer += KEYMOD_META }
+        if (event.charCode || event.keyCode) {
+            editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
+                // event.which does not seem to work, it returns 0 for the escape Key
         }
-        catch (e if false) {
-            this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
-        }
+        //if (event.keyCode) { event.preventDefault(); }
+        event.preventDefault();
+        event.stopPropagation();
+        editor.inputEvent();
     };
     this.__defineGetter__("inputBuffer", function() { return this.inputElement.value; });
     this.__defineSetter__("inputBuffer", function(x) { this.inputElement.value = x; });
@@ -720,20 +741,5 @@ function GemsePEditor() {
     this.pool = null;
 }
 
-function standardKeyHandler(event,editor) {
-    // This procedure can be used as a method by a mode object. 
-
-    if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT }
-    if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL }
-    //if (event.metaKey) { editor.inputBuffer += KEYMOD_META }
-    if (event.charCode || event.keyCode) {
-        editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
-            // event.which does not seem to work, it returns 0 for the escape Key
-    }
-    //if (event.keyCode) { event.preventDefault(); }
-    event.preventDefault();
-    event.stopPropagation();
-    editor.inputEvent();
-}
 
 
