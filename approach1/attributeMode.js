@@ -53,13 +53,7 @@ function AttributeMode(editor, equationEnv, element) {
     }
     this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.element }); // XXX: good like this?
-    this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
     this.inputHandler = function() {
-        // Call handleOneCommandFromInputBuffer as long as it can extract and execute a
-        // full command from the input buffer.
-        while (editor.inputBuffer.length > 0 && this.handleOneCommandFromInputBuffer()) {}
-    }
-    this.handleOneCommandFromInputBuffer = function() {
         // Returns true if it succeeded to execute the first command from the
         // input buffer. Else, it returns false.
         // (This is mainly a copy from the same function of the edit
@@ -69,12 +63,6 @@ function AttributeMode(editor, equationEnv, element) {
         var commandArg = null;
         var forceFlag = false;
         var singleCharacterArgs = [];
-        if (command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE && command.length > 1) {
-            // KeyEvent.DOM_VK_ESCAPE should be 0x1b
-            //event.preventDefault();
-            this.editor.inputBuffer = "";
-            return false; //XXX: Or true?
-        }
         while (command[0] == '"') {
             if (command.length < 2) { return } // Returns if the user has not yet entered the character
             singleCharacterArgs.push(command[1]);
@@ -110,7 +98,6 @@ function AttributeMode(editor, equationEnv, element) {
             }
         }
         else {
-            throw "Command not found";
             return false;
         }
     }
@@ -120,8 +107,7 @@ function AttributeMode(editor, equationEnv, element) {
 function attributeModeCommand_exit(mode,command) {
     mode.editor.inputBuffer = mode.editor.inputBuffer.slice(command.length);
     mode.finish();
-    // We have to return false to break the command loop of this mode and return control to edit mode
-    return false;
+    return true;
 }
 
 function attributeModeCommand_up(mode,oldCursor) {
