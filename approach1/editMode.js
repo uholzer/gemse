@@ -64,7 +64,7 @@ function EditMode(editor, equationEnv) {
             if (commandObject.type == "long") {
                 var executionResult = commandObject.execute(this,commandArg,forceFlag)
                 // TODO: Only clear buffer if it returns true?
-                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
+                editor.eatInput(endOfCommandIndex);
             }
             else if (commandObject.type == "movement") {
                 var executionResult = commandObject.execute(this,this.cursor)
@@ -76,7 +76,7 @@ function EditMode(editor, equationEnv) {
                 }
                 // If executionResult is null, we do not move the
                 // cursor
-                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
+                editor.eatInput(endOfCommandIndex);
             }
             else {
                 if (this.userSelectionForNextCommand) {
@@ -93,7 +93,7 @@ function EditMode(editor, equationEnv) {
                 }
                 var executionResult = commandObject.execute(this,command,singleCharacterArgs,this.userSelectionForNextCommand);
                 // TODO: Only clear buffer if it returns true?
-                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
+                editor.eatInput(endOfCommandIndex);
             }
             this.userSelectionForNextCommand = null;
             return true; // TODO: Or should it return executionResult?

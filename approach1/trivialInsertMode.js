@@ -153,7 +153,7 @@ function trivialInsertModeCommand_mnNormal(mode,command) {
                 res[1]
             )
         );
-        mode.editor.inputBuffer = res[3]; // thats why the + in the regex is needed
+        mode.editor.eatInput(mode.editor.inputBuffer.length - res[3].length); // thats why the + in the regex is needed
         return true;
     }
     else {
@@ -197,7 +197,7 @@ function trivialInsertModeCommand_table(mode,command) {
         //insert an mtable
         mode.putElement(null, "mtable", mode.getNewPlaceholderElement());
     }
-    mode.editor.inputBuffer = mode.editor.inputBuffer.slice(command.length);
+    mode.editor.eatInput(command.length);
     return true;
 }
 
@@ -228,36 +228,36 @@ function trivialInsertModeCommand_insertDescribedElement(mode, command, elementN
         throw description.type + " not yet supported by insertDescribedElement";
     }
     mode.putElement(newElement);
-    mode.editor.inputBuffer = mode.editor.inputBuffer.slice(command.length);
+    mode.editor.eatInput(command.length);
     return true;
 }
 
 function trivialInsertModeCommand_cursorJump(mode,command) {
     if (mode.cursorStack.length<1) { 
         // If the stack is empty, the user is done with inserting, so exit
-        return trivialInsertModeCommand_exit(mode);
+        return trivialInsertModeCommand_exit(mode,command);
     }
     mode.moveCursor(mode.cursorStack.pop());
-    mode.editor.inputBuffer = mode.editor.inputBuffer.slice(command.length);
+    mode.editor.eatInput(command.length);
     return true;
 }
 
 function trivialInsertModeCommand_exit(mode,command) {
     mode.finish();
-    mode.editor.inputBuffer = mode.editor.inputBuffer.slice(command.length);
+    mode.editor.eatInput(command.length);
     return true;
 }
 
 function trivialInsertModeCommandTool_elementWithSingleCharacter(mode,command,elementName) {
     if (mode.editor.inputBuffer.length < 2) { return false }
     mode.putElement(null, elementName, document.createTextNode(mode.editor.inputBuffer[1]));
-    mode.editor.inputBuffer = mode.editor.inputBuffer.slice(command.length+1);
+    mode.editor.eatInput(command.length+1);
     return true;
 }
 
 function trivialInsertModeCommandTool_elementWithLongText(mode,command,elementName) {
     var endOfText = mode.editor.inputBuffer.indexOf("\n");
-    if (mode.editor.inputBuffer[mode.editor.inputBuffer.length-1] != "\n") { return false } 
+    if (endOfText==-1) { return false } 
     mode.putElement(
         null, 
         elementName,
@@ -265,7 +265,7 @@ function trivialInsertModeCommandTool_elementWithLongText(mode,command,elementNa
             mode.editor.inputBuffer.substring(1,mode.editor.inputBuffer.length-1)
         )
     );
-    mode.editor.inputBuffer = mode.editor.inputBuffer.slice(endOfText+1);
+    mode.editor.eatInput(endOfText+1);
     return true;
 }
 

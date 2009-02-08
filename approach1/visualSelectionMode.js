@@ -85,7 +85,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         editCommandObject = editModeCommands[command[0]];
         if (visualCommandObject) {
             visualCommandObject.execute(this,command[0])
-            this.editor.inputBuffer = this.editor.inputBuffer.slice(1);
+            this.editor.eatInput(1);
             return true;
         }
         else if (editCommandObject && editCommandObject.type == "movement") {
@@ -119,7 +119,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
                 }
                 this.moveCursor(newCursor);
             }
-            this.editor.inputBuffer = this.editor.inputBuffer.slice(1);
+            this.editor.eatInput(1);
             return true;
         }
         else {

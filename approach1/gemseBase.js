@@ -582,6 +582,14 @@ function GemsePEditor() {
     };
     this.__defineGetter__("inputBuffer", function() { return this.inputElement.value; });
     this.__defineSetter__("inputBuffer", function(x) { this.inputElement.value = x; });
+    // Modes must not set the inputBuffer directly. Instead, they
+    // should use the mothod eatInput
+    // eatInput(numberOfCharacters) removes numberOfCharacters from
+    // the inputBuffers. Also, it does records the removed string for
+    // command repeating.
+    this.eatInput = function(numberOfCharacters) {
+        this.inputBuffer = this.inputBuffer.slice(numberOfCharacters);
+    }
 
     this.eliminateEquationEnv = function (equationEnv) {
         // This method must only be called by methods of equationEnv.
