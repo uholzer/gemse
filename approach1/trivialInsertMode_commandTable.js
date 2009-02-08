@@ -22,49 +22,49 @@ trivialInsertModeCommands = {
         execute: trivialInsertModeCommand_mtext
     },
     " ": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mrow") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mrow") }
     },
     "/": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mfrac") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mfrac") }
     },
     "e": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"menclose") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"menclose") }
     },
     "r": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msqrt") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msqrt") }
     },
     "R": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mroot") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mroot") }
     },
     "f": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mfenced") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mfenced") }
     },
     "^": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msup") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msup") }
     },
     "_": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msub") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msub") }
     },
     "=": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"msubsup") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msubsup") }
     },
     "u": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"munder") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"munder") }
     },
     "v": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mover") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mover") }
     },
     "U": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"munderover") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"munderover") }
     },
     "m": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mmultiscripts") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mmultiscripts") }
     },
     ".": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"none") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"none") }
     },
     "p": {
-        execute: function (mode) { trivialInsertModeCommand_insertDescribedElement(mode,"mprescripts") }
+        execute: function (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mprescripts") }
     },
     "t": {
         execute: trivialInsertModeCommand_table // For inserting table, tr or td elements
