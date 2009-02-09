@@ -28,7 +28,11 @@
 <p>Mathematicians usually have good knowledge of LaTeX. Because this
 is probably not true for MathML and because I want mathematicians to
 be able to use Gemse, I give here a very short introduction to
-Presentation MathML.</p>
+Presentation MathML. This introdcution however, scratches only the
+surface of Presentation MathML, so you want to look into the 
+<a href="http://www.w3.org/TR/MathML3/chapter3.html">MathML specification</a>
+afterwards. Additionally, there is always the <kbd>:help element</kbd>
+command to open the specification for a specific element.</p>
 
 <p>While it is quite practical to write LaTeX with a text editor, to
 write MathML is not. This is the reason why there is Gemse.</p>
@@ -166,12 +170,32 @@ wich has a <code>linethickness</code> attribute with value
 special containment. In MathML this is not possible. We have to put
 the φ into an <code>mi</code> element, like this:
 <code>&lt;mi&gt;φ&lt;/mi&gt;</code>. For an identifier we use an
-<code>mi</code> element. For an operators we have to use an
+<code>mi</code> element. For an operator we have to use an
 <code>mo</code> element. The <code>mn</code> element is for literal
 numbers. (With <q>literal</q>, I want to stress that
 an <code>mn</code> element is not suited for <m:math><m:mi>a</m:mi></m:math> 
 even if <m:math><m:mi>a</m:mi><m:mo>∈</m:mo><m:mi>ℝ</m:mi></m:math>.
 In this case, you must use <code>mi</code>.)</p>
+
+<p>The <code>mo</code> element is very powerful. It is not only used
+for operators like <code>+</code>, <code>·</code> and the like, but it
+is also used for fences, arrows, separators and more. It is even used for accents
+like a hat over a variable. The <code>mo</code> element has a huge
+amount of attributes which control the behaviour of the operators.
+However, these attributes have default values depending on the content
+of the <code>mo</code> element. Every MathML renderer has an operator
+dictionary which tells it the default values if it encounters an
+<code>mo</code> element containing a known operator. But it can be
+that you wish to change these defaults or that you have to set them
+because you use an operator that is not found in the dictionary. You
+can look up the 
+<a href="http://www.w3.org/TR/MathML3/appendixb.html">operator 
+dictionary in the MathML specification</a>. You can read about the
+attributes in the 
+<a href="http://www.w3.org/TR/MathML3/chapter3.html#presm.mo">section
+about <code>mo</code></a> in the MathML specification. It is quite a
+big section, you may want to read it after you have gone through the
+rest of this introduction.</p>
 
 <h2>Superscripts and subscripts</h2>
 
@@ -360,7 +384,7 @@ above and below the sign. This is done by <code>munder</code>,
 </pre>
 
 <p>Look how <code>munder</code>, <code>mover</code> and
-<code>munderover</code> change their behavious when you change the
+<code>munderover</code> change their behaviour when you change the
 value of the display attribute of the MathML element to
 <code>inline</code>:</p>
 
@@ -446,6 +470,190 @@ the paragraph on its own line, you use <code>block</code>.</p>
 <p>The <code>linethickness</code> attribute suppresses the horizontal
 bar of the fraction.</p>
 
+<h2>Roots</h2>
+
+<p>The elements <code>msqrt</code> and <code>root</code> do the
+obvious thing:</p>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <msqrt>
+      <msup>
+        <mi>x</mi>
+        <mn>2</mn>
+      </msup>
+      <mo>+</mo>
+      <msup>
+        <mi>y</mi>
+        <mn>2</mn>
+      </msup>
+    </msqrt>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <msqrt>
+      <msup>
+        <mi>x</mi>
+        <mn>2</mn>
+      </msup>
+      <mo>+</mo>
+      <msup>
+        <mi>y</mi>
+        <mn>2</mn>
+      </msup>
+    </msqrt>
+  </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mroot>
+      <mrow>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mi>y</mi>
+          <mn>2</mn>
+        </msup>
+      </mrow>
+      <mn>3</mn>
+    </mroot>
+  </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mroot>
+      <mrow>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mi>y</mi>
+          <mn>2</mn>
+        </msup>
+      </mrow>
+      <mn>3</mn>
+    </mroot>
+  </mrow>
+</math>
+]]></pre>
+
+<h2>Tables</h2>
+
+<p>Tables in MathML are a little bit like tables in HTML. There are
+the elements <code>mtable</code>, <code>mtr</code> and
+<code>mtd</code>.</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+  <mo> ( </mo>
+  <mtable>
+    <mtr>
+      <mtd> <mn>1</mn> </mtd>
+      <mtd> <mn>0</mn> </mtd>
+      <mtd> <mn>0</mn> </mtd>
+    </mtr>
+    <mtr>
+      <mtd> <mn>0</mn> </mtd>
+      <mtd> <mn>1</mn> </mtd>
+      <mtd> <mn>0</mn> </mtd>
+    </mtr>
+    <mtr>
+      <mtd> <mn>0</mn> </mtd>
+      <mtd> <mn>0</mn> </mtd>
+      <mtd> <mn>1</mn> </mtd>
+    </mtr>
+  </mtable>
+  <mo> ) </mo>
+</mrow>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+  <mo> ( </mo>
+  <mtable>
+    <mtr>
+      <mtd> <mn>1</mn> </mtd>
+      <mtd> <mn>0</mn> </mtd>
+      <mtd> <mn>0</mn> </mtd>
+    </mtr>
+    <mtr>
+      <mtd> <mn>0</mn> </mtd>
+      <mtd> <mn>1</mn> </mtd>
+      <mtd> <mn>0</mn> </mtd>
+    </mtr>
+    <mtr>
+      <mtd> <mn>0</mn> </mtd>
+      <mtd> <mn>0</mn> </mtd>
+      <mtd> <mn>1</mn> </mtd>
+    </mtr>
+  </mtable>
+  <mo> ) </mo>
+</mrow>
+</math>
+]]></pre>
+
+<p>Note that the fences are not part of the table, you have to put
+them with <code>mo</code> elements. Like this you can also use other
+brackets or none at all.</p>
+
+<p>Instead of <code>mtr</code> you can also use
+<code>mlabeledtr</code>, which interprets its first child as a label
+for this row. Otherwise, it works just like <code>mtr</code>.</p>
+
+<h2>mfenced</h2>
+
+<p>The <code>mfenced</code> element is a shorter notation for its equivalent using
+<code>mo</code> elements. For example</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mfenced><mi>x</mi><mi>y</mi><mi>z</mi></mfenced>
+</math>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mfenced><mi>x</mi><mi>y</mi><mi>z</mi></mfenced>
+</math>
+]]></pre>
+
+<p>is equivalent to</p>
+
+<pre><![CDATA[
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+  <mo>(</mo>
+    <mrow>
+      <mi>x</mi>
+      <mo>,</mo>
+      <mi>y</mi>
+      <mo>,</mo>
+      <mi>z</mi>
+    </mrow>
+  <mo>)</mo>
+</mrow>
+</math>
+]]></pre>
+
+<p>I hope you get the idea. The <code>mfenced</code> element has three
+attributes which control what operators are used: The attribute
+<code>open</code> declares which operator is used at the beginning. It
+is <code>(</code> by default. <code>close</code> is for the operator
+at the end, <code>)</code> by default. The attribute
+<code>separators</code> provides the operators put between the children
+of the <code>mfenced</code> element. It is <code>,</code> by
+default.</p>
 
 <h2>Examples</h2>
 
@@ -643,7 +851,9 @@ Gemse.</p>
 
 <p>In the above I am not shure whether one should use 
 ‾ (OVERLINE U+203E) or as above ¯ (MACRON U+00AF). Firefox stretches
-only the latter.</p>
+only the latter. Also, the operator dictionary found in the
+specification does not contain the overline, but declares the macron
+to be stretchy. So it is best to use the macron.</p>
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow>
