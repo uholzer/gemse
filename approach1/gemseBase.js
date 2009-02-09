@@ -588,7 +588,19 @@ function GemsePEditor() {
     // the inputBuffers. Also, it does records the removed string for
     // command repeating.
     this.eatInput = function(numberOfCharacters) {
+        for (r in this.inputRecordings) {
+            this.inputRecordings[r] += this.inputBuffer.slice(0,numberOfCharacters);
+        }
         this.inputBuffer = this.inputBuffer.slice(numberOfCharacters);
+    }
+    this.inputRecordings = { };
+    this.startInputRecording = function(name) {
+        this.inputRecordings[name] = "";
+    }
+    this.stopInputRecording = function(name) {
+        var result = this.inputRecordings[name];
+        delete this.inputRecordings[name];
+        return result;
     }
 
     this.eliminateEquationEnv = function (equationEnv) {

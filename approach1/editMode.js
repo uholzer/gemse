@@ -516,6 +516,10 @@ function editModeCommand_copyToRegister(mode,commandString,args,userSelection) {
     return true;
 }
 
+function editModeCommand_startstopUserRecording(name) {
+
+}
+
 /* They all return null if there is no more node in this direction */
 
 function mml_nextSibling(element) {
