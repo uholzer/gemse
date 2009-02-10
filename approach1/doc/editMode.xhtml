@@ -39,6 +39,24 @@
 </tbody>
 </table>
 
+<div class="commandDocumentation" id="editModeCommand_moveLeft">
+    <h3 class="commandTitle">Move left</h3>
+
+    <p>Moves the cursor to the previous sibling.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_moveRight">
+    <h3 class="commandTitle">Move right</h3>
+
+    <p>Moves the cursor to the next sibling.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_moveUp">
+    <h3 class="commandTitle">Move to parent</h3>
+
+    <p>Moves the cursor to the parent the current element.</p>
+</div>
+
 <div class="commandDocumentation" id="editModeCommand_moveDown">
     <h3 class="commandTitle">Move to first child</h3>
 
@@ -56,6 +74,97 @@
 
     <p>Moves the cursor to the root element, i.e. to the math
     element.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_moveToFirstSibling">
+    <h3 class="commandTitle">Move to first sibling</h3>
+
+    <p>Moves the cursor to the first sibling of the current
+    element.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_moveToLastSibling">
+    <h3 class="commandTitle">Move to last sibling</h3>
+
+    <p>Moves the cursor to the last sibling of the current
+    element.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_nextEquation">
+    <h3 class="commandTitle">Go to next equation</h3>
+
+    <p>If you have opened more than one equation, you can use this
+    command to switch to the next equation.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_previousEquation">
+    <h3 class="commandTitle">go to previous equation</h3>
+
+    <p>If you have opened more than one equation, you can use this
+    command to switch to the previous equation.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_newEquation">
+    <h3 class="commandTitle">Create a new equation</h3>
+
+    <p>Creates a new empty equation.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_redisplay">
+    <h3 class="commandTitle">Update display</h3>
+
+    <p>In rare cases it may happen (perhaps because of a bug) that the
+    display does not get updated. In such a case you can use this command
+    to force an update of the display.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_insertBefore">
+    <h3 class="commandTitle">insert before</h3>
+
+    <p>Open the insert mode such that the cursor is placed before the
+    current element.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_insertAfter">
+    <h3 class="commandTitle">insert after</h3>
+
+    <p>Open the insert mode such that the cursor is placed after the
+    current element.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_insertAtEnd">
+    <h3 class="commandTitle">insert at end</h3>
+
+    <p>Open the insert mode such that the cursor is placed after the
+    last sibling of the curent element.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_insertAtBeginning">
+    <h3 class="commandTitle">insert at beginning</h3>
+
+    <p>Open the insert mode such that the cursor is placed before the
+    first sibling</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_insertIn">
+    <h3 class="commandTitle">insert after</h3>
+
+    <p>Open the insert mode such that the cursor is placed into the
+    current empty element. <em>The current element must be empty!</em></p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_visualMode">
+    <h3 class="commandTitle">Visual</h3>
+
+    <p>Opens the visual mode so you can make a selection and execute
+    an edit mode command on it.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_attributeMode">
+    <h3 class="commandTitle">Attribute mode</h3>
+
+    <p>Opens the attribute mode so you can change the attributes of
+    the current element</p>
 </div>
 
 <div class="commandDocumentation" id="editModeCommand_kill">
@@ -108,6 +217,47 @@
     specification. If you want to open the section of another element, you
     can write the name of it behind the <q>element</q> argument, for
     example <q>element mfrac</q>.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_copyToRegister">
+    <h3 class="commandTitle">yank</h3>
+
+    <p>Copies the selection into a register. If there is no selection,
+    the element under the cursor is taken. By default, it copies to
+    the default register. Another register can be used by prepending
+    the command with <kbd>"x</kbd> where <code>x</code> is the name of
+    the register which is always one unicode character.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_putBefore">
+    <h3 class="commandTitle">Put before</h3>
+
+    <p>Puts the contents of a register before the current element. 
+    By default, it uses
+    the default register. Another register can be used by prepending
+    the command with <kbd>"x</kbd> where <code>x</code> is the name of
+    the register which is always one unicode character.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_putAfter">
+    <h3 class="commandTitle">Put after</h3>
+
+    <p>Puts the contents of a register after the current element. 
+    By default, it uses
+    the default register. Another register can be used by prepending
+    the command with <kbd>"x</kbd> where <code>x</code> is the name of
+    the register which is always one unicode character.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_putIn">
+    <h3 class="commandTitle">Put in</h3>
+
+    <p>Puts the contents of a register into the current element. 
+    <em>The current element must be empty!</em>
+    By default, it uses
+    the default register. Another register can be used by prepending
+    the command with <kbd>"x</kbd> where <code>x</code> is the name of
+    the register which is always one unicode character.</p>
 </div>
 
 </div>
