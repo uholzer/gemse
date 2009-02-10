@@ -25,13 +25,7 @@ function EditMode(editor, equationEnv) {
     }
     this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.cursor; }); // Required for every mode
-    this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
     this.inputHandler = function() {
-        // Call handleOneCommandFromInputBuffer as long as it can extract and execute a
-        // full command from the input buffer.
-        while (editor.inputBuffer.length > 0 && this.handleOneCommandFromInputBuffer()) {}
-    }
-    this.handleOneCommandFromInputBuffer = function() {
         // Returns true if it succeeded to execute the first command from the
         // input buffer. Else, it returns false.
         var command = this.editor.inputBuffer;
@@ -39,12 +33,6 @@ function EditMode(editor, equationEnv) {
         var commandArg = null;
         var forceFlag = false;
         var singleCharacterArgs = [];
-        if (command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE) {
-            // KeyEvent.DOM_VK_ESCAPE should be 0x1b
-            //event.preventDefault();
-            this.editor.inputBuffer = "";
-            return false; //XXX: Or true?
-        }
         while (command[0] == '"') {
             if (command.length < 2) { return } // Returns if the user has not yet entered the character
             singleCharacterArgs.push(command[1]);
@@ -76,7 +64,7 @@ function EditMode(editor, equationEnv) {
             if (commandObject.type == "long") {
                 var executionResult = commandObject.execute(this,commandArg,forceFlag)
                 // TODO: Only clear buffer if it returns true?
-                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
+                editor.eatInput(endOfCommandIndex);
             }
             else if (commandObject.type == "movement") {
                 var executionResult = commandObject.execute(this,this.cursor)
@@ -88,7 +76,7 @@ function EditMode(editor, equationEnv) {
                 }
                 // If executionResult is null, we do not move the
                 // cursor
-                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
+                editor.eatInput(endOfCommandIndex);
             }
             else {
                 if (this.userSelectionForNextCommand) {
@@ -105,13 +93,13 @@ function EditMode(editor, equationEnv) {
                 }
                 var executionResult = commandObject.execute(this,command,singleCharacterArgs,this.userSelectionForNextCommand);
                 // TODO: Only clear buffer if it returns true?
-                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
+                editor.eatInput(endOfCommandIndex);
             }
             this.userSelectionForNextCommand = null;
             return true; // TODO: Or should it return executionResult?
         }
         else {
-            throw "Command not found";
+            // Command not found
             return false;
         }
     };
@@ -526,6 +514,10 @@ function editModeCommand_copyToRegister(mode,commandString,args,userSelection) {
     mode.editor.registers[registerName] = new Register (registerName, registerContent);
     mode.showCursor();
     return true;
+}
+
+function editModeCommand_startstopUserRecording(name) {
+
 }
 
 /* They all return null if there is no more node in this direction */

@@ -541,26 +541,134 @@ function GemsePEditor() {
     /* Methods */
     this.inputEvent = function () {
         // Is called when the input buffer supposedly changed
+        if (inputSubstitutionActive) { 
+            var allowPropagation = this.inputSubstitution();
+            if (!allowPropagation) { return };
+        }
         try {
-            this.equations[this.focus].mode.inputHandler();
+            // Call the input handler as long as it finds commands.
+            // (If the inputBuffer is empty, it can not find one, so,
+            // for efficiency, do not call it)
+            // This can cause an endless loop, so all modes must
+            // correctly implement their inputHandler. The
+            // inputHandler must return true if it found a command. In
+            // this case, it must remove the command from the input
+            // buffer. It must not remove following commands.
+            while (this.inputBuffer && this.equations[this.focus].mode.inputHandler()) {};
+            // Now, if there is still something in the buffer, it is
+            // either an incomplete command or an invalid command. So,
+            // if the remeining string ends with ESCAPE, the user
+            // wants to clear the input buffer.
+            if (this.inputBuffer.charCodeAt(this.inputBuffer.length-1) == KeyEvent.DOM_VK_ESCAPE) {
+                this.inputBuffer = "";
+            }
         }
         catch (e if false) {
             this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
         }
     };
+    this.inputSubstitution = function() {
+        // Scans the inputBuffer for the substitution sign and does
+        // a substitution according to the intutSubstitutionTable.
+        // returns false if the user has begun to insert a to be substituted string.
+        // So the event must not be handed on to the mode if it returns false!
+        var startIndex;
+        while (-1 != (startIndex = this.inputBuffer.indexOf(inputSubstitutionSign))) {
+            // This loop never returns true, because it has to run 
+            // through completely. True is returned after the loop.
+            // However this loop _must_ return false if it detects
+            // a paritally entered string that will be later substituted.
+            // (It assumes that this is the case if it finds the
+            // substitution sign but does not know with what to substitute
+            // it.)
+            if (this.inputBuffer.substring(startIndex+1,startIndex+3) == "u+") {
+                // Insert unicode character using the following 4 characters as codepoint
+                var codepointAsHex = this.inputBuffer.substring(startIndex+3,startIndex+3+4);
+                if (codepointAsHex.length < 4) { return false }
+                var codepoint = parseInt(codepointAsHex, 16);
+                this.inputBuffer = 
+                    this.inputBuffer.substring(0,startIndex) + 
+                    String.fromCharCode(codepoint) +
+                    this.inputBuffer.substring(startIndex+3+4);
+            }
+            else if (this.inputBuffer.substring(startIndex+1,startIndex+3) == "U+") {
+                // Insert unicode character using the following 8 characters as codepoint
+                var codepointAsHex = this.inputBuffer.substring(startIndex+3,startIndex+3+8);
+                if (codepointAsHex.length < 8) { return false }
+                var codepoint = parseInt(codepointAsHex, 16);
+                this.inputBuffer = 
+                    this.inputBuffer.substring(0,startIndex) + 
+                    String.fromCharCode(codepoint) +
+                    this.inputBuffer.substring(startIndex+3+8);
+            }
+            else {
+                // Look up the table for a substitution
+                var endIndex = startIndex+1;
+                var replacement = undefined;
+                while (endIndex < this.inputBuffer.length && replacement===undefined) {
+                    replacement = inputSubstitutionTable[this.inputBuffer.substring(startIndex+1,endIndex+1)];
+                    if (this.inputBuffer.charCodeAt(endIndex) == KeyEvent.DOM_VK_ESCAPE) {
+                        replacement = "";
+                    }
+                    ++endIndex;
+                }
+                --endIndex; // Otherwise endIndex is one too high
+                if (replacement!==undefined) {
+                    this.inputBuffer = 
+                        this.inputBuffer.substring(0,startIndex) + 
+                        replacement +
+                        this.inputBuffer.substring(endIndex+1);
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        // At this point all substitutions have been commited
+        // and there is no substitution to be done at a later
+        // time. This means we can hand on the event to the
+        // mode, so return.
+        return true;
+    }
     this.keyEvent = function (event) {
         // Is called when a key gets hit. This also is called
         // if the key does not cause a character to be entered
         // into the input element (i.e. the input buffer).
-        try {
-            this.equations[this.focus].mode.keyHandler(event);
+
+        if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT }
+        if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL }
+        //if (event.metaKey) { editor.inputBuffer += KEYMOD_META }
+        if (event.charCode || event.keyCode) {
+            editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
+                // event.which does not seem to work, it returns 0 for the escape Key
         }
-        catch (e if false) {
-            this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
-        }
+        //if (event.keyCode) { event.preventDefault(); }
+        event.preventDefault();
+        event.stopPropagation();
+        editor.inputEvent();
     };
     this.__defineGetter__("inputBuffer", function() { return this.inputElement.value; });
     this.__defineSetter__("inputBuffer", function(x) { this.inputElement.value = x; });
+    // Modes must not set the inputBuffer directly. Instead, they
+    // should use the mothod eatInput
+    // eatInput(numberOfCharacters) removes numberOfCharacters from
+    // the inputBuffers. Also, it does records the removed string for
+    // command repeating.
+    this.eatInput = function(numberOfCharacters) {
+        for (r in this.inputRecordings) {
+            this.inputRecordings[r] += this.inputBuffer.slice(0,numberOfCharacters);
+        }
+        this.inputBuffer = this.inputBuffer.slice(numberOfCharacters);
+    }
+    this.inputRecordings = { };
+    this.startInputRecording = function(name) {
+        this.inputRecordings[name] = "";
+    }
+    this.stopInputRecording = function(name) {
+        var result = this.inputRecordings[name];
+        delete this.inputRecordings[name];
+        return result;
+    }
 
     this.eliminateEquationEnv = function (equationEnv) {
         // This method must only be called by methods of equationEnv.
@@ -720,20 +828,5 @@ function GemsePEditor() {
     this.pool = null;
 }
 
-function standardKeyHandler(event,editor) {
-    // This procedure can be used as a method by a mode object. 
-
-    if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT }
-    if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL }
-    //if (event.metaKey) { editor.inputBuffer += KEYMOD_META }
-    if (event.charCode || event.keyCode) {
-        editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
-            // event.which does not seem to work, it returns 0 for the escape Key
-    }
-    //if (event.keyCode) { event.preventDefault(); }
-    event.preventDefault();
-    event.stopPropagation();
-    editor.inputEvent();
-}
 
 

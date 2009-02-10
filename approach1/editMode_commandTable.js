@@ -84,6 +84,10 @@ editModeCommands = {
         type: "action",
         execute: editModeCommand_putBefore
     },
+    "q": {
+        type: "action",
+        execute: editModeCommand_startstopUserRecording
+    },
     " ": {
         type: "operator",
         execute: editModeCommand_mrowEnvelop

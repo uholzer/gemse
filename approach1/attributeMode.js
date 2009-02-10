@@ -53,13 +53,7 @@ function AttributeMode(editor, equationEnv, element) {
     }
     this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.element }); // XXX: good like this?
-    this.keyHandler = function(event) { standardKeyHandler(event,this.editor) }
     this.inputHandler = function() {
-        // Call handleOneCommandFromInputBuffer as long as it can extract and execute a
-        // full command from the input buffer.
-        while (editor.inputBuffer.length > 0 && this.handleOneCommandFromInputBuffer()) {}
-    }
-    this.handleOneCommandFromInputBuffer = function() {
         // Returns true if it succeeded to execute the first command from the
         // input buffer. Else, it returns false.
         // (This is mainly a copy from the same function of the edit
@@ -69,12 +63,6 @@ function AttributeMode(editor, equationEnv, element) {
         var commandArg = null;
         var forceFlag = false;
         var singleCharacterArgs = [];
-        if (command.charCodeAt(command.length-1) == KeyEvent.DOM_VK_ESCAPE && command.length > 1) {
-            // KeyEvent.DOM_VK_ESCAPE should be 0x1b
-            //event.preventDefault();
-            this.editor.inputBuffer = "";
-            return false; //XXX: Or true?
-        }
         while (command[0] == '"') {
             if (command.length < 2) { return } // Returns if the user has not yet entered the character
             singleCharacterArgs.push(command[1]);
@@ -100,7 +88,7 @@ function AttributeMode(editor, equationEnv, element) {
                 }
                 // If executionResult is null, we do not move the
                 // cursor
-                editor.inputBuffer = editor.inputBuffer.slice(endOfCommandIndex);
+                editor.eatInput(endOfCommandIndex);
                 return true;
             }
             else {
@@ -110,7 +98,6 @@ function AttributeMode(editor, equationEnv, element) {
             }
         }
         else {
-            throw "Command not found";
             return false;
         }
     }
@@ -118,10 +105,9 @@ function AttributeMode(editor, equationEnv, element) {
 
 
 function attributeModeCommand_exit(mode,command) {
-    mode.editor.inputBuffer = mode.editor.inputBuffer.slice(command.length);
+    mode.editor.eatInput(command.length);
     mode.finish();
-    // We have to return false to break the command loop of this mode and return control to edit mode
-    return false;
+    return true;
 }
 
 function attributeModeCommand_up(mode,oldCursor) {
@@ -137,19 +123,19 @@ function attributeModeCommand_down(mode,oldCursor) {
 }
 
 function attributeModeCommand_kill(mode,command) {
-    if (mode.cursor==null) { editor.inputBuffer = editor.inputBuffer.slice(command.legth); return true; }
+    if (mode.cursor==null) { mode.editor.eatInput(command.length); return true; }
     mode.element.removeAttributeNode(mode.attributes[mode.cursor]);
     mode.attributes.splice(mode.cursor,1);
     if (mode.attributes.length == 0) { mode.moveCursor(null) }
     else if (mode.cursor >= mode.attributes.length) { mode.moveCursor(mode.cursor-1) }
     else { mode.moveCursor(mode.cursor) }
 
-    editor.inputBuffer = editor.inputBuffer.slice(command.length);
+    mode.editor.eatInput(command.length);
     return true;
 }
 
 function attributeModeCommand_changeValue(mode,command) {
-    if (mode.cursor==null) { editor.inputBuffer = editor.inputBuffer.slice(command.legth); return true; }
+    if (mode.cursor==null) { mode.editor.eatInput(command.length); return true; }
     var endOfValue = editor.inputBuffer.indexOf("\n"); 
     if (endOfValue == -1) { return false; }
     var value = editor.inputBuffer.slice(command.length,endOfValue);
@@ -157,17 +143,17 @@ function attributeModeCommand_changeValue(mode,command) {
     mode.attributes[mode.cursor].nodeValue = value;
     mode.moveCursor(mode.cursor);
 
-    editor.inputBuffer = editor.inputBuffer.slice(endOfValue+1);
+    editor.eatInput(endOfValue+1);
     return true;
 }
 
 function attributeModeCommand_changeName(mode,command) {
-    if (mode.cursor==null) { editor.inputBuffer = editor.inputBuffer.slice(command.legth); return true; }
+    if (mode.cursor==null) { mode.editor.eatInput(command.length); return true; }
     throw "todo!";
 }
 
 function attributeModeCommand_changeNS(mode) {
-    if (mode.cursor==null) { editor.inputBuffer = editor.inputBuffer.slice(command.legth); return true; }
+    if (mode.cursor==null) { mode.editor.eatInput(command.length); return true; }
     throw "todo!";
 }
 
@@ -176,7 +162,7 @@ function attributeModeCommand_insertDefault(mode,command) {
     var info = r.exec(mode.editor.inputBuffer.slice(command.length));
     if (info) {
         mode.element.setAttribute(info[1], info[2]);
-        editor.inputBuffer = editor.inputBuffer.slice(command.length + info[0].length);
+        editor.eatInput(command.length + info[0].length);
         mode.reInit();
         return true;
     }
@@ -190,7 +176,7 @@ function attributeModeCommand_insertForeign(mode,command) {
     var info = r.exec(mode.editor.inputBuffer.slice(command.length));
     if (info) {
         mode.element.setAttributeNS(info[1], info[2], info[3]);
-        editor.inputBuffer = editor.inputBuffer.slice(command.length + info[0].length);
+        editor.eatInput(command.lenth + info[0].length);
         mode.reInit();
         return true;
     }
