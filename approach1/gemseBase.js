@@ -724,7 +724,7 @@ function GemsePEditor() {
         // equation
         var value = undefined;
         if (this.focus >= 0) {
-            value = this.equations[this.focus].options[key]];
+            value = this.equations[this.focus].options[key];
         }
         if (value === undefined) {
             value = this.options[key];
@@ -739,7 +739,7 @@ function GemsePEditor() {
         // global is false. If global is true, the option is set on
         // all equations
         if (global) {
-            this.equations.forEach(function(e) { delete e.options[key]; }
+            this.equations.forEach(function(e) { delete e.options[key]; })
             this.options[key] = value;
         }
         else {
