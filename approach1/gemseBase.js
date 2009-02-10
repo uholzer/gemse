@@ -541,6 +541,10 @@ function GemsePEditor() {
     /* Methods */
     this.inputEvent = function () {
         // Is called when the input buffer supposedly changed
+        if (inputSubstitutionActive) { 
+            var allowPropagation = this.inputSubstitution();
+            if (!allowPropagation) { return };
+        }
         try {
             // Call the input handler as long as it finds commands.
             // (If the inputBuffer is empty, it can not find one, so,
@@ -563,6 +567,69 @@ function GemsePEditor() {
             this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
         }
     };
+    this.inputSubstitution = function() {
+        // Scans the inputBuffer for the substitution sign and does
+        // a substitution according to the intutSubstitutionTable.
+        // returns false if the user has begun to insert a to be substituted string.
+        // So the event must not be handed on to the mode if it returns false!
+        var startIndex;
+        while (-1 != (startIndex = this.inputBuffer.indexOf(inputSubstitutionSign))) {
+            // This loop never returns true, because it has to run 
+            // through completely. True is returned after the loop.
+            // However this loop _must_ return false if it detects
+            // a paritally entered string that will be later substituted.
+            // (It assumes that this is the case if it finds the
+            // substitution sign but does not know with what to substitute
+            // it.)
+            if (this.inputBuffer.substring(startIndex+1,startIndex+3) == "u+") {
+                // Insert unicode character using the following 4 characters as codepoint
+                var codepointAsHex = this.inputBuffer.substring(startIndex+3,startIndex+3+4);
+                if (codepointAsHex.length < 4) { return false }
+                var codepoint = parseInt(codepointAsHex, 16);
+                this.inputBuffer = 
+                    this.inputBuffer.substring(0,startIndex) + 
+                    String.fromCharCode(codepoint) +
+                    this.inputBuffer.substring(startIndex+3+4);
+            }
+            else if (this.inputBuffer.substring(startIndex+1,startIndex+3) == "U+") {
+                // Insert unicode character using the following 8 characters as codepoint
+                var codepointAsHex = this.inputBuffer.substring(startIndex+3,startIndex+3+8);
+                if (codepointAsHex.length < 8) { return false }
+                var codepoint = parseInt(codepointAsHex, 16);
+                this.inputBuffer = 
+                    this.inputBuffer.substring(0,startIndex) + 
+                    String.fromCharCode(codepoint) +
+                    this.inputBuffer.substring(startIndex+3+8);
+            }
+            else {
+                // Look up the table for a substitution
+                var endIndex = startIndex+1;
+                var replacement = undefined;
+                while (endIndex < this.inputBuffer.length && replacement===undefined) {
+                    replacement = inputSubstitutionTable[this.inputBuffer.substring(startIndex+1,endIndex+1)];
+                    if (this.inputBuffer.charCodeAt(endIndex) == KeyEvent.DOM_VK_ESCAPE) {
+                        replacement = "";
+                    }
+                    ++endIndex;
+                }
+                --endIndex; // Otherwise endIndex is one too high
+                if (replacement!==undefined) {
+                    this.inputBuffer = 
+                        this.inputBuffer.substring(0,startIndex) + 
+                        replacement +
+                        this.inputBuffer.substring(endIndex+1);
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        // At this point all substitutions have been commited
+        // and there is no substitution to be done at a later
+        // time. This means we can hand on the event to the
+        // mode, so return.
+        return true;
+    }
     this.keyEvent = function (event) {
         // Is called when a key gets hit. This also is called
         // if the key does not cause a character to be entered
