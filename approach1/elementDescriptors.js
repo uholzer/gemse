@@ -57,7 +57,7 @@ mfrac: {
             defaultValue: "center",
         },
         denomalign: {
-            name: "numalign",
+            name: "denomalign",
             defaultValue: "center",
         },
         bevelled: {
