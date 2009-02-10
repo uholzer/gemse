@@ -528,6 +528,24 @@ function editModeCommand_copyToRegister(mode,commandString,args,userSelection) {
     return true;
 }
 
+function editModeCommand_set(mode, argString) {
+    var args = argString.match(/^(global )?([^=\s]+)(=(.*))?$/);
+    if (!args) { throw "I do not understand " + argString; }
+    var global = args[1];
+    var key = args[2];
+    var value = args[4];
+    if (value!==undefined) {
+        // set the option
+        mode.editor.setOption(key,value,global?true:false);
+    }
+    else {
+        // Only show the user the current setting
+        value = mode.editor.getOption(key);
+        mode.equationEnv.notificationDisplay.textContent = value;
+    }
+    return true;
+}
+
 /* They all return null if there is no more node in this direction */
 
 function mml_nextSibling(element) {
