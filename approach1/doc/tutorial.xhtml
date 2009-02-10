@@ -1301,11 +1301,67 @@ elements.</p>
 
 <p>In edit mode, you can call the attribute mode which allows you to
 edit the attributes of this element. At the moment, the attribute mode
-is called witch <kbd>@</kbd>. This may change in the future, since in
+is called with <kbd>@</kbd>. This may change in the future, since in
 vim, <kbd>@</kbd> has another meaning, which could be important for
-gemse too. Up to now, the attribute mode does not much. You can delete
-attributes, but not more. The commands in attribute mode are the usual
-<kbd>j</kbd>, <kbd>k</kbd> and <kbd>x</kbd>.</p>
+gemse too.</p>
+
+<p>Select the fraction, i.e. the <code>mfrac</code> element. Now hit
+<kbd>@</kbd>. You are now in the attribute mode. The selected element
+does not yet have any attributes declared. However, the attribute view
+below the tree view does also show you the default values of all
+attributes. If an attribute is not declared, MathML uses its default
+value. Let us add the attribute <code>bevelled</code>. For this, write
+<kbd>ibevelled&enter;true&enter;</kbd>. Note that the <code>i</code>
+at the beginning tells the attribute mode that you want to insert a
+new attribute. Behind the i you have to write the name of the
+attribute, then hit enter followed by the value of the attribute and
+then enter again. As you can see, the attribute has been added to the
+list of attributes and indeed, the fraction changed its
+appeareance.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
+        <mrow internal:selected="parent"><munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover><mfrac internal:selected="editcursor" internal:selectedAttributes="" internal:attributeCursor="bevelled" bevelled="true">
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac></mrow>
+    </mrow>
+</mrow>
+</math>
+    </div>
+    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element" internal:selected="parent">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element" internal:selected="editcursor">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
+    <div internal:function="attributeView"><table><caption>attributes</caption><tr internal:selected="attributeCursor"><td></td><td>bevelled</td><td>true</td></tr></table><table class="defaultAttribute"><caption>default attributes</caption><tr><td></td><td>linethickness</td><td>1</td></tr><tr><td></td><td>numalign</td><td>center</td></tr><tr><td></td><td>denomalign</td><td>center</td></tr><tr><td></td><td>bevelled</td><td>false</td></tr></table></div>
+    <div internal:function="modeName">attribute</div>
+    <pre internal:function="notificationDisplay"/>
+</div>
+</div>
+
+<p>Let us add another attribute:
+<kbd>ilinethickness&enter;0&enter;</kbd>. And antother one:
+<kbd>ifoo&enter;bar&enter;</kbd>.</p>
+
+<p>By looking at the attributes table you can see that there 
+is also a cursor in the attribute mode.
+You can move it with <kbd>j</kbd> and <kbd>k</kbd>. Select the
+<code>bevelled</code> attribute and insert <kbd>cfalse&enter;</kbd>.
+This changes the value of the attribute under the cursor. You can also
+remove the attribute by hitting <kbd>x</kbd>.</p>
 
 <h2>Customizing</h2>
 
