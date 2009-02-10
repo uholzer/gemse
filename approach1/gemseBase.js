@@ -47,6 +47,11 @@ function EquationEnv(editor, container) {
     // this.
     this.__defineGetter__("workingDirectory", function() { return this.editor.workingDirectory; });
 
+    // Options that are locally set for this equationEnv. A mode
+    // should not read or write this array directly, it should use
+    // getOption() and setOption() from the editor object.
+    this.options = [];
+
     /* Methods */
 
     // Getting and setting the equation 
@@ -526,6 +531,7 @@ function GemsePEditor() {
     this.focus = -1; // Number of equation that has the focus
     this.inputElement; // A dom element that receives user input
     this.containerTemplate; // A dom element that can be sed to create new containers
+    this.options = []; // Array of options wich differ from the defaults
 
     // Find out the current working directory
     this.__defineGetter__("workingDirectory", function() {
@@ -820,6 +826,33 @@ function GemsePEditor() {
         }
         this.focus = dest;
         this.equations[this.focus].container.setAttributeNS(NS_internal, "selected", "equationFocus");
+    }
+    this.getOption = function(key) {
+        // Tries to get the option. This may depend on the focused
+        // equation
+        var value = undefined;
+        if (this.focus >= 0) {
+            value = this.equations[this.focus].options[key];
+        }
+        if (value === undefined) {
+            value = this.options[key];
+        }
+        if (value === undefined) {
+            value = defaultOptions[key];
+        }
+        return value;
+    }
+    this.setOption = function(key,value,global) {
+        // Sets the option key to value for the current equation if
+        // global is false. If global is true, the option is set on
+        // all equations
+        if (global) {
+            this.equations.forEach(function(e) { delete e.options[key]; })
+            this.options[key] = value;
+        }
+        else {
+            this.equations[this.focus].options[key] = value;
+        }
     }
 
     // The DOM element that horts all equation Environments is
