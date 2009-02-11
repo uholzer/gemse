@@ -113,6 +113,12 @@ function EditMode(editor, equationEnv) {
         if (returnValue && returnValue.userSelection) {
             this.userSelectionForNextCommand = returnValue.userSelection;
         }
+        if (returnValue && returnValue.newCursor) {
+            // XXX: This is a hack. It relies on this.hideCursor to be
+            // called before a mode gets called that returns a
+            // newCursor value.
+            this.cursor = returnValue.newCursor;
+        }
         delete this.infoAboutCalledMode;
         this.moveCursor(this.cursor); // In order to update all views
     }

@@ -17,7 +17,7 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
     this.finish = function() {
         // TODO: Clean up attribute mess
         this.hideCursor();
-        this.equationEnv.finishMode();
+        this.equationEnv.finishMode({ newCursor: this.cursor.inElement });
     }
     this.hideCursor = function() {
         this.cursor.inElement.removeAttributeNS(NS_internal,"selected");
