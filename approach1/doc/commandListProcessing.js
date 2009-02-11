@@ -84,7 +84,10 @@ function putCommandsIntoDocumentation() {
                 placeholder
             );
         }
+    });
+    commandInfo.forEach(function(info) {
         // Replace placeholder element internal:command with ref attribute
+        // (Even for undocumented commands.)
         var placeholders = document.evaluate(
             "//internal:cmdph[@ref='"+ info.id +"']",
             document, 
