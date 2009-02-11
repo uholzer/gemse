@@ -8,11 +8,10 @@ function init() {
 }
 
 function generateCommandInfo() {
-    var nsResolver = function (prefix) {  };
     var documentations = document.evaluate(
         "//.[@class='commandDocumentation']", 
         document, 
-        nsResolver, 
+        standardNSResolver, 
         XPathResult.UNORDERED_NODE_ITERATOR_TYPE, 
         null
     );
@@ -24,7 +23,7 @@ function generateCommandInfo() {
         commandEntry.titleElement = document.evaluate(
             ".//.[@class='commandTitle']", 
             documentation, 
-            nsResolver, 
+            standardNSResolver, 
             XPathResult.ANY_UNORDERED_NODE_TYPE, 
             null
         ).singleNodeValue;
@@ -69,7 +68,37 @@ function putCommandsIntoDocumentation() {
         elementForCommand = document.createElement("p");
         elementForCommand.setAttribute("class", "commandInDocumentation");
         info.titleElement.parentNode.insertBefore(elementForCommand, info.titleElement.nextSibling);
-        formattedCommandString(info.associatedCommands, elementForCommand);
+        formattedCommandList(info.associatedCommands, elementForCommand);
+        // Replace placeholder elements internal:command without ref attribute
+        var placeholders = document.evaluate(
+            ".//internal:cmdph[not(@ref)]",
+            info.documentation, 
+            standardNSResolver, 
+            XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, 
+            null
+        );
+        for (var i = 0; i < placeholders.snapshotLength; ++i) {
+            var placeholder = placeholders.snapshotItem(i);
+            placeholder.parentNode.replaceChild(
+                document.createTextNode(formattedCommandString(info.associatedCommands[0])),
+                placeholder
+            );
+        }
+        // Replace placeholder element internal:command with ref attribute
+        var placeholders = document.evaluate(
+            "//internal:cmdph[@ref='"+ info.id +"']",
+            document, 
+            standardNSResolver, 
+            XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, 
+            null
+        );
+        for (var i = 0; i < placeholders.snapshotLength; ++i) {
+            var placeholder = placeholders.snapshotItem(i);
+            placeholder.parentNode.replaceChild(
+                document.createTextNode(formattedCommandString(info.associatedCommands[0])),
+                placeholder
+            );
+        }
     });
 }
 
@@ -113,7 +142,7 @@ function createCommandTable(sortedBy) {
         var td_functionName = document.createElement("td");
         var td_type = document.createElement("td");
         
-        formattedCommandString(c.associatedCommands,td_command);
+        formattedCommandList(c.associatedCommands,td_command);
         var titleLink = document.createElement("a");
         titleLink.setAttribute("href", "#" + c.id);
         titleLink.appendChild(document.createTextNode(c.title));
@@ -131,16 +160,12 @@ function createCommandTable(sortedBy) {
     });
 }
 
-function formattedCommandString(listOfCS, container) {
+function formattedCommandList(listOfCS, container) {
     if (listOfCS.length > 0) {
-        listOfCS.forEach(function (s) {
+        listOfCS.forEach(function (cs) {
             var kbdElement = document.createElement("kbd");
-            s = s.replace(/ /gm,  "␣");
-            s = s.replace(/\n/gm, "↵");
-            //s = s.replace((new RegExp("\" + KEYMOD_CONTROL, "gm")), "CRTL+");
-            //s = s.replace((new RegExp("\" + KEYMOD_ALT, "gm")), "ALT+");
-            s = s.replace(/\u001b/gm, "ESC");
-            kbdElement.appendChild(document.createTextNode(s));
+            cs = formattedCommandString(cs);
+            kbdElement.appendChild(document.createTextNode(cs));
             container.appendChild(kbdElement);
             container.appendChild(document.createTextNode(", "));
         });
@@ -149,5 +174,14 @@ function formattedCommandString(listOfCS, container) {
     else {
         container.appendChild(document.createTextNode("none"));
     }
+}
+
+function formattedCommandString(cs) {
+    cs = cs.replace(/ /gm,  "␣");
+    cs = cs.replace(/\n/gm, "↵");
+    //cs = cs.replace((new RegExp("\" + KEYMOD_CONTROL, "gm")), "CRTL+");
+    //cs = cs.replace((new RegExp("\" + KEYMOD_ALT, "gm")), "ALT+");
+    cs = cs.replace(/\u001b/gm, "ESC");
+    return cs;
 }
 
