@@ -29,6 +29,41 @@
 
 <h1>Trivial Insert Mode</h1>
 
+<h2></h2>
+
+<p>The trivial insert mode works like this: First you have to tell
+what element you want, then you can enter its content. When you are
+done with the content, you can usually let the cursor jump behind the
+element. In this way, you enter an expression in a depth first
+manner. Okay, this sounds a little bit esoterically.</p>
+
+<p>Elements like <code>mi</code>, <code>mo</code>, <code>mn</code>
+that contain text directly can be usually created in two ways. One way
+is to create an element with one character as content:
+For example
+<kbd><internal:cmdph ref="trivialInsertModeCommand_miSingle"/></kbd>
+is used to create an <code>mi</code> element. Now you need to enter
+the character which will be the content and the element will be
+created immediately and the cursor placed behind it. So, for example.
+<kbd><internal:cmdph ref="trivialInsertModeCommand_miSingle"/>α</kbd>
+enters an <code>mi</code> element containing α.
+The second way is to create an element with more than one character.
+For example 
+<kbd><internal:cmdph ref="trivialInsertModeCommand_miLong"/>sin&enter;</kbd>
+creates an <code>mi</code> element containing <code>sin</code>.</p>
+
+<p>Elements that actually can have children are treated differently.
+As soon as you hit the corresponding command, they get created
+immediately. For those that have a fixed amount of children, as many
+placeholder elements get inserted. For the others, one placeholder
+gets inserted. The cursor is placed in front of the first placeholder.
+When you enter a next element, it will replace the placeholder. If you are
+done inserting the children for this element, you can hit
+<kbd><internal:cmdph ref="trivialInsertModeCommand_cursorJump"/></kbd>. 
+This causes the cursor to be placed behind the element whose content you
+are inserting.</p>
+
+
 <div id="commands">
 <h2>Commands</h2>
 
@@ -56,13 +91,30 @@
     <kbd>&enter;</kbd>.</p>
 </div>
 
+<div class="commandDocumentation" id="trivialInsertModeCommand_moNormal">
+    <h3 class="commandTitle">Single character operator</h3>
+
+    <p>Inserts an operator (an <code>mo</code> element) containing a
+    single character. Simply type the command and then the
+    character.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_moLong">
+    <h3 class="commandTitle">Multi character identifier</h3>
+
+    <p>Inserts an operator (an <code>mo</code> element) containing
+    as many characters as you want. Type the command, then the
+    characters the element should contain. Terminate with
+    <kbd>&enter;</kbd>.</p>
+</div>
+
 <div class="commandDocumentation" id="trivialInsertModeCommand_mnNormal">
     <h3 class="commandTitle">Normal Number</h3>
 
     <p>Inserts a number (an <code>mn</code> element) containing
     a number which may begin with <code>+</code> or <code>-</code> and
     consists otherwise only of digits (0 to 9) and a (dezimal)
-    point. After typeing the command, you can type the number right
+    point. After typing the command, you can type the number right
     away. When you type a character that can not belong to the number,
     the insert mode detects that the number is complete and will
     insert it. The last character inserted will be considered for the
@@ -71,9 +123,164 @@
     you can use the space bar to force termination. Be aware that
     because of a bug, if you want to hit <kbd>&enter;</kbd> afterwards,
     you must use <kbd>&space;</kbd> first.</p>
+
+    <p>In order to get 
+    <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow>
+        <mn>250</mn>
+        <mo>×</mo>
+        <mn>0.4</mn>
+        <mo>=</mo>
+        <mn>5</mn>
+      </mrow>
+    </math>
+    you can type
+    <kbd><internal:cmdph/>250<internal:cmdph ref="trivialInsertModeCommand_moNormal"/>×<internal:cmdph/>0.4<internal:cmdph ref="trivialInsertModeCommand_moNormal"/>=<internal:cmdph/>5<internal:cmdph ref="trivialInsertModeCommand_cursorJump"/></kbd>
+    </p>
+
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mnLong">
+    <h3 class="commandTitle">Long number</h3>
+
+    <p>If you need an exotically written number or a number of a
+    script Gemse does not know about, you can use this command. For
+    example <kbd><internal:cmdph/>7e00&enter;</kbd> inserts a number
+    in hexadecimal notation.</p>
+
+    <p>Do not use this command to insert complex numbers like
+    <code><![CDATA[<mn>1+2𝕚</mn>]]></code>. In this case you should
+    use <code><![CDATA[<mrow><mn>1</mn><mo>+</mo><mn>2</mn><mi>𝕚</mi></mrow>]]></code>!</p>
+
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mrow">
+    <h3 class="commandTitle">mrow</h3>
+
+    <p>Inserts an <code>mrow</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_none">
+    <h3 class="commandTitle">none</h3>
+
+    <p>Inserts a <code>none</code> element. This is used only inside
+    an <code>mmultiscripty</code> element, designating an empty
+    script.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mfrac">
+    <h3 class="commandTitle">mfrac</h3>
+
+    <p>Inserts an <code>mfrac</code> element, a fraction.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_msub">
+    <h3 class="commandTitle">msub</h3>
+
+    <p>Inserts an <code>msub</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_msup">
+    <h3 class="commandTitle">msup</h3>
+
+    <p>Inserts an <code>msup</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_msubsup">
+    <h3 class="commandTitle">msubsup</h3>
+
+    <p>Inserts an <code>msubsup</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_msqrt">
+    <h3 class="commandTitle">msqrt</h3>
+
+    <p>Inserts a <code>msqrt</code> element, a square root.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mroot">
+    <h3 class="commandTitle">mroot</h3>
+
+    <p>Inserts a <code>mroot</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_munder">
+    <h3 class="commandTitle">munder</h3>
+
+    <p>Inserts a <code>munder</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mover">
+    <h3 class="commandTitle">mover</h3>
+
+    <p>Inserts a <code>mover</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_munderover">
+    <h3 class="commandTitle">munderover</h3>
+
+    <p>Inserts a <code>munderover</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_menclose">
+    <h3 class="commandTitle">menclose</h3>
+
+    <p>Inserts a <code>menclose</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mfenced">
+    <h3 class="commandTitle">mfenced</h3>
+
+    <p>Inserts a <code>mfenced</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mmultiscripts">
+    <h3 class="commandTitle">mmultiscripts</h3>
+
+    <p>Inserts a <code>mmultiscripts</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mprescripts">
+    <h3 class="commandTitle">mprescripts</h3>
+
+    <p>Inserts a <code>mprescripts</code> element. This element is
+    only used as child of an <code>mmultiscripts</code> element. It
+    signifies that all elements that follow it are to be interpreded
+    as prescripts.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_table">
+    <h3 class="commandTitle">table</h3>
+
+    <p>This command can insert various table elements, depending on
+    the element the cursor lies in. If it is located in an
+    <code>mtable</code> element, it creates an <code>mtr</code>
+    element, i.e. a table row. If it is located in a row, it creates
+    an <code>mtd</code> element, a table cell. Otherwise, it creates
+    always an <code>mtable</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mlabeledtr">
+    <h3 class="commandTitle">mlabeledtr</h3>
+
+    <p>If you need a labeled row in a table, use this comand.</p>
 </div>
 
 
+<div class="commandDocumentation" id="trivialInsertModeCommand_cursorJump">
+    <h3 class="commandTitle">Let cursor jump</h3>
+
+    <p>When you insert an element that can have children, the cursor
+    is automatically into it. When you are done inserting the children
+    you need, you can use this command to move the cursor out again, right
+    behind the element so you can insert siblings.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_exit">
+    <h3 class="commandTitle">Exit mode</h3>
+
+    <p>Terminates the insert mode.</p>
+</div>
 
 </div>
 </body>

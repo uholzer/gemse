@@ -189,7 +189,7 @@ function trivialInsertModeCommand_table(mode,command) {
         //insert an mtr
         mode.putElement(null, "mtr", mode.getNewPlaceholderElement());
     }
-    else if (mode.cursor.inElement.localName=="mtr") {
+    else if (mode.cursor.inElement.localName=="mtr"||mode.cursor.inElement.localName=="mlabeledtr") {
         //insert an mtd
         mode.putElement(null, "mtd", mode.getNewPlaceholderElement());
     }
@@ -197,6 +197,12 @@ function trivialInsertModeCommand_table(mode,command) {
         //insert an mtable
         mode.putElement(null, "mtable", mode.getNewPlaceholderElement());
     }
+    mode.editor.eatInput(command.length);
+    return true;
+}
+
+function trivialInsertModeCommand_mlabeledtr(mode,command) {
+    mode.putElement(null, "mlabeledtr", mode.getNewPlaceholderElement());
     mode.editor.eatInput(command.length);
     return true;
 }
