@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+          "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+
+<head>
+    <title>Gemse 1</title>
+    <script src="operatorDictionary.js"/>
+    <script><![CDATA[
+        function test() {
+            loadOperatorDictionary()
+            var target = document.getElementById("target");
+            for (c in operatorDictionary) {
+            for (f in operatorDictionary[c]) {
+            for (k in operatorDictionary[c][f]) {
+                var tr = document.createElement("tr");
+                var td1 = document.createElement("td");
+                td1.appendChild(document.createTextNode(c));
+                tr.appendChild(td1);
+                var td2 = document.createElement("td");
+                td2.appendChild(document.createTextNode(f));
+                tr.appendChild(td2);
+                var td3 = document.createElement("td");
+                td3.appendChild(document.createTextNode(k));
+                tr.appendChild(td3);
+                var td4 = document.createElement("td");
+                td4.appendChild(document.createTextNode(operatorDictionary[c][f][k].contentComment));
+                tr.appendChild(td4);
+                
+                var td5 = document.createElement("td");
+                for (a in operatorDictionary[c][f][k].attributes) {
+                    var text = document.createTextNode(
+                        a + " = " + operatorDictionary[c][f][k].attributes[a]
+                    );
+                    td5.appendChild(text);
+                    td5.appendChild(document.createElement("br"));
+                }
+                tr.appendChild(td5);
+
+                var td6 = document.createElement("td");
+                td6.appendChild(document.createTextNode(operatorDictionary[c][f][k].comment));
+                tr.appendChild(td6);
+
+                target.appendChild(tr);
+            }}}
+        }
+    ]]></script>
+</head>
+
+<body onload="test()">
+
+<h1>Gemse 1 Operator Dictionary</h1>
+
+<table>
+<caption>Operator dictionary</caption>
+<thead>
+    <tr><th colspan="3">indexing</th><th>contentComment</th><th>attributes</th><th>comment</th></tr>
+    <tr><th>content</th><th>form</th><th>key</th><th></th><th></th><th></th></tr>
+</thead>
+<tbody id="target">
+</tbody>
+</table>
+
+</body>
+
+</html>
