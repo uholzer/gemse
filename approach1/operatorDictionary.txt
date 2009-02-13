@@ -7,7 +7,7 @@
     
 "&#x201D;<!--RIGHT DOUBLE QUOTATION MARK-->"            form="postfix" fence="true"  lspace="0em" rspace="0em"
 "&#x2019;<!--RIGHT SINGLE QUOTATION MARK-->"                  form="postfix" fence="true"  lspace="0em" rspace="0em"
-"&#x27E8;<!--MATHEMATICAL LEFT ANGLE BRACKET-->"                 form="prefix"  fence="true" stretchy="true"  lspace="0em" rspace="0em""
+"&#x27E8;<!--MATHEMATICAL LEFT ANGLE BRACKET-->"                 form="prefix"  fence="true" stretchy="true"  lspace="0em" rspace="0em"
 "&#x2308;<!--LEFT CEILING-->"                      form="prefix"  fence="true" stretchy="true"  lspace="0em" rspace="0em"
 "&#x27E6;<!--MATHEMATICAL LEFT WHITE SQUARE BRACKET-->"                form="prefix"  fence="true" stretchy="true"  lspace="0em" rspace="0em"
 "&#x230A;<!--LEFT FLOOR-->"                        form="prefix"  fence="true" stretchy="true"  lspace="0em" rspace="0em"
