@@ -7,6 +7,21 @@ operatorDictionary = new OperatorDictionary();
 
 function OperatorDictionary() {
     this.db = {}
+
+    /* Public methods */
+
+    this.getNodesByElement= function(element) {
+
+    }
+    this.getNodesByElementKey = function(element,key) {
+
+    }
+    this.formByPosition = function(element) {
+
+    }
+
+    /* Private methods */
+
     this.load = function() {
         this.loadFromFile("operatorDictionary.txt");
     }
@@ -105,13 +120,24 @@ function OperatorDictionary() {
         }
     }
 
+    this.getByContentKey = function() {
+
+    }
+    this.getByContentFormKey = function() {
+
+    }
+    this.getByContentForm = function() {
+
+    }
+
+    this.makeNodes() {
+
+    }
+
     this.applyToElement = function(element,key) {
 
     }
 
-    this.formByPosition = function(element) {
-
-    }
 
     this.load();
 }
