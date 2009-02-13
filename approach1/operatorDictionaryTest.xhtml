@@ -9,12 +9,11 @@
     <script src="operatorDictionary.js"/>
     <script><![CDATA[
         function test() {
-            loadOperatorDictionary()
             var target = document.getElementById("target");
             var operatorCount = 0;
-            for (c in operatorDictionary) {
-            for (f in operatorDictionary[c]) {
-            for (k in operatorDictionary[c][f]) {
+            for (c in operatorDictionary.db) {
+            for (f in operatorDictionary.db[c]) {
+            for (k in operatorDictionary.db[c][f]) {
                 ++operatorCount;
                 var tr = document.createElement("tr");
                 var td1 = document.createElement("td");
@@ -27,13 +26,13 @@
                 td3.appendChild(document.createTextNode(k));
                 tr.appendChild(td3);
                 var td4 = document.createElement("td");
-                td4.appendChild(document.createTextNode(operatorDictionary[c][f][k].contentComment));
+                td4.appendChild(document.createTextNode(operatorDictionary.db[c][f][k].contentComment));
                 tr.appendChild(td4);
                 
                 var td5 = document.createElement("td");
-                for (a in operatorDictionary[c][f][k].attributes) {
+                for (a in operatorDictionary.db[c][f][k].attributes) {
                     var text = document.createTextNode(
-                        a + " = " + operatorDictionary[c][f][k].attributes[a]
+                        a + " = " + operatorDictionary.db[c][f][k].attributes[a]
                     );
                     td5.appendChild(text);
                     td5.appendChild(document.createElement("br"));
@@ -41,10 +40,10 @@
                 tr.appendChild(td5);
 
                 var td6 = document.createElement("td");
-                td6.appendChild(document.createTextNode(operatorDictionary[c][f][k].comment));
+                td6.appendChild(document.createTextNode(operatorDictionary.db[c][f][k].comment));
                 tr.appendChild(td6);
                 var td7 = document.createElement("td");
-                td7.appendChild(document.createTextNode(operatorDictionary[c][f][k].groupingPrecedence));
+                td7.appendChild(document.createTextNode(operatorDictionary.db[c][f][k].groupingPrecedence));
                 tr.appendChild(td7);
 
                 target.appendChild(tr);
