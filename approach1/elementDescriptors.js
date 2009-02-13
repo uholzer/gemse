@@ -23,6 +23,129 @@ mo: {
     name: "mo",
     namespace: NS_MathML,
     type: "special",
+    attributes: {
+        // The default attribute values of a given mo element are
+        // determined by the operator dictionary. They highly depend
+        // on the content of the mo element. If the operator
+        // dictionary does not contain an entry for some attributes,
+        // or if it doesn't even contain an entry for the element,
+        // these default values apply.
+        form: {
+            name: "form",
+            defaultValue: "infix",
+            // DefaultValue depends on position in mrow! So, don't use
+            // this!
+        },
+        fence: {
+            name: "fence",
+            fromDictionary: true,
+            defaultValue: "false",
+        },
+        separator: {
+            name: "separator",
+            fromDictionary: true,
+            defaultValue: "false",
+        },
+        lspace: {
+            name: "lspace",
+            fromDictionary: true,
+            defaultValue: "thickmathspace",
+        },
+        rspace: {
+            name: "rspace",
+            fromDictionary: true,
+            defaultValue: "thickmathspace",
+        },
+        stretchy: {
+            name: "stretchy",
+            fromDictionary: true,
+            defaultValue: "false",
+        },
+        symmetric: {
+            name: "symmetric",
+            fromDictionary: true,
+            defaultValue: "true",
+        },
+        maxsize: {
+            name: "maxsize",
+            fromDictionary: true,
+            defaultValue: "infinity",
+        },
+        minsize: {
+            name: "minsize",
+            fromDictionary: true,
+            defaultValue: "1",
+        },
+        largeop: {
+            name: "largeop",
+            fromDictionary: true,
+            defaultValue: "false",
+        },
+        movablelimits: {
+            name: "movablelimits",
+            fromDictionary: true,
+            defaultValue: "false",
+        },
+        accent: {
+            name: "accent",
+            fromDictionary: true,
+            defaultValue: "false",
+        },
+        linebreakstyle : {
+            name: "linebreakstyle ",
+            fromDictionary: true,
+            defaultValue: "lbbinary",
+        },
+        linebreakmultchar: {
+            name: "linebreakmultchar",
+            inherited: true,
+            defaultValue: "⁢", //invisible times
+        },
+        linebreak: {
+            name: "linebreak",
+            defaultValue: "auto",
+        },
+        lineleading: {
+            name: "lineleading",
+            inherited: true,
+            defaultValue: "100%",
+        },
+        indentstyle: {
+            name: "indentstyle",
+            inherited: true,
+            defaultValue: "auto",
+        },
+        indentstylefirst: {
+            name: "indentstylefirst",
+            inherited: true,
+            defaultValue: "indentstyle",
+        },
+        indentstylelast: {
+            name: "indentstylelast",
+            inherited: true,
+            defaultValue: "indentstyle",
+        },
+        indenttarget: {
+            name: "indenttarget",
+            inherited: true,
+            defaultValue: "",
+        },
+        indentoffset: {
+            name: "indentoffset",
+            inherited: true,
+            defaultValue: "0",
+        },
+        indentoffsetfirst: {
+            name: "indentoffsetfirst",
+            inherited: true,
+            defaultValue: "indentoffset",
+        },
+        indentoffsetlast: {
+            name: "indentoffsetlast",
+            inherited: true,
+            defaultValue: "indentoffset",
+        },
+    },
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mo",
 },
 
