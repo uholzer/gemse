@@ -6,8 +6,11 @@ function AttributeMode(editor, equationEnv, element) {
     this.equationEnv = equationEnv;
     this.element = element;
     this.attributes = [];
+    this.cursor = null;
     this.init = function() {
         // Place attribute information inside an Array
+        this.cursor = null;
+        this.attributes = [];
         var attributeNodeMap = this.element.attributes;
         for(var i=0; i<attributeNodeMap.length; i++) {
             this.attributes.push(attributeNodeMap[i]);
@@ -51,7 +54,6 @@ function AttributeMode(editor, equationEnv, element) {
         this.element.setAttributeNS(NS_internal, "attributeCursor", (index!=null) ? this.attributes[index].nodeName : "");
         this.equationEnv.updateViews();
     }
-    this.cursor = null;
     this.__defineGetter__("contextNode", function() { return this.element }); // XXX: good like this?
     this.inputHandler = function() {
         // Returns true if it succeeded to execute the first command from the
@@ -176,7 +178,7 @@ function attributeModeCommand_insertForeign(mode,command) {
     var info = r.exec(mode.editor.inputBuffer.slice(command.length));
     if (info) {
         mode.element.setAttributeNS(info[1], info[2], info[3]);
-        editor.eatInput(command.lenth + info[0].length);
+        editor.eatInput(command.length + info[0].length);
         mode.reInit();
         return true;
     }
@@ -184,4 +186,49 @@ function attributeModeCommand_insertForeign(mode,command) {
         return false;
     }
 }
+
+
+function attributeModeCommand_setDefaultForMissing(mode,command) {
+    // Sets default value for attributes not already present
+    var elementDesc = elementDescriptions[mode.element.localName];
+    for each (var attributeDesc in elementDesc.attributes) {
+        if (!mode.element.hasAttributeNS(attributeDesc.namespace||"",attributeDesc.name)) {
+            mode.element.setAttributeNS(attributeDesc.namespace||"",attributeDesc.name,attributeDesc.defaultValue);
+        }
+    }
+    mode.reInit();
+    editor.eatInput(command.length);
+    return true;
+}
+
+function attributeModeCommand_clearAll(mode,command) {
+    // I delete all attributes using the folowing rather crazy way. I
+    // do not know better. The problem is that, so it seems, if one
+    // retrieves element.attributes and deletes some attributes via
+    // element.removeAttributeNode, the retrieved attributes list
+    // changes. The solution I use is to retrieve a new attributes
+    // list with element.attributes after every removal.
+
+    // Attributes with localName that begins with "-" are kept.
+
+    var getaSignificantAttribute = function(e) {
+        var attributes = e.attributes;
+        for (var i=0; i<attributes.length; ++i) {
+            var candidate = attributes.item(i);
+            if (candidate) { return candidate }
+        }
+        return null;
+    }
+
+    var anAtribute;
+    while (anAttribute = getaSignificantAttribute(mode.element)) {
+        mode.element.removeAttributeNode(anAttribute);
+    }
+
+    mode.reInit();
+    editor.eatInput(command.length);
+    return true;
+}
+
+
 

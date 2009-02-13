@@ -31,7 +31,15 @@ attributeModeCommands = {
     "I": {
         type: "action",
         execute: attributeModeCommand_insertForeign
-    }
+    },
+    "!": {
+        type: "action",
+        execute: attributeModeCommand_setDefaultForMissing
+    },
+    "-": {
+        type: "action",
+        execute: attributeModeCommand_clearAll
+    },
 }
 attributeModeCommands[String.fromCharCode(0x1b)] = { // Escape
     type: "action",
