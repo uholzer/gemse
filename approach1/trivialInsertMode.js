@@ -18,7 +18,22 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
     this.finish = function() {
         // TODO: Clean up attribute mess
         this.hideCursor();
-        this.equationEnv.finishMode({ newCursor: this.cursor.inElement });
+        var newEditCursor;
+        if (this.cursor.beforeElement && mml_previousSibling(this.cursor.beforeElement)) {
+            newEditCursor = mml_previousSibling(this.cursor.beforeElement);
+        }
+        else if (this.cursor.beforeElement) {
+            newEditCursor = this.cursor.beforeElement;
+        }
+        else if (mml_lastChild(this.cursor.inElement)) {
+            newEditCursor = mml_lastChild(this.cursor.inElement);
+        }
+        else {
+            newEditCursor = this.cursor.inElement;
+        }
+        this.equationEnv.finishMode({ 
+            newCursor: newEditCursor
+        });
     }
     this.hideCursor = function() {
         this.cursor.inElement.removeAttributeNS(NS_internal,"selected");
@@ -127,8 +142,39 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         }
         // Put element into the equation
         this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
+        // Handle surrounding
+        var description = elementDescriptions[newElement.localName];
+        if (description.type=="fixedChildren" || description.type=="childList") {
+            var surroundingMrow = document.createElementNS(NS_MathML,"mrow");
+            for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
+                surroundingMrow.insertBefore(
+                    mml_previousSibling(newElement),
+                    surroundingMrow.firstChild
+                );
+            }
+            newElement.removeChild(mml_firstChild(newElement));
+            newElement.insertBefore(surroundingMrow,newElement.firstChild);
+        }
+        else if (description.type=="mrow" || description.type=="inferred_mrow") {
+            while (mml_firstChild(newElement) && mml_firstChild(newElement).getAttributeNS(NS_internal, "missing")) {
+                newElement.removeChild(mml_firstChild(newElement));
+            }
+            for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
+                newElement.insertBefore(
+                    mml_previousSibling(newElement),
+                    newElement.firstChild
+                );
+            }
+        }
+        else {
+            // Do not handle surrounding for this element
+        }
         // Position the cursor
-        if (mml_firstChild(newElement) && mml_firstChild(newElement).getAttributeNS(NS_internal, "missing")) {
+        var firstMissing = mml_firstChild(newElement);
+        while (firstMissing && !firstMissing.getAttributeNS(NS_internal, "missing")) {
+            firstMissing = mml_nextSibling(firstMissing);
+        }
+        if (firstMissing) {
             // If the element contains a "missing element" marker, put the 
             // cursor before it. But we must put a cursor behind the new
             // element on the stack.
@@ -139,13 +185,16 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
                 inElement: this.cursor.inElement
             })
             this.moveCursor({
-                beforeElement: mml_firstChild(newElement),
+                beforeElement: firstMissing,
                 inElement: newElement
             });
         }
         else {
             // Otherwise put it behind it (that's where it is already)
-            this.moveCursor(this.cursor);
+            this.moveCursor({
+                beforeElement: this.cursor.beforeElement,
+                inElement: this.cursor.inElement
+            });
         }
     }
 }
@@ -277,7 +326,7 @@ function trivialInsertModeCommand_oneMoreToSurround(mode,command) {
         mode.moveCursor({ 
             beforeElement: mode.cursor.beforeElement,
             inElement: mode.cursor.inElement,
-            numberOfElementsToSurround: mode.cursor.numberOfElementsToSurround + 1
+            numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) + 1
         });
     mode.editor.eatInput(command.length);
     return true;
@@ -288,7 +337,7 @@ function trivialInsertModeCommand_oneLessToSurround(mode,command) {
         mode.moveCursor({ 
             beforeElement: mode.cursor.beforeElement,
             inElement: mode.cursor.inElement,
-            numberOfElementsToSurround: mode.cursor.numberOfElementsToSurround - 1
+            numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) - 1
         });
     }
     mode.editor.eatInput(command.length);
