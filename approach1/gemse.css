@@ -96,3 +96,7 @@ kbd {
     color: black;
 }
 
+*:target {
+    border: 0.4ex dashed red;
+}
+
