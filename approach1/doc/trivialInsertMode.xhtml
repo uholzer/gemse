@@ -267,6 +267,29 @@ are inserting.</p>
 </div>
 
 
+<div class="commandDocumentation" id="trivialInsertModeCommand_oneMoreToSurround">
+    <h3 class="commandTitle">one more to surround</h3>
+
+    <p>Selects one sibling more to the left for surrounding. If you
+    insert a new element later on, the selection will become part of
+    it, the new element will surround what is selected, so to say.</p>
+
+    <p>If you have selected some elements and you insert an mrow
+    element or an element that acts as an inferred mrow, the selected
+    elements become children of the new one. If you insert an element with
+    a fixed numer of children (for example an <code>mfrac</code>) or an
+    element which treates its children as a list (for example
+    <code>mfenced</code>), the selected elements are put in an mrow which
+    then becomes child of the new element. For other elements, the
+    selection is simply dropped.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_oneLessToSurround">
+    <h3 class="commandTitle">one less to surround</h3>
+
+    <p>Removes the selection of the leftmost selected element.</p>
+</div>
+
 <div class="commandDocumentation" id="trivialInsertModeCommand_cursorJump">
     <h3 class="commandTitle">Let cursor jump</h3>
 
