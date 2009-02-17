@@ -270,7 +270,7 @@ are inserting.</p>
 <div class="commandDocumentation" id="trivialInsertModeCommand_oneMoreToSurround">
     <h3 class="commandTitle">one more to surround</h3>
 
-    <p>Selects one sibling more to the left for surrounding. If you
+    <p>Selects one sibling more to the left to surround. If you
     insert a new element later on, the selection will become part of
     it, the new element will surround what is selected, so to say.</p>
 
@@ -279,8 +279,11 @@ are inserting.</p>
     elements become children of the new one. If you insert an element with
     a fixed numer of children (for example an <code>mfrac</code>) or an
     element which treates its children as a list (for example
-    <code>mfenced</code>), the selected elements are put in an mrow which
-    then becomes child of the new element. For other elements, the
+    <code>mfenced</code>) and you have selected more than one element,
+    the selected elements are put in an mrow which
+    then becomes child of the new element. If you have selected one
+    element, no mrow is used, it directly becomes the first child of
+    the element you insert. For other elements, the
     selection is simply dropped.</p>
 </div>
 
