@@ -145,7 +145,25 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         // Handle surrounding
         if (this.cursor.numberOfElementsToSurround) {
             var description = elementDescriptions[newElement.localName];
-            if (description.type=="fixedChildren" || description.type=="childList") {
+            if (description.type=="mrow" || description.type=="inferred_mrow" || this.cursor.numberOfElementsToSurround==1) {
+                // clean out children of the new element that are marked as missing.
+                // But clean at most as many elements as are selected
+                for (var i=0; 
+                    i<this.cursor.numberOfElementsToSurround 
+                    && mml_firstChild(newElement)
+                    && mml_firstChild(newElement).getAttributeNS(NS_internal, "missing");
+                    ++i) {
+                    newElement.removeChild(mml_firstChild(newElement)) 
+                }
+                // Put selected elements into the new one
+                for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
+                    newElement.insertBefore(
+                        mml_previousSibling(newElement),
+                        newElement.firstChild
+                    );
+                }
+            }
+            else if (description.type=="fixedChildren" || description.type=="childList") {
                 var surroundingMrow = document.createElementNS(NS_MathML,"mrow");
                 for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
                     surroundingMrow.insertBefore(
@@ -155,17 +173,6 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
                 }
                 newElement.removeChild(mml_firstChild(newElement));
                 newElement.insertBefore(surroundingMrow,newElement.firstChild);
-            }
-            else if (description.type=="mrow" || description.type=="inferred_mrow") {
-                while (mml_firstChild(newElement) && mml_firstChild(newElement).getAttributeNS(NS_internal, "missing")) {
-                    newElement.removeChild(mml_firstChild(newElement));
-                }
-                for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
-                    newElement.insertBefore(
-                        mml_previousSibling(newElement),
-                        newElement.firstChild
-                    );
-                }
             }
             else {
                 // Do not handle surrounding for this element
