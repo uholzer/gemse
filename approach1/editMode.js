@@ -171,6 +171,10 @@ function editModeCommand_moveToRoot(mode, currentElelment) {
     return mode.equationEnv.equation;
 }
 
+function editModeCommand_moveToNextLeaf(mode, currentElement) {
+    return mml_nextLeaf(currentElement);
+}
+
 function editModeCommand_undo(mode) {
     // The glorious undo
     mode.hideCursor();
@@ -629,3 +633,39 @@ function mml_parent(element) {
     }
     return null;
 }
+
+function mml_nextLeaf(element) {
+    var nextLeaf = null;
+    var nextSibling = mml_nextSibling(element);
+    if (!nextSibling) {
+        // No next sibling, so we have to go up
+        while (!nextSibling) {
+            element = element.parentNode;
+            nextSibling = mml_nextSibling(element);
+            if (element.localName=="math") { return null }
+        }
+        // Here we reached a point where nextSibling is defined.
+        // It may be however, that it is not a leaf but an
+        // ancestor of a leaf. So it may be that we have to
+        // go down later.
+    }
+    if (mml_firstChild(nextSibling)) {
+        // Next sibling is not a leaf but contains children.
+        // So we have to go down.
+        nextLeaf = nextSibling;
+        var next;
+        while (next = mml_firstChild(nextLeaf)) {
+            nextLeaf = next;
+        }
+    }
+    else if (nextSibling) {
+        // Next sibling exists and is a leaf
+        nextLeaf = nextSibling;
+    }
+    return nextLeaf;
+}
+
+function mml_previousLeaf(element) {
+
+}
+
