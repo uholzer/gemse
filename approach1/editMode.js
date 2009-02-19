@@ -227,9 +227,31 @@ function editModeCommand_delete(mode,command,singleCharacterArgs,userSelection) 
 }
 
 function editModeCommand_change(mode,command,singleCharacterArgs,userSelection) {
-    // TODO: This is broken :-(
-    editModeCommand_delete(mode,command,singleCharacterArgs,userSelection);
-    editModeCommand_insertBefore(mode);
+    var from = userSelection.startElement; // \ Those two must be siblings, in the right order!
+    var to = userSelection.endElement;     // /
+    if (!(from && to)) {
+        throw "Change wants a startElement and an endElement in the selection!";
+    }
+    var parentOfTargets = userSelection.startElement.parentNode;
+    var change = mode.equationEnv.history.createChange();
+    change.recordBefore(mode.equationEnv.equation,parentOfTargets);
+    var cursorBefore = mml_nextSibling(to);
+    mode.moveCursor(mml_nextSibling(to) || mml_previousSibling(from) || parentOfTargets);
+    while (from != to) {
+        var nextFrom = mml_nextSibling(from);
+        parentOfTargets.removeChild(from);
+        from = nextFrom;
+    }
+    parentOfTargets.removeChild(to);
+
+    mode.infoAboutCalledMode = {
+        change: change,
+        changeElement: parentOfTargets
+    };
+    var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, parentOfTargets, cursorBefore);
+    newMode.init();
+    mode.equationEnv.callMode(newMode);
+
     return true;
 }
 
