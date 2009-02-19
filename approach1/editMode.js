@@ -213,7 +213,7 @@ function editModeCommand_delete(mode,command,singleCharacterArgs,userSelection) 
     var parentOfTargets = userSelection.startElement.parentNode;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,parentOfTargets);
-    TODO: mode.moveCursor(mml_nextSibling(to) || mml_previousSibling(from) || parentOfTargets);
+    mode.moveCursor(mml_nextSibling(to) || mml_previousSibling(from) || parentOfTargets);
     while (from != to) {
         var nextFrom = mml_nextSibling(from);
         parentOfTargets.removeChild(from);
