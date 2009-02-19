@@ -36,6 +36,10 @@ editModeCommands = {
         type: "movement",
         execute: editModeCommand_moveToNextLeaf
     },
+    "H": {
+        type: "movement",
+        execute: editModeCommand_moveToPreviousLeaf
+    },
     "x": {
         type: "action",
         execute: editModeCommand_kill
