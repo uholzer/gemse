@@ -994,7 +994,60 @@ creates an <code>mrow</code> element. Go on with
 </div>
 </div>
 
-<p>And now <kbd>r^&space;o(&space;iao+ib&enter;o)&enter;n2&space;&enter;&enter;o=</kbd>.</p>
+<p>And now <kbd>ro(&space;iao+ib&enter;o)</kbd>.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+            <mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt internal:selected="insertCursorIn"><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo internal:selected="insertCursorAfter">)</mo></msqrt></mrow>
+        </math>
+    </div>
+    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element">mrow<div class="element">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="insertCursorIn">msqrt<div class="element">mo<div class="nodeValue">(</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element" internal:selected="insertCursorAfter">mo<div class="nodeValue">)</div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p> Rats! We have
+forgotten something important. The expression inside the brackets
+including the brackets actually should be the base of a potency.
+Actually, we should have hit <kbd>^&space;</kbd> right before the
+<kbd>o(</kbd>. This mistake happens regularly (at least to me).
+Usually, one thinks of the potency after having written the base.
+Unfortunately, the current insert mode does not work like that, it
+needs you to enter the <kbd>^</kbd> before writing the base. However,
+there is a feature that allows you to fix this situation. Find out
+yourself what the commands <kbd>h</kbd> and <kbd>l</kbd> do. Well,
+they select what you already wrote. Good. use these two commands to
+select the brackets and their content:</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+            <mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt internal:selected="insertCursorIn"><mo internal:selected="userSelection">(</mo><mrow internal:selected="userSelection"><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo internal:selected="userSelection">)</mo></msqrt></mrow>
+        </math>
+    </div>
+    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element">mrow<div class="element">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="insertCursorIn">msqrt<div class="element" internal:selected="userSelection">mo<div class="nodeValue">(</div></div><div class="element" internal:selected="userSelection">mrow<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element" internal:selected="userSelection">mo<div class="nodeValue">)</div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Now, hit <kbd>^</kbd>. The selected elements are enclosed inside an
+<code>mrow</code> which becomes the first element of the new
+<code>msup</code> element.</p>
+
+<div class="documentationScreenshot">
+<div internal:function="container" internal:selected="equationFocus">
+    <div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+            <mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt><msup internal:selected="insertCursorIn"><mrow internal:selected="insertCursorAfter"><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi></msup></msqrt></mrow>
+        </math>
+    </div>
+    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element">mrow<div class="element">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">msqrt<div class="element" internal:selected="insertCursorIn">msup<div class="element" internal:selected="insertCursorAfter">mrow<div class="element">mo<div class="nodeValue">(</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element" internal:selected="insertCursorBefore">mi<div class="nodeValue">□</div></div></div></div></div></div></div></div>
+</div>
+</div>
+
+<p>Now, we put the exponent <kbd>n2&space;</kbd> and continue with our
+work: <kbd>&enter;&enter;o=</kbd>.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
