@@ -75,6 +75,12 @@ trivialInsertModeCommands = {
     "\n": {
         execute: trivialInsertModeCommand_cursorJump
     },
+    "h": {
+        execute: trivialInsertModeCommand_oneMoreToSurround
+    },
+    "l": {
+        execute: trivialInsertModeCommand_oneLessToSurround
+    },
 }
 trivialInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
     execute: trivialInsertModeCommand_exit
