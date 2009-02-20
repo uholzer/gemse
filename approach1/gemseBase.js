@@ -561,6 +561,11 @@ function GemsePEditor() {
             // this case, it must remove the command from the input
             // buffer. It must not remove following commands.
             while (this.inputBuffer && this.equations[this.focus].mode.inputHandler()) {};
+        }
+        catch (e if false) {
+            this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
+        }
+        finally {
             // Now, if there is still something in the buffer, it is
             // either an incomplete command or an invalid command. So,
             // if the remeining string ends with ESCAPE, the user
@@ -568,9 +573,6 @@ function GemsePEditor() {
             if (this.inputBuffer.charCodeAt(this.inputBuffer.length-1) == KeyEvent.DOM_VK_ESCAPE) {
                 this.inputBuffer = "";
             }
-        }
-        catch (e if false) {
-            this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
         }
     };
     this.inputSubstitution = function() {
