@@ -3,6 +3,28 @@ The function herein are used to query and manipulate the operator
 dictionary.
 */
 
+/* Expected format of the operator dictionary:
+Basically, the format of the operator dictionary given in the MathML2
+specification is used. However, attributes with the prefix "meta"
+have a special meaning:
+    meta:description     one-line description
+    meta:id              Unique identification, used onlyto override default
+    meta:disamb          Identification to disambiguate overriden operators
+    meta:nr              Preference of the user. If set to 0, then
+                         this operator is used by default.
+The id is by default the operator followed by meta:disamb. Please make
+shure that this string is unique among all operators.
+
+TODO: Somehow, we have to distinguish between MathML default entries
+and additional ones. The default entries are entries that we think
+that they are known to every MathML processor. So, the attributes of
+such an entry do not need to be added to the XML structure. Most
+important is that we can plug in the operator dictionary from the
+specification without modification.
+The best way would be to put them in one file and the user defined
+ones in another.
+*/
+
 operatorDictionary = new OperatorDictionary();
 
 function OperatorDictionary() {
@@ -23,7 +45,8 @@ function OperatorDictionary() {
     /* Private methods */
 
     this.load = function() {
-        this.loadFromFile("operatorDictionary.txt");
+        this.loadFromFile("operatorDictionaryMathML.txt");
+        this.loadFromFile("operatorDictionaryUser.txt");
     }
     this.loadFromFile = function(dictionaryFile) {
         var resolveEntities = function(sEscaped) {
