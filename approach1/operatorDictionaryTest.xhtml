@@ -15,36 +15,44 @@
             for (f in operatorDictionary.db[c]) {
             for (k in operatorDictionary.db[c][f]) {
                 ++operatorCount;
+                var entry = operatorDictionary.db[c][f][k];
                 var tr = document.createElement("tr");
-                var td1 = document.createElement("td");
-                td1.appendChild(document.createTextNode(c));
-                tr.appendChild(td1);
-                var td2 = document.createElement("td");
-                td2.appendChild(document.createTextNode(f));
-                tr.appendChild(td2);
-                var td3 = document.createElement("td");
-                td3.appendChild(document.createTextNode(k));
-                tr.appendChild(td3);
-                var td4 = document.createElement("td");
-                td4.appendChild(document.createTextNode(operatorDictionary.db[c][f][k].contentComment));
-                tr.appendChild(td4);
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(entry.content));
+                tr.appendChild(td);
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(entry.form));
+                tr.appendChild(td);
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(entry.id + " (" + entry.disamb + ")"));
+                tr.appendChild(td);
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(entry.contentComment));
+                tr.appendChild(td);
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(entry.comment));
+                tr.appendChild(td);
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(entry.description));
+                tr.appendChild(td);
                 
-                var td5 = document.createElement("td");
-                for (a in operatorDictionary.db[c][f][k].attributes) {
+                var td = document.createElement("td");
+                for (a in entry.attributes) {
                     var text = document.createTextNode(
-                        a + " = " + operatorDictionary.db[c][f][k].attributes[a]
+                        a + " = " + entry.attributes[a]
                     );
-                    td5.appendChild(text);
-                    td5.appendChild(document.createElement("br"));
+                    td.appendChild(text);
+                    td.appendChild(document.createElement("br"));
                 }
-                tr.appendChild(td5);
+                tr.appendChild(td);
 
-                var td6 = document.createElement("td");
-                td6.appendChild(document.createTextNode(operatorDictionary.db[c][f][k].comment));
-                tr.appendChild(td6);
-                var td7 = document.createElement("td");
-                td7.appendChild(document.createTextNode(operatorDictionary.db[c][f][k].groupingPrecedence));
-                tr.appendChild(td7);
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(entry.groupingPrecedence));
+                tr.appendChild(td);
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(entry.isSpec ? "spec" : "user"));
+                tr.appendChild(td);
+                tr.setAttribute("class", entry.isSpec ? "spec" : "user");
 
                 target.appendChild(tr);
             }}}
@@ -52,6 +60,10 @@
             document.getElementById("count").appendChild(document.createTextNode(operatorCount));
         }
     ]]></script>
+    <style>
+        tr.user { background-color: #fdd }
+        table, tr, td, th { border: 1px solid gray }
+    </style>
 </head>
 
 <body onload="test()">
@@ -61,8 +73,8 @@
 <table>
 <caption>Operator dictionary</caption>
 <thead>
-    <tr><th colspan="3">indexing</th><th>contentComment</th><th>attributes</th><th>comment</th><th>Grouping</th></tr>
-    <tr><th>content</th><th>form</th><th>key</th><th></th><th></th><th></th></tr>
+    <tr><th colspan="3">indexing</th><th colspan="3">comments</th><th>attributes</th><th>Grouping precedence</th><th>is part of spec</th></tr>
+    <tr><th>content</th><th>form</th><th>id (disamb)</th><th>contentComment</th><th>comment</th><th>description</th><th></th><th></th><th></th></tr>
 </thead>
 <tbody id="target">
 </tbody>

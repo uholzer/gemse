@@ -1,5 +1,5 @@
 /*
-The function herein are used to query and manipulate the operator
+The functions herein are used to query and manipulate the operator
 dictionary.
 */
 
@@ -12,6 +12,8 @@ have a special meaning:
     meta:disamb          Identification to disambiguate overriden operators
     meta:nr              Preference of the user. If set to 0, then
                          this operator is used by default.
+    meta:grouping        Precedence of the operator
+                         (Useful for automatic placement of mrows)
 The id is by default the operator followed by meta:disamb. Please make
 shure that this string is unique among all operators.
 
@@ -35,21 +37,32 @@ function OperatorDictionary() {
     this.getNodesByElement= function(element) {
 
     }
-    this.getNodesByElementKey = function(element,key) {
+    this.getNodesByElementDisamb = function(element,disamb) {
 
     }
     this.formByPosition = function(element) {
-
+        // This function determines the form of an operator by
+        // his position in the mrow it is contained in. The algorithm
+        // used for that is described in
+        // http://www.w3.org/TR/MathML2/chapter3.html#presm.formdefval
+        // (which equals the respective section in the MathML 3
+        // specification at the time of writing.)
     }
 
     /* Private methods */
 
     this.load = function() {
-        this.loadFromFile("operatorDictionaryMathML.txt");
-        this.loadFromFile("operatorDictionaryUser.txt");
+        this.loadFromFile("operatorDictionaryMathMLSpec.txt",true);
+        this.loadFromFile("operatorDictionaryUser.txt",false);
     }
-    this.loadFromFile = function(dictionaryFile) {
+    this.loadFromFile = function(dictionaryFile, isSpec) {
+        // Loads operator dictionary entries from a file. If isSpec is
+        // true, they are handled as entries from the operator
+        // dictionary from the MathML specification.
         var resolveEntities = function(sEscaped) {
+            // Converts the hexadecimal XML entities found in sEscape
+            // into the actual characters. Returns the resulting
+            // string.
             var s = "";
             while (sEscaped) {
                 if (sEscaped[0]!="&") {
@@ -112,20 +125,36 @@ function OperatorDictionary() {
                 while (attributeMatch = attributeRegex.exec(attributesString)) {
                     attributes[attributeMatch[1]] = resolveEntities(attributeMatch[2]);
                 }
+
+                // Extract meta information from attributes
                 var form = attributes["form"];
+                var description = attributes["meta:description"];
+                var groupingPrecedence = groupingPrecedenceAuto;
+                if (attributes["meta:grouping"]!==undefined) {
+                    groupingPrecedence = attributes["meta:grouping"];
+                }
+                var disamb = attributes["meta:disamb"] || null;
+                var id = content + (disamb ? disamb : "");
+                if (attributes["meta:id"]!==undefined) {
+                    groupingPrecedence = attributes["meta:id"];
+                }
                 if (!form) { throw "form must always be given in operator dictionary. (Line " + (i+1) + ")" }
                 var overloadKey = 0;
 
-                var groupingPrecedence = groupingPrecedenceAuto;
+                // TODO: Remove "meta:" attributes
+
 
                 var entry = { 
-                    content: content, 
+                    content: content,
                     form: form,
-                    overloadKey: overloadKey,
+                    id: id,
+                    disamb: disamb,
                     contentComment: contentComment,
+                    description: description,
                     comment: comment,
                     attributes: attributes,
                     groupingPrecedence: groupingPrecedence,
+                    isSpec: isSpec
                 }
 
                 if (!this.db[content]) { 
@@ -143,17 +172,17 @@ function OperatorDictionary() {
         }
     }
 
-    this.getByContentKey = function() {
+    this.getByContentDisamb = function() {
 
     }
-    this.getByContentFormKey = function() {
+    this.getByContentFormDisamb = function() {
 
     }
     this.getByContentForm = function() {
 
     }
 
-    this.makeNodes() {
+    this.makeNodes = function() {
 
     }
 
