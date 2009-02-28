@@ -39,11 +39,18 @@ table {
     color: blue;
     font-size: larger;
 }
+*[internal|function="attributeView"] {
+    float: left;
+}
 *[internal|function="attributeView"] * {
+    border: 1px solid black;
+}
+*[internal|function="dictionaryView"] * {
     border: 1px solid black;
 }
 *[internal|function="modeName"] {
     color: white; background-color: black;
+    clear: both;
 }
 *[internal|function="container"] {
     opacity: 0.4;

@@ -24,6 +24,10 @@ function EquationEnv(editor, container) {
     // element
     this.attributeView = document.evaluate(".//.[@internal:function='attributeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
+    // The dictionary view shows information taken from a dictionary
+    // about the current element.
+    this.dictionaryView = document.evaluate(".//.[@internal:function='dictionaryView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+
     // The modeName element shows the name of the current mode
     this.modeNameIndicator = document.evaluate(".//.[@internal:function='modeName']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
@@ -69,6 +73,11 @@ function EquationEnv(editor, container) {
             var element = this.mode.contextNode;
             while (element.nodeType != Node.ELEMENT_NODE) { element = element.parentNode; }
             this.buildAttributeView(element); 
+        }
+        if (this.dictionaryView && this.mode.contextNode) { 
+            var element = this.mode.contextNode;
+            while (element.nodeType != Node.ELEMENT_NODE) { element = element.parentNode; }
+            this.buildDictionaryView(element); 
         }
         if (this.modeNameIndicator) {
             this.modeNameIndicator.textContent = this.mode.name;
@@ -201,6 +210,21 @@ function EquationEnv(editor, container) {
             }
             this.attributeView.appendChild(table);
         }
+    }
+
+    this.buildDictionaryView = function (forElement) {
+        while (this.dictionaryView.hasChildNodes()) { this.dictionaryView.removeChild(this.dictionaryView.firstChild); }
+        // Return immediately if we are not on an mo element
+        if (! (forElement.namespaceURI==NS_MathML && forElement.localName=="mo")) { return }
+
+        var table = document.createElement("table");
+        var caption = document.createElement("caption");
+        caption.appendChild(document.createTextNode("dictionary entries"));
+        table.appendChild(caption);
+
+        // TODO
+
+        this.dictionaryView.appendChild(table);
     }
 
     this.init = function() {
