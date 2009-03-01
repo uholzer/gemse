@@ -41,12 +41,25 @@ table {
 }
 *[internal|function="attributeView"] {
     float: left;
+    margin: 1ex;
 }
 *[internal|function="attributeView"] * {
     border: 1px solid black;
 }
+*[internal|function="dictionaryView"] {
+    margin: 1ex;
+}
 *[internal|function="dictionaryView"] * {
     border: 1px solid black;
+}
+*[internal|function="dictionaryView"] td:first-child {
+    font-size: x-large;
+}
+*[internal|function="dictionaryView"] tr.user {
+    color: #008;
+}
+*[internal|function="dictionaryView"] tr.applied {
+    background-color: #f88;
 }
 *[internal|function="modeName"] {
     color: white; background-color: black;

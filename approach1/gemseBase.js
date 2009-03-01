@@ -222,7 +222,59 @@ function EquationEnv(editor, container) {
         caption.appendChild(document.createTextNode("dictionary entries"));
         table.appendChild(caption);
 
-        // TODO
+        // XXX: Do we need to remove whitespacve at beginning and end?
+        entries = operatorDictionary.entriesByContent(forElement.textContent);
+        entries.forEach(function (entry) {
+            var tr = document.createElement("tr");
+            
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.content));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.form));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.id + " (" + entry.disamb + ")"));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.contentComment));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.comment));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.description));
+            tr.appendChild(td);
+            
+            var td = document.createElement("td");
+            for (a in entry.attributes) {
+                var text = document.createTextNode(
+                    a + " = " + entry.attributes[a]
+                );
+                td.appendChild(text);
+                td.appendChild(document.createElement("br"));
+            }
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.groupingPrecedence));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.isSpec ? "spec" : "user"));
+            tr.appendChild(td);
+
+            tr.setAttribute("class", entry.isSpec ? "spec" : "user");
+            // If all attributes match, we mark the entry as "applied"
+            var matches = true;
+            for (a in entry.attributes) {
+                if (entry.attributes[a] != forElement.getAttribute(a)) { matches = false }
+            }
+            if (matches) {
+                tr.setAttribute("class", tr.getAttribute("class") + " applied");
+            }
+            
+            table.appendChild(tr);
+        });
 
         this.dictionaryView.appendChild(table);
     }

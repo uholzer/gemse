@@ -34,6 +34,16 @@ function OperatorDictionary() {
 
     /* Public methods */
 
+    this.entriesByContent = function(content) {
+        var entries = [];
+        for each (f in this.db[content]) {
+            for each (entry in f) {
+                entries.push(entry);
+            }
+        }
+        return entries;
+    }
+
     this.getNodesByElement= function(element) {
 
     }
@@ -160,11 +170,8 @@ function OperatorDictionary() {
                 if (!this.db[content]) { 
                     this.db[content] = { prefix: {}, infix: {}, postfix: {} };
                 }
-                if (this.db[content][form][overloadKey]) { 
-                    if (overloadKey) { throw "You tried to overload the operator " + content + " " + form + " " + overloadKey }
-                    while (this.db[content][form][overloadKey.toString()]) { ++overloadKey }
-                }
-                this.db[content][form][overloadKey.toString()] = entry;
+                //if (this.db[content][form][disamb||""]) { throw "You tried to overload the operator " + content + " " + form + " " + (disamb||"") }
+                this.db[content][form][disamb||""] = entry;
             }
             else {
                 throw "Error in operator dictionary at line " + (i+1);
