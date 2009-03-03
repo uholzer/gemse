@@ -8,14 +8,18 @@ Basically, the format of the operator dictionary given in the MathML2
 specification is used. However, attributes with the prefix "meta"
 have a special meaning:
     meta:description     one-line description
-    meta:id              Unique identification, used onlyto override default
+    meta:id              Unique identification, used only to override default.
+                         Do not use it!
     meta:disamb          Identification to disambiguate overriden operators
     meta:nr              Preference of the user. If set to 0, then
                          this operator is used by default.
     meta:grouping        Precedence of the operator
                          (Useful for automatic placement of mrows)
-The id is by default the operator followed by meta:disamb. Please make
+The id is by default the operator followed by the form
+followed by meta:disamb. Please make
 shure that this string is unique among all operators.
+meta:dsiamb is used to disambiguate between operators that have the
+same content and the same form.
 
 TODO: Somehow, we have to distinguish between MathML default entries
 and additional ones. The default entries are entries that we think
@@ -57,6 +61,38 @@ function OperatorDictionary() {
         // http://www.w3.org/TR/MathML2/chapter3.html#presm.formdefval
         // (which equals the respective section in the MathML 3
         // specification at the time of writing.)
+        // IMPORTANT: Here, embellished operators are not treated in a special way!
+
+        var parentNode = element.parentNode;
+        var parentIsMrow = (
+            elementDescriptions[parentNode.localName] && (
+            elementDescriptions[parentNode.localName].type == "mrow" ||
+            elementDescriptions[parentNode.localName].type == "inferred_mrow"
+            )
+        );
+        var parentLength = 0;
+        var position = -1;
+        // Count non-space elements
+        var siblingList = parentNode.childNodes;
+        for (var i = 0; i < siblingList.length; i++) {
+            var sibling = siblingList[i];
+            if (sibling.nodeType==Node.ELEMENT_NODE) {
+                if (!(sibling.namespaceURI==NS_MathML&&sibling.localName=="mspace")) {
+                    ++parentLength;
+                }
+                if (sibling==element) { position = parentLength-1 }
+            }
+        }
+
+        if (parentIsMrow && parentLength > 1 && position==0) {
+            return "prefix";
+        }
+        else if (parentIsMrow && parentLength > 1 && position==parentLength-1) {
+            return "postfix";
+        }
+        else {
+            return "infix";
+        }
     }
 
     /* Private methods */
