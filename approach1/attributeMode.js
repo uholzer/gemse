@@ -230,5 +230,49 @@ function attributeModeCommand_clearAll(mode,command) {
     return true;
 }
 
+function attributeModeCommand_setFromDictionary(mode,command) {
+    // Looks up the entries for this element in the dicitonar and sets
+    // the attributes accordingly. Up to now, this only works for mo
+    // elements.
+    if (! (mode.element.namespaceURI==NS_MathML && mode.element.localName=="mo")) { return }
 
+    var applyEntry = function(entry,element) {
+        for (name in entry.attributes) {
+            element.setAttribute(name, entry.attributes[name]);
+        }
+    }
+
+    var endOfValue = editor.inputBuffer.indexOf("\n"); 
+    if (endOfValue == -1) { return false; }
+    var value = editor.inputBuffer.slice(command.length,endOfValue);
+
+    var entries = operatorDictionary.entriesByContent(mode.element.textContent);
+    // If the user has given a string for disambiguation, filter for it
+    if (value) {
+        entries = entries.filter(function (e) {
+            return (e.disamb==value);
+        });
+    }
+    if (entries.length==1) { 
+        // Only one left, apply it blindly
+        applyEntry(entries[0],mode.element);
+    }
+    else if (entries.length>1) {
+        // Find out the form of this element
+        var form = mode.element.getAttribute("form") || operatorDictionary.formByPosition(mode.element);
+        // Filter for the form
+        entries = entries.filter(function (e) {
+            return (e.form==form);
+        });
+        // Apply, if present, first (and hopefully only) matching entry
+        if (entries.length>0) { applyEntry(entries[0],mode.element) }
+    }
+    // At this pint the attributes have been set or
+    // there has been no matching entry or there
+    // have been more than one matching entries.
+
+    mode.reInit();
+    editor.eatInput(endOfValue+1);
+    return true;
+}
 

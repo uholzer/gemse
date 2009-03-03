@@ -221,9 +221,26 @@ function EquationEnv(editor, container) {
         var caption = document.createElement("caption");
         caption.appendChild(document.createTextNode("dictionary entries"));
         table.appendChild(caption);
+        var titleRow = document.createElement("tr");
+        var th = document.createElement("th");
+        th.appendChild(document.createTextNode("name"));
+        th.setAttribute("colspan", "3");
+        titleRow.appendChild(th);
+        var th = document.createElement("th");
+        th.appendChild(document.createTextNode("comments"));
+        th.setAttribute("colspan", "3");
+        titleRow.appendChild(th);
+        var th = document.createElement("th");
+        th.appendChild(document.createTextNode("attributes"));
+        titleRow.appendChild(th);
+        var th = document.createElement("th");
+        th.appendChild(document.createTextNode("other"));
+        th.setAttribute("colspan", "2");
+        titleRow.appendChild(th);
+        table.appendChild(titleRow);
 
         // XXX: Do we need to remove whitespacve at beginning and end?
-        entries = operatorDictionary.entriesByContent(forElement.textContent);
+        var entries = operatorDictionary.entriesByContent(forElement.textContent);
         entries.forEach(function (entry) {
             var tr = document.createElement("tr");
             
@@ -234,7 +251,7 @@ function EquationEnv(editor, container) {
             td.appendChild(document.createTextNode(entry.form));
             tr.appendChild(td);
             var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.id + " (" + entry.disamb + ")"));
+            td.appendChild(document.createTextNode(entry.disamb));
             tr.appendChild(td);
             var td = document.createElement("td");
             td.appendChild(document.createTextNode(entry.contentComment));

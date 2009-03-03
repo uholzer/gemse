@@ -40,6 +40,10 @@ attributeModeCommands = {
         type: "action",
         execute: attributeModeCommand_clearAll
     },
+    "=": {
+        type: "action",
+        execute: attributeModeCommand_setFromDictionary
+    },
 }
 attributeModeCommands[String.fromCharCode(0x1b)] = { // Escape
     type: "action",
