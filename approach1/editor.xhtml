@@ -31,7 +31,6 @@
         function start() {
             editor = new GemsePEditor();
             editor.containerTemplate = document.getElementById("containerTemplate");
-            editor.attachNewEquationEnvToElement(document.getElementById("equationEnv"));
             editor.inputElement = document.getElementById("input");
             editor.inputElement.focus();
 
@@ -47,6 +46,16 @@
                 window.arguments[0].forEach(function (m) {
                     editor.loadFromOpenDocument(m.doc, m.element);
                 });
+            }
+
+            // If there are no equations up to now, use the
+            // startEquationEnv from this document
+            var startEquationEnv = document.getElementById("startEquationEnv");
+            if (editor.equations.length==0) {
+                editor.attachNewEquationEnvToElement(startEquationEnv);
+            }
+            else {
+                startEquationEnv.parentNode.removeChild(startEquationEnv);
             }
         }
 
@@ -75,7 +84,7 @@
 
 <div id="pool">
 
-<div internal:function="container" id="equationEnv">
+<div internal:function="container" id="startEquationEnv">
     <div internal:function="equation">
         <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
             <mrow>
