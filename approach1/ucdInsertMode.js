@@ -101,9 +101,9 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
     this.inputHandler = function() {
         // Handle input as command if CTRL is pressed, otherwise
         // handle it as indicated by the UCD
-        else if (this.editor.inputBuffer[0] == KEYMOD_CONTROL || this.editor.inputBuffer[0] == KeyEvent.DOM_VK_ESCAPE) {
+        if (this.editor.inputBuffer[0] == KEYMOD_CONTROL || this.editor.inputBuffer[0] == String.fromCharCode(0x1b)) {
             command = this.editor.inputBuffer;
-            commandObject = trivialInsertModeCommands[command[0]];
+            commandObject = ucdInsertModeCommands[command[0]];
             if (commandObject) {
                 return commandObject.execute(this,command[0]);
             }
