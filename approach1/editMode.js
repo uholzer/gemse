@@ -113,7 +113,8 @@ function EditMode(editor, equationEnv) {
         if (!manualChange) {
             this.infoAboutCalledMode.change.recordBefore(this.equationEnv.equation,this.cursor.parentNode);
         }
-        var newMode = new trivialInsertMode(this.editor, this.equationEnv, cursorInElement, cursorBeforeElement);
+        //var newMode = new trivialInsertMode(this.editor, this.equationEnv, cursorInElement, cursorBeforeElement);
+        var newMode = new ucdInsertMode(this.editor, this.equationEnv, cursorInElement, cursorBeforeElement);
         newMode.init();
         this.equationEnv.callMode(newMode);
         return true;
