@@ -101,7 +101,7 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
     this.inputHandler = function() {
         // Handle input as command if CTRL is pressed, otherwise
         // handle it as indicated by the UCD
-        if (this.editor.inputBuffer[0] == KEYMOD_CONTROL) {
+        else if (this.editor.inputBuffer[0] == KEYMOD_CONTROL || this.editor.inputBuffer[0] == KeyEvent.DOM_VK_ESCAPE) {
             command = this.editor.inputBuffer;
             commandObject = trivialInsertModeCommands[command[0]];
             if (commandObject) {
@@ -117,11 +117,11 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
             // plane, i.e. if the character is a high surrogate. 
             // (Remember the high one comes first, so a
             // low surrogate is hopefully not to be expected.)
-            var c = mode.editor.inputBuffer[0];
-            mode.editor.eatInput(1);
+            var c = this.editor.inputBuffer[0];
+            this.editor.eatInput(1);
             if (0xD800 <= c && c <= 0xDBFF) {
-                c += mode.editor.inputBuffer[0];
-                mode.editor.eatInput(1);
+                c += this.editor.inputBuffer[0];
+                this.editor.eatInput(1);
             }
 
             // Find out wether we have to treat this character as
@@ -129,7 +129,7 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
             if (ucd.isOperator(c)) {
                 this.putElement(null, "mo", document.createTextNode(c));
             }
-            else if (ucd.isNumber(c)) {
+            else if (ucd.isDigit(c)) {
 
             }
             else { // Identifier
@@ -247,6 +247,11 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
 
 
 
+function ucdInsertModeCommand_exit(mode,command) {
+    mode.finish();
+    mode.editor.eatInput(command.length);
+    return true;
+}
 
 
 
