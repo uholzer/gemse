@@ -99,20 +99,23 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
     }
     this.__defineGetter__("contextNode", function() { /*TODO*/ }); // TODO
     this.inputHandler = function() {
-        // Handle input as command if CTRL is pressed, otherwise
-        // handle it as indicated by the UCD
-        if (this.editor.inputBuffer[0] == KEYMOD_CONTROL || this.editor.inputBuffer[0] == String.fromCharCode(0x1b)) {
-            command = this.editor.inputBuffer;
-            commandObject = ucdInsertModeCommands[command[0]];
-            if (commandObject) {
-                return commandObject.execute(this,command[0]);
-            }
-            else {
-                // Command not found;
-                return false;
-            } 
+        // First check wheter this could be a command from the command
+        // table. Otherwise handle it as indicated by the UCD
+        var command = this.editor.inputBuffer;
+        var firstCommand = command.slice(0,1);
+        while (!ucdInsertModeCommands[firstCommand] && firstCommand.length < command.length) { 
+            firstCommand = command.slice(0,firstCommand.length + 1);
+        }
+        var command = firstCommand;
+        var commandObject = ucdInsertModeCommands[command];
+        if (commandObject) {
+            // The first endOfCommandIndex+1 characters are a command.
+            return commandObject.execute(this,command[0]);
         }
         else {
+            // The input buffer does not begin with a command, so look
+            // into the UCD to decide what to do.
+
             // Fetch next character, be careful if it is from a higher
             // plane, i.e. if the character is a high surrogate. 
             // (Remember the high one comes first, so a
