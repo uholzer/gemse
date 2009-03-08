@@ -625,6 +625,14 @@ function GemsePEditor() {
     this.inputElement; // A dom element that receives user input
     this.containerTemplate; // A dom element that can be sed to create new containers
     this.options = []; // Array of options wich differ from the defaults
+    this.insertModes = {
+        trivial: {
+            constructor: trivialInsertMode
+        },
+        ucd: {
+            constructor: ucdInsertMode
+        }
+    };
 
     // Find out the current working directory
     this.__defineGetter__("workingDirectory", function() {
@@ -941,7 +949,7 @@ function GemsePEditor() {
         // Sets the option key to value for the current equation if
         // global is false. If global is true, the option is set on
         // all equations
-        if (global) {
+        if (global || this.focus == -1) {
             this.equations.forEach(function(e) { delete e.options[key]; })
             this.options[key] = value;
         }
