@@ -110,7 +110,7 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
         var commandObject = ucdInsertModeCommands[command];
         if (commandObject) {
             // The first endOfCommandIndex+1 characters are a command.
-            return commandObject.execute(this,command[0]);
+            return commandObject.execute(this,command);
         }
         else {
             // The input buffer does not begin with a command, so look
