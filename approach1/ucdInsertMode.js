@@ -133,7 +133,18 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
                 this.putElement(null, "mo", document.createTextNode(c));
             }
             else if (ucd.isDigit(c)) {
-
+                // We assume that it does not happen that the user
+                // wants to have two consecutive mn elements. (For
+                // indecies that consist of two numbers, please put an
+                // invisible comma between them.)
+                var precedingElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
+                if (precedingElement && precedingElement.namespaceURI == NS_MathML && precedingElement.localName == "mn") {
+                    precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities or similar=
+                    this.equationEnv.updateViews();
+                }
+                else {
+                    this.putElement(null, "mn", document.createTextNode(c));
+                }
             }
             else if (ucd.isIdentifier(c)) { // Identifier
                 this.putElement(null, "mi", document.createTextNode(c));
