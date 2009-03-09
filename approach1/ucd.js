@@ -19,7 +19,7 @@ function UCD4Gemse() {
     }
 
     this.isOperator = function(c) {
-        return (this.lookupGeneralCategory(c)[0] == "S");
+        return (this.lookupGeneralCategory(c)[0] == "S" || this.lookupGeneralCategory(c)[0] == "P");
     }
 
     /* Lookup methods */

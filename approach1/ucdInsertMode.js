@@ -135,8 +135,11 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
             else if (ucd.isDigit(c)) {
 
             }
-            else { // Identifier
+            else if (ucd.isIdentifier(c)) { // Identifier
                 this.putElement(null, "mi", document.createTextNode(c));
+            }
+            else {
+                throw "I don't know what to do with " + c + ", it seems not to be an operator, a digit or an identifier.";
             }
         }
     };
