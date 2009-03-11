@@ -318,9 +318,9 @@ function editModeCommand_insertIn(mode) {
     // (should be used seldomly)
     mode.infoAboutCalledMode = {
         change: mode.equationEnv.history.createChange(),
-        changeElement: mode.cursor.parentNode
+        changeElement: mode.cursor
     };
-    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
+    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor);
     var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor, null);
     newMode.init();
     mode.equationEnv.callMode(newMode);
