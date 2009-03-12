@@ -2,10 +2,6 @@
     This is an insert mode that queries the Unicode Character Database
     in order to decide whether a chracter is an identifier, an operator
     or a number. 
-
-    See
-    http://www.unicode.org/reports/tr31/
-    http://www.unicode.org/reports/tr29/
 */
 
 function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
