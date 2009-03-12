@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html [
+  <!ENTITY  enter  "↵">
+  <!ENTITY  esc    "ESC">
+  <!ENTITY  ctrl   "CRTL+">
+  <!ENTITY  alt    "ALT+">
+  <!ENTITY  space  "␣">
+]>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xml:lang="en"
+    internal:function="documentation"
+>
+
+<head>
+    <title>UCD Insert Mode</title>
+    <link rel="stylesheet" href="../gemse.css" type="text/css" />
+    <script src="../const.js"/>
+    <script src="../trivialInsertMode.js"/> <!-- Needed since ucd steals commands from trivial -->
+    <script src="../ucdInsertMode.js"/>
+    <script src="../ucdInsertMode_commandTable.js"/>
+    <script src="commandListProcessing.js"/>
+</head>
+
+<body onload="modeCommands = ucdInsertModeCommands; init()">
+
+<h1>UCD Insert Mode</h1>
+
+<h2>Basics</h2>
+
+<p>Unlike in the trivial insert mode, this mode does not require you
+to tell it the nature of a character before inserting it. This
+information is looked up in the unicode character database (UCD). So,
+for example you do not need to hit <kbd>o</kbd> before hitting
+<kbd>=</kbd> in order to tell Gemse that it is an operator. Yo can
+simply hit <kbd>=</kbd> and the ucd insert mode looks into the UCD in
+order to find out wether it is an operator, an identifier or a digit.
+For example <kbd>a+b=2c</kbd> would insert an identifier <code>A</code>, an
+operator <code>+</code>, an identifier <code>b</code>, an operator
+<code>=</code>, a number <code>2</code> and an
+identifier <code>c</code>.</p>
+
+<p>Otherwise, this insert mode is very similar to the 
+<a href="trivialInsertMode.xhtml">trivial insert mode</a>.</p>
+
+<div id="commands">
+<h2>Commands</h2>
+
+<table>
+<thead><tr><th>Command</th><th>title</th><th>Function name</th><th>type</th></tr></thead>
+<tbody id="commandTableBody">
+
+</tbody>
+</table>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mrow">
+    <h3 class="commandTitle">mrow</h3>
+
+    <p>Inserts an <code>mrow</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mfrac">
+    <h3 class="commandTitle">mfrac</h3>
+
+    <p>Inserts an <code>mfrac</code> element, a fraction.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_msub">
+    <h3 class="commandTitle">msub</h3>
+
+    <p>Inserts an <code>msub</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_msup">
+    <h3 class="commandTitle">msup</h3>
+
+    <p>Inserts an <code>msup</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_msqrt">
+    <h3 class="commandTitle">msqrt</h3>
+
+    <p>Inserts a <code>msqrt</code> element, a square root.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_mroot">
+    <h3 class="commandTitle">mroot</h3>
+
+    <p>Inserts a <code>mroot</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_munder">
+    <h3 class="commandTitle">munder</h3>
+
+    <p>Inserts a <code>munder</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_mover">
+    <h3 class="commandTitle">mover</h3>
+
+    <p>Inserts a <code>mover</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_munderover">
+    <h3 class="commandTitle">munderover</h3>
+
+    <p>Inserts a <code>munderover</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_menclose">
+    <h3 class="commandTitle">menclose</h3>
+
+    <p>Inserts a <code>menclose</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_mfenced">
+    <h3 class="commandTitle">mfenced</h3>
+
+    <p>Inserts a <code>mfenced</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_mmultiscripts">
+    <h3 class="commandTitle">mmultiscripts</h3>
+
+    <p>Inserts a <code>mmultiscripts</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_mprescripts">
+    <h3 class="commandTitle">mprescripts</h3>
+
+    <p>Inserts a <code>mprescripts</code> element. This element is
+    only used as child of an <code>mmultiscripts</code> element. It
+    signifies that all elements that follow it are to be interpreded
+    as prescripts.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_table">
+    <h3 class="commandTitle">table</h3>
+
+    <p>Please read the 
+    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_table">description 
+    of this command in the documentation of the trivial insert mode</a>.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_mlabeledtr">
+    <h3 class="commandTitle">mlabeledtr</h3>
+
+    <p>Please read the 
+    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_mlabeledtr">description 
+    of this command in the documentation of the trivial insert mode</a>.</p>
+</div>
+
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_oneMoreToSurround">
+    <h3 class="commandTitle">one more to surround</h3>
+
+    <p>Please read the 
+    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_oneMoreToSurround">description 
+    of this command in the documentation of the trivial insert mode</a>.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_oneLessToSurround">
+    <h3 class="commandTitle">one less to surround</h3>
+
+    <p>Please read the 
+    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_oneLessToSurround">description 
+    of this command in the documentation of the trivial insert mode</a>.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_cursorJump">
+    <h3 class="commandTitle">Let cursor jump</h3>
+
+    <p>Please read the 
+    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_cursorJump">description 
+    of this command in the documentation of the trivial insert mode</a>.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_exit">
+    <h3 class="commandTitle">Exit mode</h3>
+
+    <p>Terminates the insert mode.</p>
+</div>
+
+
+</div>
+</body>
+</html>
