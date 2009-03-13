@@ -8,10 +8,14 @@ inputSubstitutionEndSign = ";";
 
 /* Loading of tables */
 
-// The entries in this table must be prefix free and must not begin
-// with u+ or U+.
 inputSubstitutionTable = {
-    
+    // Here you can add additional entries to the input substitution
+    // table. They have to look like
+    //   name: "character",
+    // So, for example    
+    //   alpha: "α",
+    // (without the comment signs // at the beginning of the line, of
+    // course. Don't forget the comma at the end of the line)
 }
 
 // Create request for entity declaration file
