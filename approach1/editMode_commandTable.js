@@ -100,6 +100,10 @@ editModeCommands = {
         type: "operator",
         execute: editModeCommand_mrowEnvelop
     },
+    "\t": {
+        type: "action",
+        execute: editModeCommand_cycleInsertMode
+    },
     ":set": {
         type: "long",
         execute: editModeCommand_set

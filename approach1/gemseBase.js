@@ -625,6 +625,14 @@ function GemsePEditor() {
     this.inputElement; // A dom element that receives user input
     this.containerTemplate; // A dom element that can be sed to create new containers
     this.options = []; // Array of options wich differ from the defaults
+    this.insertModes = {
+        trivial: {
+            constructor: trivialInsertMode
+        },
+        ucd: {
+            constructor: ucdInsertMode
+        }
+    };
 
     // Find out the current working directory
     this.__defineGetter__("workingDirectory", function() {
@@ -881,7 +889,7 @@ function GemsePEditor() {
         // Sets the option key to value for the current equation if
         // global is false. If global is true, the option is set on
         // all equations
-        if (global) {
+        if (global || this.focus == -1) {
             this.equations.forEach(function(e) { delete e.options[key]; })
             this.options[key] = value;
         }
@@ -895,6 +903,21 @@ function GemsePEditor() {
     // create new equations.
     this.pool = null;
 }
+
+
+/* For handling unicode characters from higher planes, we have to be
+aware that such characters are represented by pairs! The following
+functions help. */
+
+function fromCharCode (codePt) {  
+    if (codePt > 0xFFFF) {  
+        codePt -= 0x10000;  
+        return String.fromCharCode(0xD800 + (codePt >> 10), 0xDC00 + (codePt & 0x3FF));  
+    }  
+    else {  
+        return String.fromCharCode(codePt);  
+    }  
+} 
 
 
 

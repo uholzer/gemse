@@ -6,6 +6,14 @@ function EditMode(editor, equationEnv) {
     this.userSelectionForNextCommand = null; // This is set after visual mode. Otherwise allways null.
     this.init = function() {
         this.moveCursor(this.equationEnv.equation); // the element the cursor points to
+        // XXX: This should not be here. It will be removed as soon as
+        // the handling of options has been implemented.
+        if (!this.editor.getOption("selectableInsertModes")) {
+            this.editor.setOption("selectableInsertModes", "trivial,ucd");
+        }
+        if (!this.editor.getOption("currentInsertMode")) {
+            this.editor.setOption("currentInsertMode", "trivial");
+        }
     }
     this.moveCursor = function(element) {
         this.hideCursor();
@@ -103,6 +111,22 @@ function EditMode(editor, equationEnv) {
             return false;
         }
     };
+    this.callInsertMode = function (cursorInElement, cursorBeforeElement, manualChange, manualChangeElement) {
+        // Calls the insert mode
+        // If manual change is supplied, then its recordBefore must already have been called.
+        this.infoAboutCalledMode = {
+            change: manualChange || this.equationEnv.history.createChange(),
+            changeElement: manualChangeElement || this.cursor.parentNode
+        };
+        if (!manualChange) {
+            this.infoAboutCalledMode.change.recordBefore(this.equationEnv.equation,this.cursor.parentNode);
+        }
+        var constructor = this.editor.insertModes[this.editor.getOption("currentInsertMode")].constructor;
+        var newMode = new constructor(this.editor, this.equationEnv, cursorInElement, cursorBeforeElement);
+        newMode.init();
+        this.equationEnv.callMode(newMode);
+        return true;
+    }
     this.calledModeReturned = function (returnValue) {
         if (this.infoAboutCalledMode) {
             if (this.infoAboutCalledMode.change) {
@@ -252,15 +276,8 @@ function editModeCommand_change(mode,command,singleCharacterArgs,userSelection) 
     }
     parentOfTargets.removeChild(to);
 
-    mode.infoAboutCalledMode = {
-        change: change,
-        changeElement: parentOfTargets
-    };
-    var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, parentOfTargets, cursorBefore);
-    newMode.init();
-    mode.equationEnv.callMode(newMode);
-
-    return true;
+    // Start the insert mode
+    return mode.callInsertMode(parentOfTargets, cursorBefore, change, parentOfTargets);
 }
 
 function editModeCommand_attributeMode(mode) {
@@ -290,41 +307,16 @@ function editModeCommand_visualMode(mode) {
 }
 
 function editModeCommand_insertBefore(mode) {
-    mode.infoAboutCalledMode = {
-        change: mode.equationEnv.history.createChange(),
-        changeElement: mode.cursor.parentNode
-    };
-    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
-    var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor.parentNode, mode.cursor);
-    newMode.init();
-    mode.equationEnv.callMode(newMode);
-    return true;
+    return mode.callInsertMode(mode.cursor.parentNode, mode.cursor);
 }
 
 function editModeCommand_insertAfter(mode) {
-    mode.infoAboutCalledMode = {
-        change: mode.equationEnv.history.createChange(),
-        changeElement: mode.cursor.parentNode
-    };
-    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
-    var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor.parentNode, mml_nextSibling(mode.cursor));
-    newMode.init();
-    mode.equationEnv.callMode(newMode);
-    return true;
+    return mode.callInsertMode(mode.cursor.parentNode, mml_nextSibling(mode.cursor));
 }
 
 function editModeCommand_insertIn(mode) {
     // Thought for inserting into empty elements
-    // (should be used seldomly)
-    mode.infoAboutCalledMode = {
-        change: mode.equationEnv.history.createChange(),
-        changeElement: mode.cursor
-    };
-    mode.infoAboutCalledMode.change.recordBefore(mode.equationEnv.equation,mode.cursor);
-    var newMode = new trivialInsertMode(mode.editor, mode.equationEnv, mode.cursor, null);
-    newMode.init();
-    mode.equationEnv.callMode(newMode);
-    return true;
+    return mode.callInsertMode(mode.cursor, null);
 }
 
 function editModeCommand_insertAtBeginning(mode) {
@@ -554,6 +546,20 @@ function editModeCommand_copyToRegister(mode,commandString,args,userSelection) {
 
 function editModeCommand_startstopUserRecording(name) {
 
+}
+
+function editModeCommand_cycleInsertMode(mode) {
+    var current = mode.editor.getOption("currentInsertMode");
+    var selectable = mode.editor.getOption("selectableInsertModes").split(",");
+    var index = selectable.indexOf(current);
+    if (index == selectable.length-1) { current = selectable[0] }
+    else if (index >= 0) { current = selectable[index+1] }
+    else { current = selectable[0] }
+    mode.editor.setOption("currentInsertMode",current);
+    mode.equationEnv.notificationDisplay.appendChild(
+        document.createTextNode("You changed the insert mode to " + mode.editor.getOption("currentInsertMode"))
+    );
+    return true;
 }
 
 function editModeCommand_set(mode, argString) {
