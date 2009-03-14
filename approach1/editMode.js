@@ -116,10 +116,10 @@ function EditMode(editor, equationEnv) {
         // If manual change is supplied, then its recordBefore must already have been called.
         this.infoAboutCalledMode = {
             change: manualChange || this.equationEnv.history.createChange(),
-            changeElement: manualChangeElement || this.cursor.parentNode
+            changeElement: manualChangeElement || cursorInElement
         };
         if (!manualChange) {
-            this.infoAboutCalledMode.change.recordBefore(this.equationEnv.equation,this.cursor.parentNode);
+            this.infoAboutCalledMode.change.recordBefore(this.equationEnv.equation,cursorInElement);
         }
         var constructor = this.editor.insertModes[this.editor.getOption("currentInsertMode")].constructor;
         var newMode = new constructor(this.editor, this.equationEnv, cursorInElement, cursorBeforeElement);
