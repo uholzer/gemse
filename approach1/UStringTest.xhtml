@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+          "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+
+<head>
+    <title>Gemse 1</title>
+    <script src="UString.js"/>
+    <script><![CDATA[
+        function test() {
+            var dest = document.getElementById("results");
+
+            var ustring = new UString("foo 𝕂 bar");
+
+            var s = ustring.toString();
+            dest.appendChild(document.createTextNode(s + "\n"));
+
+            var s = "has length " + 
+                    ustring.length + " and internal length " +
+                    ustring.value.length;
+            dest.appendChild(document.createTextNode(s + "\n"));
+
+            for (var i=0; i<ustring.length; ++i) {
+                var s = "index " + i + " has internal index " +
+                        ustring.indexToInternalIndex(i);
+                dest.appendChild(document.createTextNode(s + "\n"));
+            }
+
+            for (var i=0; i<ustring.value.length; ++i) {
+                var s = "Internal index " + i + " has index " +
+                        ustring.internalIndexToIndex(i);
+                dest.appendChild(document.createTextNode(s + "\n"));
+            }
+
+            for (var i=0; i<ustring.length; ++i) {
+                var s = "Character at position " + i + " is " +
+                        ustring.charAt(i);
+                dest.appendChild(document.createTextNode(s + "\n"));
+            }
+        }
+    ]]></script>
+</head>
+
+<body onload="test()">
+
+<h1>Gemse 1 UString</h1>
+
+<pre id="results"></pre>
+
+</body>
+
+</html>
