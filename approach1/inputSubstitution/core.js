@@ -8,7 +8,9 @@ inputSubstitutionEndSign = ";";
 
 /* Loading of tables */
 
-if (inputSubstitutionActive) {
+if (inputSubstitutionActive) { inputSubstitution_loadTables(); }
+
+function inputSubstitution_loadTables() {
     inputSubstitutionTable = {
         // Here you can add additional entries to the input substitution
         // table. They have to look like
@@ -24,7 +26,6 @@ if (inputSubstitutionActive) {
     request.open("GET", "inputSubstitution/w3centities-f.ent", false);
     request.overrideMimeType("text/plain");
     request.send(null);
-    request.responseText;
 
     // Prepare Regex
     var entitiesLineRegex = /<!ENTITY\s+(\w+)\s+"([^"]+)"\s*>/g;
