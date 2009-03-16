@@ -110,3 +110,8 @@ UString.isSurrogateCode = function(characterCode) {
     }
 }
 
+
+String.prototype.toUString = function() {
+    return new UString(this.toString());
+}
+

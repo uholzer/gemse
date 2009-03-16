@@ -11,7 +11,7 @@
         function test() {
             var dest = document.getElementById("results");
 
-            var ustring = new UString("foo 𝕂 bar");
+            var ustring = "foo 𝕂 bar".toUString();
 
             var s = ustring.toString();
             dest.appendChild(document.createTextNode(s + "\n"));
