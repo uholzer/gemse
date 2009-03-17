@@ -8,6 +8,8 @@ const KEYMOD_CONTROL = String.fromCharCode(17);
 const KEYMOD_META = KeyEvent.VK_META;
 
 function standardNSResolver(prefix) {
+    // The code of Gemse relies on this resolver, so don't remove
+    // already defined prefixes!
     if (prefix == "internal") { return NS_internal }
     else if (prefix == "m") { return NS_MathML }
     else if (prefix == "math") { return NS_MathML }

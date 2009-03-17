@@ -5,10 +5,7 @@ function EquationEnv(editor, container) {
     /* The container must provide some elements. They are
       located by the function attribute. */
 
-    var nsResolver = function (prefix) { 
-        if (prefix == "internal") { return NS_internal }
-        else { return null }
-    };
+    var nsResolver = standardNSResolver;
 
     // The element with function "equation" is the one that
     // actually contains the MathML element. It must already
