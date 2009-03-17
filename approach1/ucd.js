@@ -46,6 +46,7 @@ function UCD4Gemse() {
         request.overrideMimeType("text/plain");
         request.send(null);
         var dataLines = request.responseText.split("\n");
+        delete request;
 
         var lineRegex = /^([^;]*);([^;]*);([^;]*);/;
         dataLines.forEach(function(l) {

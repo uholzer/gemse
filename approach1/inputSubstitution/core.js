@@ -26,6 +26,11 @@ function inputSubstitution_loadTables() {
     request.open("GET", "inputSubstitution/w3centities-f.ent", false);
     request.overrideMimeType("text/plain");
     request.send(null);
+    // Make a copy of the response text. (Using request.resonseText
+    // later on in the while loop causes huge memory usage while this
+    // function executes, around one gigabyte. So make a copy.)
+    declarationText = request.responseText;
+    delete request;
 
     // Prepare Regex
     var entitiesLineRegex = /<!ENTITY\s+(\w+)\s+"([^"]+)"\s*>/g;
@@ -33,7 +38,7 @@ function inputSubstitution_loadTables() {
 
     // Parse entity declarations
     var entryData;
-    while (entryData = entitiesLineRegex.exec(request.responseText)) {
+    while (entryData = entitiesLineRegex.exec(declarationText)) {
         var entityName = entryData[1];
         var entityValueEscaped = entryData[2];
         var entityValue = "";
