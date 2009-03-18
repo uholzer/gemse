@@ -76,9 +76,13 @@ UString.prototype = {
     
     /* For private use */
     indexToInternalIndex: function(index) {
+        // For a given index, the corresponding index in the internal
+        // string this.value is returned.
         // If the character at index is from a higher plane, the
         // internal index of its first surrogate is returned, i.e.
         // the index of its high surrogate
+        // If index is less than 0, TODO
+        // If index is larger or equal to this.length, TODO
         var internalIndex = -1;
         for (var i=0; i<=index; ++i) {
             if (UString.isSurrogate(this.value[internalIndex+1])==1) {
@@ -91,6 +95,13 @@ UString.prototype = {
         return internalIndex;
     },
     internalIndexToIndex: function(internalIndex) {
+        // For an index of thee internal this.value, returns an index
+        // indicating the position of the corresponding unicode
+        // character in the sequence of unicode characters.
+        // internalIndex is allowed to point to a low or a high
+        // surrogate.
+        // If internalIndex is smaller than 0, TODO
+        // If internalIndex is larger or equal to this.value.length, TODO
         var index = -1;
         for (var i=0; i<=internalIndex; ++i) {
             if (UString.isSurrogate(this.value[i])!=1) {
