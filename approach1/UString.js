@@ -30,6 +30,9 @@ UString.prototype = {
     toString: function() {
         return this.value.toString();
     },
+    valueOf: function() {
+        return this.value.toString();
+    },
     charAt: function(index) {
         // Returns a string value
         var internalIndex = this.indexToInternalIndex(index);
@@ -52,6 +55,25 @@ UString.prototype = {
             return this.value.charCodeAt(internalIndex);
         }
     },
+    concat: String.prototype.concat,
+    indexOf: function(searchString, position) {
+        var internalIndex = this.value.indexOf(searchString, position);
+        if (internalIndex == -1) { return -1 }
+        else { return this.internalIndexToIndex(internalIndex) }
+    },
+    lastIndexOf: function(searchString, position) {
+        var internalIndex = this.value.lastIndexOf(searchString, position);
+        if (internalIndex == -1) { return -1 }
+        else { return this.internalIndexToIndex(internalIndex) }
+    },
+    slice: function(start, end) {
+        throw "TODO"
+    },
+    substring: function(start, end) {
+        throw "TODO"
+    },
+
+    
     /* For private use */
     indexToInternalIndex: function(index) {
         // If the character at index is from a higher plane, the
@@ -84,13 +106,18 @@ UString.prototype = {
 
 UString.fromCharCode = function(codePt) {
     // Returns a string value, not an object
-    if (codePt > 0xFFFF) {  
-        codePt -= 0x10000;  
-        return String.fromCharCode(0xD800 + (codePt >> 10), 0xDC00 + (codePt & 0x3FF));  
-    }  
-    else {  
-        return String.fromCharCode(codePt);  
-    }  
+    result = "";
+    for (var i=0; i<arguments.length; ++i) {
+        var codePt = arguments[i];
+        if (codePt > 0xFFFF) {  
+            codePt -= 0x10000;  
+            result += String.fromCharCode(0xD800 + (codePt >> 10), 0xDC00 + (codePt & 0x3FF));  
+        }  
+        else {  
+            result += String.fromCharCode(codePt);  
+        }  
+    }
+    return result;
 }
 UString.isSurrogate = function(character) {
     return UString.isSurrogateCode(character.charCodeAt(0));

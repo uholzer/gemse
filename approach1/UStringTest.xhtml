@@ -38,6 +38,18 @@
                         ustring.charAt(i);
                 dest.appendChild(document.createTextNode(s + "\n"));
             }
+
+            var s = "Concat: " + ustring.concat("wo", "rks".toUString());
+            dest.appendChild(document.createTextNode(s + "\n"));
+
+            var s = "indexOf: " + ustring.indexOf("a");
+            dest.appendChild(document.createTextNode(s + "\n"));
+
+            var s = "lastIndexOf: " + ustring.lastIndexOf("a");
+            dest.appendChild(document.createTextNode(s + "\n"));
+
+            var s = "fromCharCode: " + UString.fromCharCode(0x77, 0x6f, 0x72, 0x1d55c, 0x73)
+            dest.appendChild(document.createTextNode(s + "\n"));
         }
     ]]></script>
 </head>
