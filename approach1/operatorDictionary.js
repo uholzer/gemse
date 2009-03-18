@@ -137,8 +137,8 @@ function OperatorDictionary() {
         request.open("GET", dictionaryFile, false);
         request.overrideMimeType("text/plain");
         request.send(null);
-        var dictionaryString = request.responseText;
-        var dictionaryLines = dictionaryString.split("\n");
+        var dictionaryLines = request.responseText.split("\n");
+        delete request;
 
         var entryRegex = /^ *"(([^<"]+)((<!--(([^-]|-(?!-))*)-->)([^<"]*))*)"(( +[^=]+="[^"]*")*)( +(<!--([^-]*)-->))? *$/;
         var emptyRegex = /^\s*$/;
