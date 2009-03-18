@@ -48,6 +48,12 @@
             var s = "lastIndexOf: " + ustring.lastIndexOf("a");
             dest.appendChild(document.createTextNode(s + "\n"));
 
+            var s = "substring: " + ustring.substring(1,7);
+            dest.appendChild(document.createTextNode(s + "\n"));
+
+            var s = "slice: " + ustring.slice(1,-1);
+            dest.appendChild(document.createTextNode(s + "\n"));
+
             var s = "fromCharCode: " + UString.fromCharCode(0x77, 0x6f, 0x72, 0x1d55c, 0x73)
             dest.appendChild(document.createTextNode(s + "\n"));
         }

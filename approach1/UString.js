@@ -67,10 +67,28 @@ UString.prototype = {
         else { return this.internalIndexToIndex(internalIndex) }
     },
     slice: function(start, end) {
-        throw "TODO"
+        if (end === undefined) { end = this.length }
+        if (isNaN(start)) { start = 0 }
+        if (isNaN(end)  ) { end   = 0 }
+        if (start < 0) { start = this.length + start }
+        if (end   < 0) { end   = this.length + end   }
+        if (start < 0) { start = 0 }
+        if (end   < 0) { end   = 0 }
+        if (start > this.length) { start = this.length }
+        if (end   > this.length) { end   = this.length }
+        var internalStart = this.indexToInternalIndex(start);
+        var internalEnd = this.indexToInternalIndex(end);
+        return this.value.slice(internalStart, internalEnd);
     },
     substring: function(start, end) {
-        throw "TODO"
+        if (end === undefined) { end = this.length }
+        if (isNaN(start) || start<0) { start = 0 }
+        if (isNaN(end)   || end<0  ) { end   = 0 }
+        if (start > this.length) { start = this.length }
+        if (end   > this.length) { end   = this.length }
+        var internalStart = this.indexToInternalIndex(start);
+        var internalEnd = this.indexToInternalIndex(end);
+        return this.value.substring(internalStart, internalEnd);
     },
 
     
@@ -81,8 +99,12 @@ UString.prototype = {
         // If the character at index is from a higher plane, the
         // internal index of its first surrogate is returned, i.e.
         // the index of its high surrogate
-        // If index is less than 0, TODO
-        // If index is larger or equal to this.length, TODO
+        // If index is less than 0, an error is thrown
+        // If index is larger than this.length, an error is
+        // thrown
+        if (index < 0) { throw "negative index not accepted" }
+        if (index == this.length) { return this.value.length }
+        if (index > this.length) { throw "index" }
         var internalIndex = -1;
         for (var i=0; i<=index; ++i) {
             if (UString.isSurrogate(this.value[internalIndex+1])==1) {
@@ -100,8 +122,12 @@ UString.prototype = {
         // character in the sequence of unicode characters.
         // internalIndex is allowed to point to a low or a high
         // surrogate.
-        // If internalIndex is smaller than 0, TODO
-        // If internalIndex is larger or equal to this.value.length, TODO
+        // If internalIndex is smaller than 0, an error is thrown
+        // If internalIndex is larger tahen this.value.length,
+        // an error is thrown
+        if (index < 0) { throw "negative index not accepted" }
+        if (index == this.value.length) { return this.length }
+        if (index > this.value.length) { throw "string is shorter" }
         var index = -1;
         for (var i=0; i<=internalIndex; ++i) {
             if (UString.isSurrogate(this.value[i])!=1) {
