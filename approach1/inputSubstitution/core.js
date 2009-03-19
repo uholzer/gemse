@@ -8,38 +8,46 @@ inputSubstitutionEndSign = ";";
 
 /* Loading of tables */
 
-inputSubstitutionTable = {
-    // Here you can add additional entries to the input substitution
-    // table. They have to look like
-    //   name: "character",
-    // So, for example    
-    //   alpha: "α",
-    // (without the comment signs // at the beginning of the line, of
-    // course. Don't forget the comma at the end of the line)
-}
+if (inputSubstitutionActive) { inputSubstitution_loadTables(); }
 
-// Create request for entity declaration file
-var request = new XMLHttpRequest();
-request.open("GET", "inputSubstitution/w3centities-f.ent", false);
-request.overrideMimeType("text/plain");
-request.send(null);
-request.responseText;
-
-// Prepare Regex
-var entitiesLineRegex = /<!ENTITY\s+(\w+)\s+"([^"]+)"\s*>/g;
-var valueRegex = /&#x([0-9A-Fa-f]+);/g;
-
-// Parse entity declarations
-var entryData;
-while (entryData = entitiesLineRegex.exec(request.responseText)) {
-    var entityName = entryData[1];
-    var entityValueEscaped = entryData[2];
-    var entityValue = "";
-    var valueData;
-    while (valueData = valueRegex.exec(entityValueEscaped)) {
-        entityValue += String.fromCharCode(parseInt(valueData[1], 16));
+function inputSubstitution_loadTables() {
+    inputSubstitutionTable = {
+        // Here you can add additional entries to the input substitution
+        // table. They have to look like
+        //   name: "character",
+        // So, for example    
+        //   alpha: "α",
+        // (without the comment signs // at the beginning of the line, of
+        // course. Don't forget the comma at the end of the line)
     }
-    inputSubstitutionTable[entityName] = entityValue;
+
+    // Create request for entity declaration file
+    var request = new XMLHttpRequest();
+    request.open("GET", "inputSubstitution/w3centities-f.ent", false);
+    request.overrideMimeType("text/plain");
+    request.send(null);
+    // Make a copy of the response text. (Using request.resonseText
+    // later on in the while loop causes huge memory usage while this
+    // function executes, around one gigabyte. So make a copy.)
+    declarationText = request.responseText;
+    delete request;
+
+    // Prepare Regex
+    var entitiesLineRegex = /<!ENTITY\s+(\w+)\s+"([^"]+)"\s*>/g;
+    var valueRegex = /&#x([0-9A-Fa-f]+);/g;
+
+    // Parse entity declarations
+    var entryData;
+    while (entryData = entitiesLineRegex.exec(declarationText)) {
+        var entityName = entryData[1];
+        var entityValueEscaped = entryData[2];
+        var entityValue = "";
+        var valueData;
+        while (valueData = valueRegex.exec(entityValueEscaped)) {
+            entityValue += String.fromCharCode(parseInt(valueData[1], 16));
+        }
+        inputSubstitutionTable[entityName] = entityValue;
+    }
 }
 
 /* Functionality */

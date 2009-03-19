@@ -148,10 +148,7 @@ function EditMode(editor, equationEnv) {
     }
     this.reInit = function () {
         // Search equation for the cursor
-        var nsResolver = function (prefix) { 
-            if (prefix == "internal") { return NS_internal }
-            else { return null }
-        };
+        var nsResolver = standardNSResolver;
         this.cursor = document.evaluate(".//.[@internal:selected='editcursor']", this.equationEnv.equation, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
         if (!this.cursor) { this.cursor = this.equationEnv.equation }
         this.moveCursor(this.cursor); // In order to update all views
