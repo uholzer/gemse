@@ -33,6 +33,11 @@ UString.prototype = {
     valueOf: function() {
         return this.value.toString();
     },
+    toUString: function() {
+        // This is just for convenience, when someone calls toUString
+        // on a string without knowing that it is already an UString.
+        return this;
+    },
     charAt: function(index) {
         // Returns a string value
         var internalIndex = this.indexToInternalIndex(index);
