@@ -37,14 +37,17 @@ function EditMode(editor, equationEnv) {
         // Returns true if it succeeded to execute the first command from the
         // input buffer. Else, it returns false.
         var command = this.editor.inputBuffer;
-        var endOfCommandIndex = 0; // Points to the end of the command in the input buffer
+        // endOfCommandIndex points to the end of the command in the
+        // input buffer. It counts unicode characters, not UTF16
+        // characters.
+        var endOfCommandIndex = 0;
         var commandArg = null;
         var forceFlag = false;
         var singleCharacterArgs = [];
         while (command[0] == '"') {
             if (command.length < 2) { return } // Returns if the user has not yet entered the character
-            singleCharacterArgs.push(command[1]);
-            command = command.slice(2);
+            singleCharacterArgs.push(command.uCharAt(1));
+            command = command.uSlice(2);
             endOfCommandIndex += 2;
         }
         if (command[0] == ":") { // Treate this as a long command
@@ -53,19 +56,19 @@ function EditMode(editor, equationEnv) {
                 command = inf[1];
                 if (inf[2]) { forceFlag = true }
                 commandArg = inf[4] || ""; // Prevent commandArg from being null (XXX: is this good?)
-                endOfCommandIndex += inf[0].length + 1;
+                endOfCommandIndex += inf[0].uLength + 1;
             }
             else {
                 return false;
             }
         }
         else {
-            var firstCommand = command.slice(0,1);
+            var firstCommand = command.uSlice(0,1);
             while (!editModeCommands[firstCommand] && firstCommand.length < command.length) { 
-                firstCommand = command.slice(0,firstCommand.length + 1);
+                firstCommand = command.uSlice(0,firstCommand.uLength + 1);
             }
             command = firstCommand;
-            endOfCommandIndex += firstCommand.length;
+            endOfCommandIndex += firstCommand.uLength;
         }
         commandObject = editModeCommands[command];
         if (commandObject) {
