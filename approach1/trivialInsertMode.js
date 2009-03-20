@@ -91,9 +91,9 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
     this.__defineGetter__("contextNode", function() { /*TODO*/ }); // TODO
     this.inputHandler = function() {
         command = this.editor.inputBuffer;
-        commandObject = trivialInsertModeCommands[command[0]];
+        commandObject = trivialInsertModeCommands[command.uCharAt(0)];
         if (commandObject) {
-            return commandObject.execute(this,command[0]);
+            return commandObject.execute(this,command.uCharAt(0));
         }
         else {
             // Command not found;
@@ -235,7 +235,7 @@ function trivialInsertModeCommand_mnNormal(mode,command) {
                 res[1]
             )
         );
-        mode.editor.eatInput(mode.editor.inputBuffer.length - res[3].length); // thats why the + in the regex is needed
+        mode.editor.eatInput(mode.editor.inputBuffer.uLength - res[3].uLength); // thats why the + in the regex is needed
         return true;
     }
     else {
@@ -279,13 +279,13 @@ function trivialInsertModeCommand_table(mode,command) {
         //insert an mtable
         mode.putElement(null, "mtable", mode.getNewPlaceholderElement());
     }
-    mode.editor.eatInput(command.length);
+    mode.editor.eatInput(command.uLength);
     return true;
 }
 
 function trivialInsertModeCommand_mlabeledtr(mode,command) {
     mode.putElement(null, "mlabeledtr", mode.getNewPlaceholderElement());
-    mode.editor.eatInput(command.length);
+    mode.editor.eatInput(command.uLength);
     return true;
 }
 
@@ -316,7 +316,7 @@ function trivialInsertModeCommand_insertDescribedElement(mode, command, elementN
         throw description.type + " not yet supported by insertDescribedElement";
     }
     mode.putElement(newElement);
-    mode.editor.eatInput(command.length);
+    mode.editor.eatInput(command.uLength);
     return true;
 }
 
@@ -326,7 +326,7 @@ function trivialInsertModeCommand_cursorJump(mode,command) {
         return trivialInsertModeCommand_exit(mode,command);
     }
     mode.moveCursor(mode.cursorStack.pop());
-    mode.editor.eatInput(command.length);
+    mode.editor.eatInput(command.uLength);
     return true;
 }
 
@@ -337,7 +337,7 @@ function trivialInsertModeCommand_oneMoreToSurround(mode,command) {
             inElement: mode.cursor.inElement,
             numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) + 1
         });
-    mode.editor.eatInput(command.length);
+    mode.editor.eatInput(command.uLength);
     return true;
 }
 
@@ -349,34 +349,35 @@ function trivialInsertModeCommand_oneLessToSurround(mode,command) {
             numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) - 1
         });
     }
-    mode.editor.eatInput(command.length);
+    mode.editor.eatInput(command.uLength);
     return true;
 }
 
 function trivialInsertModeCommand_exit(mode,command) {
     mode.finish();
-    mode.editor.eatInput(command.length);
+    mode.editor.eatInput(command.uLength);
     return true;
 }
 
 function trivialInsertModeCommandTool_elementWithSingleCharacter(mode,command,elementName) {
-    if (mode.editor.inputBuffer.length < 2) { return false }
-    mode.putElement(null, elementName, document.createTextNode(mode.editor.inputBuffer[1]));
-    mode.editor.eatInput(command.length+1);
+    if (mode.editor.inputBuffer.uLength < 2) { return false }
+    mode.putElement(null, elementName, document.createTextNode(mode.editor.inputBuffer.uCharAt(1)));
+    mode.editor.eatInput(command.uLength+1);
     return true;
 }
 
 function trivialInsertModeCommandTool_elementWithLongText(mode,command,elementName) {
+    // endOfText here counts UTF16 characters!
     var endOfText = mode.editor.inputBuffer.indexOf("\n");
     if (endOfText==-1) { return false } 
     mode.putElement(
         null, 
         elementName,
         document.createTextNode(
-            mode.editor.inputBuffer.substring(1,mode.editor.inputBuffer.length-1)
+            mode.editor.inputBuffer.substring(command.length,endOfText)
         )
     );
-    mode.editor.eatInput(endOfText+1);
+    mode.editor.eatInput16(endOfText+1);
     return true;
 }
 
