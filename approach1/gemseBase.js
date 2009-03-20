@@ -700,11 +700,24 @@ function GemsePEditor() {
     // eatInput(numberOfCharacters) removes numberOfCharacters from
     // the inputBuffers. Also, it does records the removed string for
     // command repeating.
+    // IMPORTANT: eatInput considers the numberOfCharacters to be the
+    // number of the unicode characters, not the number of UTF16
+    // characters. So characters from higher planes are counted once.
+    // The method eatInput16 on the other hand counts higher plane
+    // characters twice, once for each surrogate. If you try to eat
+    // only the first one of a surrogate pair, eatInput16 will remove
+    // both.
     this.eatInput = function(numberOfCharacters) {
         for (r in this.inputRecordings) {
-            this.inputRecordings[r] += this.inputBuffer.slice(0,numberOfCharacters);
+            this.inputRecordings[r] += this.inputBuffer.uSlice(0,numberOfCharacters);
         }
-        this.inputBuffer = this.inputBuffer.slice(numberOfCharacters);
+        this.inputBuffer = this.inputBuffer.uSlice(numberOfCharacters);
+    }
+    this.eatInput16 = function(numberOfUTF16Characters) {
+        this.eatInput(this.inputBuffer.index_16ToU(numberOfUTF16Characters));
+        // Using this.eatInput and index_16ToU has a nice side effect:
+        // It is not possible to eat only one surrogate of a surrogate
+        // pair. It will eat always both surrogates.
     }
     this.inputRecordings = { };
     this.startInputRecording = function(name) {
@@ -900,21 +913,6 @@ function GemsePEditor() {
     // create new equations.
     this.pool = null;
 }
-
-
-/* For handling unicode characters from higher planes, we have to be
-aware that such characters are represented by pairs! The following
-functions help. */
-
-function fromCharCode (codePt) {  
-    if (codePt > 0xFFFF) {  
-        codePt -= 0x10000;  
-        return String.fromCharCode(0xD800 + (codePt >> 10), 0xDC00 + (codePt & 0x3FF));  
-    }  
-    else {  
-        return String.fromCharCode(codePt);  
-    }  
-} 
 
 
 
