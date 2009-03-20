@@ -57,7 +57,7 @@ function UCD4Gemse() {
             // We have to use the advanced fromCharCode shipped with
             // gemse, String.fromCharCode can not handle characters
             // from upper planes, unfortunately
-            var character = fromCharCode(codepoint);
+            var character = String.uFromCharCode(codepoint);
             db[character] = [res[2],res[3]];
         });
     }
