@@ -11,50 +11,48 @@
         function test() {
             var dest = document.getElementById("results");
 
-            var ustring = "foo 𝕂 bar".toUString();
+            var a = "foo 𝕂 bar";
 
-            var s = ustring.toString();
+            var s = a;
             dest.appendChild(document.createTextNode(s + "\n"));
 
             var s = "has length " + 
-                    ustring.length + " and internal length " +
-                    ustring.value.length;
+                    a.uLength + " and UTF16 length " +
+                    a.length;
             dest.appendChild(document.createTextNode(s + "\n"));
 
-            for (var i=0; i<ustring.length; ++i) {
-                var s = "index " + i + " has internal index " +
-                        ustring.indexToInternalIndex(i);
+            for (var i=0; i<a.uLength; ++i) {
+                var s = "unicode index " + i + " has UTF16 index " +
+                        a.index_UTo16(i);
                 dest.appendChild(document.createTextNode(s + "\n"));
             }
 
-            for (var i=0; i<ustring.value.length; ++i) {
-                var s = "Internal index " + i + " has index " +
-                        ustring.internalIndexToIndex(i);
+            for (var i=0; i<a.length; ++i) {
+                var s = "UTF16 index " + i + " has unicode index " +
+                        a.index_16ToU(i);
                 dest.appendChild(document.createTextNode(s + "\n"));
             }
 
-            for (var i=0; i<ustring.length; ++i) {
-                var s = "Character at position " + i + " is " +
-                        ustring.charAt(i);
+            for (var i=0; i<a.uLength; ++i) {
+                var s = "Character at position " + i + " is " + a.uCharAt(i) +
+                        " and has code " + a.uCharCodeAt(i).toString(16);
+                    
                 dest.appendChild(document.createTextNode(s + "\n"));
             }
 
-            var s = "Concat: " + ustring.concat("wo", "rks".toUString());
+            var s = "uIndexOf: " + a.uIndexOf("a");
             dest.appendChild(document.createTextNode(s + "\n"));
 
-            var s = "indexOf: " + ustring.indexOf("a");
+            var s = "uLastIndexOf: " + a.uLastIndexOf("a");
             dest.appendChild(document.createTextNode(s + "\n"));
 
-            var s = "lastIndexOf: " + ustring.lastIndexOf("a");
+            var s = "uSubstring: " + a.uSubstring(1,8);
             dest.appendChild(document.createTextNode(s + "\n"));
 
-            var s = "substring: " + ustring.substring(1,7);
+            var s = "uSlice: " + a.uSlice(1,-1);
             dest.appendChild(document.createTextNode(s + "\n"));
 
-            var s = "slice: " + ustring.slice(1,-1);
-            dest.appendChild(document.createTextNode(s + "\n"));
-
-            var s = "fromCharCode: " + UString.fromCharCode(0x77, 0x6f, 0x72, 0x1d55c, 0x73)
+            var s = "uFromCharCode: " + String.uFromCharCode(0x77, 0x6f, 0x72, 0x1d55c, 0x73)
             dest.appendChild(document.createTextNode(s + "\n"));
         }
     ]]></script>
