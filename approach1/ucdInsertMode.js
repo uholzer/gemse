@@ -113,15 +113,11 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
             // into the UCD to decide what to do.
 
             // Fetch next character, be careful if it is from a higher
-            // plane, i.e. if the character is a high surrogate. 
-            // (Remember the high one comes first, so a
-            // low surrogate is hopefully not to be expected.)
-            var c = this.editor.inputBuffer[0];
+            // plane, i.e. if the character is a high surrogate.
+            // uCharAt and eatInput handle a surrogate pair as one
+            // character.
+            var c = this.editor.inputBuffer.uCharAt(0);
             this.editor.eatInput(1);
-            if (0xD800 <= c && c <= 0xDBFF) {
-                c += this.editor.inputBuffer[0];
-                this.editor.eatInput(1);
-            }
 
             // Find out wether we have to treat this character as
             // identifier, operator or number.
@@ -135,7 +131,7 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
                 // invisible comma between them.)
                 var precedingElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
                 if (precedingElement && precedingElement.namespaceURI == NS_MathML && precedingElement.localName == "mn") {
-                    precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities or similar=
+                    precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities or similar?
                     this.equationEnv.updateViews();
                 }
                 else {
