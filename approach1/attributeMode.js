@@ -61,14 +61,14 @@ function AttributeMode(editor, equationEnv, element) {
         // (This is mainly a copy from the same function of the edit
         // mode.)
         var command = this.editor.inputBuffer;
-        var endOfCommandIndex = 0; // Points to the end of the command in the input buffer
+        var endOfCommandIndex = 0; // Points to the end of the command in the input buffer (Index of unicode character, not UTF16 character)
         var commandArg = null;
         var forceFlag = false;
         var singleCharacterArgs = [];
         while (command[0] == '"') {
             if (command.length < 2) { return } // Returns if the user has not yet entered the character
-            singleCharacterArgs.push(command[1]);
-            command = command.slice(2);
+            singleCharacterArgs.push(command.uCharAt(1));
+            command = command.uSlice(2);
             endOfCommandIndex += 2;
         }
 
@@ -77,7 +77,7 @@ function AttributeMode(editor, equationEnv, element) {
             firstCommand = command.slice(0,firstCommand.length + 1);
         }
         command = firstCommand;
-        endOfCommandIndex += firstCommand.length;
+        endOfCommandIndex += firstCommand.uLength;
         commandObject = attributeModeCommands[command];
         if (commandObject) {
             if (commandObject.type == "movement") {
@@ -107,7 +107,7 @@ function AttributeMode(editor, equationEnv, element) {
 
 
 function attributeModeCommand_exit(mode,command) {
-    mode.editor.eatInput(command.length);
+    mode.editor.eatInput(command.uLength);
     mode.finish();
     return true;
 }
@@ -125,37 +125,37 @@ function attributeModeCommand_down(mode,oldCursor) {
 }
 
 function attributeModeCommand_kill(mode,command) {
-    if (mode.cursor==null) { mode.editor.eatInput(command.length); return true; }
+    if (mode.cursor==null) { mode.editor.eatInput(command.uLength); return true; }
     mode.element.removeAttributeNode(mode.attributes[mode.cursor]);
     mode.attributes.splice(mode.cursor,1);
     if (mode.attributes.length == 0) { mode.moveCursor(null) }
     else if (mode.cursor >= mode.attributes.length) { mode.moveCursor(mode.cursor-1) }
     else { mode.moveCursor(mode.cursor) }
 
-    mode.editor.eatInput(command.length);
+    mode.editor.eatInput(command.uLength);
     return true;
 }
 
 function attributeModeCommand_changeValue(mode,command) {
-    if (mode.cursor==null) { mode.editor.eatInput(command.length); return true; }
-    var endOfValue = editor.inputBuffer.indexOf("\n"); 
+    if (mode.cursor==null) { mode.editor.eatInput(command.uLength); return true; }
+    var endOfValue = editor.inputBuffer.indexOf("\n"); // Counts UTF16 characters
     if (endOfValue == -1) { return false; }
     var value = editor.inputBuffer.slice(command.length,endOfValue);
 
     mode.attributes[mode.cursor].nodeValue = value;
     mode.moveCursor(mode.cursor);
 
-    editor.eatInput(endOfValue+1);
+    editor.eatInput16(endOfValue+1); // works because \n is always the last character
     return true;
 }
 
 function attributeModeCommand_changeName(mode,command) {
-    if (mode.cursor==null) { mode.editor.eatInput(command.length); return true; }
+    if (mode.cursor==null) { mode.editor.eatInput16(command.length); return true; }
     throw "todo!";
 }
 
-function attributeModeCommand_changeNS(mode) {
-    if (mode.cursor==null) { mode.editor.eatInput(command.length); return true; }
+function attributeModeCommand_changeNS(mode,command) {
+    if (mode.cursor==null) { mode.editor.eatInput16(command.length); return true; }
     throw "todo!";
 }
 
@@ -164,7 +164,7 @@ function attributeModeCommand_insertDefault(mode,command) {
     var info = r.exec(mode.editor.inputBuffer.slice(command.length));
     if (info) {
         mode.element.setAttribute(info[1], info[2]);
-        editor.eatInput(command.length + info[0].length);
+        editor.eatInput16(command.length + info[0].length);
         mode.reInit();
         return true;
     }
@@ -178,7 +178,7 @@ function attributeModeCommand_insertForeign(mode,command) {
     var info = r.exec(mode.editor.inputBuffer.slice(command.length));
     if (info) {
         mode.element.setAttributeNS(info[1], info[2], info[3]);
-        editor.eatInput(command.length + info[0].length);
+        editor.eatInput16(command.length + info[0].length);
         mode.reInit();
         return true;
     }
@@ -197,7 +197,7 @@ function attributeModeCommand_setDefaultForMissing(mode,command) {
         }
     }
     mode.reInit();
-    editor.eatInput(command.length);
+    editor.eatInput16(command.length);
     return true;
 }
 
@@ -226,7 +226,7 @@ function attributeModeCommand_clearAll(mode,command) {
     }
 
     mode.reInit();
-    editor.eatInput(command.length);
+    editor.eatInput16(command.length);
     return true;
 }
 
@@ -242,7 +242,7 @@ function attributeModeCommand_setFromDictionary(mode,command) {
         }
     }
 
-    var endOfValue = editor.inputBuffer.indexOf("\n"); 
+    var endOfValue = editor.inputBuffer.indexOf("\n"); // counting UTF16 characters
     if (endOfValue == -1) { return false; }
     var value = editor.inputBuffer.slice(command.length,endOfValue);
 
@@ -272,7 +272,7 @@ function attributeModeCommand_setFromDictionary(mode,command) {
     // have been more than one matching entries.
 
     mode.reInit();
-    editor.eatInput(endOfValue+1);
+    editor.eatInput16(endOfValue+1);
     return true;
 }
 
