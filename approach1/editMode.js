@@ -363,6 +363,53 @@ function editModeCommand_serialize(mode, argString) {
     return true;
 }
 
+function editModeCommand_export(mode, argString) {
+
+    // Fetch exporter stylesheet
+    var stylesheet;
+    if (argString == "tex" || !argString) {
+        // Create request
+        var request = new XMLHttpRequest();
+        request.open("GET", "exporters/xsltml/mmltex.xsl", false);
+        request.send(null);
+        stylesheet = request.responseXML;
+        delete request;
+    }
+    else {
+        throw "Unknown exporter: " + argString;
+    }
+
+    // Create new document, since cleanSubtreeOfDocument requires
+    // a document.
+    var doc = document.implementation.createDocument(null, null, null);
+    var rootNode = doc.importNode(mode.equationEnv.equation, true);
+    doc.appendChild(rootNode);
+    mode.equationEnv.cleanSubtreeOfDocument(doc, rootNode);
+
+    // Prepare the processor
+    var processor = new XSLTProcessor();
+    processor.importStylesheet(stylesheet);
+    
+    // Do the tranformation
+    var resultDoc = processor.transformToDocument(doc);
+
+    // Serialize the result
+    var serialized;
+    if (resultDoc.documentElement.nodeName == "transformiix:result") {
+        // The output of the transformation is text.
+        // XXX: Is the above comparison correct?
+        serialized = resultDoc.documentElement.textContent;
+    }
+    else {
+        // The output of the transformation is XML
+        var serializer = new XMLSerializer();
+        serialized = serializer.serializeToString(resultDoc);
+    }
+
+    mode.equationEnv.notificationDisplay.textContent = serialized;
+    return true;
+}
+
 function editModeCommand_newEquation(mode) {
     mode.editor.newEquation(null);
     return true;

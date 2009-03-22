@@ -112,6 +112,10 @@ editModeCommands = {
         type: "long",
         execute: editModeCommand_serialize
     },
+    ":export": {
+        type: "long",
+        execute: editModeCommand_export
+    },
     ":new": {
         type: "long",
         execute: editModeCommand_newEquation
