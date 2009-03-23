@@ -43,28 +43,28 @@ function EquationEnv(editor, container) {
     // below.)
     this.origin = null;
 
-    // The working directory is used if the user provides a relative URI for
-    // load or save or whatever. XXX: Load does not yet know about
-    // this.
-    this.__defineGetter__("workingDirectory", function() { return this.editor.workingDirectory; });
-
     // Options that are locally set for this equationEnv. A mode
     // should not read or write this array directly, it should use
     // getOption() and setOption() from the editor object.
     this.options = [];
+    /* Additional objects */
 
+    this.history = new History;   // An array of Change Elements
+    this.modeStack = [new EditMode(editor, this)];
+}
+EquationEnv.prototype = {
     /* Methods */
 
     // Getting and setting the equation 
     // You must not set this.equation directly. You must use
     // the following method. You also have to call reInit of
     // the current mode afterwards.
-    this.replaceEquation = function(e) {
+    replaceEquation: function(e) {
         this.equation.parentNode.replaceChild(e, this.equation);
         this.equation = e;
-    }
+    },
 
-    this.updateViews = function() {
+    updateViews: function() {
         if (this.treeView) { this.buildTreeView(); }
         if (this.attributeView && this.mode.contextNode) { 
             var element = this.mode.contextNode;
@@ -79,9 +79,9 @@ function EquationEnv(editor, container) {
         if (this.modeNameIndicator) {
             this.modeNameIndicator.textContent = this.mode.name;
         }
-    }
+    },
 
-    this.buildTreeView = function() {
+    buildTreeView: function() {
         var treeWalker = document.createTreeWalker(
             this.equation,
             NodeFilter.SHOW_ALL,
@@ -128,9 +128,9 @@ function EquationEnv(editor, container) {
             }
         }
 
-    }
+    },
 
-    this.buildAttributeView = function (forElement) {
+    buildAttributeView: function (forElement) {
         while (this.attributeView.hasChildNodes()) { this.attributeView.removeChild(this.attributeView.firstChild); }
         // Place attribute information inside an Array
         var attributes = [];
@@ -207,9 +207,9 @@ function EquationEnv(editor, container) {
             }
             this.attributeView.appendChild(table);
         }
-    }
+    },
 
-    this.buildDictionaryView = function (forElement) {
+    buildDictionaryView: function (forElement) {
         while (this.dictionaryView.hasChildNodes()) { this.dictionaryView.removeChild(this.dictionaryView.firstChild); }
         // Return immediately if we are not on an mo element
         if (! (forElement.namespaceURI==NS_MathML && forElement.localName=="mo")) { return }
@@ -291,41 +291,46 @@ function EquationEnv(editor, container) {
         });
 
         this.dictionaryView.appendChild(table);
-    }
+    },
 
-    this.init = function() {
+    init: function() {
         this.mode.init();
-    }
+    },
 
-    this.callMode = function (mode) {
+    callMode: function (mode) {
         // mode must be a properly created and initialized mode
         // When the mode finishes (by calling finishMode),
         // control is returned to the current mode.
         this.modeStack.push(mode);
         this.updateViews();
-    }
-    this.switchMode = function (mode) {
+    },
+    switchMode: function (mode) {
         // mode must be a properly created and initialized mode
         // Unlike callMode, this method kills the current mode
         // and puts the new one at its place.
         this.modeStack[this.modeStack.length-1] = mode;
         this.updateViews();
-    }
-    this.finishMode = function (returnValue) {
+    },
+    finishMode: function (returnValue) {
         // Closes the curent mode and reverts to the old one
         this.modeStack.pop();
         this.modeStack[this.modeStack.length-1].calledModeReturned(returnValue);
-    }
-    this.__defineGetter__("mode", function() { return this.modeStack[this.modeStack.length-1]; });
+    },
+    get mode() { return this.modeStack[this.modeStack.length-1]; },
 
-    this.stringToURI = function(s) {
+    // The working directory is used if the user provides a relative URI for
+    // load or save or whatever. XXX: Load does not yet know about
+    // this.
+    get workingDirectory() { return this.editor.workingDirectory; },
+
+    stringToURI: function(s) {
         // Given a URI as a string, returns an uri object. 
         // The string may be a relative URI.
         var ios = Components.classes["@mozilla.org/network/io-service;1"]
                 .getService(Components.interfaces.nsIIOService);
         return ios.newURI(s,null,ios.newURI(this.workingDirectory,null,null));
-    }
-    this.cleanSubtreeOfDocument = function(doc,root) {
+    },
+    cleanSubtreeOfDocument: function(doc,root) {
         // Kills all attributes in the internal namespace
         // (Using TreeWalker, since createNodeIterator has been
         // introduced in firefox 3.1)
@@ -349,8 +354,8 @@ function EquationEnv(editor, container) {
             }
             n =  iterator.nextNode();
         }
-    }
-    this.save = function(destinationURIString) {
+    },
+    save: function(destinationURIString) {
         // Saves the equation to its origin if destination is empty.
         // Otherwise it will save it to destinationURI, creating a new
         // XML file with the math element as a root node. 
@@ -435,8 +440,8 @@ function EquationEnv(editor, container) {
 
         // Tell the history object that we saved the current state
         this.history.reportSaving();
-    }
-    this.close = function(force) {
+    },
+    close: function(force) {
         // Closes this equation environment if their are no unsaved
         // changes or if force is set to true
 
@@ -448,12 +453,7 @@ function EquationEnv(editor, container) {
 
         // close
         this.editor.eliminateEquationEnv(this);
-    }
-
-    /* Additional objects */
-
-    this.history = new History;   // An array of Change Elements
-    this.modeStack = [new EditMode(editor, this)];
+    },
 }
 
 function Register(name, content, type) {
@@ -482,37 +482,39 @@ function History() {
     this.position = -1; // Alway points to the last change applied
     this.savedState = -2; // Always points to the last change saved to disk
         // (Set to -2 so that -1!=-2 at the beginning)
-    this.goBack = function (equationEnv) {
+}
+History.prototype = {
+    goBack: function (equationEnv) {
         if (this.position < 0) { return false; }
         this[this.position].undo(equationEnv);
         --this.position;
         return true;
-    }
-    this.goForward = function (equationEnv) {
+    },
+    goForward: function (equationEnv) {
         if (this.position >= this.length-1) { return false; }
         ++this.position;
         this[this.position].redo(equationEnv);
         return true;
-    }
-    this.createChange = function () {
+    },
+    createChange: function () {
         return new Change();
-    }
-    this.reportChange = function(change) {
+    },
+    reportChange: function(change) {
         if (!change.ready) { throw "reported change is not ready" }
         this.length = this.position + 1; // Chop off succeeding changes
         this.push(change);
         ++this.position;
-    }
-    this.reportSaving = function() {
+    },
+    reportSaving: function() {
         // Marks the current state as saved
         this.savedState = this.position;
-    }
-    this.hasChanges = function() {
+    },
+    hasChanges: function() {
         // Returns false if the current state has been written to file
         return !(this.savedState == this.position);
-    }
+    },
 }
-History.prototype = new Array();
+History.prototype.__proto__ = new Array();
 
 function Change() {
     /* Default implementation of Change */
@@ -521,7 +523,14 @@ function Change() {
     // attributes in the namespace NS_internal.
     // The method reInit of the mode is called after the
     // change so that the mode can update its data structures
-    this.undo = function (equationEnv) {
+    this.oldNode = null;
+    this.newNode = null;
+    this.treePointer = [];
+    this.command = null; // Please set that, otherwise the command '.' will not work
+    this.ready = false;
+}
+Change.prototype = {
+    undo: function (equationEnv) {
         var equation = equationEnv.equation;
         if (!this.ready) {
             throw "This Change instance is not ready for undo or redo";
@@ -537,8 +546,8 @@ function Change() {
         }
         equationEnv.mode.reInit();
         return true;
-    }
-    this.redo = function (equationEnv) {
+    },
+    redo: function (equationEnv) {
         var equation = equationEnv.equation;
         if (!this.ready) {
             throw "This Change instance is not ready for undo or redo";
@@ -554,13 +563,8 @@ function Change() {
         }
         equationEnv.mode.reInit();
         return true;
-    }
-    this.oldNode = null;
-    this.newNode = null;
-    this.treePointer = [];
-    this.command = null; // Please set that, otherwise the command '.' will not work
-    this.ready = false;
-    this.recordBefore = function (equation,toBeChangedElement) {
+    },
+    recordBefore: function (equation,toBeChangedElement) {
         if (toBeChangedElement.nodeType != Node.ELEMENT_NODE) {
             throw "Only element nodes can be recorded.";
         }
@@ -576,8 +580,8 @@ function Change() {
 
         // Make deep copy
         this.oldNode = toBeChangedElement.cloneNode(true);
-    }
-    this.recordAfter = function (equation,changedElement) {
+    },
+    recordAfter: function (equation,changedElement) {
         if (changedElement.nodeType != Node.ELEMENT_NODE) {
             throw "Only element nodes can be recorded.";
         }
@@ -593,8 +597,8 @@ function Change() {
 
         // Flag this object as ready for undo and redo
         this.ready = true;
-    }
-    this.deriveTreePointer = function (equation, target) {
+    },
+    deriveTreePointer: function (equation, target) {
         var pointer = [];
         // We go from the target _backwards_ to the equation node
         while (equation != target) {
@@ -605,14 +609,14 @@ function Change() {
             target = target.parentNode;
         }
         return pointer;
-    }
-    this.applyTreePointer = function (equation, pointer) {
+    },
+    applyTreePointer: function (equation, pointer) {
         var target = equation;
         pointer.forEach(function(siblingNumber) {
             target = target.childNodes[siblingNumber];
         });
         return target;
-    }
+    },
 }
 
 function GemsePEditor() {
@@ -622,9 +626,18 @@ function GemsePEditor() {
     this.inputElement; // A dom element that receives user input
     this.containerTemplate; // A dom element that can be sed to create new containers
     this.options = []; // Array of options wich differ from the defaults
-
+    this.inputRecordings = { };
+    // The DOM element that horts all equation Environments is
+    // called pool. If it is null, then the user can not
+    // create new equations.
+    this.pool = null;
+    this.inputSubstitution = inputSubstitution;
+        // This is implemented in inputSubstitution/core.js and is
+        // perhaps not even present.
+}
+GemsePEditor.prototype = {
     // Find out the current working directory
-    this.__defineGetter__("workingDirectory", function() {
+    get workingDirectory() {
         var ios = Components.classes["@mozilla.org/network/io-service;1"].
                          getService(Components.interfaces.nsIIOService);
         var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
@@ -632,10 +645,10 @@ function GemsePEditor() {
                          get("CurWorkD", Components.interfaces.nsIFile);
         var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
         return workingDirectory;
-    });
+    },
 
     /* Methods */
-    this.inputEvent = function () {
+    inputEvent: function () {
         // Is called when the input buffer supposedly changed
         if (inputSubstitutionActive) { 
             var allowPropagation = this.inputSubstitution();
@@ -664,11 +677,8 @@ function GemsePEditor() {
                 this.inputBuffer = "";
             }
         }
-    };
-    this.inputSubstitution = inputSubstitution;
-        // This is implemented in inputSubstitution/core.js and is
-        // perhaps not even present.
-    this.keyEvent = function (event) {
+    },
+    keyEvent: function (event) {
         // Is called when a key gets hit. This also is called
         // if the key does not cause a character to be entered
         // into the input element (i.e. the input buffer).
@@ -684,9 +694,9 @@ function GemsePEditor() {
         event.preventDefault();
         event.stopPropagation();
         editor.inputEvent();
-    };
-    this.__defineGetter__("inputBuffer", function() { return this.inputElement.value; });
-    this.__defineSetter__("inputBuffer", function(x) { this.inputElement.value = x; });
+    },
+    get inputBuffer()  { return this.inputElement.value; },
+    set inputBuffer(x) { this.inputElement.value = x;    },
     // Modes must not set the inputBuffer directly. Instead, they
     // should use the mothod eatInput
     // eatInput(numberOfCharacters) removes numberOfCharacters from
@@ -699,29 +709,28 @@ function GemsePEditor() {
     // characters twice, once for each surrogate. If you try to eat
     // only the first one of a surrogate pair, eatInput16 will remove
     // both.
-    this.eatInput = function(numberOfCharacters) {
+    eatInput: function(numberOfCharacters) {
         for (r in this.inputRecordings) {
             this.inputRecordings[r] += this.inputBuffer.uSlice(0,numberOfCharacters);
         }
         this.inputBuffer = this.inputBuffer.uSlice(numberOfCharacters);
-    }
-    this.eatInput16 = function(numberOfUTF16Characters) {
+    },
+    eatInput16: function(numberOfUTF16Characters) {
         this.eatInput(this.inputBuffer.index_16ToU(numberOfUTF16Characters));
         // Using this.eatInput and index_16ToU has a nice side effect:
         // It is not possible to eat only one surrogate of a surrogate
         // pair. It will eat always both surrogates.
-    }
-    this.inputRecordings = { };
-    this.startInputRecording = function(name) {
+    },
+    startInputRecording: function(name) {
         this.inputRecordings[name] = "";
-    }
-    this.stopInputRecording = function(name) {
+    },
+    stopInputRecording: function(name) {
         var result = this.inputRecordings[name];
         delete this.inputRecordings[name];
         return result;
-    }
+    },
 
-    this.eliminateEquationEnv = function (equationEnv) {
+    eliminateEquationEnv: function (equationEnv) {
         // This method must only be called by methods of equationEnv.
         // The equationEnv gets dropped from this.equations and this.focus
         // gets adjusted if needed.
@@ -735,8 +744,8 @@ function GemsePEditor() {
         if (this.focus == index && index > 0) { --this.focus; this.moveFocusTo(this.focus) }
         else { this.moveFocusTo(this.focus) }
         // TODO: What to do if all equations are gone?
-    }
-    this.attachNewEquationEnvToElement = function (element) {
+    },
+    attachNewEquationEnvToElement: function (element) {
         // Attaches a new EquationEnv to an already present element in
         // the document. Returns the newly created EquationEnv.
         var newEquationEnv = new EquationEnv(this, element);
@@ -744,8 +753,8 @@ function GemsePEditor() {
         this.equations.push(newEquationEnv);
         this.moveFocusTo(this.equations.length-1);
         return newEquationEnv;
-    }
-    this.newEquation = function (equation) {
+    },
+    newEquation: function (equation) {
         // Creates a new EquationEnv and also a new Element in the
         // document. If the argument equation is not given, an empty
         // one gets created. Returns the newly created EquationEnv.
@@ -765,8 +774,8 @@ function GemsePEditor() {
         }
         this.moveFocusTo(this.equations.length-1);
         return newEquationEnv;
-    }
-    this.loadURI = function (uri, elementId, xpathString) {
+    },
+    loadURI: function (uri, elementId, xpathString) {
         // Fetches the uri. If elementId and xpathString are empty, it
         // uses the root element as the MathML element. If elementId
         // is given, it uses the element with this id. Else, if
@@ -841,8 +850,8 @@ function GemsePEditor() {
             // saved.
             newEquationEnv.history.reportSaving();
         }
-    }
-    this.loadFromOpenDocument = function(doc,element) {
+    },
+    loadFromOpenDocument: function(doc,element) {
         // If the element to edit is part of an already open document,
         // call this method to load it
         if (element.localName != "math" || element.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
@@ -858,12 +867,12 @@ function GemsePEditor() {
         // Tell the history object that this new equation is already
         // saved.
         newEquationEnv.history.reportSaving();
-    }
-    this.loadAll = function(uri) {
+    },
+    loadAll: function(uri) {
         // Loads all equations found in the file uri
         this.loadURI(uri,null,"//m:math");
-    }
-    this.moveFocusTo = function(dest) {
+    },
+    moveFocusTo: function(dest) {
         if (dest >= this.equations.length) { return false }
         if (dest < 0) { return false }
         if (this.focus >= 0) {
@@ -871,8 +880,8 @@ function GemsePEditor() {
         }
         this.focus = dest;
         this.equations[this.focus].container.setAttributeNS(NS_internal, "selected", "equationFocus");
-    }
-    this.getOptionHandler = function(key) {
+    },
+    getOptionHandler: function(key) {
         for (var i=0; i < GemsePEditor.knownClasses.length; ++i) {
             if (GemsePEditor.knownClasses[i].gemseOptions &&
                 GemsePEditor.knownClasses[i].gemseOptions[key]) {
@@ -880,8 +889,8 @@ function GemsePEditor() {
             }
         }
         return null;
-    }
-    this.getOption = function(key) {
+    },
+    getOption: function(key) {
         // Tries to get the option. This may depend on the focused
         // equation
         var value = undefined;
@@ -897,13 +906,13 @@ function GemsePEditor() {
             value = handler.defaultValue;
         }
         return value;
-    }
-    this.getOptionParsed = function(key) {
+    },
+    getOptionParsed: function(key) {
         var value = this.getOption(key);
         var handler = this.getOptionHandler(key);
         return handler.parser(value,this);
-    }
-    this.setOption = function(key,value,global) {
+    },
+    setOption: function(key,value,global) {
         // Sets the option key to value for the current equation if
         // global is false. If global is true, the option is set on
         // all equations
@@ -919,12 +928,7 @@ function GemsePEditor() {
         else {
             this.equations[this.focus].options[key] = value;
         }
-    }
-
-    // The DOM element that horts all equation Environments is
-    // called pool. If it is null, then the user can not
-    // create new equations.
-    this.pool = null;
+    },
 }
 
 GemsePEditor.knownClasses = [];
