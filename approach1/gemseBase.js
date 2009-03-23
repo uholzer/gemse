@@ -622,14 +622,6 @@ function GemsePEditor() {
     this.inputElement; // A dom element that receives user input
     this.containerTemplate; // A dom element that can be sed to create new containers
     this.options = []; // Array of options wich differ from the defaults
-    this.insertModes = {
-        trivial: {
-            constructor: trivialInsertMode
-        },
-        ucd: {
-            constructor: ucdInsertMode
-        }
-    };
 
     // Find out the current working directory
     this.__defineGetter__("workingDirectory", function() {
@@ -880,6 +872,15 @@ function GemsePEditor() {
         this.focus = dest;
         this.equations[this.focus].container.setAttributeNS(NS_internal, "selected", "equationFocus");
     }
+    this.getOptionHandler = function(key) {
+        for (var i=0; i < GemsePEditor.knownClasses.length; ++i) {
+            if (GemsePEditor.knownClasses[i].gemseOptions &&
+                GemsePEditor.knownClasses[i].gemseOptions[key]) {
+                return GemsePEditor.knownClasses[i].gemseOptions[key];
+            }
+        }
+        return null;
+    }
     this.getOption = function(key) {
         // Tries to get the option. This may depend on the focused
         // equation
@@ -891,14 +892,26 @@ function GemsePEditor() {
             value = this.options[key];
         }
         if (value === undefined) {
-            value = defaultOptions[key];
+            var handler = this.getOptionHandler(key);
+            if (!handler) { throw "Option " + key + " does not exist" }
+            value = handler.defaultValue;
         }
         return value;
+    }
+    this.getOptionParsed = function(key) {
+        var value = this.getOption(key);
+        var handler = this.getOptionHandler(key);
+        return handler.parser(value,this);
     }
     this.setOption = function(key,value,global) {
         // Sets the option key to value for the current equation if
         // global is false. If global is true, the option is set on
         // all equations
+        var handler = this.getOptionHandler(key);
+        if (!handler) { throw "Option " + key + " does not exist" }
+        if (!handler.validator(value,this)) {
+            throw value + " is not a valid value for the option" + key;
+        }
         if (global || this.focus == -1) {
             this.equations.forEach(function(e) { delete e.options[key]; })
             this.options[key] = value;
@@ -913,6 +926,8 @@ function GemsePEditor() {
     // create new equations.
     this.pool = null;
 }
+
+GemsePEditor.knownClasses = [];
 
 
 

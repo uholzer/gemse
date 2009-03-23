@@ -1,4 +1,6 @@
 
+GemsePEditor.knownClasses.push(EditMode);
+
 function EditMode(editor, equationEnv) {
     this.name = "edit";
     this.editor = editor;
@@ -6,14 +8,6 @@ function EditMode(editor, equationEnv) {
     this.userSelectionForNextCommand = null; // This is set after visual mode. Otherwise allways null.
     this.init = function() {
         this.moveCursor(this.equationEnv.equation); // the element the cursor points to
-        // XXX: This should not be here. It will be removed as soon as
-        // the handling of options has been implemented.
-        if (!this.editor.getOption("selectableInsertModes")) {
-            this.editor.setOption("selectableInsertModes", "trivial,ucd");
-        }
-        if (!this.editor.getOption("currentInsertMode")) {
-            this.editor.setOption("currentInsertMode", "trivial");
-        }
     }
     this.moveCursor = function(element) {
         this.hideCursor();
@@ -124,8 +118,8 @@ function EditMode(editor, equationEnv) {
         if (!manualChange) {
             this.infoAboutCalledMode.change.recordBefore(this.equationEnv.equation,cursorInElement);
         }
-        var constructor = this.editor.insertModes[this.editor.getOption("currentInsertMode")].constructor;
-        var newMode = new constructor(this.editor, this.equationEnv, cursorInElement, cursorBeforeElement);
+        var editModeClass = this.editor.getOptionParsed("currentInsertMode");
+        var newMode = new editModeClass(this.editor, this.equationEnv, cursorInElement, cursorBeforeElement);
         newMode.init();
         this.equationEnv.callMode(newMode);
         return true;
@@ -159,8 +153,32 @@ function EditMode(editor, equationEnv) {
 }
 
 
-editModeOptions = { // Default values of options
-
+EditMode.gemseOptions = { // Default values of options
+    "selectableInsertModes": {
+        defaultValue: "trivial,ucd",
+        validator: function(value,editor) {
+            return (value == "trivial,ucd" || value == "ucd,trivial" ||
+                    value == "trivial"     || value == "ucd");
+        },
+        parser: function(value,editor) {
+            return value.split(",");
+        }
+    },
+    "currentInsertMode": {
+        defaultValue: "trivial",
+        validator: function(value,editor) {
+            return (value == "trivial" || value == "ucd");
+        },
+        parser: function(value,editor) {
+            // Returns a class
+            if (value == "trivial") {
+                return trivialInsertMode;
+            }
+            else {
+                return ucdInsertMode;
+            }
+        }
+    },
 }
 
 function editModeCommand_moveLeft(mode,currentElement) {
@@ -597,7 +615,7 @@ function editModeCommand_startstopUserRecording(name) {
 
 function editModeCommand_cycleInsertMode(mode) {
     var current = mode.editor.getOption("currentInsertMode");
-    var selectable = mode.editor.getOption("selectableInsertModes").split(",");
+    var selectable = mode.editor.getOptionParsed("selectableInsertModes");
     var index = selectable.indexOf(current);
     if (index == selectable.length-1) { current = selectable[0] }
     else if (index >= 0) { current = selectable[index+1] }
