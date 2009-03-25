@@ -25,6 +25,44 @@
 
 <h1>Release Notes</h1>
 
+<h2>1.0.3</h2>
+
+<ul>
+<li>An operator dictionary has been added. Up to now, it is only used
+by the attribute mode. There you can set attributes according to a
+dictionary entry. The dictoinary is based on the operator dictionary
+provided by the MathML 2 specification.</li>
+<li>The input substitution has been changed fundamentally. The
+sequences that get substituted look now like XML entities.
+One can insert characters by their codepoint: For example
+<code>&amp;#x03b1;</code> gets substituted with α. Characters can also
+be inserted by name: For example <code>&amp;alpha;</code> gives α as
+well. The names are taken from 
+<a href="http://www.w3.org/2003/entities/2007doc/">the w3c's
+collection of entities</a>. In this release, input substitution is on
+by default.</li>
+<li>A new UCD-based input mode has been added. UCD-based means that
+the mode queries the unicode character database to find out whether a
+character is an operator, an identifier or a digit. This means that
+you do not need to hit <kbd>o</kbd> before an operator or <kbd>i</kbd> before an identifier.
+The old input mode is the default, you can change this by hitting the
+tab key.</li>
+<li>Unicode characters that do not reside in the BMP (for example 𝕂),
+can now be used everywhere: As name of commands in all modes, as names
+of registers and as operators or identifiers in the insert modes.
+The problematic part about that is that JavaScript stores unicode
+characters with 16 bits per character. Since characters outside the BMP
+can not be represented by 16 bits, a pair of surrogate characters is
+used, that is, they are represented by two characters. So everywhere
+Gemse expects one character, it has to check whether it is a surrogate
+and in this case has to take two characters!</li>
+<li>The command <kbd>:export</kbd> has been added to the edit mode. It
+allows you to translate your equation into LaTeX. At the moment,
+however, you need to download the additional library that is needed
+for this feature yourself. More information you can find in the
+documentation of this command.</li>
+</ul>
+
 <h2>1.0.2</h2>
 
 <p>The surround feature has been added to the insert mode. It allows
