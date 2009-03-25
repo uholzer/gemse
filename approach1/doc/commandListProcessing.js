@@ -184,6 +184,7 @@ function formattedCommandString(cs) {
     cs = cs.replace(/\n/gm, "↵");
     //cs = cs.replace((new RegExp("\" + KEYMOD_CONTROL, "gm")), "CRTL+");
     //cs = cs.replace((new RegExp("\" + KEYMOD_ALT, "gm")), "ALT+");
+    cs = cs.replace(/\u0009/gm, "TAB");
     cs = cs.replace(/\u001b/gm, "ESC");
     return cs;
 }
