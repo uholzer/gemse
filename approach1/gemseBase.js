@@ -1,5 +1,12 @@
+/**
+ * @class Environment for an equation
+ * @param editor The editor object the new environment will belong to
+ * @param container The DOM element that will contain this environment
+ */
 function EquationEnv(editor, container) {
+    /** @private */
     this.container = container;
+    /** @private */
     this.editor = editor;
 
     /* The container must provide some elements. They are
@@ -7,63 +14,102 @@ function EquationEnv(editor, container) {
 
     var nsResolver = standardNSResolver;
 
-    // The element with function "equation" is the one that
-    // actually contains the MathML element. It must already
-    // contain one now, not nessecairily empty.
+    /**
+     * Root element of the equation.
+     * The element with function "equation" is the one that
+     * actually contains the MathML element. It must already
+     * contain one now, not nessecairily empty.
+     * @private
+     */
     this.equation = document.evaluate(".//.[@internal:function='equation']/*", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
-    // The tree view shows the tree structure of the equation
-    // using nested div elements. This view is always
-    // regenerated based on the equation.
+    /**
+     * The element containing the tree view.
+     * The tree view shows the tree structure of the equation
+     * using nested div elements. This view is always
+     * regenerated based on the equation.
+     * @private
+     */
     this.treeView = document.evaluate(".//.[@internal:function='treeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
-    // The attribute view lists all attributes of the current
-    // element
+    /**
+     * The element containing the attribute view.
+     * The attribute view lists all attributes of the current
+     * element
+     * @private
+     */
     this.attributeView = document.evaluate(".//.[@internal:function='attributeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
-    // The dictionary view shows information taken from a dictionary
-    // about the current element.
+    /**
+     * The element containing the dictionary view.
+     * The dictionary view shows information taken from a dictionary
+     * about the current element.
+     * @private
+     */
     this.dictionaryView = document.evaluate(".//.[@internal:function='dictionaryView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
-    // The modeName element shows the name of the current mode
+    /**
+     * The element containing the name of the current mode.
+     * @private
+     */
     this.modeNameIndicator = document.evaluate(".//.[@internal:function='modeName']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
-    // The notificationDisplay element
+    /**
+     * The element containing various notifications.
+     * @private
+     */
     this.notificationDisplay = document.evaluate(".//.[@internal:function='notificationDisplay']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 
-    // The origin is an object that describes where exactly the
-    // equation has been loaded from. If there is no origin, this
-    // property should be set to null. This may happen for example
-    // when the user creates a new equation. The write command uses
-    // this property to find out where to write the equation by
-    // default. This description of the origin must be stable in the
-    // sense, that it must stay valid even if other equations in the
-    // same document are modified.
-    // (How this object has to look like is defined by the save method
-    // below.)
+    /**
+     * Where the equation originates from.
+     * The origin is an object that describes where exactly the
+     * equation has been loaded from. If there is no origin, this
+     * property should be set to null. This may happen for example
+     * when the user creates a new equation. The write command uses
+     * this property to find out where to write the equation by
+     * default. This description of the origin must be stable in the
+     * sense, that it must stay valid even if other equations in the
+     * same document are modified.
+     * (How this object has to look like is defined by the save method
+     * below.)
+     */
     this.origin = null;
 
-    // Options that are locally set for this equationEnv. A mode
-    // should not read or write this array directly, it should use
-    // getOption() and setOption() from the editor object.
+    /**
+     * Local options.
+     * Options that are locally set for this equationEnv. A mode
+     * should not read or write this array directly, it should use
+     * getOption() and setOption() from the editor object.
+     */
     this.options = [];
-    /* Additional objects */
 
+    /**
+     * The change history of this equation
+     */
     this.history = new History;   // An array of Change Elements
+
+    /**
+     * The stack of modes.
+     * @private
+     */
     this.modeStack = [new EditMode(editor, this)];
 }
 EquationEnv.prototype = {
     /* Methods */
 
-    // Getting and setting the equation 
-    // You must not set this.equation directly. You must use
-    // the following method. You also have to call reInit of
-    // the current mode afterwards.
+    /** 
+     * Replaces a currenly open equation with a different one.
+     * You must not set this.equation directly. You must use
+     * this method instead. You also have to call reInit of
+     * the current mode afterwards.
+     * @param e the root node of the new equation
+     */
     replaceEquation: function(e) {
         this.equation.parentNode.replaceChild(e, this.equation);
         this.equation = e;
     },
 
+    /** Rebuilds all currently visible views. */
     updateViews: function() {
         if (this.treeView) { this.buildTreeView(); }
         if (this.attributeView && this.mode.contextNode) { 
@@ -81,6 +127,13 @@ EquationEnv.prototype = {
         }
     },
 
+    /** 
+     * Rebuilds the tree view. For showing the tree structure, nested
+     * div elements are used. The view is built up from scratch every
+     * time. The internal:selected attributes from elements in the
+     * equation are also placed in the tree view. 
+     * @private
+     */
     buildTreeView: function() {
         var treeWalker = document.createTreeWalker(
             this.equation,
@@ -130,6 +183,12 @@ EquationEnv.prototype = {
 
     },
 
+    /**
+     * Builds the attribute view
+     * @private
+     * @param forElement the element for which the attribute view
+     *                   should be generated
+     */
     buildAttributeView: function (forElement) {
         while (this.attributeView.hasChildNodes()) { this.attributeView.removeChild(this.attributeView.firstChild); }
         // Place attribute information inside an Array
@@ -209,6 +268,11 @@ EquationEnv.prototype = {
         }
     },
 
+    /** 
+     * Builds the dictionary view
+     * @private
+     * @param forElement the element for which the view is built
+     */
     buildDictionaryView: function (forElement) {
         while (this.dictionaryView.hasChildNodes()) { this.dictionaryView.removeChild(this.dictionaryView.firstChild); }
         // Return immediately if we are not on an mo element
@@ -293,48 +357,84 @@ EquationEnv.prototype = {
         this.dictionaryView.appendChild(table);
     },
 
+    /**
+     * Does inportant initialisation and must be called after creating
+     * the object.
+     */
     init: function() {
         this.mode.init();
     },
 
+    /**
+     * Starts a new mode on top of the current one. When the new mode
+     * terminates, the control is returned to the current mode.
+     * @param mode properly created and initialized mode
+     */
     callMode: function (mode) {
-        // mode must be a properly created and initialized mode
-        // When the mode finishes (by calling finishMode),
-        // control is returned to the current mode.
         this.modeStack.push(mode);
         this.updateViews();
     },
+    /**
+     * Replaces the current mode with a new one. If the current mode
+     * is the topmost mode, the new mode is not allowed to terminate.
+     * Otherwise, when the new mode terminates, control is returned to
+     * the parent mode of the current mode.
+     * @param mode properly created and initialized mode
+     */
     switchMode: function (mode) {
-        // mode must be a properly created and initialized mode
-        // Unlike callMode, this method kills the current mode
-        // and puts the new one at its place.
         this.modeStack[this.modeStack.length-1] = mode;
         this.updateViews();
     },
+    /**
+     * Closes the current mode and returns control to its parent mode.
+     * A must be ready to terminate before calling this method.
+     * @param returnValue A value returned by the current mode to the
+     *                    parent mode. This value may be of any type,
+     *                    but the parent mode must know how to handle
+     *                    it.
+     */
     finishMode: function (returnValue) {
         // Closes the curent mode and reverts to the old one
         this.modeStack.pop();
         this.modeStack[this.modeStack.length-1].calledModeReturned(returnValue);
     },
+    /**
+     * The current mode
+     */
     get mode() { return this.modeStack[this.modeStack.length-1]; },
 
-    // The working directory is used if the user provides a relative URI for
-    // load or save or whatever. XXX: Load does not yet know about
-    // this.
+    /** 
+     * Current woriking directory for this equation.
+     * The woring directory is used if the user provides a relative
+     * URI for load or save or whatever.
+     * XXX: Load does not yet know about this.
+     * XXX: Does always use the working directory given by the editor
+     * object.
+     */
     get workingDirectory() { return this.editor.workingDirectory; },
 
+    /**
+     * Turns an URI given as string into an URI object of the
+     * nsIIOService. Relative URIs are considered to be relative to
+     * the working directory of this equation.
+     * @param {String} s the URI as string, may be relative
+     */
     stringToURI: function(s) {
-        // Given a URI as a string, returns an uri object. 
-        // The string may be a relative URI.
         var ios = Components.classes["@mozilla.org/network/io-service;1"]
                 .getService(Components.interfaces.nsIIOService);
         return ios.newURI(s,null,ios.newURI(this.workingDirectory,null,null));
     },
+    /**
+     * Removes all attributes in the internal namespace. This method
+     * must be applied on a subtree of a document.
+     * @param doc  The document that contains the subtree
+     * @param root The root node of the subtree
+     */
     cleanSubtreeOfDocument: function(doc,root) {
         // Kills all attributes in the internal namespace
         // (Using TreeWalker, since createNodeIterator has been
         // introduced in firefox 3.1)
-        // TODO: How to remove namespace desclarations?
+        // TODO: How to remove namespace declarations?
         var iterator = doc.createTreeWalker(
             root,
             NodeFilter.SHOW_ELEMENT,
@@ -355,6 +455,16 @@ EquationEnv.prototype = {
             n =  iterator.nextNode();
         }
     },
+    /**
+     * Saves the equation, as it currently looks like, to disk or to a remote
+     * server.
+     * @param destinationURIString URI where the equation should be
+     *                             saved. If this is missing, the
+     *                             default location will be used.
+     *                             This is usually where the equation
+     *                             has been saved to the last time or
+     *                             where it was loaded from.
+     */
     save: function(destinationURIString) {
         // Saves the equation to its origin if destination is empty.
         // Otherwise it will save it to destinationURI, creating a new
@@ -441,6 +551,12 @@ EquationEnv.prototype = {
         // Tell the history object that we saved the current state
         this.history.reportSaving();
     },
+    /**
+     * Closes this equation if there are no unsaved changes or if
+     * force is set to true
+     * @param {Boolean} force if true, the equation is closed even if there are
+     *                  unsaved changes.
+     */
     close: function(force) {
         // Closes this equation environment if their are no unsaved
         // changes or if force is set to true
@@ -456,11 +572,27 @@ EquationEnv.prototype = {
     },
 }
 
+/**
+ * @class Register holding data that can be put somewhere (so to say, an
+ * internal clipboard)
+ * @param name the name the user has to use to access this Register,
+ * consisting of one unicode character
+ * @param content an array of DOM Nodes of the same type
+ * @param [type] overrides the automatically detected type of the content
+ */
 function Register(name, content, type) {
+    /** 
+     * Name of the register consisting of one unicode character 
+     * @type String
+     */
     this.name = name; // Should be one unicode character
+    /**
+     * The data the register is holding. This is an array of DOM nodes
+     * of the same type. (Text nodes, elements nodes or attribute
+     * nodes)
+     */
     this.content = content;
-    // content is an array of DOM Nodes of the same type
-    // (Text nodes, element nodes, or attribute nodes)
+
     if (type) {
         this.type = type;
     }
@@ -478,37 +610,77 @@ function Register(name, content, type) {
     }
 }
 
+/**
+ * @class An array that holds the whole modification history for an equation. It
+ * also makes it possible to move from one point to another in the
+ * history, by undoing and reapplying changes. Changes made to the
+ * equation must be registered using the methods of the corresponding
+ * history object.
+ */
 function History() {
+    /**
+     * Current state of the equation. Points always to the last
+     * applied change.
+     * @private
+     */
     this.position = -1; // Alway points to the last change applied
+    /**
+     * Saved state of the equation. Points always to the last state
+     * that equals the state saved to disk. It is -2 if the equation
+     * has not yet a saved state, that is, it has not been loaded from
+     * disk and not been saved since it was created.
+     * @private
+     */
     this.savedState = -2; // Always points to the last change saved to disk
         // (Set to -2 so that -1!=-2 at the beginning)
 }
 History.prototype = {
+    /** Go back one step in the history */
     goBack: function (equationEnv) {
         if (this.position < 0) { return false; }
         this[this.position].undo(equationEnv);
         --this.position;
         return true;
     },
+    /** Go forward one step in the history */
     goForward: function (equationEnv) {
         if (this.position >= this.length-1) { return false; }
         ++this.position;
         this[this.position].redo(equationEnv);
         return true;
     },
+    /** 
+     * Used to get a fresh Change object in order to register a
+     * change that will be made immediately afterwards.
+     */
     createChange: function () {
         return new Change();
     },
+    /** 
+     * Reports a change that has been successfully commited on the
+     * equation. 
+     */
     reportChange: function(change) {
         if (!change.ready) { throw "reported change is not ready" }
         this.length = this.position + 1; // Chop off succeeding changes
         this.push(change);
         ++this.position;
     },
+    /**
+     * Used to report that the equation has been saved, so that the
+     * history object always knows whether the equation has changed
+     * (relative to the saved verison). This is needed for example to
+     * warn the user if there are unsaved changes, before he closes
+     * the equation.
+     */
     reportSaving: function() {
         // Marks the current state as saved
         this.savedState = this.position;
     },
+    /** 
+     * Tells whether the equation has been changed and the changes
+     * have not yet been saved.
+     */
     hasChanges: function() {
         // Returns false if the current state has been written to file
         return !(this.savedState == this.position);
@@ -516,20 +688,59 @@ History.prototype = {
 }
 History.prototype.__proto__ = new Array();
 
+/**
+ * @class A Change object stores the changes made to the equation
+ * from one point in the history to the next. It can be used to undo
+ * and redo changes. It is also used to report changes.
+ * Before modifying the equation, recordBefore has to be called,
+ * after modifying, recordAfter has to be called. Afterwards, the
+ * object is readyto undo and redo chages.
+ */
 function Change() {
-    /* Default implementation of Change */
     // The equation element (or its descendants) is supposed
     // to carry the whole significant mode state, given as
     // attributes in the namespace NS_internal.
     // The method reInit of the mode is called after the
     // change so that the mode can update its data structures
+    /**
+     * Full copy of the old version of the changed node
+     * @private
+     */
     this.oldNode = null;
+    /**
+     * Full copy of the new version of the changed node
+     * @private
+     */
     this.newNode = null;
+    /**
+     * DOM node independent pointer to the changed node. This pointer
+     * is correct in the version of the equation before the change and
+     * also after the change.
+     * @private
+     */
     this.treePointer = [];
+    /**
+     * The command that caused the change. It should be set by the
+     * user of the Change object. It the future, it will perhaps be
+     * used to implement the repeat command '.'.
+     */
     this.command = null; // Please set that, otherwise the command '.' will not work
+    /**
+     * Tells whether this object is ready to perform undo and redo,
+     * that is, recordBefore and recordAfter have been successfully
+     * performed.
+     * @private
+     */
     this.ready = false;
 }
 Change.prototype = {
+    /**
+     * Undo this change on an equation.
+     * Of course, this change must be the last change applied to the
+     * equation.
+     * @param {EquationEnv} equationEnv The equation environment the undo should be
+     *                                  applied to
+     */
     undo: function (equationEnv) {
         var equation = equationEnv.equation;
         if (!this.ready) {
@@ -547,6 +758,13 @@ Change.prototype = {
         equationEnv.mode.reInit();
         return true;
     },
+    /**
+     * Reapply this change on an equation.
+     * The last change applied to the equation must be the change
+     * preceding this change in the history of the equation.
+     * @param {EquationEnv} equationEnv The equation environment the redo should be
+     *                                  applied to
+     */
     redo: function (equationEnv) {
         var equation = equationEnv.equation;
         if (!this.ready) {
@@ -564,6 +782,17 @@ Change.prototype = {
         equationEnv.mode.reInit();
         return true;
     },
+    /**
+     * Record the state of the equation before a change.
+     * Right before making a change that the user should be able to undo,
+     * this method has to be called.
+     * @param equation The equation that is going to be changed
+     * @param toBeChangedElement A DOM element node that is going to
+     *                           be changed. Important: This node must
+     *                           only be changed, not replaced. If
+     *                           your replace a node, you have to take
+     *                           the parent node as changed element!
+     */
     recordBefore: function (equation,toBeChangedElement) {
         if (toBeChangedElement.nodeType != Node.ELEMENT_NODE) {
             throw "Only element nodes can be recorded.";
@@ -581,6 +810,16 @@ Change.prototype = {
         // Make deep copy
         this.oldNode = toBeChangedElement.cloneNode(true);
     },
+    /**
+     * Record the state of an equation after a change.
+     * Right after making a change that the user should be able to
+     * undo, this method must be called.
+     * @param equation The equation that hass been changed
+     * @param changedElement The same DOM element node that has been
+     *                       given to the recordBefore method. If it
+     *                       is detected that an other node has been
+     *                       given, an error is thrown.
+     */
     recordAfter: function (equation,changedElement) {
         if (changedElement.nodeType != Node.ELEMENT_NODE) {
             throw "Only element nodes can be recorded.";
@@ -598,6 +837,17 @@ Change.prototype = {
         // Flag this object as ready for undo and redo
         this.ready = true;
     },
+    /**
+     * Creates a pointer into the tree of an equation independent of
+     * the DOM nodes. This is usefull when you need to point to an
+     * element of an equation, but the DOM nodes may change, for
+     * example because an equation gets replaced by an identical copy
+     * of it. This is needed by the Change object, since recorded
+     * Changes are full copies of a subtree of the equation and
+     * undoing or redoing changes replaces nodes with such copies.
+     * @private
+     * @returns Tree pointer which is an array of integers
+     */
     deriveTreePointer: function (equation, target) {
         var pointer = [];
         // We go from the target _backwards_ to the equation node
@@ -610,6 +860,12 @@ Change.prototype = {
         }
         return pointer;
     },
+    /**
+     * Finds the DOM node in an equation a pointer obtained by
+     * deriveTreePointer points to.
+     * @private
+     * @returns A DOM node
+     */
     applyTreePointer: function (equation, pointer) {
         var target = equation;
         pointer.forEach(function(siblingNumber) {
@@ -619,24 +875,64 @@ Change.prototype = {
     },
 }
 
+/**
+ * @class The Gemse main object. It hosts all equation environments, handles
+ * input by the user, keeps registers, options, and so on.
+ */
 function GemsePEditor() {
-    this.registers = {}; // Maps unicode characters to register objects
-    this.equations = []; // Array of EquationEnv objects.
-    this.focus = -1; // Number of equation that has the focus
-    this.inputElement; // A dom element that receives user input
-    this.containerTemplate; // A dom element that can be sed to create new containers
-    this.options = []; // Array of options wich differ from the defaults
+    /**
+     * Maps single unicode characters to register objects
+     */
+    this.registers = {};
+    /**
+     * Array of EquationEnv objects
+     * @private
+     */
+    this.equations = [];
+    /**
+     * The number of the equation that currently has the focus
+     * @private
+     */
+    this.focus = -1;
+    /**
+     * The input box where the user enters commands
+     * @private
+     */
+    this.inputElement;
+    /**
+     * A template as a DOM element of a container for a new equation environment
+     * @private
+     */
+    this.containerTemplate;
+    /**
+     * Globally set options by name
+     * @private
+     */
+    this.options = {};
+    /**
+     * Recordings of options created automatically or by the user 
+     * @private
+     */
     this.inputRecordings = { };
-    // The DOM element that horts all equation Environments is
-    // called pool. If it is null, then the user can not
-    // create new equations.
+    /**
+     * The DOM element that horts all equation Environments, it is
+     * called pool. If it is null, then the user can not
+     * create new equations.
+     * @private
+     */
     this.pool = null;
+    /**
+     * Internal input substitution method. This is implemented in
+     * inputSubstitution/cors.js and is perhaps not even present.
+     * @private
+     */
     this.inputSubstitution = inputSubstitution;
-        // This is implemented in inputSubstitution/core.js and is
-        // perhaps not even present.
 }
 GemsePEditor.prototype = {
-    // Find out the current working directory
+    /**
+     * The global working directory of the editor. An equation may have its own
+     * working directory.
+     */
     get workingDirectory() {
         var ios = Components.classes["@mozilla.org/network/io-service;1"].
                          getService(Components.interfaces.nsIIOService);
@@ -647,7 +943,14 @@ GemsePEditor.prototype = {
         return workingDirectory;
     },
 
-    /* Methods */
+    /**
+     * Handle new input. This is called by the input box event
+     * handler, when the input buffer supposedly changed. That is, it
+     * is callend in editor.xhtml. It basically calls the input
+     * handler of the current mode of the focused equation. It does
+     * that repeatedly until it returns false, so that all complete
+     * commands are executed.
+     */
     inputEvent: function () {
         // Is called when the input buffer supposedly changed
         if (inputSubstitutionActive) { 
@@ -678,6 +981,13 @@ GemsePEditor.prototype = {
             }
         }
     },
+    /**
+     * Handle key event. This is called by editor.xhtml when the user
+     * hits a key. It adds the character gnerated by this key to the
+     * input buffer and calls inputEvent on this object. (Not all
+     * input generates key events, for example pasting from the
+     * cpboard.)
+     */
     keyEvent: function (event) {
         // Is called when a key gets hit. This also is called
         // if the key does not cause a character to be entered
@@ -695,45 +1005,80 @@ GemsePEditor.prototype = {
         event.stopPropagation();
         editor.inputEvent();
     },
+    /** 
+     * Content of the input buffer
+     * Modes must not set the inputBuffer directly. Instead, they
+     * should use the mothod eatInput
+     * @type String
+     */
     get inputBuffer()  { return this.inputElement.value; },
     set inputBuffer(x) { this.inputElement.value = x;    },
-    // Modes must not set the inputBuffer directly. Instead, they
-    // should use the mothod eatInput
-    // eatInput(numberOfCharacters) removes numberOfCharacters from
-    // the inputBuffers. Also, it does records the removed string for
-    // command repeating.
-    // IMPORTANT: eatInput considers the numberOfCharacters to be the
-    // number of the unicode characters, not the number of UTF16
-    // characters. So characters from higher planes are counted once.
-    // The method eatInput16 on the other hand counts higher plane
-    // characters twice, once for each surrogate. If you try to eat
-    // only the first one of a surrogate pair, eatInput16 will remove
-    // both.
+    /**
+     * Removes unicode characters from the beginning
+     * of the input buffer. Also, it does record the removed string for
+     * command repeating.
+     * @param numberOfCharacters Amount of unicode characters to be
+     * removed.
+     * IMPORTANT: eatInput considers the numberOfCharacters to be the
+     * number of the unicode characters, not the number of UTF16
+     * characters. So characters from higher planes are counted once.
+     * For eating input based on UTF16 characters, use eatInput16.
+     */
     eatInput: function(numberOfCharacters) {
         for (r in this.inputRecordings) {
             this.inputRecordings[r] += this.inputBuffer.uSlice(0,numberOfCharacters);
         }
         this.inputBuffer = this.inputBuffer.uSlice(numberOfCharacters);
     },
+    /**
+     * Removes UTF16 characters from the beginning
+     * of input buffer. Also, it does record the removed string for
+     * command repeating.
+     * @param numberOfCharacters Amount of UTF16 characters to be
+     * removed.
+     * IMPORTANT: eatInput considers this number to be the amount of
+     * UTF16 characters, so characters on higher planes are trated as
+     * surrogate paris, that is as two characters. However, if one
+     * tries to eat only the first surrogate of a surrogate pair, the
+     * second one is removed too in order to keep the string in the
+     * input buffer to be valid UTF16.
+     */
     eatInput16: function(numberOfUTF16Characters) {
         this.eatInput(this.inputBuffer.index_16ToU(numberOfUTF16Characters));
         // Using this.eatInput and index_16ToU has a nice side effect:
         // It is not possible to eat only one surrogate of a surrogate
         // pair. It will eat always both surrogates.
     },
+    /**
+     * Starts recording input for later use. It records all eaten
+     * (that is executed) commands. Input recording must be stopped
+     * using stopInputRecording.
+     * @param {String} name name under which the recording should be
+     *                      saved
+     */
     startInputRecording: function(name) {
         this.inputRecordings[name] = "";
     },
+    /**
+     * Terminate input recording.
+     * @param {String} name name under which the recording runs
+     * @returns {Sting} the recorded command
+     */
     stopInputRecording: function(name) {
         var result = this.inputRecordings[name];
         delete this.inputRecordings[name];
         return result;
     },
 
+    /**
+     * removes an equation.
+     * This method must only be called by methods of equationEnv.
+     * The equationEnv gets dropped from this.equations and this.focus
+     * gets adjusted if needed.
+     * @param equationEnv {EquationEnv} Equation environment to be
+     *                                  eliminated
+     */
     eliminateEquationEnv: function (equationEnv) {
-        // This method must only be called by methods of equationEnv.
-        // The equationEnv gets dropped from this.equations and this.focus
-        // gets adjusted if needed.
         var index = this.equations.indexOf(equationEnv);
         if (index < 0) { throw "This equationEnv is not even registered!" }
 
@@ -745,15 +1090,36 @@ GemsePEditor.prototype = {
         else { this.moveFocusTo(this.focus) }
         // TODO: What to do if all equations are gone?
     },
+    /**
+     * Attaches a new EquationEnv to an already present element in the
+     * document. If one has created a complete container
+     * (a dom element with internal:purpos="container") containing all
+     * needed elements, including the equation, this method can be
+     * used to create an equation environment object that is attached
+     * to the container and added to the list of equations.
+     * This method is mainly used internally but is also used from the
+     * outside sometimes.
+     * @param element the cotnainer element
+     * @returns {EquationEnv} the new equation environment
+     */
     attachNewEquationEnvToElement: function (element) {
-        // Attaches a new EquationEnv to an already present element in
-        // the document. Returns the newly created EquationEnv.
         var newEquationEnv = new EquationEnv(this, element);
         newEquationEnv.init();
         this.equations.push(newEquationEnv);
         this.moveFocusTo(this.equations.length-1);
         return newEquationEnv;
     },
+    /**
+     * Create new equation and its environment. A new EquationEnv gets
+     * created and also a new container element. For the new
+     * container, this.containerTemplate is used.
+     * @param equation this DOM element is used as the equation and
+     *                 placed into its location in the container
+     *                 element. No fullcopy is made beforehand. If
+     *                 this parameter is missing, the equation from
+     *                 the tamplate is used
+     * @returns {EquationEnv} the new equation environment
+     */
     newEquation: function (equation) {
         // Creates a new EquationEnv and also a new Element in the
         // document. If the argument equation is not given, an empty
@@ -775,15 +1141,20 @@ GemsePEditor.prototype = {
         this.moveFocusTo(this.equations.length-1);
         return newEquationEnv;
     },
+    /** 
+     * Loads the document at the given URI and loads its equations. 
+     * If elementId and xpathString are empty, it
+     * uses the root element as the MathML element. If elementId
+     * is given, it uses the element with this id. Else, if
+     * xpathString is given (and elementId is null), it evaluates
+     * this xpath expression and uses the first result.
+     * This is done using an XMLHttpRequest. This also works for
+     * local files.
+     * @param {String} uri
+     * @param {String} elementId
+     * @param {String} xpathString
+     */
     loadURI: function (uri, elementId, xpathString) {
-        // Fetches the uri. If elementId and xpathString are empty, it
-        // uses the root element as the MathML element. If elementId
-        // is given, it uses the element with this id. Else, if
-        // xpathString is given (and elementId is null), it evaluates
-        // this xpath expression and uses the first result.
-        // This is done using an XMLHttpRequest. This also works for
-        // local files.
-
         // Check whether uri is relative. Make an absolute one out of it.
         // XXX: Stupid hack:
         // (Fails, if the preivileges for accessing Components.classes
@@ -851,9 +1222,16 @@ GemsePEditor.prototype = {
             newEquationEnv.history.reportSaving();
         }
     },
+    /**
+     * Load an equation from an already loaded document.
+     * In order to edit an equation which is part of a document that
+     * is loaded in this instance of Mozilla, one uses this method to
+     * open it in Gemse. A deep copy of the equation is made and it
+     * gets written back only when the user saves his changes.
+     * @param doc DOM document containing the equation
+     * @param element the root element of the equation
+     */
     loadFromOpenDocument: function(doc,element) {
-        // If the element to edit is part of an already open document,
-        // call this method to load it
         if (element.localName != "math" || element.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
             throw "The element you load should be a math element in the MathML namespace";
         }
@@ -868,10 +1246,19 @@ GemsePEditor.prototype = {
         // saved.
         newEquationEnv.history.reportSaving();
     },
+    /**
+     * Load all equations of a document.
+     * Fetches the document at the URI and locates all math elements
+     * in it, which all get loaded.
+     * @param {String} uri
+     */
     loadAll: function(uri) {
-        // Loads all equations found in the file uri
         this.loadURI(uri,null,"//m:math");
     },
+    /**
+     * Moves the focus to another equation.
+     * @dest {Integer}
+     */
     moveFocusTo: function(dest) {
         if (dest >= this.equations.length) { return false }
         if (dest < 0) { return false }
@@ -881,6 +1268,10 @@ GemsePEditor.prototype = {
         this.focus = dest;
         this.equations[this.focus].container.setAttributeNS(NS_internal, "selected", "equationFocus");
     },
+    /**
+     * Get an option's handler object, which defines a validator and a
+     * parser.
+     */
     getOptionHandler: function(key) {
         for (var i=0; i < GemsePEditor.knownClasses.length; ++i) {
             if (GemsePEditor.knownClasses[i].gemseOptions &&
@@ -890,6 +1281,11 @@ GemsePEditor.prototype = {
         }
         return null;
     },
+    /**
+     * Get the value of an option as string.
+     * @param key name of the option
+     * @returns {String} current value of the option
+     */
     getOption: function(key) {
         // Tries to get the option. This may depend on the focused
         // equation
@@ -907,11 +1303,29 @@ GemsePEditor.prototype = {
         }
         return value;
     },
+    /**
+     * Get the value of an option as suitable data structure.
+     * The registered parser for the option in question is used to
+     * transform the string value into an arbitrary object.
+     * @param   key name of the requested option
+     * @returns result as given by the registered parser
+     */
     getOptionParsed: function(key) {
         var value = this.getOption(key);
         var handler = this.getOptionHandler(key);
         return handler.parser(value,this);
     },
+    /**
+     * Set an option to a string value, globally or locally.
+     * The new value is checked for validity using the
+     * registered validator. If the option does not exist or the value
+     * is invalid, an error is thrown.
+     * @param {String}  key    name of the option to be set
+     * @param {String}  value  new value
+     * @param {Boolean} global If true, the option is set for all
+     *                         equations, if false, it is set only for
+     *                         the current one.
+     */
     setOption: function(key,value,global) {
         // Sets the option key to value for the current equation if
         // global is false. If global is true, the option is set on
@@ -929,6 +1343,14 @@ GemsePEditor.prototype = {
             this.equations[this.focus].options[key] = value;
         }
     },
+    /** 
+     * Highly configurable command handler.
+     * @param options      Options controlling the behaviour
+     * @param commandTable Table of all known commands
+     */
+    commandBasedInputHandler: function(options, commandTable) {
+
+    }
 }
 
 GemsePEditor.knownClasses = [];
