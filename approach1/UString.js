@@ -1,7 +1,13 @@
-/* UString is an extension of the prototype of String. It adds some
+/**
+ * @fileOverview Extension of the String class for actions on true Unicode
+ * characters.
+ * UString is an extension of the prototype of String. It adds some
  * useful methods which treat the string as a sequence of Unicode
- * characters instead of a sequence of UTF16 characters. */
+ * characters instead of a sequence of UTF16 characters as it is done
+ * by Javascript. 
+ */
 
+/** The length of the string counting Unicode characters */
 String.prototype.__defineGetter__("uLength", function() {
     // This getter has runtime o(n) when it is first called and O(1)
     // if it has already been called at least once for this object.
@@ -29,6 +35,10 @@ String.prototype.__defineGetter__("uLength", function() {
     }
     return this.uLength_alreadyKnown;
 });
+/** 
+ * Like charAt but operates on unicode characters as opposed to UTF16
+ * characters.
+ */
 String.prototype.uCharAt = function(index) {
     // Returns a string value
     var index16 = this.index_UTo16(index);
@@ -41,8 +51,11 @@ String.prototype.uCharAt = function(index) {
         return this.charAt(index16);
     }
 }
+/** 
+ * Like charCodeAt but operates on unicode characters as opposed to UTF16
+ * characters.
+ */
 String.prototype.uCharCodeAt = function(index) {
-    // Returns an integer
     var index16 = this.index_UTo16(index);
     if (String.isSurrogate(this.charAt(index16))) {
         var hi = this.charCodeAt(index16);  
@@ -53,18 +66,30 @@ String.prototype.uCharCodeAt = function(index) {
         return this.charCodeAt(index16);
     }
 }
+/** 
+ * Like indexOf but operates on unicode characters as opposed to UTF16
+ * characters.
+ */
 String.prototype.uIndexOf = function(searchString, position) {
     var position16 = (position!==undefined) ? this.index_UTo16(position) : undefined;
     var index16 = this.indexOf(searchString, position16);
     if (index16 == -1) { return -1 }
     else { return this.index_16ToU(index16) }
 }
+/** 
+ * Like lastIndexOf but operates on unicode characters as opposed to UTF16
+ * characters.
+ */
 String.prototype.uLastIndexOf = function(searchString, position) {
     var position16 = (position!==undefined) ?  this.index_UTo16(position) : undefined;
     var index16 = this.lastIndexOf(searchString, position16);
     if (index16 == -1) { return -1 }
     else { return this.index_16ToU(index16) }
 }
+/** 
+ * Like slice but operates on unicode characters as opposed to UTF16
+ * characters.
+ */
 String.prototype.uSlice = function(start, end) {
     if (end === undefined) { end = this.uLength }
     if (isNaN(start)) { start = 0 }
@@ -79,6 +104,10 @@ String.prototype.uSlice = function(start, end) {
     var end16 = this.index_UTo16(end);
     return this.slice(start16, end16);
 }
+/** 
+ * Like substring but operates on unicode characters as opposed to UTF16
+ * characters.
+ */
 String.prototype.uSubstring = function(start, end) {
     if (end === undefined) { end = this.uLength }
     if (isNaN(start) || start<0) { start = 0 }
@@ -90,15 +119,16 @@ String.prototype.uSubstring = function(start, end) {
     return this.substring(start16, end16);
 }
 
+/** 
+ * Transforms a unicode character based index into an index based on
+ * UTF16 characters. 
+ * If the character at index belongs to a higher plane, the UTF16
+ * index from its first surrogate is returned, that is, the index of
+ * its high surrogate.
+ * An error is thrown if the index is less than 0 or strictly larger
+ * than this.uLength.
+ */
 String.prototype.index_UTo16 = function(indexU) {
-    // For a given unicode character based index, the corresponding 
-    // UTF16 index is returned.
-    // If the character at index is from a higher plane, the
-    // internal index of its first surrogate is returned, i.e.
-    // the index of its high surrogate.
-    // If index is less than 0, an error is thrown
-    // If index is larger than this.uLength, an error is
-    // thrown
     if (indexU < 0) { throw "negative index not accepted" }
     if (indexU == this.uLength) { return this.length }
     if (indexU > this.uLength) { throw "index out of range" }
@@ -113,15 +143,13 @@ String.prototype.index_UTo16 = function(indexU) {
     }
     return index16;
 }
+/** 
+ * Transforms an UTF16 based index into a unicode character based
+ * index. Index is allowed to point to a high or a low surrogate. An
+ * error is thrown if the given index is smaller than 0 or strictly
+ * larger than this.length
+ */
 String.prototype.index_16ToU = function(index16) {
-    // For an UTF16 based index, returns an index
-    // indicating the position of the corresponding unicode
-    // character in the sequence of unicode characters.
-    // index is allowed to point to a low or a high
-    // surrogate.
-    // If index is smaller than 0, an error is thrown
-    // If index is larger tahen this.value.length,
-    // an error is thrown
     if (index16 < 0) { throw "negative index not accepted" }
     if (index16 == this.length) { return this.uLength }
     if (index16 > this.length) { throw "string is shorter" }
@@ -137,7 +165,13 @@ String.prototype.index_16ToU = function(index16) {
     return indexU;
 }
 
-String.uFromCharCode = function(codePt) {
+/** 
+ * Returns the sequence of characters for a list of unicode
+ * codepoints. This also works for characters that are not in the BMP,
+ * unlike fromCharCode.
+ * @returns {String}
+ */
+String.uFromCharCode = function() {
     // Returns a string value, not an object
     result = "";
     for (var i=0; i<arguments.length; ++i) {
@@ -152,13 +186,24 @@ String.uFromCharCode = function(codePt) {
     }
     return result;
 }
+/**
+ * Tells whether a character is a surrogate.
+ * @param character The UTF16 character in form of a string
+ * @returns {Integer} 0 if the character is not a
+ * surrogate, 1 if it is  a low surrogate and 2 if it
+ * is a high surrogate.
+ */
 String.isSurrogate = function(character) {
     return String.isSurrogateCode(character.charCodeAt(0));
 }
+/**
+ * Tells whether characterCode is the code of a surrogate character.
+ * @param characterCode the codepoint of the character
+ * @returns {Integer} 0 if characterCode is not the condepoint of a
+ * surrogate, 1 if it is the codepoint of a low surrogate and 2 if it
+ * is the codepoint of a high surrogate.
+ */
 String.isSurrogateCode = function(characterCode) {
-    // Returns 0 if characterCode is not the codepoint of a surrogate,
-    // 1 if it is the codepoint of a low surrogate and 2 if it is the
-    // codepoint of a high surrogate.
     if (0xD800 <= characterCode && characterCode <= 0xDBFF) { // High surrogate (could change last hex to 0xDB7F to treat high private surrogates as single characters)  
         return 2;
     }  
