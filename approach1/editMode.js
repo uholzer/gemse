@@ -1,35 +1,97 @@
 
 GemsePEditor.knownClasses.push(EditMode);
 
+/**
+ * After creation of the object, its init method must be called.
+ * @class Provides the functionality of the edit mode. For every
+ * equation, an own edit mode object has to be used.
+ * @param editor The editor that uses this mode object
+ * @param equationenv The equation environment this mode object is
+ * used for
+ */
 function EditMode(editor, equationEnv) {
-    this.name = "edit";
+    /**
+     * The editor this object belongs to
+     * @constant
+     */
     this.editor = editor;
+    /**
+     * The equation environment this object belongs to
+     * @constant
+     */
     this.equationEnv = equationEnv;
-    this.userSelectionForNextCommand = null; // This is set after visual mode. Otherwise allways null.
-    this.init = function() {
+    /**
+     * The selection (as returned by the visual mode) the next command
+     * will operate on. This is set after the visual mode terminates
+     * and will be set back to null after issuing the next command. 
+     */
+    this.userSelectionForNextCommand = null;
+    /**
+     * The element the cursor is on
+     */
+    this.cursor = null;
+}
+EditMode.prototype = {
+    /**
+     * Name of the mode, as shown to the user
+     * @constant
+     */
+    name: "edit",
+    /**
+     * Initialize.
+     * Does some important initialisation and must be called after
+     * creating this object.
+     * XXX: Get rid of that for all modes?
+     */
+    init: function() {
         this.moveCursor(this.equationEnv.equation); // the element the cursor points to
-    }
-    this.moveCursor = function(element) {
+    },
+    /**
+     * Moves the cursor to another element. Afterwards, the views are
+     * rebuilt by callin this.equationEnv.updateViews()
+     * @param element destination element
+     */
+    moveCursor: function(element) {
         this.hideCursor();
         this.cursor = element;
         this.showCursor();
         this.equationEnv.updateViews();
-    }
-    this.showCursor = function() {
+    },
+    /**
+     * Puts "selected" attributes for the cursor into the equation.
+     */
+    showCursor: function() {
         this.cursor.setAttributeNS(NS_internal, "selected", "editcursor");
         if (this.cursor != this.equationEnv.equation) { this.cursor.parentNode.setAttributeNS(NS_internal, "selected", "parent"); }
-    }
-    this.hideCursor = function() {
+    },
+    /**
+     * Removes "selected" attributes for the current cursor.
+     * It really only removes the attributes from the elements that
+     * have set the "selected" attribute for the current cursor, it
+     * does not go through all elements to remove them. So, when
+     * changing the cursor, this method must be callsed before,
+     * afterwards its too late.
+     */
+    hideCursor: function() {
         if (this.cursor) {
             this.cursor.removeAttributeNS(NS_internal, "selected");
             if (this.cursor != this.equationEnv.equation) { this.cursor.parentNode.removeAttributeNS(NS_internal, "selected"); }
         }
-    }
-    this.cursor = null;
-    this.__defineGetter__("contextNode", function() { return this.cursor; }); // Required for every mode
-    this.inputHandler = function() {
-        // Returns true if it succeeded to execute the first command from the
-        // input buffer. Else, it returns false.
+    },
+    /**
+     * The node for which the views should be created. For this mode,
+     * it is always the element the cursor is on.
+     */
+    get contextNode() { return this.cursor; },
+    /**
+     * Handles the first command from the input buffer. This method is
+     * called if the input buffer changes.
+     * @returns true if the first command from the input buffer was
+     *               successfully executed and removed from the input
+     *               buffer, false if the command does not exist or is
+     *               not yet complete
+     */
+    inputHandler: function() {
         var command = this.editor.inputBuffer;
         // endOfCommandIndex points to the end of the command in the
         // input buffer. It counts unicode characters, not UTF16
@@ -107,8 +169,33 @@ function EditMode(editor, equationEnv) {
             // Command not found
             return false;
         }
-    };
-    this.callInsertMode = function (cursorInElement, cursorBeforeElement, manualChange, manualChangeElement) {
+    },
+    /** 
+     * Starts insert mode. This is useful for commands that open the
+     * insert mode. 
+     * @param cursorInElement     The element the initial cursor is placed
+     *                            in
+     * @param cursorBeforeElement The element right after the initial
+     *                            cursor. If this is null, the cursor
+     *                            is placed behind the last child of
+     *                            the element given by
+     *                            cursorInElement.
+     * @param manualChange        Already existing Change object that
+     *                            has to be used to record the changes
+     *                            the edit mode makes. If this
+     *                            parameter is missing or null, a
+     *                            fresh change object gets created.
+     *                            Otherwise, the given one is used to
+     *                            record changes after the edit mode
+     *                            returns. The method recordBefore
+     *                            must be called on the Change object
+     *                            before hading it over to this
+     *                            method.
+     * @param manualChangeElement Points to the element that the
+     *                            Change object manualChange is
+     *                            observing.
+     */
+    callInsertMode: function (cursorInElement, cursorBeforeElement, manualChange, manualChangeElement) {
         // Calls the insert mode
         // If manual change is supplied, then its recordBefore must already have been called.
         this.infoAboutCalledMode = {
@@ -123,8 +210,15 @@ function EditMode(editor, equationEnv) {
         newMode.init();
         this.equationEnv.callMode(newMode);
         return true;
-    }
-    this.calledModeReturned = function (returnValue) {
+    },
+    /**
+     * Do things that have to be done after a mode returns.
+     * This method is always called when a mode that has been called
+     * on top of this mode returns. It records changes, remembers user
+     * selections and places the cursor at a good place.
+     * @param returnValue The value the terminated mode handed back.
+     */
+    calledModeReturned: function (returnValue) {
         if (this.infoAboutCalledMode) {
             if (this.infoAboutCalledMode.change) {
                 this.infoAboutCalledMode.change.recordAfter(this.equationEnv.equation,this.infoAboutCalledMode.changeElement);
@@ -142,18 +236,28 @@ function EditMode(editor, equationEnv) {
         }
         delete this.infoAboutCalledMode;
         this.moveCursor(this.cursor); // In order to update all views
-    }
-    this.reInit = function () {
+    },
+    /**
+     * Resets internal data about the equation, including the position
+     * of the cursor. This is called after an undo or redo, which only
+     * change the equation, note the equation environment or the mode
+     * object, but they preserve internal attributes, so all needed
+     * information can be found in the equation.
+     */
+    reInit: function () {
         // Search equation for the cursor
         var nsResolver = standardNSResolver;
         this.cursor = document.evaluate(".//.[@internal:selected='editcursor']", this.equationEnv.equation, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
         if (!this.cursor) { this.cursor = this.equationEnv.equation }
         this.moveCursor(this.cursor); // In order to update all views
-    }
+    },
 }
 
-
-EditMode.gemseOptions = { // Default values of options
+/**
+ * Handlers for options that the edit mode provides. They contain
+ * default values, validators, parsers.
+ */
+EditMode.gemseOptions = {
     "selectableInsertModes": {
         defaultValue: "trivial,ucd",
         validator: function(value,editor) {
@@ -180,6 +284,10 @@ EditMode.gemseOptions = { // Default values of options
         }
     },
 }
+
+
+/* Commands */
+/* For documentation look into the user documentation */
 
 function editModeCommand_moveLeft(mode,currentElement) {
     return mml_previousSibling(currentElement);
@@ -647,6 +755,10 @@ function editModeCommand_set(mode, argString) {
 
 /* They all return null if there is no more node in this direction */
 
+/**
+ * Returns the element following the given one, null if the given one
+ * is the last sibling element.
+ */
 function mml_nextSibling(element) {
     while (element = element.nextSibling) {
         if (element.nodeType == Node.ELEMENT_NODE) {
@@ -656,6 +768,10 @@ function mml_nextSibling(element) {
     return null;
 }
 
+/**
+ * Returns the element before the given one or null if no preceding
+ * siblings exist.
+ */
 function mml_previousSibling(element) {
     while (element = element.previousSibling) {
         if (element.nodeType == Node.ELEMENT_NODE) {
@@ -665,6 +781,9 @@ function mml_previousSibling(element) {
     return null;
 }
 
+/**
+ * Returns the first element with the same parent
+ */
 function mml_firstSibling(element) {
     var next;
     while (next = mml_previousSibling(element)) {
@@ -673,6 +792,9 @@ function mml_firstSibling(element) {
     return element;
 }
 
+/**
+ * Returns the last element with the same parent
+ */
 function mml_lastSibling(element) {
     var next;
     while (next = mml_nextSibling(element)) {
@@ -681,6 +803,9 @@ function mml_lastSibling(element) {
     return element;
 }
 
+/**
+ * Returns the first child element.
+ */
 function mml_firstChild(element) {
     var candidates = element.childNodes;
     for (var i = 0; i < candidates.length; i++) {
@@ -691,6 +816,9 @@ function mml_firstChild(element) {
     return null;
 }
 
+/**
+ * Returns the last child element
+ */
 function mml_lastChild(element) {
     var candidates = element.childNodes;
     for (var i = candidates.length-1; i >= 0; i--) {
@@ -701,14 +829,22 @@ function mml_lastChild(element) {
     return null;
 }
 
+/**
+ * Returns the parent element. If the given element is a math element,
+ * null is returned, since it is the root element of an equation.
+ */
 function mml_parent(element) {
     // Important: We must not go above the formula
-    if (element.localName != "math") { //XXX: Not perfect
+    if (element.localName != "math" || element.namespaceURI != NS_MathML) {
         return element.parentNode;
     }
     return null;
 }
 
+/**
+ * Returns the next leaf element in document order. A leaf element is
+ * an element that has no child elements.
+ */
 function mml_nextLeaf(element) {
     var nextLeaf = null;
     var nextSibling = mml_nextSibling(element);
@@ -717,7 +853,7 @@ function mml_nextLeaf(element) {
         while (!nextSibling) {
             element = element.parentNode;
             nextSibling = mml_nextSibling(element);
-            if (element.localName=="math") { return null }
+            if (element.localName=="math" && element.namespaceURI == NS_MathML) { return null }
         }
         // Here we reached a point where nextSibling is defined.
         // It may be however, that it is not a leaf but an
@@ -740,6 +876,10 @@ function mml_nextLeaf(element) {
     return nextLeaf;
 }
 
+/**
+ * Returns the previous leaf element in document order. A leaf element is
+ * an element that has no child elements.
+ */
 function mml_previousLeaf(element) {
     var previousLeaf = null;
     var previousSibling = mml_previousSibling(element);
@@ -748,7 +888,7 @@ function mml_previousLeaf(element) {
         while (!previousSibling) {
             element = element.parentNode;
             previousSibling = mml_previousSibling(element);
-            if (element.localName=="math") { return null }
+            if (element.localName=="math" && element.namespaceURI == NS_MathML) { return null }
         }
         // Here we reached a point where nextSibling is defined.
         // It may be however, that it is not a leaf but an
