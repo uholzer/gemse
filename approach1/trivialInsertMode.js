@@ -1,5 +1,5 @@
 
-function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
+function TrivialInsertMode(editor, equationEnv, inElement, beforeElement) {
     // This insert mode inserts children into inElement, before the
     // silbing beforeElement. If beforeElement is null, it adds
     // children to the end of the inElement.
@@ -12,7 +12,7 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
     };
     this.cursorStack = [];
 }
-trivialInsertMode.prototype = {
+TrivialInsertMode.prototype = {
     name: "insert (trivial)",
     init: function() {
         this.moveCursor(this.cursor);

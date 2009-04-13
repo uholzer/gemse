@@ -4,7 +4,7 @@
     or a number. 
 */
 
-function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
+function UCDInsertMode(editor, equationEnv, inElement, beforeElement) {
     // This insert mode inserts children into inElement, before the
     // silbing beforeElement. If beforeElement is null, it adds
     // children to the end of the inElement.
@@ -17,7 +17,7 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
     };
     this.cursorStack = [];
 }
-ucdInsertMode.prototype = {
+UCDInsertMode.prototype = {
     name: "insert (UCD)",
     init: function() {
         this.moveCursor(this.cursor);

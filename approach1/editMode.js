@@ -276,10 +276,10 @@ EditMode.gemseOptions = {
         parser: function(value,editor) {
             // Returns a class
             if (value == "trivial") {
-                return trivialInsertMode;
+                return TrivialInsertMode;
             }
             else {
-                return ucdInsertMode;
+                return UCDInsertMode;
             }
         }
     },
