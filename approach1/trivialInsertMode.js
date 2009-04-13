@@ -3,7 +3,6 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
     // This insert mode inserts children into inElement, before the
     // silbing beforeElement. If beforeElement is null, it adds
     // children to the end of the inElement.
-    this.name = "insert (trivial)";
     this.editor = editor;
     this.equationEnv = equationEnv;
     this.cursor = {
@@ -12,10 +11,13 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         numberOfElementsToSurround: 0
     };
     this.cursorStack = [];
-    this.init = function() {
+}
+trivialInsertMode.prototype = {
+    name: "insert (trivial)",
+    init: function() {
         this.moveCursor(this.cursor);
-    }
-    this.finish = function() {
+    },
+    finish: function() {
         // TODO: Clean up attribute mess
         this.hideCursor();
         var newEditCursor;
@@ -34,8 +36,8 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         this.equationEnv.finishMode({ 
             newCursor: newEditCursor
         });
-    }
-    this.hideCursor = function() {
+    },
+    hideCursor: function() {
         this.cursor.inElement.removeAttributeNS(NS_internal,"selected");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.removeAttributeNS(NS_internal,"selected");
@@ -58,8 +60,8 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
             sibling.removeAttributeNS(NS_internal,"selected");
             sibling = mml_previousSibling(sibling);
         }
-    }
-    this.showCursor = function() {
+    },
+    showCursor: function() {
         this.cursor.inElement.setAttributeNS(NS_internal,"selected","insertCursorIn");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.setAttributeNS(NS_internal,"selected","insertCursorBefore");
@@ -81,15 +83,15 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         for (var i=0; i < this.cursor.numberOfElementsToSurround; ++i, sibling=mml_previousSibling(sibling)) {
             sibling.setAttributeNS(NS_internal,"selected","userSelection");
         }
-    }
-    this.moveCursor = function(newCursor) {
+    },
+    moveCursor: function(newCursor) {
         this.hideCursor();
         this.cursor = newCursor;
         this.showCursor()
         this.equationEnv.updateViews();
-    }
-    this.__defineGetter__("contextNode", function() { /*TODO*/ }); // TODO
-    this.inputHandler = function() {
+    },
+    get contextNode() { return null }, // TODO
+    inputHandler: function() {
         command = this.editor.inputBuffer;
         commandObject = trivialInsertModeCommands[command.uCharAt(0)];
         if (commandObject) {
@@ -99,14 +101,14 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
             // Command not found;
             return false;
         }
-    };
-    this.getNewPlaceholderElement = function() {
+    },
+    getNewPlaceholderElement: function() {
         var placeholder = document.createElementNS(NS_MathML, "mi");
         placeholder.setAttributeNS(NS_internal, "missing", "1")
         placeholder.appendChild(document.createTextNode("□"));
         return placeholder;
-    }
-    this.putElement = function() {
+    },
+    putElement: function() {
         // Puts an element where the cursor is located. If an element
         // follows which is marked with the missing attribute, it gets
         // deleted
@@ -205,7 +207,7 @@ function trivialInsertMode(editor, equationEnv, inElement, beforeElement) {
                 inElement: this.cursor.inElement
             });
         }
-    }
+    },
 }
 
 

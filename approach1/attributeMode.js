@@ -1,13 +1,15 @@
 
 function AttributeMode(editor, equationEnv, element) {
     // The attribute mode is specially created for one element!
-    this.name = "attribute";
     this.editor = editor;
     this.equationEnv = equationEnv;
     this.element = element;
     this.attributes = [];
     this.cursor = null;
-    this.init = function() {
+}
+AttributeMode.prototype = {
+    name: "attribute",
+    init: function() {
         // Place attribute information inside an Array
         this.cursor = null;
         this.attributes = [];
@@ -41,21 +43,21 @@ function AttributeMode(editor, equationEnv, element) {
         else {
             this.moveCursor(null);
         }
-    }
-    this.reInit = this.init;
-    this.finish = function() {
+    },
+    reInit: function() { this.init() },
+    finish: function() {
         // Clean up attribute mess
         this.element.removeAttributeNS(NS_internal, "selectedAttributes");
         this.element.setAttributeNS(NS_internal, "attributeCursor", "");
         this.equationEnv.finishMode();
-    }
-    this.moveCursor = function(index) {
+    },
+    moveCursor: function(index) {
         this.cursor = index; // index may be undef if there are no attributes present
         this.element.setAttributeNS(NS_internal, "attributeCursor", (index!=null) ? this.attributes[index].nodeName : "");
         this.equationEnv.updateViews();
-    }
-    this.__defineGetter__("contextNode", function() { return this.element }); // XXX: good like this?
-    this.inputHandler = function() {
+    },
+    get contextNode() { return this.element }, // XXX: good like this?
+    inputHandler: function() {
         // Returns true if it succeeded to execute the first command from the
         // input buffer. Else, it returns false.
         // (This is mainly a copy from the same function of the edit
@@ -102,7 +104,7 @@ function AttributeMode(editor, equationEnv, element) {
         else {
             return false;
         }
-    }
+    },
 }
 
 

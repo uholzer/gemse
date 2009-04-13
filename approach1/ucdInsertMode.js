@@ -8,7 +8,6 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
     // This insert mode inserts children into inElement, before the
     // silbing beforeElement. If beforeElement is null, it adds
     // children to the end of the inElement.
-    this.name = "insert (UCD)";
     this.editor = editor;
     this.equationEnv = equationEnv;
     this.cursor = {
@@ -17,10 +16,13 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
         numberOfElementsToSurround: 0
     };
     this.cursorStack = [];
-    this.init = function() {
+}
+ucdInsertMode.prototype = {
+    name: "insert (UCD)",
+    init: function() {
         this.moveCursor(this.cursor);
-    }
-    this.finish = function() {
+    },
+    finish: function() {
         // TODO: Clean up attribute mess
         this.hideCursor();
         var newEditCursor;
@@ -39,8 +41,8 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
         this.equationEnv.finishMode({ 
             newCursor: newEditCursor
         });
-    }
-    this.hideCursor = function() {
+    },
+    hideCursor: function() {
         this.cursor.inElement.removeAttributeNS(NS_internal,"selected");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.removeAttributeNS(NS_internal,"selected");
@@ -63,8 +65,8 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
             sibling.removeAttributeNS(NS_internal,"selected");
             sibling = mml_previousSibling(sibling);
         }
-    }
-    this.showCursor = function() {
+    },
+    showCursor: function() {
         this.cursor.inElement.setAttributeNS(NS_internal,"selected","insertCursorIn");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.setAttributeNS(NS_internal,"selected","insertCursorBefore");
@@ -86,15 +88,15 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
         for (var i=0; i < this.cursor.numberOfElementsToSurround; ++i, sibling=mml_previousSibling(sibling)) {
             sibling.setAttributeNS(NS_internal,"selected","userSelection");
         }
-    }
-    this.moveCursor = function(newCursor) {
+    },
+    moveCursor: function(newCursor) {
         this.hideCursor();
         this.cursor = newCursor;
         this.showCursor()
         this.equationEnv.updateViews();
-    }
-    this.__defineGetter__("contextNode", function() { /*TODO*/ }); // TODO
-    this.inputHandler = function() {
+    },
+    get contextNode() { return null }, // TODO
+    inputHandler: function() {
         // First check wheter this could be a command from the command
         // table. Otherwise handle it as indicated by the UCD
         var command = this.editor.inputBuffer;
@@ -145,14 +147,14 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
                 throw "I don't know what to do with " + c + ", it seems not to be an operator, a digit or an identifier.";
             }
         }
-    };
-    this.getNewPlaceholderElement = function() {
+    },
+    getNewPlaceholderElement: function() {
         var placeholder = document.createElementNS(NS_MathML, "mi");
         placeholder.setAttributeNS(NS_internal, "missing", "1")
         placeholder.appendChild(document.createTextNode("□"));
         return placeholder;
-    }
-    this.putElement = function() {
+    },
+    putElement: function() {
         // Puts an element where the cursor is located. If an element
         // follows which is marked with the missing attribute, it gets
         // deleted
@@ -251,7 +253,7 @@ function ucdInsertMode(editor, equationEnv, inElement, beforeElement) {
                 inElement: this.cursor.inElement
             });
         }
-    }
+    },
 }
 
 

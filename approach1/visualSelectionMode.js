@@ -3,27 +3,29 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
     // This insert mode inserts children into inElement, before the
     // silbing beforeElement. If beforeElement is null, it adds
     // children to the end of the inElement.
-    this.name = "visual";
     this.editor = editor;
     this.equationEnv = equationEnv;
-    this.START = "start"; // denotes the left end of the selection
-    this.END = "end"; // denotes the rigth end of the selection
     this.cursor = {
         startElement: startElement,
         endElement:   startElement,
         moving:       this.END,
     };
-    this.createCursor = function() {
+}
+VisualSelectionMode.prototype = {
+    name: "visual",
+    START: "start", // denotes the left end of the selection
+    END: "end", // denotes the rigth end of the selection
+    createCursor: function() {
         return {
             startElement: this.cursor.startElement,
             endElement:   this.cursor.endElement,
             moving:       this.cursor.moving,
         }
-    }
-    this.init = function() {
+    },
+    init: function() {
         this.moveCursor(this.cursor);
-    }
-    this.hideCursor = function() {
+    },
+    hideCursor: function() {
         // Remove all "selected" attributes on selected nodes
         var current = this.cursor.startElement;
         while (current != this.cursor.endElement) {
@@ -31,8 +33,8 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
             current = mml_nextSibling(current);
         }
         current.removeAttributeNS(NS_internal, "selected");
-    }
-    this.showCursor = function() {
+    },
+    showCursor: function() {
         // Put selected="userSelection" attributes on all selected
         // nodes
         // Begin at startElement and go through the following siblings
@@ -50,19 +52,19 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         else {
             this.cursor.endElement.setAttributeNS(NS_internal, "selected", "userSelectionCursor");
         }
-    }
-    this.moveCursor = function(newCursor) {
+    },
+    moveCursor: function(newCursor) {
         this.hideCursor();
         this.cursor = newCursor;
         this.showCursor();
         this.equationEnv.updateViews();
-    }
-    this.__defineGetter__("contextNode", function() { /*TODO*/ }); // TODO
-    this.isSibling = function(e1,e2) {
+    },
+    get contextNode() { return null }, // TODO
+    isSibling: function(e1,e2) {
         // Returns true iff e1 and e2 are siblings
         return (e1.parentNode == e2.parentNode);
-    }
-    this.compareSiblings = function(e1, e2) {
+    },
+    compareSiblings: function(e1, e2) {
         // Returns 0 if the siblings are equal, 1 if if e1 comes before e2,
         // and -1 if e2 precedes e1. -2 indicates that e1 and e2 are not Siblings
         if (e1.parentNode != e2.parentNode) { return -2 }
@@ -78,8 +80,8 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
             }
         }
         throw "Never reached!";
-    }
-    this.inputHandler = function() {
+    },
+    inputHandler: function() {
         command = this.editor.inputBuffer;
         visualCommandObject = visualSelectionModeCommands[command.uCharAt(0)];
         editCommandObject = editModeCommands[command.uCharAt(0)];
@@ -153,13 +155,13 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
                 return false;
             }*/
         }
-    };
-    this.cancel = function() {
+    },
+    cancel: function() {
         // Exits this mode without doing anything, drops the selection
         this.hideCursor();
         this.equationEnv.finishMode();
-    }
-    this.dispatch = function() {
+    },
+    dispatch: function() {
         // Exits this mode and tells the underlying mode the selection 
         // for the next command
         this.hideCursor();
@@ -167,7 +169,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         // editMode should now automatically execute the next command in
         // the buffer. (But we will enforce it now. XXX: Perhaps this is bad)
         this.equationEnv.mode.inputHandler();
-    }
+    },
 }
 
 
