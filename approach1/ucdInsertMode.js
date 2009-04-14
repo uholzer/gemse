@@ -123,7 +123,33 @@ UCDInsertMode.prototype = {
 
             // Find out wether we have to treat this character as
             // identifier, operator or number.
-            if (ucd.isOperator(c)) {
+            if (ucd.isCombining(c)) {
+                // The user entered a combining character, so, this
+                // character interacts with the element before the
+                // cursor.
+                this.hideCursor();
+                var position = ucd.lookupCombiningPosition(c);
+                var standalone = ucd.lookupCombiningStandalone(c);
+                if (!standalone) { 
+                    // If there is now standalone from known, we build
+                    // one by using 0x00A0 as base character
+                    standalone = String.uFromCharCode(0x00A0) + c
+                }
+                var parentElement = this.cursor.inElement;
+                var baseElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
+                if (!baseElement) { throw "No element before the cursor, so don't know what to do with the combining mark." }
+                var standaloneTextNode = document.createTextNode(standalone);
+                var standaloneElement = document.createElementNS(NS_MathML, "mo");      //TODO!
+                standaloneElement.appendChild(standaloneTextNode);
+                var surroundingElement = document.createElementNS(NS_MathML, "mover");  //TODO!
+                parentElement.replaceChild(surroundingElement, baseElement);
+                surroundingElement.appendChild(baseElement);
+                surroundingElement.appendChild(standaloneElement);
+                // this.cursor should still have correct values at
+                // this point.
+                this.showCursor();
+            }
+            else if (ucd.isOperator(c)) {
                 this.putElement(null, "mo", document.createTextNode(c));
             }
             else if (ucd.isDigit(c)) {

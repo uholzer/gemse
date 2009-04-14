@@ -1,0 +1,9 @@
+# Meaning of Position: The letter is placed at 0
+#  5 6 5
+#  8 0 4
+#  9 2 3
+# 1 means that the combining mark is superimposed.
+# However 4, 8 are never used.
+# Format:
+# Codepoint; position; standalone codepoint
+

@@ -6,21 +6,27 @@
 
 <head>
     <title>Gemse 1</title>
-    <script src="gemseBase.js"/> <!-- Contains the enhanced fromCharCode -->
+    <script src="UString.js"/>
     <script src="ucd.js"/>
     <script><![CDATA[
         function test() {
             var dest = document.getElementById("results");
-            
-            var c = "𝕂";
-            var s = document.createTextNode(
-                c + ": " + 
-                ucd.lookupName(c) +
-                " " +
-                ucd.lookupGeneralCategory(c) +
-                "\n"
-            );
-            dest.appendChild(s);
+
+            for (var c in ucd.db) {
+                var codepoint = c.uCharCodeAt(0);
+                if (codepoint <= 0x0400 || (codepoint <= 0x2000 && codepoint >= 0x2FFF)) {
+                var tr = document.createElement("tr");
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(c));
+                tr.appendChild(td);
+                ucd.db[c].forEach(function(f) {
+                    var td = document.createElement("td");
+                    td.appendChild(document.createTextNode(f));
+                    tr.appendChild(td);
+                });
+                dest.appendChild(tr);
+                }
+            }
         }
     ]]></script>
 </head>
@@ -29,7 +35,8 @@
 
 <h1>Gemse 1 Unicode Character Database</h1>
 
-<pre id="results"></pre>
+<table id="results">
+</table>
 
 </body>
 
