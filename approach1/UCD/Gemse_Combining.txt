@@ -6,4 +6,4 @@
 # However 4, 8 are never used.
 # Format:
 # Codepoint; position; standalone codepoint
-
+0325;2;2218 

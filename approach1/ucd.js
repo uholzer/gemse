@@ -160,11 +160,11 @@ function UCD4Gemse() {
             if (!l || l[0]=="#") { continue }
             var res = lineRegex.exec(l);
             if (!res) { throw "Error in Gemse_Combining.txt? " + l }
-            var codepoint = parseInt(res[0],16);
+            var codepoint = parseInt(res[1],16);
             var character = String.uFromCharCode(codepoint);
-            db[character][2] = parseInt(res[1],10);
+            db[character][2] = parseInt(res[2],10);
             if (res[2]) {
-                db[character][3] = String.uFromCharCode(parseInt(res[2],16));
+                db[character][3] = String.uFromCharCode(parseInt(res[3],16));
             }
         }
     }
