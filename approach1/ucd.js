@@ -1,80 +1,129 @@
-/*
-The functions herein are used to query the unicode character database
-(UCD), specially tailored to the needs of Gemse.
-*/
+/**
+ * @fileOverview Accessing the Unicode Character Database.
+ * This file provides a class for querying the UCD,
+ * specially tailored to the needs of Gemse.
+ * When loading this file, a global object ucd is created and the UCD
+ * gets loaded. So, one does not need to create a UCD4Gemse object,
+ * but one should use the global object ucd instead.
+ */
 
-ucd = new UCD4Gemse();
-ucd.load();
 
+/**
+ * @class Querying the Unicode Character Database.
+ */
 function UCD4Gemse() {
+    /**
+     * Content of the UCD.
+     * <p>Only significant information is stored. Some information is
+     * derived and can not directly be found in the UCD. This
+     * datastructure may change over time, so it should not be
+     * accessed from the outside directly.</p>
+     *
+     * <p>Database structure: The database is an array with the following
+     * fields:</p>
+     * <ul>
+     * <li>0: Unicode name
+     * <li>1: General category
+     * <li>2: Position for combining characters (one of the MPOS_*)
+     * <li>3: Only set for combining characters: The character (as string)
+     *    that is the standalone version used for accents. It may be
+     *    null even for a combining character. In this case, no
+     *    standalone version is known.</li>
+     * </ul>
+     *
+     * @private
+     */
     this.db = {};
-
-    /* Public methods */
-
-    this.isIdentifier = function(c) {
+}
+UCD4Gemse.prototype = {
+    /**
+     * Tells whether a character can be considered an identifier by
+     * default.
+     */
+    isIdentifier: function(c) {
         return (this.lookupGeneralCategory(c)[0] == "L");
-    }
+    },
 
-    this.isDigit = function(c) {
+    /**
+     * Tells whether a character can be considered a digit by
+     * default.
+     */
+    isDigit: function(c) {
         return (this.lookupGeneralCategory(c)[0] == "N");
-    }
+    },
 
-    this.isOperator = function(c) {
+    /**
+     * Tells whether a character can be considered an operator by
+     * default.
+     */
+    isOperator: function(c) {
         return (this.lookupGeneralCategory(c)[0] == "S" || this.lookupGeneralCategory(c)[0] == "P");
-    }
+    },
 
-    this.isCombining = function(c) {
+    /**
+     * Tells whether a character is a combining character.
+     * This may not be fully unicode conformant, since it uses the
+     * property "combining class".
+     */
+    isCombining: function(c) {
         return (this.lookupCombiningPosition(c) != this.MPOS_NOTCOMBINING);
-    }
+    },
 
     // They match the numbers used in Gemse_Combining.txt
-    this.MPOS_UNKNOWN = -1;
-    this.MPOS_NOTCOMBINING = 0;
-    this.MPOS_SUPERIMPOSED = 1;
-    this.MPOS_UNDER = 2;
-    this.MPOS_SUB = 3;
-    this.MPOS_SUP = 5;
-    this.MPOS_OVER = 6;
-    this.MPOS_PRESUP = 7;
-    this.MPOS_PRESUB = 9;
+    MPOS_UNKNOWN: -1,
+    MPOS_NOTCOMBINING: 0,
+    MPOS_SUPERIMPOSED: 1,
+    MPOS_UNDER: 2,
+    MPOS_SUB: 3,
+    MPOS_SUP: 5,
+    MPOS_OVER: 6,
+    MPOS_PRESUP: 7,
+    MPOS_PRESUB: 9,
 
     /* Lookup methods */
 
-    this.lookupName = function(c) {
+    /**
+     * Tells the unicode name of a character
+     */
+    lookupName: function(c) {
         return this.db[c][0];
-    }
+    },
 
-    this.lookupGeneralCategory = function(c) {
+    /**
+     * Tells the general category of a character. The format of the
+     * value is as it is found in the UCD.
+     */
+    lookupGeneralCategory: function(c) {
         return this.db[c][1];
-    }
+    },
  
-    this.lookupCombiningPosition = function(c) {
+    /**
+     * Tells for a combining character at which position it is placed.
+     * It returns one of the MPOS_* values. This value is originally
+     * derived from the combining class of the character. If its
+     * combining class is 0, the character is considered not to be
+     * combining and MPOS_NOTCOMBINING.
+     */
+    lookupCombiningPosition: function(c) {
         return this.db[c][2];
-    }
+    },
  
-    this.lookupCombiningStandalone = function(c) {
+    /**
+     * Guesses the standalone version of a combining character.
+     * The standalone version is a non-combining character having the
+     * same form as the given character and is used in MathML together
+     * with a mover, msup, munder or similar construct.
+     */
+    lookupCombiningStandalone: function(c) {
         return this.db[c][3];
-    }
+    },
 
-    /* Private methods for handling database */
 
-    /* Database structure: The database is an array with the following
-       fields:
-       0: Unicode name
-       1: General category
-       2: Set to
-          0  for characters that are not combining characters
-          -1 for unknown combining characters
-          for known combining characters, that is, combining
-          characters found in Gemse_Combining.txt, the position found
-          therein is used.
-       3: Only set for combining characters: The character (as string)
-          that is the standalone version used for accents. It may be
-          null even for a combining character. In this case, no
-          standalone version is known.
-    */
 
-    this.load = function() {
+    /**
+     * Fetches all database files and parses them.
+     */
+    load: function() {
         // This function traverses the whole UnicodeData.txt in order
         // to build the database.
         // Additionally Gemse_Combining.txt is loaded
@@ -167,7 +216,10 @@ function UCD4Gemse() {
                 db[character][3] = String.uFromCharCode(parseInt(res[3],16));
             }
         }
-    }
+    },
 
 }
+
+ucd = new UCD4Gemse();
+ucd.load();
 
