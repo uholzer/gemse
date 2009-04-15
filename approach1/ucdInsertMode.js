@@ -134,6 +134,7 @@ UCDInsertMode.prototype = {
                     // If there is now standalone from known, we build
                     // one by using 0x00A0 as base character
                     standalone = String.uFromCharCode(0x00A0) + c
+                    // Or do we have to use 0x0020 or nothing at all?
                 }
                 var parentElement = this.cursor.inElement;
                 var baseElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
@@ -141,7 +142,24 @@ UCDInsertMode.prototype = {
                 var standaloneTextNode = document.createTextNode(standalone);
                 var standaloneElement = document.createElementNS(NS_MathML, "mo");      //TODO!
                 standaloneElement.appendChild(standaloneTextNode);
-                var surroundingElement = document.createElementNS(NS_MathML, "mover");  //TODO!
+                var surroundingElementName;
+                switch (position) {
+                    case ucd.MPOS_OVER:
+                        surroundingElementName = "mover";
+                        break;
+                    case ucd.MPOS_SUP:
+                        surroundingElementName = "msup";
+                        break;
+                    case ucd.MPOS_SUB:
+                        surroundingElementName = "msub";
+                        break;
+                    case ucd.MPOS_UNDER:
+                        surroundingElementName = "munder";
+                        break;
+                    default:
+                        surroundingElementName = "mover";
+                }
+                var surroundingElement = document.createElementNS(NS_MathML, surroundingElementName);  //TODO!
                 parentElement.replaceChild(surroundingElement, baseElement);
                 surroundingElement.appendChild(baseElement);
                 surroundingElement.appendChild(standaloneElement);
