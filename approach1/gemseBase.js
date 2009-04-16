@@ -1345,8 +1345,31 @@ GemsePEditor.prototype = {
     },
     /** 
      * Highly configurable command handler.
-     * @param options      Options controlling the behaviour
+     * @param options Options controlling the behaviour
+     *        This has to be an object having the following
+     *        fields:
+     *        <dl>
+     *        <dt>onInvalidCommand</dt>
+     *        <dd>forget,throw,inform</dd>
+     *        <dt>backspace</dt>
+     *        <dd>removeAll: removeAll,removeLast,asCommand</dd>
+     *        </dl>
      * @param commandTable Table of all known commands
+     *        For every command c, commandTable[c] must be an object
+     *        holding the following fields:
+     *        <dl>
+     *        <dt>type</dt>
+     *        <dd>disamb,singleCharacterArgumentPrefix,operator,action,long,longDisamb</dd>
+     *        <dt>argument</dt>
+     *        <dd>none,parameters,characters,manuallyTerminated,regex</dd>
+     *        <dt>argumentCharacterCount (only if argument=characters)</dt>
+     *        <dd>unsigned integer</dd>
+     *        <dt>argumentTerminator (only if argument=manuallyTerminated)</dt>
+     *        <dd>unicode character</dd>
+     *        <dt>repeating</dt>
+     *        <dd>unsigned integer</dd>
+     *        <dd>external,internal,prevent</dd>
+     *        </dl>
      */
     commandBasedInputHandler: function(options, commandTable) {
 
