@@ -1349,30 +1349,205 @@ GemsePEditor.prototype = {
      *        This has to be an object having the following
      *        fields:
      *        <dl>
-     *        <dt>onInvalidCommand</dt>
-     *        <dd>forget,throw,inform</dd>
+     *        <dt>onNotExistingCommand</dt>
+     *        <dd>forget,throw,inform,handBack</dd>
+     *        <dt>onExistingButMalformedCommand</dt>
+     *        <dd>forget,throw,inform,handBack</dd>
      *        <dt>backspace</dt>
      *        <dd>removeAll: removeAll,removeLast,asCommand</dd>
+     *        <dt>repeating</dt>
+     *        <dd>Boolean. When true, commands are not allowed to
+     *        begin with a digit, except the command 0.</dd>
      *        </dl>
      * @param commandTable Table of all known commands
      *        For every command c, commandTable[c] must be an object
      *        holding the following fields:
      *        <dl>
      *        <dt>type</dt>
-     *        <dd>disamb,singleCharacterArgumentPrefix,operator,action,long,longDisamb</dd>
+     *        <dd>disamb,singleCharacterPreArgumentPrefix,command,longPrefix</dd>
      *        <dt>argument</dt>
-     *        <dd>none,parameters,characters,manuallyTerminated,regex</dd>
+     *        <dd>none,parameters,characters,manual,regex,selection</dd>
      *        <dt>argumentCharacterCount (only if argument=characters)</dt>
      *        <dd>unsigned integer</dd>
-     *        <dt>argumentTerminator (only if argument=manuallyTerminated)</dt>
-     *        <dd>unicode character</dd>
+     *        <dt>extractArgument (only if argument=manuallyTerminated)</dt>
+     *        <dd>function(input,begin), returns undefined if not
+     *        complete. (null is a valid argument!)</dd>
+     *        <dt>argumentRegex (only if argument=regex)</dt>
+     *        <dd>RegExp object, TODO</dd>
      *        <dt>repeating</dt>
-     *        <dd>unsigned integer</dd>
      *        <dd>external,internal,prevent</dd>
+     *        <dt>resultHandler</dt>
+     *        <dd>function(mode,data,commandInfo,result)</dd>
+     *        <dt>executionHandler</dt>
+     *        <dd>function(mode,data,commandInfo)</dd>
+     *        <dt>execute</dt>
+     *        <dd>function(mode,data,commandInfo)</dd>
      *        </dl>
+     * @returns 0 if the command is incomplete,
+     *          1 if the first command has been executed
      */
-    commandBasedInputHandler: function(options, commandTable) {
+    commandBasedInputHandler: function(mode, options, commandTable, selection) {
+        // Make a string object from the buffer, so the optimisations
+        // from UString kick in. (buffer must not be changed in this
+        // function.)
+        var buffer = new String(this.inputBuffer);
+        // Track where the next unprocessed character is  
+        // in the input buffer, counting unicode characters
+        var pos = 0;
+        // How often to repeat
+        var repeat = 1;
+        // Single character pre-arguments
+        var singleCharacterPreArguments = [];
 
+        /* Repeating */
+        if (options.repeating) {
+            // Fetch digits at the beginning. The first digit must not
+            // be a 0.
+            var matchRes = buffer.match(/^([1-9][0-9]*)/);
+            if (matchRes) {
+                repeat = parseInt(matchRes[1]);
+                pos += matchRes[1].uLength;
+            }
+        }
+        if (buffer.uLength<=pos) { return 0 }
+
+        var firstChar = buffer.uCharAt(pos);
+        var firstCharInfo = comandTable[firstChar];
+
+        /* single character arguments */
+        while (firstCharInfo && firstCharInfo.type == "singleCharacterPreArgumentPrefix") {
+            ++pos; // Points now to the argument, if present
+            if (buffer.uLength<=pos) { return 0 }
+            singleCharacterPreArguments.push(buffer.uCharAt(pos));
+            ++pos;
+            if (buffer.uLength<=pos) { return 0 }
+            firstChar = buffer.uCharAt(pos);
+            firstCharInfo = comandTable[firstChar];
+        }
+        // After this loop, pos points to the next character after the
+        // last single character argument. This characters exists,
+        // since otherweise 0 would have already been returned by the
+        // loop. firstChar holds this character and firstCharInfo
+        // information about it from the command table.
+
+        /* The command itself */
+        var command = "";
+        while (pos < buffer.uLength) {
+            command += buffer.uCharAt(pos);
+            commandInfo = commandTable[command];
+            if (firstCharInfo && firstCharInfo.type == "disamb") {
+                // Command is not yet complete
+                return 0;
+            }
+            else if (firstCharInfo && firstCharInfo.type == "longPrefix") {
+                // Long command
+                throw "Long commands not yet implemented."; // TODO
+            }
+            else if (!firstCharInfo) {
+                // The command does not exist
+                throw "Command does not exist."; // TODO
+            }
+            else {
+                throw "Unsupported command table entry type: " + firstCharInfo.type; //TODO
+            }
+            ++pos;
+        }
+        if (pos>=buffer.uLength) {
+            // Command does not exist
+            throw "Command does not exist."; // TODO
+        }
+
+        /* Argument */
+        // At this point, pos must point to the first character of
+        // the argument.
+        var argument;
+        var parameters;
+        else if (commandInfo.argument=="none") {
+            argument = null;
+            parameters = null;
+        }
+        else if (commandInfo.argument=="paramters") {
+            // TODO: Parsing of paramters should be improved
+            var end = buffer.uIndexOf("\n",pos);
+            if (end==-1) {
+                // Command is incomplete
+                return 0;
+            }
+            var paramterStringList = buffer.uSlice(pos,end).split(" ");
+            parameters = {};
+            parameterStringList.forEach(function(s) {
+                var equalSignIndex = s.indexOf("="); // Counting UTF16 characters
+                if (equalSignIndex == -1) {
+                    throw "Invalid parameter syntax";
+                }
+                parameters[s.slice(0,equalSignIndex)] = s.slice(equalSign+1);
+            });
+            argument = null;
+            pos = end+1;
+        }
+        else if (commandInfo.argument=="characters") {
+            var ccount = commandInfo.argumentCharacterCount
+            if (buffer.uLength < pos + ccount) {
+                // Command is incomplete
+                return 0;
+            }
+            argument = buffer.uSlice(pos,pos+ccount);
+            parameters = null;
+            pos += ccount;
+        }
+        else if (commandInfo.argument=="manual") {
+            argument = commandInfo.extractArgument(buffer,pos);
+            if (argument === undefined) {
+                // Command is incomplete
+                return 0;
+            }
+            parameters = null;
+        }
+        else if (commandInfo.argument=="regex") {
+            // TODO
+            throw "regex not yet supported";
+        }
+        else if (commandInfo.argument=="selection") {
+            // If selection is aleady set, we are done
+            if (!selection) {
+                // TODO
+            }
+        }
+        else {
+            throw "Unknown argument type: " + commandInfo.argument;
+        }
+
+        /* Build table of data handed over to execution function */
+        if (commandInfo.repeating=="prevent") { repeat = 1 }
+        var data = {
+            internalRepeat: commandInfo.repeating=="internal" ? repeat : 1,
+            externalRepeat: commandInfo.repeating=="external" ? repeat : 1,
+            command: command,
+            fullCommand: buffer.uSlice(0,pos),
+            singleCharacterPreArguments: singleCharacterPreArguments,
+            parameters: parameters,
+            argument: argument,
+            selection: selection,
+        };
+
+        /* Execution */
+        if (commandInfo.repeat=="internal") { repeat = 1 }
+        for (var i = 1; i < repeat; ++i) {
+            if (commandInfo.executionHandler) {
+                commandInfo.executionHandler(mode,data,commandInfo);
+            }
+            else {
+                var result = commandInfo.execute(mode,data,commandInfo);
+                if (commandInfo.resultHandler) {
+                    commandInfo.resultHandler(mode,data,commandInfo,result);
+                }
+            }
+        }
+
+        /* Eat */
+        this.eatInput(pos);
+
+        return 1; // Success!
     }
 }
 
