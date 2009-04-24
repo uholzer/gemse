@@ -1343,50 +1343,70 @@ GemsePEditor.prototype = {
             this.equations[this.focus].options[key] = value;
         }
     },
-    /** 
-     * Highly configurable command handler.
-     * @param options Options controlling the behaviour
-     *        This has to be an object having the following
-     *        fields:
-     *        <dl>
-     *        <dt>onNotExistingCommand</dt>
-     *        <dd>forget,throw,inform,handBack</dd>
-     *        <dt>onExistingButMalformedCommand</dt>
-     *        <dd>forget,throw,inform,handBack</dd>
-     *        <dt>backspace</dt>
-     *        <dd>removeAll: removeAll,removeLast,asCommand</dd>
-     *        <dt>repeating</dt>
-     *        <dd>Boolean. When true, commands are not allowed to
-     *        begin with a digit, except the command 0.</dd>
-     *        </dl>
-     * @param commandTable Table of all known commands
-     *        For every command c, commandTable[c] must be an object
-     *        holding the following fields:
-     *        <dl>
-     *        <dt>type</dt>
-     *        <dd>disamb,singleCharacterPreArgumentPrefix,command,longPrefix</dd>
-     *        <dt>argument</dt>
-     *        <dd>none,parameters,characters,manual,regex,selection</dd>
-     *        <dt>argumentCharacterCount (only if argument=characters)</dt>
-     *        <dd>unsigned integer</dd>
-     *        <dt>extractArgument (only if argument=manuallyTerminated)</dt>
-     *        <dd>function(input,begin), returns undefined if not
-     *        complete. (null is a valid argument!)</dd>
-     *        <dt>argumentRegex (only if argument=regex)</dt>
-     *        <dd>RegExp object, TODO</dd>
-     *        <dt>repeating</dt>
-     *        <dd>external,internal,prevent</dd>
-     *        <dt>resultHandler</dt>
-     *        <dd>function(mode,data,commandInfo,result)</dd>
-     *        <dt>executionHandler</dt>
-     *        <dd>function(mode,data,commandInfo)</dd>
-     *        <dt>execute</dt>
-     *        <dd>function(mode,data,commandInfo)</dd>
-     *        </dl>
-     * @returns 0 if the command is incomplete,
-     *          1 if the first command has been executed
+}
+
+GemsePEditor.knownClasses = [];
+
+
+/** 
+ * @class Highly configurable command handler.
+ * @param mode
+ * @param options Options controlling the behaviour
+ *        This has to be an object having the following
+ *        fields:
+ *        <dl>
+ *        <dt>onNotExistingCommand</dt>
+ *        <dd>forget,throw,inform,handBack</dd>
+ *        <dt>onExistingButMalformedCommand</dt>
+ *        <dd>forget,throw,inform,handBack</dd>
+ *        <dt>backspace</dt>
+ *        <dd>removeAll: removeAll,removeLast,asCommand</dd>
+ *        <dt>repeating</dt>
+ *        <dd>Boolean. When true, commands are not allowed to
+ *        begin with a digit, except the command 0.</dd>
+ *        </dl>
+ * @param commandTables An array of tables of all known commands
+ *        For every command c, commandTable[i][c] must be an object
+ *        holding the following fields:
+ *        <dl>
+ *        <td>class</dt>
+ *        <dd>Can be set by the user to any value. It is not
+ *        considered.</dd>
+ *        <dt>type</dt>
+ *        <dd>disamb,singleCharacterPreArgumentPrefix,command,longPrefix</dd>
+ *        <dt>argument</dt>
+ *        <dd>none,parameters,characters,manual,regex,selection</dd>
+ *        <dt>argumentCharacterCount (only if argument=characters)</dt>
+ *        <dd>unsigned integer</dd>
+ *        <dt>extractArgument (only if argument=manuallyTerminated)</dt>
+ *        <dd>function(input,begin), returns undefined if not
+ *        complete. (null is a valid argument!)</dd>
+ *        <dt>argumentRegex (only if argument=regex)</dt>
+ *        <dd>RegExp object, TODO</dd>
+ *        <dt>repeating</dt>
+ *        <dd>external,internal,prevent</dd>
+ *        <dt>resultHandler</dt>
+ *        <dd>function(mode,data,commandInfo,result)</dd>
+ *        <dt>executionHandler</dt>
+ *        <dd>function(mode,data,commandInfo)</dd>
+ *        <dt>execute</dt>
+ *        <dd>function(mode,data,commandInfo)</dd>
+ *        </dl>
+ * @returns {CommandInstance} A CommandInstance containing all
+ * information needed to execute the command. However, null is
+ * returned if there is no complete command in the input buffer.
+ */
+CommandHandler = function(mode,options,commandTables) {
+    this.mode = mode;
+    this.options = options;
+    this.commandTables = commandTables;
+    this.selection = null;
+}
+CommandHandler.prototype = {
+    /**
+     * Parses the next command from the input buffer
      */
-    commandBasedInputHandler: function(mode, options, commandTable, selection) {
+    parse: function() {
         // Make a string object from the buffer, so the optimisations
         // from UString kick in. (buffer must not be changed in this
         // function.)
@@ -1462,7 +1482,7 @@ GemsePEditor.prototype = {
         // the argument.
         var argument;
         var parameters;
-        else if (commandInfo.argument=="none") {
+        if (commandInfo.argument=="none") {
             argument = null;
             parameters = null;
         }
@@ -1511,6 +1531,7 @@ GemsePEditor.prototype = {
             // If selection is aleady set, we are done
             if (!selection) {
                 // TODO
+                throw "Selection ny argument is not yet supported";
             }
         }
         else {
@@ -1519,41 +1540,113 @@ GemsePEditor.prototype = {
 
         /* Build table of data handed over to execution function */
         if (commandInfo.repeating=="prevent") { repeat = 1 }
-        var data = {
-            internalRepeat: commandInfo.repeating=="internal" ? repeat : 1,
-            externalRepeat: commandInfo.repeating=="external" ? repeat : 1,
-            command: command,
-            fullCommand: buffer.uSlice(0,pos),
-            singleCharacterPreArguments: singleCharacterPreArguments,
-            parameters: parameters,
-            argument: argument,
-            selection: selection,
-        };
-
-        /* Execution */
-        if (commandInfo.repeat=="internal") { repeat = 1 }
-        for (var i = 1; i < repeat; ++i) {
-            if (commandInfo.executionHandler) {
-                commandInfo.executionHandler(mode,data,commandInfo);
-            }
-            else {
-                var result = commandInfo.execute(mode,data,commandInfo);
-                if (commandInfo.resultHandler) {
-                    commandInfo.resultHandler(mode,data,commandInfo,result);
-                }
-            }
+        var instance = new CommandInstance;
+        instance.mode = this.mode;
+        if (commandInfo.repeat=="internal") {
+            instance.internalRepeat = commandInfo.repeating=="internal" ? repeat : 1;
         }
+        else if (commandInfo.repeat=="external") {
+            instance.externalRepeat = commandInfo.repeating=="external" ? repeat : 1;
+        }
+        instance.command = command;
+        instance.commandInfo = commandInfo;
+        instance.fullCommand = buffer.uSlice(0,pos);
+        instance.singleCharacterPreArguments = singleCharacterPreArguments;
+        instance.parameters = parameters;
+        instance.argument = argument;
+        instance.selection = selection;
+        instance.implementation = commandInfo.implementation;
+
+        instance.isReadyToExecute = true;
 
         /* Eat */
         this.eatInput(pos);
 
-        return 1; // Success!
-    }
+        return instance; // Success!
+    },
 }
 
-GemsePEditor.knownClasses = [];
-
-
+CommandInstance = function() {
+}
+CommandInstance.prototype = {
+    /**
+     * Mode object this instance is bound to.
+     */
+    mode: null,
+    /**
+     * Name of the command, as the user entered it.
+     */
+    command: null,
+    /**
+     * The full command, including digits for repeating, single
+     * character arguments, arguments, termination string and so on.
+     */
+    fullCommand: null,
+    /**
+     * The entry of the command table associated to this command
+     * instance.
+     */
+    commandInfo: null,
+    /**
+     * Array containing the single character pre-arguments.
+     */
+    singleCharacterPreArguments: [],
+    /**
+     * Parameters provided by the user.
+     */
+    parameters: {},
+    /**
+     * Argument as string
+     */
+    argument: null,
+    /**
+     * Selection
+     */
+    selection: null,
+    /**
+     * How many times the command should be repeated by the implementation itself
+     */
+    internalRepeat: 1,
+    /**
+     * How many times the execution mechanism has to call the
+     * implementation
+     */
+    externalRepeat: 1,
+    /**
+     * Whether the instance can be executed. If not, it is maybe an
+     * invalid command.
+     */
+    isReadyToExecute: false,
+    /**
+     * The function that implements the command.
+     * This function is caled by the execution mechanism, that is, by
+     * the execute method of this object. The mode is given as first
+     * parameter and this object as the second.
+     */
+    implementation: null,
+    /**
+     * Executes the command
+     */
+    execute: function() {
+        if (!this.isReadyToExecute) {
+            throw "This command instance is not ready to be executed!"
+        }
+        for (var i = 1; i < this.externalRepeat; ++i) {
+            if (this.executionHandler) {
+                return this.executionHandler(this.mode,this);
+            }
+            else {
+                var result = this.implementation(this.mode,this);
+                if (this.resultHandler) {
+                    return this.resultHandler(this.mode,this,result);
+                }
+                else {
+                    return result;
+                }
+            }
+        }
+    },
+};
 
 /* Functions for navigating the DOM, specially tailored to MathML */
 
