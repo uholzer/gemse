@@ -1465,8 +1465,8 @@ CommandHandler.prototype = {
                 break;
             }
             else if (commandInfo && commandInfo.type == "disamb") {
-                // Command is not yet complete
-                return 0;
+                // Command is not yet complete, so read more
+                // characters
             }
             else if (commandInfo && commandInfo.type == "longPrefix") {
                 // Long command
@@ -1482,8 +1482,8 @@ CommandHandler.prototype = {
             ++pos;
         }
         if (pos>=buffer.uLength) {
-            // Command does not exist
-            throw "Command does not exist."; // TODO
+            // Command is not yet complete entered by the user
+            return null;
         }
         ++pos;
 
@@ -1552,11 +1552,11 @@ CommandHandler.prototype = {
         if (commandInfo.repeating=="prevent") { repeat = 1 }
         var instance = new CommandInstance();
         instance.mode = this.mode;
-        if (commandInfo.repeat=="internal") {
-            instance.internalRepeat = commandInfo.repeating=="internal" ? repeat : 1;
+        if (commandInfo.repeating=="internal") {
+            instance.internalRepeat = repeat;
         }
-        else if (commandInfo.repeat=="external") {
-            instance.externalRepeat = commandInfo.repeating=="external" ? repeat : 1;
+        else if (commandInfo.repeating=="external") {
+            instance.externalRepeat = repeat;
         }
         instance.command = command;
         instance.commandInfo = commandInfo;
