@@ -1365,11 +1365,11 @@ GemsePEditor.knownClasses = [];
  *        <dd>Boolean. When true, commands are not allowed to
  *        begin with a digit, except the command 0.</dd>
  *        </dl>
- * @param commandTables An array of tables of all known commands
- *        For every command c, commandTable[i][c] must be an object
+ * @param commandTable A tables of all known commands
+ *        For every command c, commandTable[c] must be an object
  *        holding the following fields:
  *        <dl>
- *        <td>class</dt>
+ *        <td>category</dt>
  *        <dd>Can be set by the user to any value. It is not
  *        considered.</dd>
  *        <dt>type</dt>
@@ -1389,17 +1389,18 @@ GemsePEditor.knownClasses = [];
  *        <dd>function(mode,data,commandInfo,result)</dd>
  *        <dt>executionHandler</dt>
  *        <dd>function(mode,data,commandInfo)</dd>
- *        <dt>execute</dt>
+ *        <dt>implementation</dt>
  *        <dd>function(mode,data,commandInfo)</dd>
  *        </dl>
  * @returns {CommandInstance} A CommandInstance containing all
  * information needed to execute the command. However, null is
  * returned if there is no complete command in the input buffer.
  */
-CommandHandler = function(mode,options,commandTables) {
+CommandHandler = function(mode,options,commandTable) {
+    this.editor = mode.editor;
     this.mode = mode;
     this.options = options;
-    this.commandTables = commandTables;
+    this.commandTable = commandTable;
     this.selection = null;
 }
 CommandHandler.prototype = {
@@ -1407,10 +1408,13 @@ CommandHandler.prototype = {
      * Parses the next command from the input buffer
      */
     parse: function() {
+        // Shortcuts:
+        var commandTable = this.commandTable;
+        var options = this.options;
         // Make a string object from the buffer, so the optimisations
         // from UString kick in. (buffer must not be changed in this
         // function.)
-        var buffer = new String(this.inputBuffer);
+        var buffer = new String(this.editor.inputBuffer);
         // Track where the next unprocessed character is  
         // in the input buffer, counting unicode characters
         var pos = 0;
@@ -1432,7 +1436,7 @@ CommandHandler.prototype = {
         if (buffer.uLength<=pos) { return 0 }
 
         var firstChar = buffer.uCharAt(pos);
-        var firstCharInfo = comandTable[firstChar];
+        var firstCharInfo = commandTable[firstChar];
 
         /* single character arguments */
         while (firstCharInfo && firstCharInfo.type == "singleCharacterPreArgumentPrefix") {
@@ -1451,24 +1455,29 @@ CommandHandler.prototype = {
         // information about it from the command table.
 
         /* The command itself */
+        // TODO: Restructure this whole loop.
         var command = "";
         while (pos < buffer.uLength) {
             command += buffer.uCharAt(pos);
             commandInfo = commandTable[command];
-            if (firstCharInfo && firstCharInfo.type == "disamb") {
+            if (commandInfo && commandInfo.type == "command") {
+                // normal command
+                break;
+            }
+            else if (commandInfo && commandInfo.type == "disamb") {
                 // Command is not yet complete
                 return 0;
             }
-            else if (firstCharInfo && firstCharInfo.type == "longPrefix") {
+            else if (commandInfo && commandInfo.type == "longPrefix") {
                 // Long command
                 throw "Long commands not yet implemented."; // TODO
             }
-            else if (!firstCharInfo) {
+            else if (!commandInfo) {
                 // The command does not exist
                 throw "Command does not exist."; // TODO
             }
             else {
-                throw "Unsupported command table entry type: " + firstCharInfo.type; //TODO
+                throw "Unsupported command table entry type: " + commandInfo.type + " (for command " + command + ")" ; //TODO
             }
             ++pos;
         }
@@ -1476,6 +1485,7 @@ CommandHandler.prototype = {
             // Command does not exist
             throw "Command does not exist."; // TODO
         }
+        ++pos;
 
         /* Argument */
         // At this point, pos must point to the first character of
@@ -1529,7 +1539,7 @@ CommandHandler.prototype = {
         }
         else if (commandInfo.argument=="selection") {
             // If selection is aleady set, we are done
-            if (!selection) {
+            if (!this.selection) {
                 // TODO
                 throw "Selection ny argument is not yet supported";
             }
@@ -1540,7 +1550,7 @@ CommandHandler.prototype = {
 
         /* Build table of data handed over to execution function */
         if (commandInfo.repeating=="prevent") { repeat = 1 }
-        var instance = new CommandInstance;
+        var instance = new CommandInstance();
         instance.mode = this.mode;
         if (commandInfo.repeat=="internal") {
             instance.internalRepeat = commandInfo.repeating=="internal" ? repeat : 1;
@@ -1550,17 +1560,23 @@ CommandHandler.prototype = {
         }
         instance.command = command;
         instance.commandInfo = commandInfo;
+        instance.category = commandInfo.category;
         instance.fullCommand = buffer.uSlice(0,pos);
         instance.singleCharacterPreArguments = singleCharacterPreArguments;
         instance.parameters = parameters;
         instance.argument = argument;
-        instance.selection = selection;
+        instance.selection = this.selection;
         instance.implementation = commandInfo.implementation;
+        instance.executionHandler = commandInfo.executionHandler;
+        instance.resultHandler = commandInfo.resultHandler;
 
         instance.isReadyToExecute = true;
 
         /* Eat */
-        this.eatInput(pos);
+        if (pos < 1) {
+            throw "pos must be at least 1 here";
+        }
+        this.editor.eatInput(pos);
 
         return instance; // Success!
     },
@@ -1582,6 +1598,12 @@ CommandInstance.prototype = {
      * character arguments, arguments, termination string and so on.
      */
     fullCommand: null,
+    /**
+     * The class of the command, as defined in the command table. The
+     * CommandHandler and CommandInstance objects do not look at this
+     * value.
+     */
+    category: null,
     /**
      * The entry of the command table associated to this command
      * instance.
@@ -1613,6 +1635,15 @@ CommandInstance.prototype = {
      */
     externalRepeat: 1,
     /**
+     * Function that should be used to execute the command, instead of
+     * executing it directly
+     */
+    executionHandler: null,
+    /**
+     * Function that has to be used to handle the result.
+     */
+    resultHandler: null,
+    /**
      * Whether the instance can be executed. If not, it is maybe an
      * invalid command.
      */
@@ -1628,23 +1659,22 @@ CommandInstance.prototype = {
      * Executes the command
      */
     execute: function() {
+        var result;
         if (!this.isReadyToExecute) {
             throw "This command instance is not ready to be executed!"
         }
-        for (var i = 1; i < this.externalRepeat; ++i) {
+        for (var i = 0; i < this.externalRepeat; ++i) {
             if (this.executionHandler) {
-                return this.executionHandler(this.mode,this);
+                result = this.executionHandler(this.mode,this);
             }
             else {
                 var result = this.implementation(this.mode,this);
                 if (this.resultHandler) {
-                    return this.resultHandler(this.mode,this,result);
-                }
-                else {
-                    return result;
+                    result = this.resultHandler(this.mode,this,result);
                 }
             }
         }
+        return result;
     },
 };
 
