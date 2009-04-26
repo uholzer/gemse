@@ -1,8 +1,15 @@
 
+editModeCommandOptions = {
+    repeating: true,
+}
 editModeCommands = {
     "j": {
-        type: "movement",
-        execute: editModeCommand_moveDown
+        category: "movement",
+        type: "command",
+        implementation: editModeCommand_moveDown,
+        executionHandler: editModeExecutionHandler_movement,
+        repeating: "internal",
+        argument: "none",
     },
     "J": {
         type: "movement",
@@ -41,8 +48,10 @@ editModeCommands = {
         execute: editModeCommand_moveToPreviousLeaf
     },
     "x": {
-        type: "action",
-        execute: editModeCommand_kill
+        type: "command",
+        implementation: editModeCommand_kill,
+        argument: "none",
+        repeating: "external",
     },
     "d": {
         type: "operator",

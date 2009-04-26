@@ -20,6 +20,7 @@ function EditMode(editor, equationEnv) {
      * @constant
      */
     this.equationEnv = equationEnv;
+    this.commandHandler = new CommandHandler(this,editModeCommandOptions,editModeCommands);
     /**
      * The selection (as returned by the visual mode) the next command
      * will operate on. This is set after the visual mode terminates
@@ -85,90 +86,17 @@ EditMode.prototype = {
     get contextNode() { return this.cursor; },
     /**
      * Handles the first command from the input buffer. This method is
-     * called if the input buffer changes.
-     * @returns true if the first command from the input buffer was
-     *               successfully executed and removed from the input
-     *               buffer, false if the command does not exist or is
-     *               not yet complete
+     * called if the input buffer changes. It does not parse the
+     * command itself but uses the CommandHandler.
+     * @returns true if a command was removed from the input buffer.
+     *          If there was nothing removed, that is, there was no
+     *          complete command, false is returned.
      */
     inputHandler: function() {
-        var command = this.editor.inputBuffer;
-        // endOfCommandIndex points to the end of the command in the
-        // input buffer. It counts unicode characters, not UTF16
-        // characters.
-        var endOfCommandIndex = 0;
-        var commandArg = null;
-        var forceFlag = false;
-        var singleCharacterArgs = [];
-        while (command[0] == '"') {
-            if (command.length < 2) { return } // Returns if the user has not yet entered the character
-            singleCharacterArgs.push(command.uCharAt(1));
-            command = command.uSlice(2);
-            endOfCommandIndex += 2;
-        }
-        if (command[0] == ":") { // Treate this as a long command
-            var inf = /^(:[^\s\n!]*)(!?)(\s+([^\n]*))?\n$/.exec(command);
-            if (inf) {
-                command = inf[1];
-                if (inf[2]) { forceFlag = true }
-                commandArg = inf[4] || ""; // Prevent commandArg from being null (XXX: is this good?)
-                endOfCommandIndex += inf[0].uLength + 1;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            var firstCommand = command.uSlice(0,1);
-            while (!editModeCommands[firstCommand] && firstCommand.length < command.length) { 
-                firstCommand = command.uSlice(0,firstCommand.uLength + 1);
-            }
-            command = firstCommand;
-            endOfCommandIndex += firstCommand.uLength;
-        }
-        commandObject = editModeCommands[command];
-        if (commandObject) {
-            if (commandObject.type == "long") {
-                var executionResult = commandObject.execute(this,commandArg,forceFlag)
-                // TODO: Only clear buffer if it returns true?
-                editor.eatInput(endOfCommandIndex);
-            }
-            else if (commandObject.type == "movement") {
-                var executionResult = commandObject.execute(this,this.cursor)
-                // A movement method must return a node or null
-                // (A movement command is not allowed to have side
-                // effect.)
-                if (executionResult) {
-                    this.moveCursor(executionResult);
-                }
-                // If executionResult is null, we do not move the
-                // cursor
-                editor.eatInput(endOfCommandIndex);
-            }
-            else {
-                if (this.userSelectionForNextCommand) {
-                    // For debugging purposes:
-                    if (!(this.userSelectionForNextCommand.startElement && this.userSelectionForNextCommand.endElement)) {
-                        throw "A selection must have a startElement and an endElement.";
-                    }
-                }
-                if (commandObject.type == "operator" && !this.userSelectionForNextCommand) {
-                    // An operator expects a selection, so if none is present,
-                    // take the cursor as the only selected element.
-                    // This will be revised later.
-                    this.userSelectionForNextCommand = {startElement: this.cursor, endElement: this.cursor};
-                }
-                var executionResult = commandObject.execute(this,command,singleCharacterArgs,this.userSelectionForNextCommand);
-                // TODO: Only clear buffer if it returns true?
-                editor.eatInput(endOfCommandIndex);
-            }
-            this.userSelectionForNextCommand = null;
-            return true; // TODO: Or should it return executionResult?
-        }
-        else {
-            // Command not found
-            return false;
-        }
+        var instance = this.commandHandler.parse();
+        if (!instance) { return false }
+        instance.execute();
+        return true;
     },
     /** 
      * Starts insert mode. This is useful for commands that open the
@@ -285,6 +213,12 @@ EditMode.gemseOptions = {
     },
 }
 
+/* Execution handler for movement commands */
+
+function editModeExecutionHandler_movement(mode,instance) {
+    var destination = instance.implementation(mode,mode.cursor);
+    if (destination) { mode.moveCursor(destination) }
+}
 
 /* Commands */
 /* For documentation look into the user documentation */
@@ -349,7 +283,7 @@ function editModeCommand_redo(mode) {
     return true;
 }
 
-function editModeCommand_kill(mode) {
+function editModeCommand_kill(mode,instance) {
     var target = mode.cursor;
     var parentOfTarget = target.parentNode;
     var change = mode.equationEnv.history.createChange();
