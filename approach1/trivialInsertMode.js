@@ -257,7 +257,7 @@ function trivialInsertModeCommand_moNormal(mode,command) {
 
 function trivialInsertModeCommand_moLong(mode,command) {
     // Inserts an mi element with several characters as content
-    return trivialInsertModeCommandTool_elementWithLongText(mode,command,"mi");
+    return trivialInsertModeCommandTool_elementWithLongText(mode,command,"mo");
 }
 
 function trivialInsertModeCommand_mtext(mode,command) {
