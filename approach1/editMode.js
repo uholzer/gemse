@@ -263,7 +263,7 @@ function editModeCommand_moveToPreviousLeaf(mode, currentElement) {
     return mml_previousLeaf(currentElement);
 }
 
-function editModeCommand_undo(mode) {
+function editModeCommand_undo(mode,instance) {
     // The glorious undo
     mode.hideCursor();
     if (!mode.equationEnv.history.goBack(mode.equationEnv)) {
@@ -273,7 +273,7 @@ function editModeCommand_undo(mode) {
     return true;
 }
 
-function editModeCommand_redo(mode) {
+function editModeCommand_redo(mode,instance) {
     // The inverse of the glorious undo
     mode.hideCursor();
     if (!mode.equationEnv.history.goForward(mode.equationEnv)) {
@@ -340,7 +340,7 @@ function editModeCommand_change(mode,command,singleCharacterArgs,userSelection) 
     return mode.callInsertMode(parentOfTargets, cursorBefore, change, parentOfTargets);
 }
 
-function editModeCommand_attributeMode(mode) {
+function editModeCommand_attributeMode(mode,instance) {
     mode.infoAboutCalledMode = {
         change: mode.equationEnv.history.createChange(),
         changeElement: mode.cursor
@@ -557,9 +557,8 @@ function editModeCommand_help(mode, argString) {
     return true;
 }
 
-function editModeCommand_putAfter(mode,commandString,args) {
-    var registerName = "";
-    if (args != null) { registerName = args[0]; }
+function editModeCommand_putAfter(mode,instance) {
+    var registerName = instance.singleCharacterPreArguments[0] || "";
     var position = mml_nextSibling(mode.cursor);
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
@@ -573,9 +572,8 @@ function editModeCommand_putAfter(mode,commandString,args) {
     return true;
 }
 
-function editModeCommand_putBefore(mode,commandString,args) {
-    var registerName = "";
-    if (args != null) { registerName = args[0]; }
+function editModeCommand_putBefore(mode,instance) {
+    var registerName = instance.singleCharacterPreArguments[0] || "";
     var position = mode.cursor;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
@@ -589,10 +587,9 @@ function editModeCommand_putBefore(mode,commandString,args) {
     return true;
 }
 
-function editModeCommand_putIn(mode,commandString,args) {
+function editModeCommand_putIn(mode,instance) {
     // Put the content of a register into an _empty_ element
-    var registerName = "";
-    if (args != null) { registerName = args[0]; }
+    var registerName = instance.singleCharacterPreArguments[0] || "";
     var position = null;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor);
