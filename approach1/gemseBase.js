@@ -483,6 +483,7 @@ EquationEnv.prototype = {
                     newElement,
                     this.origin.element
                 );
+                this.origin.element = newElement;
                 this.cleanSubtreeOfDocument(this.origin.doc, newElement);
                 var serializer = new XMLSerializer();
                 var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
