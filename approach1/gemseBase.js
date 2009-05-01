@@ -1050,6 +1050,23 @@ GemsePEditor.prototype = {
         // pair. It will eat always both surrogates.
     },
     /**
+     * Applies backspace at end of input buffer.
+     * If there is a backspace at the end of the input buffer it is
+     * removed together with the character preceding it.
+     * @return true if the input buffer has been changed, false
+     *         otherwise
+     */
+    applyBackspaceInInput: function() {
+        var s = this.inputBuffer;
+        if (s.charCodeAt(s.length) == 0x0008) { // U+0008 is backspace
+            this.inputBuffer = s.slice(0,-2);
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+    /**
      * Starts recording input for later use. It records all eaten
      * (that is executed) commands. Input recording must be stopped
      * using stopInputRecording.
@@ -1404,6 +1421,8 @@ CommandHandler = function(mode,options,commandTable) {
     this.selection = null;
 }
 CommandHandler.prototype = {
+    repeatingRegex: /^([1-9][0-9]*)/,
+    longRegex: /^(\S+)(\S+(.*))?\n/,
     /**
      * Parses the next command from the input buffer
      */
@@ -1411,6 +1430,11 @@ CommandHandler.prototype = {
         // Shortcuts:
         var commandTable = this.commandTable;
         var options = this.options;
+        // Check handling of backspaces before copying the input
+        // buffer
+        if (options.backspace == "removeLast") {
+            this.editor.applyBackspaceInInput();
+        }
         // Make a string object from the buffer, so the optimisations
         // from UString kick in. (buffer must not be changed in this
         // function.)
@@ -1427,7 +1451,7 @@ CommandHandler.prototype = {
         if (options.repeating) {
             // Fetch digits at the beginning. The first digit must not
             // be a 0.
-            var matchRes = buffer.match(/^([1-9][0-9]*)/);
+            var matchRes = buffer.match(this.repeatingRegex);
             if (matchRes) {
                 repeat = parseInt(matchRes[1]);
                 pos += matchRes[1].uLength;
@@ -1471,6 +1495,22 @@ CommandHandler.prototype = {
             else if (commandInfo && commandInfo.type == "longPrefix") {
                 // Long command
                 throw "Long commands not yet implemented."; // TODO
+                // Look for a newline, which is the end of the command
+                var matchRes = buffer.slize(pos,end+1).match(this.longRegex);
+                if (matchRes) {
+                    // The command seems to be complete
+                    pos += matchRes[1].length;
+                    command = matchRes[1];
+                    commandInfo = commandTable[command];
+                    // TODO: Argument processind is different for long
+                    // commands ...
+                    break;
+                }
+                else {
+                    // The command is incomplete
+                    this.editor.applyBackspaceInInput();
+                    return null;
+                }
             }
             else if (!commandInfo) {
                 // The command does not exist
