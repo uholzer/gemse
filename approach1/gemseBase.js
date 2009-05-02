@@ -1421,69 +1421,116 @@ CommandHandler = function(mode,options,commandTable) {
     this.selection = null;
 }
 CommandHandler.prototype = {
+    pos: null,     // parsing state information
+    buffer: null,  // parsing state information
+    instance: null,// parsing state information
     repeatingRegex: /^([1-9][0-9]*)/,
     longRegex: /^(\S+)(\S+(.*))?\n/,
     /**
      * Parses the next command from the input buffer
      */
     parse: function() {
-        // Shortcuts:
-        var commandTable = this.commandTable;
-        var options = this.options;
         // Check handling of backspaces before copying the input
         // buffer
-        if (options.backspace == "removeLast") {
+        if (this.options.backspace == "removeLast") {
             this.editor.applyBackspaceInInput();
         }
         // Make a string object from the buffer, so the optimisations
-        // from UString kick in. (buffer must not be changed in this
-        // function.)
-        var buffer = new String(this.editor.inputBuffer);
+        // from UString kick in. (buffer must not be changed during
+        // the parsing process.
+        this.buffer = new String(this.editor.inputBuffer);
         // Track where the next unprocessed character is  
         // in the input buffer, counting unicode characters
-        var pos = 0;
+        this.pos = 0;
+        // The command instance we are going to populate
+        this.instance = new CommandInstance();
         // How often to repeat
-        var repeat = 1;
-        // Single character pre-arguments
-        var singleCharacterPreArguments = [];
+        this.instance.repeat = 1; // will be deleted after parsing
 
         /* Repeating */
-        if (options.repeating) {
-            // Fetch digits at the beginning. The first digit must not
-            // be a 0.
-            var matchRes = buffer.match(this.repeatingRegex);
-            if (matchRes) {
-                repeat = parseInt(matchRes[1]);
-                pos += matchRes[1].uLength;
-            }
+        if (this.options.repeating) {
+            this.scanRepeating();
         }
-        if (buffer.uLength<=pos) { return 0 }
-
-        var firstChar = buffer.uCharAt(pos);
-        var firstCharInfo = commandTable[firstChar];
+        if (this.buffer.uLength<=this.pos) { return 0 }
 
         /* single character arguments */
+        this.scanSingleCharacterPreArguments();
+
+        /* The command itself */
+        this.scanCommand();
+
+        /* Argument */
+        this.scanArgument();
+
+        /* Complete instance object */
+        if (this.instance.commandInfo.repeating=="prevent") { repeat = 1 }
+        if (this.instance.commandInfo.repeating=="internal") {
+            this.instance.internalRepeat = this.instance.repeat;
+        }
+        else if (this.instance.commandInfo.repeating=="external") {
+            this.instance.externalRepeat = this.instance.repeat;
+        }
+        delete this.instance.repeat;
+        this.instance.mode = this.mode;
+        this.instance.category = this.instance.commandInfo.category;
+        this.instance.fullCommand = this.buffer.uSlice(0,this.pos);
+        this.instance.selection = this.selection;
+        this.instance.implementation = this.instance.commandInfo.implementation;
+        this.instance.executionHandler = this.instance.commandInfo.executionHandler;
+        this.instance.resultHandler = this.instance.commandInfo.resultHandler;
+
+        this.instance.isReadyToExecute = true;
+
+        /* Eat */
+        if (this.pos < 1) {
+            throw "pos must be at least 1 here";
+        }
+        this.editor.eatInput(this.pos);
+
+        return this.instance; // Success!
+    },
+    /* Maybe it will be possible to use the following procedures from
+     * the outside. They could come in handy, if you just need to
+     * parse a subexpression of a more complex command.
+     * This is the reason why state information of the parsing is
+     * stored as properties of the parser object.
+     */
+    scanRepeating: function() {
+        // Fetch digits at the beginning. The first digit must not
+        // be a 0.
+        if (this.pos > 0) { throw "scanRepeating requires pos to be 0"; }
+        var matchRes = this.buffer.match(this.repeatingRegex);
+        if (matchRes) {
+            this.instance.repeat = parseInt(matchRes[1]);
+            this.pos += matchRes[1].uLength;
+        }
+    },
+    scanSingleCharacterPreArguments: function() {
+        var firstChar = this.buffer.uCharAt(this.pos);
+        var firstCharInfo = this.commandTable[firstChar];
+
         while (firstCharInfo && firstCharInfo.type == "singleCharacterPreArgumentPrefix") {
-            ++pos; // Points now to the argument, if present
-            if (buffer.uLength<=pos) { return 0 }
-            singleCharacterPreArguments.push(buffer.uCharAt(pos));
-            ++pos;
-            if (buffer.uLength<=pos) { return 0 }
-            firstChar = buffer.uCharAt(pos);
-            firstCharInfo = comandTable[firstChar];
+            ++this.pos; // Points now to the argument, if present
+            if (this.buffer.uLength<=this.pos) { return 0 }
+            this.instance.singleCharacterPreArguments.push(this.buffer.uCharAt(this.pos));
+            ++this.pos;
+            if (this.buffer.uLength<=this.pos) { return 0 }
+            firstChar = this.buffer.uCharAt(this.pos);
+            firstCharInfo = this.comandTable[firstChar];
         }
         // After this loop, pos points to the next character after the
         // last single character argument. This characters exists,
         // since otherweise 0 would have already been returned by the
         // loop. firstChar holds this character and firstCharInfo
         // information about it from the command table.
-
-        /* The command itself */
+    },
+    scanCommand: function() {
         // TODO: Restructure this whole loop.
         var command = "";
-        while (pos < buffer.uLength) {
-            command += buffer.uCharAt(pos);
-            commandInfo = commandTable[command];
+        var commandInfo = null;
+        while (this.pos < this.buffer.uLength) {
+            command += this.buffer.uCharAt(this.pos);
+            commandInfo = this.commandTable[command];
             if (commandInfo && commandInfo.type == "command") {
                 // normal command
                 break;
@@ -1496,10 +1543,10 @@ CommandHandler.prototype = {
                 // Long command
                 throw "Long commands not yet implemented."; // TODO
                 // Look for a newline, which is the end of the command
-                var matchRes = buffer.slize(pos,end+1).match(this.longRegex);
+                var matchRes = this.buffer.slize(this.pos).match(this.longRegex);
                 if (matchRes) {
                     // The command seems to be complete
-                    pos += matchRes[1].length;
+                    this.pos += matchRes[1].length;
                     command = matchRes[1];
                     commandInfo = commandTable[command];
                     // TODO: Argument processind is different for long
@@ -1519,31 +1566,31 @@ CommandHandler.prototype = {
             else {
                 throw "Unsupported command table entry type: " + commandInfo.type + " (for command " + command + ")" ; //TODO
             }
-            ++pos;
+            ++this.pos;
         }
-        if (pos>=buffer.uLength) {
+        if (this.pos>=this.buffer.uLength) {
             // Command is not yet complete entered by the user
             return null;
         }
-        ++pos;
-
-        /* Argument */
-        // At this point, pos must point to the first character of
-        // the argument.
+        ++this.pos;
+        this.instance.command     = command;
+        this.instance.commandInfo = commandInfo;
+    },
+    scanArgument: function() {
         var argument;
         var parameters;
-        if (commandInfo.argument=="none") {
+        if (this.instance.commandInfo.argument=="none") {
             argument = null;
             parameters = null;
         }
-        else if (commandInfo.argument=="paramters") {
+        else if (this.instance.commandInfo.argument=="paramters") {
             // TODO: Parsing of paramters should be improved
-            var end = buffer.uIndexOf("\n",pos);
+            var end = this.buffer.uIndexOf("\n",this.pos);
             if (end==-1) {
                 // Command is incomplete
                 return 0;
             }
-            var paramterStringList = buffer.uSlice(pos,end).split(" ");
+            var paramterStringList = buffer.uSlice(this.pos,end).split(" ");
             parameters = {};
             parameterStringList.forEach(function(s) {
                 var equalSignIndex = s.indexOf("="); // Counting UTF16 characters
@@ -1553,31 +1600,31 @@ CommandHandler.prototype = {
                 parameters[s.slice(0,equalSignIndex)] = s.slice(equalSign+1);
             });
             argument = null;
-            pos = end+1;
+            this.pos = end+1;
         }
-        else if (commandInfo.argument=="characters") {
-            var ccount = commandInfo.argumentCharacterCount
-            if (buffer.uLength < pos + ccount) {
+        else if (this.instance.commandInfo.argument=="characters") {
+            var ccount = this.instance.commandInfo.argumentCharacterCount
+            if (this.buffer.uLength < this.pos + ccount) {
                 // Command is incomplete
                 return 0;
             }
-            argument = buffer.uSlice(pos,pos+ccount);
+            argument = this.buffer.uSlice(this.pos,this.pos+ccount);
             parameters = null;
-            pos += ccount;
+            this.pos += ccount;
         }
-        else if (commandInfo.argument=="manual") {
-            argument = commandInfo.extractArgument(buffer,pos);
+        else if (this.instance.commandInfo.argument=="manual") {
+            argument = this.instance.commandInfo.extractArgument(this.buffer,this.pos);
             if (argument === undefined) {
                 // Command is incomplete
                 return 0;
             }
             parameters = null;
         }
-        else if (commandInfo.argument=="regex") {
+        else if (this.instance.commandInfo.argument=="regex") {
             // TODO
             throw "regex not yet supported";
         }
-        else if (commandInfo.argument=="selection") {
+        else if (this.instance.commandInfo.argument=="selection") {
             // If selection is aleady set, we are done
             if (!this.selection) {
                 // TODO
@@ -1585,40 +1632,11 @@ CommandHandler.prototype = {
             }
         }
         else {
-            throw "Unknown argument type: " + commandInfo.argument;
+            throw "Unknown argument type: " + this.instance.commandInfo.argument;
         }
-
-        /* Build table of data handed over to execution function */
-        if (commandInfo.repeating=="prevent") { repeat = 1 }
-        var instance = new CommandInstance();
-        instance.mode = this.mode;
-        if (commandInfo.repeating=="internal") {
-            instance.internalRepeat = repeat;
-        }
-        else if (commandInfo.repeating=="external") {
-            instance.externalRepeat = repeat;
-        }
-        instance.command = command;
-        instance.commandInfo = commandInfo;
-        instance.category = commandInfo.category;
-        instance.fullCommand = buffer.uSlice(0,pos);
-        instance.singleCharacterPreArguments = singleCharacterPreArguments;
-        instance.parameters = parameters;
-        instance.argument = argument;
-        instance.selection = this.selection;
-        instance.implementation = commandInfo.implementation;
-        instance.executionHandler = commandInfo.executionHandler;
-        instance.resultHandler = commandInfo.resultHandler;
-
-        instance.isReadyToExecute = true;
-
-        /* Eat */
-        if (pos < 1) {
-            throw "pos must be at least 1 here";
-        }
-        this.editor.eatInput(pos);
-
-        return instance; // Success!
+        
+        this.instance.argument = argument;
+        this.instance.parameters = parameters;
     },
 }
 
