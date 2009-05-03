@@ -1392,7 +1392,7 @@ GemsePEditor.knownClasses = [];
  *        <dt>type</dt>
  *        <dd>disamb,singleCharacterPreArgumentPrefix,command,longPrefix</dd>
  *        <dt>argument</dt>
- *        <dd>none,parameters,characters,manual,regex,selection</dd>
+ *        <dd>none,parameters,characters,newlineTerminated,manual,regex,selection</dd>
  *        <dt>argumentCharacterCount (only if argument=characters)</dt>
  *        <dd>unsigned integer</dd>
  *        <dt>extractArgument (only if argument=manuallyTerminated)</dt>
@@ -1425,7 +1425,7 @@ CommandHandler.prototype = {
     buffer: null,  // parsing state information
     instance: null,// parsing state information
     repeatingRegex: /^([1-9][0-9]*)/,
-    longRegex: /^(\S+)(\S+(.*))?\n/,
+    longRegex: /^(\S+)((\s+)(.*))?\n/,
     /**
      * Parses the next command from the input buffer
      */
@@ -1447,20 +1447,26 @@ CommandHandler.prototype = {
         // How often to repeat
         this.instance.repeat = 1; // will be deleted after parsing
 
+        // Tells whether we can continue parsing
+        var goOn = true;
+
         /* Repeating */
         if (this.options.repeating) {
-            this.scanRepeating();
+            goOn = this.scanRepeating();
         }
-        if (this.buffer.uLength<=this.pos) { return 0 }
+        if (!goOn) { return false }
 
         /* single character arguments */
-        this.scanSingleCharacterPreArguments();
+        goOn = this.scanSingleCharacterPreArguments();
+        if (!goOn) { return false }
 
         /* The command itself */
-        this.scanCommand();
+        goOn = this.scanCommand();
+        if (!goOn) { return false }
 
         /* Argument */
-        this.scanArgument();
+        goOn = this.scanArgument();
+        if (!goOn) { return false }
 
         /* Complete instance object */
         if (this.instance.commandInfo.repeating=="prevent") { repeat = 1 }
@@ -1504,6 +1510,7 @@ CommandHandler.prototype = {
             this.instance.repeat = parseInt(matchRes[1]);
             this.pos += matchRes[1].uLength;
         }
+        return true; // Go on with parsing in any case
     },
     scanSingleCharacterPreArguments: function() {
         var firstChar = this.buffer.uCharAt(this.pos);
@@ -1511,13 +1518,18 @@ CommandHandler.prototype = {
 
         while (firstCharInfo && firstCharInfo.type == "singleCharacterPreArgumentPrefix") {
             ++this.pos; // Points now to the argument, if present
-            if (this.buffer.uLength<=this.pos) { return 0 }
+            if (this.buffer.uLength<=this.pos) { 
+                // The user started to enter a single
+                // characterPreArgument by entering the prefix, but
+                // the argument is still missing
+                return false;
+            }
             this.instance.singleCharacterPreArguments.push(this.buffer.uCharAt(this.pos));
             ++this.pos;
-            if (this.buffer.uLength<=this.pos) { return 0 }
             firstChar = this.buffer.uCharAt(this.pos);
             firstCharInfo = this.comandTable[firstChar];
         }
+        return true;
         // After this loop, pos points to the next character after the
         // last single character argument. This characters exists,
         // since otherweise 0 would have already been returned by the
@@ -1525,56 +1537,82 @@ CommandHandler.prototype = {
         // information about it from the command table.
     },
     scanCommand: function() {
-        // TODO: Restructure this whole loop.
+        // Assure that there is at least one character
+        if (this.pos >= this.buffer.uLength) { return false; }
         var command = "";
         var commandInfo = null;
+        // The mainloop. It terminates on its only if the command
+        // is not yet complete. (that is, the command type is disamb)
+        // In all other cases, return is called from withing the loop.
         while (this.pos < this.buffer.uLength) {
             command += this.buffer.uCharAt(this.pos);
+            ++this.pos;
             commandInfo = this.commandTable[command];
-            if (commandInfo && commandInfo.type == "command") {
+            if (!commandInfo) {
+                // command does not exist
+                return false;
+            }
+            else if (commandInfo.type == "command") {
                 // normal command
-                break;
+                this.instance.command     = command;
+                this.instance.commandInfo = commandInfo;
+                return true;
             }
-            else if (commandInfo && commandInfo.type == "disamb") {
+            else if (commandInfo.type == "disamb") {
                 // Command is not yet complete, so read more
-                // characters
+                // characters, that is, let the loop continue
             }
-            else if (commandInfo && commandInfo.type == "longPrefix") {
-                // Long command
-                throw "Long commands not yet implemented."; // TODO
-                // Look for a newline, which is the end of the command
-                var matchRes = this.buffer.slize(this.pos).match(this.longRegex);
+            else if (commandInfo.type == "longPrefix") {
+                // Fetch the whole long command at once.
+                // Here, pos points to the first character after the
+                // command, which is a whitespace or the newline.
+                var matchRes = this.buffer.slice(this.pos-command.length).match(this.longRegex);
                 if (matchRes) {
                     // The command seems to be complete
-                    this.pos += matchRes[1].length;
                     command = matchRes[1];
-                    commandInfo = commandTable[command];
-                    // TODO: Argument processind is different for long
-                    // commands ...
-                    break;
+                    commandInfo = this.commandTable[command];
+                    if (!commandInfo) {
+                        // command does not exist
+                        return false;
+                    }
+                    // Move pos to first character of argument, or the
+                    // newline if there is no argument. (That is, skip
+                    // the whitespaces if present)
+                    if (matchRes[3]) { this.pos += matchRes[3].length; }
+                    // Check whether argument is none,
+                    // newlineTerminated or parameters. Other values
+                    // are not allowed.
+                    if (commandInfo.argument=="none") {
+                        if (matchRes[4]) {
+                            // Throw error since the user provided argument anyway
+                            throw "No argument expected";
+                        }
+                        else {
+                            // move pos behind newline since no
+                            // argument processing will be performed
+                            this.pos += 1;
+                        }
+                    }
+                    else if (commandInfo.argument!="newlineTerminated" && commandInfo.argument!="parameters") {
+                        throw "Error in command table"
+                    }
+                    this.instance.command     = command;
+                    this.instance.commandInfo = commandInfo;
+                    return true;
                 }
                 else {
                     // The command is incomplete
                     this.editor.applyBackspaceInInput();
-                    return null;
+                    break; // terminate the loop
                 }
-            }
-            else if (!commandInfo) {
-                // The command does not exist
-                throw "Command does not exist."; // TODO
             }
             else {
                 throw "Unsupported command table entry type: " + commandInfo.type + " (for command " + command + ")" ; //TODO
             }
-            ++this.pos;
         }
-        if (this.pos>=this.buffer.uLength) {
-            // Command is not yet complete entered by the user
-            return null;
-        }
-        ++this.pos;
-        this.instance.command     = command;
-        this.instance.commandInfo = commandInfo;
+        // Since the loop terminated, command is not yet complete
+        // entered by the user at this point.
+        return false;
     },
     scanArgument: function() {
         var argument;
@@ -1602,11 +1640,21 @@ CommandHandler.prototype = {
             argument = null;
             this.pos = end+1;
         }
+        else if (this.instance.commandInfo.argument=="newlineTerminated") {
+            var end = this.buffer.uIndexOf("\n",this.pos);
+            if (end==-1) {
+                // Command is incomplete
+                return false;
+            }
+            parameters = null;
+            argument = this.buffer.slice(this.pos,end);
+            this.pos = end+1;
+        }
         else if (this.instance.commandInfo.argument=="characters") {
             var ccount = this.instance.commandInfo.argumentCharacterCount
             if (this.buffer.uLength < this.pos + ccount) {
                 // Command is incomplete
-                return 0;
+                return false;
             }
             argument = this.buffer.uSlice(this.pos,this.pos+ccount);
             parameters = null;
@@ -1616,7 +1664,7 @@ CommandHandler.prototype = {
             argument = this.instance.commandInfo.extractArgument(this.buffer,this.pos);
             if (argument === undefined) {
                 // Command is incomplete
-                return 0;
+                return false;
             }
             parameters = null;
         }
@@ -1637,6 +1685,7 @@ CommandHandler.prototype = {
         
         this.instance.argument = argument;
         this.instance.parameters = parameters;
+        return true;
     },
 }
 
