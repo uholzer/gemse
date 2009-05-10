@@ -1372,12 +1372,12 @@ GemsePEditor.knownClasses = [];
  *        This has to be an object having the following
  *        fields:
  *        <dl>
- *        <dt>onNotExistingCommand</dt>
+ *        <dt>onNotExistingCommand (not implemented)</dt>
  *        <dd>forget,throw,inform,handBack</dd>
- *        <dt>onExistingButMalformedCommand</dt>
+ *        <dt>onExistingButMalformedCommand (not implemented)</dt>
  *        <dd>forget,throw,inform,handBack</dd>
  *        <dt>backspace</dt>
- *        <dd>removeAll: removeAll,removeLast,asCommand</dd>
+ *        <dd>removeLast,asCommand</dd>
  *        <dt>repeating</dt>
  *        <dd>Boolean. When true, commands are not allowed to
  *        begin with a digit, except the command 0.</dd>
@@ -1409,9 +1409,6 @@ GemsePEditor.knownClasses = [];
  *        <dt>implementation</dt>
  *        <dd>function(mode,data,commandInfo)</dd>
  *        </dl>
- * @returns {CommandInstance} A CommandInstance containing all
- * information needed to execute the command. However, null is
- * returned if there is no complete command in the input buffer.
  */
 CommandHandler = function(mode,options,commandTable) {
     this.editor = mode.editor;
@@ -1428,6 +1425,10 @@ CommandHandler.prototype = {
     longRegex: /^(\S+)((\s+)(.*))?\n/,
     /**
      * Parses the next command from the input buffer
+     * @returns {CommandInstance} A CommandInstance containing all
+     * information needed to execute the command. If an error has been
+     * encountered or the command is incomplete, a CommandInstance is
+     * returned as well and holds all information about the problem.
      */
     parse: function() {
         // Check handling of backspaces before copying the input
@@ -1454,19 +1455,19 @@ CommandHandler.prototype = {
         if (this.options.repeating) {
             goOn = this.scanRepeating();
         }
-        if (!goOn) { return false }
+        if (!goOn) { return this.instance }
 
         /* single character arguments */
         goOn = this.scanSingleCharacterPreArguments();
-        if (!goOn) { return false }
+        if (!goOn) { return this.instance }
 
         /* The command itself */
         goOn = this.scanCommand();
-        if (!goOn) { return false }
+        if (!goOn) { return this.instance }
 
         /* Argument */
         goOn = this.scanArgument();
-        if (!goOn) { return false }
+        if (!goOn) { return this.instance }
 
         /* Complete instance object */
         if (this.instance.commandInfo.repeating=="prevent") { repeat = 1 }
@@ -1485,7 +1486,7 @@ CommandHandler.prototype = {
         this.instance.executionHandler = this.instance.commandInfo.executionHandler;
         this.instance.resultHandler = this.instance.commandInfo.resultHandler;
 
-        this.instance.isReadyToExecute = true;
+        this.instance.isComplete = true;
 
         /* Eat */
         if (this.pos < 1) {
@@ -1550,6 +1551,7 @@ CommandHandler.prototype = {
             commandInfo = this.commandTable[command];
             if (!commandInfo) {
                 // command does not exist
+                this.instance.notFound = true;
                 return false;
             }
             else if (commandInfo.type == "command") {
@@ -1573,6 +1575,7 @@ CommandHandler.prototype = {
                     commandInfo = this.commandTable[command];
                     if (!commandInfo) {
                         // command does not exist
+                        this.instance.notFound = true;
                         return false;
                     }
                     // Move pos to first character of argument, or the
@@ -1626,7 +1629,7 @@ CommandHandler.prototype = {
             var end = this.buffer.uIndexOf("\n",this.pos);
             if (end==-1) {
                 // Command is incomplete
-                return 0;
+                return false;
             }
             var paramterStringList = buffer.uSlice(this.pos,end).split(" ");
             parameters = {};
@@ -1676,7 +1679,7 @@ CommandHandler.prototype = {
             // If selection is aleady set, we are done
             if (!this.selection) {
                 // TODO
-                throw "Selection ny argument is not yet supported";
+                throw "Selection by argument is not yet supported";
             }
         }
         else {
@@ -1751,17 +1754,32 @@ CommandInstance.prototype = {
      */
     resultHandler: null,
     /**
-     * Whether the instance can be executed. If not, it is maybe an
-     * invalid command.
-     */
-    isReadyToExecute: false,
-    /**
      * The function that implements the command.
      * This function is caled by the execution mechanism, that is, by
      * the execute method of this object. The mode is given as first
      * parameter and this object as the second.
      */
     implementation: null,
+    /**
+     * Whether the instance can be executed. If not, it is maybe an
+     * invalid command.
+     */
+    get isReadyToExecute() { return this.isComplete && !this.notFound && !this.isInvalid },
+    /**
+     * True if the command is complete, otherwise false.
+     */
+    isComplete: false,
+    /**
+     * True if the command does not exist. (In this case, the command
+     * is still in the input buffer, since there is no way to find its
+     * end.)
+     */
+    notFound: false,
+    /**
+     * True if the command has been found but can not be parsed since
+     * its syntax is wrong.
+     */
+    isInvalid: false,
     /**
      * Executes the command
      */
