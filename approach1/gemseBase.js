@@ -1422,7 +1422,7 @@ CommandHandler.prototype = {
     buffer: null,  // parsing state information
     instance: null,// parsing state information
     repeatingRegex: /^([1-9][0-9]*)/,
-    longRegex: /^(\S+)((\s+)(.*))?\n/,
+    longRegex: /^([^\s!]+)(!?)((\s+)(.*))?\n/,
     /**
      * Parses the next command from the input buffer
      * @returns {CommandInstance} A CommandInstance containing all
@@ -1567,8 +1567,12 @@ CommandHandler.prototype = {
             else if (commandInfo.type == "longPrefix") {
                 // Fetch the whole long command at once.
                 // Here, pos points to the first character after the
-                // command, which is a whitespace or the newline.
-                var matchRes = this.buffer.slice(this.pos-command.length).match(this.longRegex);
+                // prefix. We set it back such that it points to the
+                // first character of the prefix, that is, the first
+                // character of the command. (XXX: Is it dangerous to
+                // do that?)
+                this.pos -= command.length;
+                var matchRes = this.buffer.slice(this.pos).match(this.longRegex);
                 if (matchRes) {
                     // The command seems to be complete
                     command = matchRes[1];
@@ -1578,15 +1582,19 @@ CommandHandler.prototype = {
                         this.instance.notFound = true;
                         return false;
                     }
+                    // Is the force flag set?
+                    if (matchRes[2]) { this.instance.forceFlag = true }
                     // Move pos to first character of argument, or the
                     // newline if there is no argument. (That is, skip
-                    // the whitespaces if present)
-                    if (matchRes[3]) { this.pos += matchRes[3].length; }
+                    // the command, the force flag and the whitespaces if present)
+                    this.pos += matchRes[1].length;
+                    if (matchRes[2]) { this.pos += matchRes[2].length; }
+                    if (matchRes[4]) { this.pos += matchRes[4].length; }
                     // Check whether argument is none,
                     // newlineTerminated or parameters. Other values
                     // are not allowed.
                     if (commandInfo.argument=="none") {
-                        if (matchRes[4]) {
+                        if (matchRes[5]) {
                             // Throw error since the user provided argument anyway
                             throw "No argument expected";
                         }
@@ -1723,6 +1731,10 @@ CommandInstance.prototype = {
      * Array containing the single character pre-arguments.
      */
     singleCharacterPreArguments: [],
+    /**
+     * Long commands can have a force flag
+     */
+    forceFlag: false,
     /**
      * Parameters provided by the user.
      */
