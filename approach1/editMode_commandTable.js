@@ -205,76 +205,127 @@ editModeCommands = {
         type: "longPrefix",
     },
     ":set": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_set
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_set
     },
     ":serialize": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_serialize
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_serialize
     },
     ":export": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_export
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_export
     },
     ":new": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_newEquation
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_newEquation
     },
     ":next": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_nextEquation
+        argument: "none",
+        repeating: "external",
+        implementation: editModeCommand_nextEquation
     },
     ":previous": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_previousEquation
+        argument: "none",
+        repeating: "external",
+        implementation: editModeCommand_previousEquation
     },
     ":load": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_load
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_load
     },
     ":loadid": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_loadById
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_loadById
     },
     ":loadxpath": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_loadByXPath
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_loadByXPath
     },
     ":loadall": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_loadAll
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_loadAll
     },
     ":save": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_save
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_save
     },
     ":write": { // synonym for :save
+        category: "action",
         type: "long",
-        execute: editModeCommand_save
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_save
     },
     ":saveall": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_saveAll
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_saveAll
     },
     ":writeall": { // synonym for :save
+        category: "action",
         type: "long",
-        execute: editModeCommand_saveAll
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_saveAll
     },
     ":close": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_close
+        repeating: "external",
+        argument: "none",
+        implementation: editModeCommand_close
     },
     ":help": {
+        category: "action",
         type: "long",
-        execute: editModeCommand_help
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_help
     },
 };
 editModeCommands[KEYMOD_CONTROL] = {
         type: "disamb",
 };
 editModeCommands[KEYMOD_CONTROL + "i"] = {
-        type: "action",
-        execute: editModeCommand_insertIn
+        category: "action",
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_insertIn
 };
 editModeCommands[KEYMOD_CONTROL + "r"] = {
         category: "action",
@@ -284,11 +335,17 @@ editModeCommands[KEYMOD_CONTROL + "r"] = {
         implementation: editModeCommand_redo
 };
 editModeCommands[KEYMOD_CONTROL + "l"] = {
-        type: "action",
-        execute: editModeCommand_redisplay
+        category: "action",
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_redisplay
 };
 editModeCommands[KEYMOD_CONTROL + "p"] = {
-        type: "action",
-        execute: editModeCommand_putIn
+        category: "action",
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_putIn
 };
 
