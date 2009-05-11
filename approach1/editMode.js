@@ -1,5 +1,5 @@
 
-GemsePEditor.knownClasses.push(EditMode);
+if (window.GemsePEditor) { GemsePEditor.knownClasses.push(EditMode) }
 
 /**
  * After creation of the object, its init method must be called.

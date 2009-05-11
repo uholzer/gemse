@@ -120,3 +120,21 @@ kbd {
     border: 0.4ex dashed red;
 }
 
+table.doc_commandDetailTable {
+    border: 1px solid black;
+    float: left;
+    background-color: #ffa;
+    margin: 0ex 1ex 1ex 1ex;
+}
+
+table.doc_commandDetailTable > tr {
+    border: 1px solid black;
+}
+
+[internal|function="documentation"] h1,
+[internal|function="documentation"] h2,
+[internal|function="documentation"] h3,
+[internal|function="documentation"] h4 {
+    clear: both;
+}
+

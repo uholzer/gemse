@@ -1,13 +1,16 @@
-var commandInfo = [];
+var doc_commands = [];
+var doc_commandsByImplementationName = {};
 var modeCommands;
 
-function init() {
-    generateCommandInfo();
-    createCommandTable("command");
-    putCommandsIntoDocumentation();
+function doc_init() {
+    doc_collectCommandInfo();
+    doc_createCommandTable("command");
+    doc_putCommandsIntoDocumentation();
 }
 
-function generateCommandInfo() {
+function doc_collectCommandInfo() {
+    // Find all elements that describe a command in this documentation
+    // file.
     var documentations = document.evaluate(
         "//.[@class='commandDocumentation']", 
         document, 
@@ -15,64 +18,72 @@ function generateCommandInfo() {
         XPathResult.UNORDERED_NODE_ITERATOR_TYPE, 
         null
     );
-    var documentation;
-    while (documentation = documentations.iterateNext()) {
+
+    // Loop over all of them
+    var docElement;
+    while (docElement = documentations.iterateNext()) {
         var commandEntry = {};
-        commandEntry.documentation = documentation;
-        commandEntry.functionName = commandEntry.id = documentation.getAttribute("id");
+        commandEntry.docElement = docElement;
+        commandEntry.id = docElement.getAttribute("id");
         commandEntry.titleElement = document.evaluate(
             ".//.[@class='commandTitle']", 
-            documentation, 
+            docElement, 
             standardNSResolver, 
             XPathResult.ANY_UNORDERED_NODE_TYPE, 
             null
         ).singleNodeValue;
         commandEntry.title = commandEntry.titleElement.textContent;
-                        
-        commandEntry.associatedCommands = [];
-        for (s in modeCommands) {
-            if (modeCommands[s].execute.name == commandEntry.functionName) {
-                commandEntry.associatedCommands.push(s);
-                // Remember the type (which does not always is the same in this loop)
-                if (commandEntry.type) {
-                    if (commandEntry.type.indexOf(modeCommands[s].type) == -1) {
-                        commandEntry.type += ", " + modeCommands[s].type;
-                    }
-                }
-                else {
-                    commandEntry.type = modeCommands[s].type;
-                }
-                delete modeCommands[s];
+        // Look for the implementation of this command
+        if (window[commandEntry.id]) {
+            commandEntry.implementation = window[commandEntry.id];
+        }
+        commandEntry.bindings = {};
+        doc_commands.push(commandEntry);
+        if (commandEntry.implementation) {
+            doc_commandsByImplementationName[commandEntry.implementation.name] = commandEntry;
+        }
+    }
+
+    // Go through all bindings
+    for (b in modeCommands) {
+        if (modeCommands[b].implementation) {
+            // Command is implemented
+            // Look for its documentation (if already present)
+            var commandEntry = doc_commandsByImplementationName[modeCommands[b].implementation.name];
+            if (commandEntry) {
+                // There is a documentation of this command
+                commandEntry.bindings[b] = modeCommands[b];
+                commandEntry.primaryBinding = b; //XXX
+            }
+            else {
+                // There is no documentation of this command, so we
+                // add one
+                var commandEntry = {
+                    implementation: modeCommands[b].implementation,
+                    bindings: [modeCommands[b]],
+                    primaryBinding: b,
+                };
+                doc_commands.push(commandEntry);
+                doc_commandsByImplementationName[modeCommands[b].implementation.name] = commandEntry;
             }
         }
-
-        commandInfo.push(commandEntry);
+        else {
+            // this binding has no implementation, perhaps because it
+            // is of type disamb or longPrefix.
+        }
     }
-    // Undocumented commands
-    for (s in modeCommands) {
-        var commandEntry = {};
-        commandEntry.documentation = null;
-        commandEntry.functionName = commandEntry.id = modeCommands[s].execute.name;
-        commandEntry.titleElement = null;
-        commandEntry.title = "NOT DOCUMENTED!";
-                        
-        commandEntry.associatedCommands = [s];
-        commandEntry.type = modeCommands[s].type;
-        commandInfo.push(commandEntry);
-    }            
-    
 }
 
-function putCommandsIntoDocumentation() {
-    commandInfo.filter(function(info) {return info.documentation}).forEach(function(info) {
-        elementForCommand = document.createElement("p");
-        elementForCommand.setAttribute("class", "commandInDocumentation");
-        info.titleElement.parentNode.insertBefore(elementForCommand, info.titleElement.nextSibling);
-        formattedCommandList(info.associatedCommands, elementForCommand);
+
+function doc_putCommandsIntoDocumentation() {
+    doc_commands.filter(function(info) {return info.docElement}).forEach(function(info) {
+        var detailTable = doc_commandDetailTable(info);
+        detailTable.setAttribute("class", "doc_commandDetailTable");
+        info.titleElement.parentNode.insertBefore(detailTable, info.titleElement.nextSibling);
         // Replace placeholder elements internal:command without ref attribute
         var placeholders = document.evaluate(
             ".//internal:cmdph[not(@ref)]",
-            info.documentation, 
+            info.docElement, 
             standardNSResolver, 
             XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, 
             null
@@ -80,12 +91,12 @@ function putCommandsIntoDocumentation() {
         for (var i = 0; i < placeholders.snapshotLength; ++i) {
             var placeholder = placeholders.snapshotItem(i);
             placeholder.parentNode.replaceChild(
-                document.createTextNode(formattedCommandString(info.associatedCommands[0])),
+                document.createTextNode(doc_formattedCommandString(info.primaryBinding)),
                 placeholder
             );
         }
     });
-    commandInfo.forEach(function(info) {
+    doc_commands.forEach(function(info) {
         // Replace placeholder element internal:command with ref attribute
         // (Even for undocumented commands.)
         var placeholders = document.evaluate(
@@ -98,34 +109,38 @@ function putCommandsIntoDocumentation() {
         for (var i = 0; i < placeholders.snapshotLength; ++i) {
             var placeholder = placeholders.snapshotItem(i);
             placeholder.parentNode.replaceChild(
-                document.createTextNode(formattedCommandString(info.associatedCommands[0])),
+                document.createTextNode(formattedCommandString(info.primaryBinding)),
                 placeholder
             );
         }
     });
 }
 
-function createCommandTable(sortedBy) {
+function doc_createCommandTable(sortedBy) {
     var tableBody = document.getElementById("commandTableBody");
     while (tableBody.hasChildNodes()) { tableBody.removeChild(tableBody.firstChild) }
-    commandInfo.sort(function(a, b) {
+    doc_commands.sort(function(a, b) {
         var aKey; 
         var bKey;
         if (sortedBy == "command" || sortedBy == null) {
-            aKey = a.associatedCommands.sort()[0];
-            bKey = b.associatedCommands.sort()[0];
+            aKey = a.primaryBinding;
+            bKey = b.primaryBinding;
         }
         else if (sortedBy == "title") {
             aKey = a.title;
             bKey = b.title;
         }
-        else if (sortedBy == "functionName") {
-            aKey = a.functionName;
-            bKey = b.functionName;
+        else if (sortedBy == "implementation") {
+            aKey = a.implementation;
+            bKey = b.implementation;
         }
         else if (sortedBy == "type") {
-            aKey = a.type;
-            bKey = b.type;
+            aKey = a.bindings[a.primaryBinding].type;
+            bKey = b.bindings[a.primaryBinding].type;
+        }
+        else if (sortedBy == "category") {
+            aKey = a.bindings[a.primaryBinding].category;
+            bKey = b.bindings[a.primaryBinding].category;
         }
         else if (sortedBy == "documentOrder") {
             // Does not change the order of the elements. (Well, I
@@ -139,35 +154,40 @@ function createCommandTable(sortedBy) {
         else if (aKey > bKey) return 1;
         else if (aKey == bKey) return 0;
     });
-    commandInfo.forEach(function(c) {
+    doc_commands.forEach(function(c) {
         var td_command = document.createElement("td");
         var td_title = document.createElement("td");
-        var td_functionName = document.createElement("td");
-        var td_type = document.createElement("td");
+        var td_implementationName = document.createElement("td");
         
-        formattedCommandList(c.associatedCommands,td_command);
-        var titleLink = document.createElement("a");
-        titleLink.setAttribute("href", "#" + c.id);
-        titleLink.appendChild(document.createTextNode(c.title));
-        td_title.appendChild(titleLink);
-        td_functionName.appendChild(document.createTextNode(c.functionName));
-        td_type.appendChild(document.createTextNode(c.type));
+        doc_formattedCommandList(c.bindings,td_command);
+        if (c.docElement) {
+            var titleLink = document.createElement("a");
+            titleLink.setAttribute("href", "#" + c.id);
+            titleLink.appendChild(document.createTextNode(c.title));
+            td_title.appendChild(titleLink);
+        }
+        else {
+            td_title.appendChild(document.createTextNode("not documented"));
+        }
+        td_implementationName.appendChild(document.createTextNode(c.implementation?c.implementation.name:"<none>"));
 
         var tr = document.createElement("tr");
         tr.appendChild(td_command);
         tr.appendChild(td_title);
-        tr.appendChild(td_functionName);
-        tr.appendChild(td_type);
+        tr.appendChild(td_implementationName);
 
         tableBody.appendChild(tr);
     });
 }
 
-function formattedCommandList(listOfCS, container) {
-    if (listOfCS.length > 0) {
-        listOfCS.forEach(function (cs) {
+function doc_formattedCommandList(bindings, container) {
+    listOfCommandStrings = [];
+    for (s in bindings) { listOfCommandStrings.push(s); }
+    listOfCommandStrings = listOfCommandStrings.sort();
+    if (listOfCommandStrings.length > 0) {
+        listOfCommandStrings.forEach(function (cs) {
             var kbdElement = document.createElement("kbd");
-            cs = formattedCommandString(cs);
+            cs = doc_formattedCommandString(cs);
             kbdElement.appendChild(document.createTextNode(cs));
             container.appendChild(kbdElement);
             container.appendChild(document.createTextNode(", "));
@@ -179,7 +199,48 @@ function formattedCommandList(listOfCS, container) {
     }
 }
 
-function formattedCommandString(cs) {
+function doc_commandDetailTable(info) {
+    var table = document.createElement("table");
+    var headtr = document.createElement("tr");
+    var th1 = document.createElement("th");
+    th1.appendChild(document.createTextNode("command"));
+    headtr.appendChild(th1);
+    var th2 = document.createElement("th");
+    th2.appendChild(document.createTextNode("category"));
+    headtr.appendChild(th2);
+    var th3 = document.createElement("th");
+    th3.appendChild(document.createTextNode("type"));
+    headtr.appendChild(th3);
+    var th4 = document.createElement("th");
+    th4.appendChild(document.createTextNode("argument"));
+    headtr.appendChild(th4);
+    table.appendChild(headtr);
+    for (s in info.bindings) {
+        table.appendChild(doc_commandDetailTableRow(s, info.bindings[s]));
+    }
+    return table;
+}
+
+function doc_commandDetailTableRow(s, b) {
+    var tr = document.createElement("tr");
+    var td1 = document.createElement("td");
+    var kbd = document.createElement("kbd");
+    kbd.appendChild(document.createTextNode(doc_formattedCommandString(s)));
+    td1.appendChild(kbd);
+    tr.appendChild(td1);
+    var td2 = document.createElement("td");
+    td2.appendChild(document.createTextNode(b.category));
+    tr.appendChild(td2);
+    var td3 = document.createElement("td");
+    td3.appendChild(document.createTextNode(b.type));
+    tr.appendChild(td3);
+    var td4 = document.createElement("td");
+    td4.appendChild(document.createTextNode(b.argument));
+    tr.appendChild(td4);
+    return tr;
+}
+
+function doc_formattedCommandString(cs) {
     cs = cs.replace(/ /gm,  "␣");
     cs = cs.replace(/\n/gm, "↵");
     //cs = cs.replace((new RegExp("\" + KEYMOD_CONTROL, "gm")), "CRTL+");
