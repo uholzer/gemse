@@ -1382,7 +1382,7 @@ GemsePEditor.knownClasses = [];
  *        <dd>Boolean. When true, commands are not allowed to
  *        begin with a digit, except the command 0.</dd>
  *        </dl>
- * @param commandTable A tables of all known commands
+ * @param commandTable A table of all known commands
  *        For every command c, commandTable[c] must be an object
  *        holding the following fields:
  *        <dl>
@@ -1393,6 +1393,9 @@ GemsePEditor.knownClasses = [];
  *        <dd>disamb,singleCharacterPreArgumentPrefix,command,longPrefix</dd>
  *        <dt>argument</dt>
  *        <dd>none,parameters,characters,newlineTerminated,manual,regex,selection</dd>
+ *        <dt>argumentLineCount</dt>
+ *        <dd>number of lines (only if argument=newlineTerminated,
+ *        default is 1)</dd>
  *        <dt>argumentCharacterCount (only if argument=characters)</dt>
  *        <dd>unsigned integer</dd>
  *        <dt>extractArgument (only if argument=manuallyTerminated)</dt>
@@ -1653,6 +1656,11 @@ CommandHandler.prototype = {
         }
         else if (this.instance.commandInfo.argument=="newlineTerminated") {
             var end = this.buffer.uIndexOf("\n",this.pos);
+            if (this.instance.commandInfo.argumentLineCount) {
+                for (var i=1; end!=-1 && i<this.instance.commandInfo.argumentLineCount; ++i) {
+                    end = this.buffer.uIndexOf("\n",end+1);
+                }
+            }
             if (end==-1) {
                 // Command is incomplete
                 return false;
