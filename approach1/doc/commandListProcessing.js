@@ -60,9 +60,10 @@ function doc_collectCommandInfo() {
                 // add one
                 var commandEntry = {
                     implementation: modeCommands[b].implementation,
-                    bindings: [modeCommands[b]],
+                    bindings: {}, // Filled later
                     primaryBinding: b,
                 };
+                commandEntry.bindings[b] = modeCommands[b];
                 doc_commands.push(commandEntry);
                 doc_commandsByImplementationName[modeCommands[b].implementation.name] = commandEntry;
             }
