@@ -6,6 +6,7 @@ function AttributeMode(editor, equationEnv, element) {
     this.element = element;
     this.attributes = [];
     this.cursor = null;
+    this.commandHandler = new CommandHandler(this,attributeModeCommandOptions,attributeModeCommands);
 }
 AttributeMode.prototype = {
     name: "attribute",
@@ -58,115 +59,67 @@ AttributeMode.prototype = {
     },
     get contextNode() { return this.element }, // XXX: good like this?
     inputHandler: function() {
-        // Returns true if it succeeded to execute the first command from the
-        // input buffer. Else, it returns false.
-        // (This is mainly a copy from the same function of the edit
-        // mode.)
-        var command = this.editor.inputBuffer;
-        var endOfCommandIndex = 0; // Points to the end of the command in the input buffer (Index of unicode character, not UTF16 character)
-        var commandArg = null;
-        var forceFlag = false;
-        var singleCharacterArgs = [];
-        while (command[0] == '"') {
-            if (command.length < 2) { return } // Returns if the user has not yet entered the character
-            singleCharacterArgs.push(command.uCharAt(1));
-            command = command.uSlice(2);
-            endOfCommandIndex += 2;
-        }
-
-        var firstCommand = command.slice(0,1);
-        while (!attributeModeCommands[firstCommand] && firstCommand.length < command.length) { 
-            firstCommand = command.slice(0,firstCommand.length + 1);
-        }
-        command = firstCommand;
-        endOfCommandIndex += firstCommand.uLength;
-        commandObject = attributeModeCommands[command];
-        if (commandObject) {
-            if (commandObject.type == "movement") {
-                var executionResult = commandObject.execute(this,this.cursor)
-                // A movement method must return a node or null
-                // (A movement command is not allowed to have side
-                // effect.)
-                if (executionResult) {
-                    this.moveCursor(executionResult);
-                }
-                // If executionResult is null, we do not move the
-                // cursor
-                editor.eatInput(endOfCommandIndex);
-                return true;
-            }
-            else {
-                var executionResult = commandObject.execute(this,command,singleCharacterArgs);
-                // The input buffer has to be sliced by the called command
-                return executionResult;
-            }
-        }
-        else {
-            return false;
-        }
+        var instance = this.commandHandler.parse();
+        if (!instance.isReadyToExecute) { return false }
+        instance.execute();
+        return true;
     },
 }
 
 
-function attributeModeCommand_exit(mode,command) {
-    mode.editor.eatInput(command.uLength);
+function attributeModeCommand_exit(mode) {
     mode.finish();
     return true;
 }
 
-function attributeModeCommand_up(mode,oldCursor) {
+function attributeModeCommand_up(mode) {
+    var oldCursor = mode.cursor;
     if (oldCursor!=null && oldCursor > 0) {
         mode.moveCursor(oldCursor - 1);
     }
+    return true;
 }
 
-function attributeModeCommand_down(mode,oldCursor) {
+function attributeModeCommand_down(mode) {
+    var oldCursor = mode.cursor;
     if (oldCursor!=null && oldCursor < mode.attributes.length-1) {
         mode.moveCursor(oldCursor + 1);
     }
+    return true;
 }
 
-function attributeModeCommand_kill(mode,command) {
-    if (mode.cursor==null) { mode.editor.eatInput(command.uLength); return true; }
+function attributeModeCommand_kill(mode) {
+    if (mode.cursor==null) { return true; }
     mode.element.removeAttributeNode(mode.attributes[mode.cursor]);
     mode.attributes.splice(mode.cursor,1);
     if (mode.attributes.length == 0) { mode.moveCursor(null) }
     else if (mode.cursor >= mode.attributes.length) { mode.moveCursor(mode.cursor-1) }
     else { mode.moveCursor(mode.cursor) }
-
-    mode.editor.eatInput(command.uLength);
     return true;
 }
 
-function attributeModeCommand_changeValue(mode,command) {
-    if (mode.cursor==null) { mode.editor.eatInput(command.uLength); return true; }
-    var endOfValue = editor.inputBuffer.indexOf("\n"); // Counts UTF16 characters
-    if (endOfValue == -1) { return false; }
-    var value = editor.inputBuffer.slice(command.length,endOfValue);
-
-    mode.attributes[mode.cursor].nodeValue = value;
+function attributeModeCommand_changeValue(mode,instance) {
+    if (mode.cursor==null) { return true; }
+    mode.attributes[mode.cursor].nodeValue = instance.argument;
     mode.moveCursor(mode.cursor);
-
-    editor.eatInput16(endOfValue+1); // works because \n is always the last character
     return true;
 }
 
-function attributeModeCommand_changeName(mode,command) {
-    if (mode.cursor==null) { mode.editor.eatInput16(command.length); return true; }
+function attributeModeCommand_changeName(mode) {
+    if (mode.cursor==null) { return true; }
     throw "todo!";
 }
 
-function attributeModeCommand_changeNS(mode,command) {
-    if (mode.cursor==null) { mode.editor.eatInput16(command.length); return true; }
+function attributeModeCommand_changeNS(mode) {
+    if (mode.cursor==null) { return true; }
     throw "todo!";
 }
 
-function attributeModeCommand_insertDefault(mode,command) {
-    var r = /^([^\n]*)\n([^\n]*)\n/m;
-    var info = r.exec(mode.editor.inputBuffer.slice(command.length));
+function attributeModeCommand_insertDefault(mode,instance) {
+    var r = /^([^\n]*)\n([^\n]*)$/m;
+    var info = r.exec(instance.argument);
     if (info) {
         mode.element.setAttribute(info[1], info[2]);
-        editor.eatInput16(command.length + info[0].length);
         mode.reInit();
         return true;
     }
@@ -175,12 +128,11 @@ function attributeModeCommand_insertDefault(mode,command) {
     }
 }
 
-function attributeModeCommand_insertForeign(mode,command) {
-    var r = /^([^\n]*)\n([^\n]*)\n([^\n]*)\n/;
-    var info = r.exec(mode.editor.inputBuffer.slice(command.length));
+function attributeModeCommand_insertForeign(mode,instance) {
+    var r = /^([^\n]*)\n([^\n]*)\n([^\n]*)$/;
+    var info = r.exec(instance.argument);
     if (info) {
         mode.element.setAttributeNS(info[1], info[2], info[3]);
-        editor.eatInput16(command.length + info[0].length);
         mode.reInit();
         return true;
     }
@@ -190,7 +142,7 @@ function attributeModeCommand_insertForeign(mode,command) {
 }
 
 
-function attributeModeCommand_setDefaultForMissing(mode,command) {
+function attributeModeCommand_setDefaultForMissing(mode) {
     // Sets default value for attributes not already present
     var elementDesc = elementDescriptions[mode.element.localName];
     for each (var attributeDesc in elementDesc.attributes) {
@@ -199,11 +151,10 @@ function attributeModeCommand_setDefaultForMissing(mode,command) {
         }
     }
     mode.reInit();
-    editor.eatInput16(command.length);
     return true;
 }
 
-function attributeModeCommand_clearAll(mode,command) {
+function attributeModeCommand_clearAll(mode) {
     // I delete all attributes using the folowing rather crazy way. I
     // do not know better. The problem is that, so it seems, if one
     // retrieves element.attributes and deletes some attributes via
@@ -217,7 +168,7 @@ function attributeModeCommand_clearAll(mode,command) {
         var attributes = e.attributes;
         for (var i=0; i<attributes.length; ++i) {
             var candidate = attributes.item(i);
-            if (candidate) { return candidate }
+            if (candidate.localName[0]!="-") { return candidate }
         }
         return null;
     }
@@ -228,15 +179,14 @@ function attributeModeCommand_clearAll(mode,command) {
     }
 
     mode.reInit();
-    editor.eatInput16(command.length);
     return true;
 }
 
-function attributeModeCommand_setFromDictionary(mode,command) {
-    // Looks up the entries for this element in the dicitonar and sets
+function attributeModeCommand_setFromDictionary(mode,instance) {
+    // Looks up the entries for this element in the dictionary and sets
     // the attributes accordingly. Up to now, this only works for mo
     // elements.
-    if (! (mode.element.namespaceURI==NS_MathML && mode.element.localName=="mo")) { return }
+    if (! (mode.element.namespaceURI==NS_MathML && mode.element.localName=="mo")) { return false }
 
     var applyEntry = function(entry,element) {
         for (name in entry.attributes) {
@@ -244,9 +194,7 @@ function attributeModeCommand_setFromDictionary(mode,command) {
         }
     }
 
-    var endOfValue = editor.inputBuffer.indexOf("\n"); // counting UTF16 characters
-    if (endOfValue == -1) { return false; }
-    var value = editor.inputBuffer.slice(command.length,endOfValue);
+    var value = instance.argument;
 
     var entries = operatorDictionary.entriesByContent(mode.element.textContent);
     // If the user has given a string for disambiguation, filter for it
@@ -274,7 +222,6 @@ function attributeModeCommand_setFromDictionary(mode,command) {
     // have been more than one matching entries.
 
     mode.reInit();
-    editor.eatInput16(endOfValue+1);
     return true;
 }
 
