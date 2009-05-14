@@ -1,5 +1,5 @@
 var doc_commands = [];
-var doc_commandsByImplementationName = {};
+var doc_commandsByImplementationNameOrId = {};
 var modeCommands;
 
 function doc_init() {
@@ -33,15 +33,16 @@ function doc_collectCommandInfo() {
             null
         ).singleNodeValue;
         commandEntry.title = commandEntry.titleElement.textContent;
-        // Look for the implementation of this command
+        // Look for the implementation of this command.
+        // This does not find implementations that are not part of the
+        // global object (the window object). Those will be discovered
+        // when processing bindings if they have a binding.
         if (window[commandEntry.id]) {
             commandEntry.implementation = window[commandEntry.id];
         }
         commandEntry.bindings = {};
         doc_commands.push(commandEntry);
-        if (commandEntry.implementation) {
-            doc_commandsByImplementationName[commandEntry.implementation.name] = commandEntry;
-        }
+        doc_commandsByImplementationNameOrId[commandEntry.id] = commandEntry;
     }
 
     // Go through all bindings
@@ -49,11 +50,16 @@ function doc_collectCommandInfo() {
         if (modeCommands[b].implementation) {
             // Command is implemented
             // Look for its documentation (if already present)
-            var commandEntry = doc_commandsByImplementationName[modeCommands[b].implementation.name];
+            var commandEntry = doc_commandsByImplementationNameOrId[modeCommands[b].implementation.name];
             if (commandEntry) {
                 // There is a documentation of this command
                 commandEntry.bindings[b] = modeCommands[b];
                 commandEntry.primaryBinding = b; //XXX
+                if (!commandEntry.implementation) {
+                    // The implementation of this command is not yet
+                    // known, so set it
+                    commandEntry.implementation = modeCommands[b].implementation;
+                }
             }
             else {
                 // There is no documentation of this command, so we
@@ -65,7 +71,7 @@ function doc_collectCommandInfo() {
                 };
                 commandEntry.bindings[b] = modeCommands[b];
                 doc_commands.push(commandEntry);
-                doc_commandsByImplementationName[modeCommands[b].implementation.name] = commandEntry;
+                doc_commandsByImplementationNameOrId[modeCommands[b].implementation.name] = commandEntry;
             }
         }
         else {
@@ -100,8 +106,9 @@ function doc_putCommandsIntoDocumentation() {
     doc_commands.forEach(function(info) {
         // Replace placeholder element internal:command with ref attribute
         // (Even for undocumented commands.)
+        var ref = info.id ? info.id : info.implementation.name;
         var placeholders = document.evaluate(
-            "//internal:cmdph[@ref='"+ info.id +"']",
+            "//internal:cmdph[@ref='"+ ref +"']",
             document, 
             standardNSResolver, 
             XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, 
@@ -109,8 +116,25 @@ function doc_putCommandsIntoDocumentation() {
         );
         for (var i = 0; i < placeholders.snapshotLength; ++i) {
             var placeholder = placeholders.snapshotItem(i);
+            var select = placeholder.getAttribute("select");
+            var bindingString;
+            if (select) {
+                bindingString = "[NO SUITABLE BINDING FOUND]";
+                // Walk through all bindings and check whether they
+                // match. This is done by evaluating the string
+                // select. This string is supposed to be a expression
+                // generating a boolean, using the object b for its
+                // decision.
+                for (s in info.bindings) {
+                    var b = info.bindings[s];
+                    if (eval(select)) { bindingString = s }
+                }
+            }
+            else {
+                bindingString = info.primaryBinding;
+            }
             placeholder.parentNode.replaceChild(
-                document.createTextNode(formattedCommandString(info.primaryBinding)),
+                document.createTextNode(doc_formattedCommandString(bindingString)),
                 placeholder
             );
         }
