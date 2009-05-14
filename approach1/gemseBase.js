@@ -1398,9 +1398,13 @@ GemsePEditor.knownClasses = [];
  *        default is 1)</dd>
  *        <dt>argumentCharacterCount (only if argument=characters)</dt>
  *        <dd>unsigned integer</dd>
- *        <dt>extractArgument (only if argument=manuallyTerminated)</dt>
- *        <dd>function(input,begin), returns undefined if not
- *        complete. (null is a valid argument!)</dd>
+ *        <dt>extractArgument (only if argument=manual)</dt>
+ *        <dd>function(commandHandler), returns undefined if not
+ *        complete. (null is a valid argument!) This procedure must
+ *        update commandHandler.pos! argument=manual is not
+ *        recommended, since it tampers with the internals of the
+ *        CommandHandler, so use it only if the other possiblilities
+ *        for argument fail.</dd>
  *        <dt>argumentRegex (only if argument=regex)</dt>
  *        <dd>RegExp object, TODO</dd>
  *        <dt>repeating</dt>
@@ -1680,7 +1684,7 @@ CommandHandler.prototype = {
             this.pos += ccount;
         }
         else if (this.instance.commandInfo.argument=="manual") {
-            argument = this.instance.commandInfo.extractArgument(this.buffer,this.pos);
+            argument = this.instance.commandInfo.extractArgument(this);
             if (argument === undefined) {
                 // Command is incomplete
                 return false;
