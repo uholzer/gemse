@@ -11,6 +11,7 @@ function TrivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         numberOfElementsToSurround: 0
     };
     this.cursorStack = [];
+    this.commandHandler = new CommandHandler(this,trivialInsertModeCommandOptions,trivialInsertModeCommands);
 }
 TrivialInsertMode.prototype = {
     name: "insert (trivial)",
@@ -92,15 +93,10 @@ TrivialInsertMode.prototype = {
     },
     get contextNode() { return null }, // TODO
     inputHandler: function() {
-        command = this.editor.inputBuffer;
-        commandObject = trivialInsertModeCommands[command.uCharAt(0)];
-        if (commandObject) {
-            return commandObject.execute(this,command.uCharAt(0));
-        }
-        else {
-            // Command not found;
-            return false;
-        }
+        var instance = this.commandHandler.parse();
+        if (!instance.isReadyToExecute) { return false }
+        instance.execute();
+        return true;
     },
     getNewPlaceholderElement: function() {
         var placeholder = document.createElementNS(NS_MathML, "mi");
@@ -210,62 +206,7 @@ TrivialInsertMode.prototype = {
     },
 }
 
-
-
-function trivialInsertModeCommand_miSingle(mode,command) {
-    // Inserts an mi element with a single character as content
-    return trivialInsertModeCommandTool_elementWithSingleCharacter(mode,command,"mi");
-}
-
-function trivialInsertModeCommand_miLong(mode,command) {
-    // Inserts an mi element with several characters as content
-    return trivialInsertModeCommandTool_elementWithLongText(mode,command,"mi");
-}
-
-function trivialInsertModeCommand_mnNormal(mode,command) {
-    // Inserts a mn element, containg a number of the form /^[+-]?[0-9.]+$/
-    var c = mode.editor.inputBuffer;
-    var res = /^.([+-]?[0-9.]+)( ?([\S\s]*))$/.exec(c);
-        //                         ^^^^^^ capture all characters, including \n
-        //                               ^ This one is needed so res[3]
-        //                                 contains the whole next command string
-    if (res && res[2]) { 
-        mode.putElement(
-            null, 
-            "mn",
-            document.createTextNode(
-                res[1]
-            )
-        );
-        mode.editor.eatInput(mode.editor.inputBuffer.uLength - res[3].uLength); // thats why the + in the regex is needed
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-function trivialInsertModeCommand_mnLong(mode,command) {
-    // Inserts an mn element containing anything
-    return trivialInsertModeCommandTool_elementWithLongText(mode,command,"mn");
-}
-
-function trivialInsertModeCommand_moNormal(mode,command) {
-    // Inserts an mo element with a single character as content
-    return trivialInsertModeCommandTool_elementWithSingleCharacter(mode,command,"mo");
-}
-
-function trivialInsertModeCommand_moLong(mode,command) {
-    // Inserts an mi element with several characters as content
-    return trivialInsertModeCommandTool_elementWithLongText(mode,command,"mi");
-}
-
-function trivialInsertModeCommand_mtext(mode,command) {
-    // Inserts an mtext element
-    return trivialInsertModeCommandTool_elementWithLongText(mode,command,"mtext");
-}
-
-function trivialInsertModeCommand_table(mode,command) {
+function trivialInsertModeCommand_table(mode) {
     // Inserts an mtr element if the parent is an mtable element, an
     // mtd element if the parent is an mtr element and otherwise an
     // mtable element.
@@ -281,17 +222,15 @@ function trivialInsertModeCommand_table(mode,command) {
         //insert an mtable
         mode.putElement(null, "mtable", mode.getNewPlaceholderElement());
     }
-    mode.editor.eatInput(command.uLength);
     return true;
 }
 
-function trivialInsertModeCommand_mlabeledtr(mode,command) {
+function trivialInsertModeCommand_mlabeledtr(mode) {
     mode.putElement(null, "mlabeledtr", mode.getNewPlaceholderElement());
-    mode.editor.eatInput(command.uLength);
     return true;
 }
 
-function trivialInsertModeCommand_insertDescribedElement(mode, command, elementName) {
+function trivialInsertModeCommand_insertDescribedElement(mode, instance, elementName) {
     // Inserts an mtext element
     var description = elementDescriptions[elementName];
     var placeholder = mode.getNewPlaceholderElement();
@@ -314,36 +253,38 @@ function trivialInsertModeCommand_insertDescribedElement(mode, command, elementN
     else if (description.type == "mrow") {
         newElement.appendChild(placeholder.cloneNode(true));
     }
+    else if (description.type == "special") {
+        // The argument of the instance gives us the content for the
+        // token elment
+        newElement.appendChild(document.createTextNode(instance.argument));
+    }
     else {
         throw description.type + " not yet supported by insertDescribedElement";
     }
     mode.putElement(newElement);
-    mode.editor.eatInput(command.uLength);
     return true;
 }
 
-function trivialInsertModeCommand_cursorJump(mode,command) {
+function trivialInsertModeCommand_cursorJump(mode,instance) {
     if (mode.cursorStack.length<1) { 
         // If the stack is empty, the user is done with inserting, so exit
-        return trivialInsertModeCommand_exit(mode,command);
+        return trivialInsertModeCommand_exit(mode,instance);
     }
     mode.moveCursor(mode.cursorStack.pop());
-    mode.editor.eatInput(command.uLength);
     return true;
 }
 
-function trivialInsertModeCommand_oneMoreToSurround(mode,command) {
+function trivialInsertModeCommand_oneMoreToSurround(mode) {
     // TODO: Count preceding siblings and prevent to select too many
         mode.moveCursor({ 
             beforeElement: mode.cursor.beforeElement,
             inElement: mode.cursor.inElement,
             numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) + 1
         });
-    mode.editor.eatInput(command.uLength);
     return true;
 }
 
-function trivialInsertModeCommand_oneLessToSurround(mode,command) {
+function trivialInsertModeCommand_oneLessToSurround(mode) {
     if (mode.cursor.numberOfElementsToSurround > 0) {
         mode.moveCursor({ 
             beforeElement: mode.cursor.beforeElement,
@@ -351,37 +292,12 @@ function trivialInsertModeCommand_oneLessToSurround(mode,command) {
             numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) - 1
         });
     }
-    mode.editor.eatInput(command.uLength);
     return true;
 }
 
-function trivialInsertModeCommand_exit(mode,command) {
+function trivialInsertModeCommand_exit(mode) {
     mode.finish();
-    mode.editor.eatInput(command.uLength);
     return true;
 }
-
-function trivialInsertModeCommandTool_elementWithSingleCharacter(mode,command,elementName) {
-    if (mode.editor.inputBuffer.uLength < 2) { return false }
-    mode.putElement(null, elementName, document.createTextNode(mode.editor.inputBuffer.uCharAt(1)));
-    mode.editor.eatInput(command.uLength+1);
-    return true;
-}
-
-function trivialInsertModeCommandTool_elementWithLongText(mode,command,elementName) {
-    // endOfText here counts UTF16 characters!
-    var endOfText = mode.editor.inputBuffer.indexOf("\n");
-    if (endOfText==-1) { return false } 
-    mode.putElement(
-        null, 
-        elementName,
-        document.createTextNode(
-            mode.editor.inputBuffer.substring(command.length,endOfText)
-        )
-    );
-    mode.editor.eatInput16(endOfText+1);
-    return true;
-}
-
 
 
