@@ -169,14 +169,14 @@ editModeCommands = {
     "p": {
         category: "action",
         type: "command",
-        repeating: "prevent",
+        repeating: "external",
         argument: "none",
         implementation: editModeCommand_putAfter
     },
     "P": {
         category: "action",
         type: "command",
-        repeating: "prevent",
+        repeating: "external",
         argument: "none",
         implementation: editModeCommand_putBefore
     },

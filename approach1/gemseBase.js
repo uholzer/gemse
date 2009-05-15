@@ -1058,7 +1058,7 @@ GemsePEditor.prototype = {
      */
     applyBackspaceInInput: function() {
         var s = this.inputBuffer;
-        if (s.charCodeAt(s.length) == 0x0008) { // U+0008 is backspace
+        if (s.charCodeAt(s.length-1) == 0x0008) { // U+0008 is backspace
             this.inputBuffer = s.slice(0,-2);
             return true;
         }
@@ -1535,7 +1535,7 @@ CommandHandler.prototype = {
             this.instance.singleCharacterPreArguments.push(this.buffer.uCharAt(this.pos));
             ++this.pos;
             firstChar = this.buffer.uCharAt(this.pos);
-            firstCharInfo = this.comandTable[firstChar];
+            firstCharInfo = this.commandTable[firstChar];
         }
         return true;
         // After this loop, pos points to the next character after the
@@ -1712,7 +1712,24 @@ CommandHandler.prototype = {
     },
 }
 
+/** 
+ * @class Represents the command the user entered. It stores the name
+ * of the command, the given arguments, repeating, information from
+ * the command table, and so on. It is also used to represent
+ * incomplete, unknown or invalid commands.
+ * The method execute() can be used to execute the command.
+ */
 CommandInstance = function() {
+    // Must create these objects for every object, since otherwise, the
+    // array of the prototype could be modified accidentally
+    /**
+     * Array containing the single character pre-arguments.
+     */
+    this.singleCharacterPreArguments = [];
+    /**
+     * Parameters provided by the user.
+     */
+    this.parameters = {};
 }
 CommandInstance.prototype = {
     /**
@@ -1740,17 +1757,9 @@ CommandInstance.prototype = {
      */
     commandInfo: null,
     /**
-     * Array containing the single character pre-arguments.
-     */
-    singleCharacterPreArguments: [],
-    /**
      * Long commands can have a force flag
      */
     forceFlag: false,
-    /**
-     * Parameters provided by the user.
-     */
-    parameters: {},
     /**
      * Argument as string
      */

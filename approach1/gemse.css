@@ -131,6 +131,10 @@ table.doc_commandDetailTable > tr {
     border: 1px solid black;
 }
 
+table.doc_commandDetailTable td {
+    padding: 0.2ex 0.5em;
+}
+
 [internal|function="documentation"] h1,
 [internal|function="documentation"] h2,
 [internal|function="documentation"] h3,

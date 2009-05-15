@@ -632,7 +632,7 @@ function editModeCommand_mrowEnvelop(mode,instance) {
 
 function editModeCommand_copyToRegister(mode,instance) {
     var registerName = "";
-    if (args != null) { registerName = args[0]; }
+    if (instance.singleCharacterPreArguments.length > 0) { registerName = instance.singleCharacterPreArguments[0]; }
     var from = instance.selection.startElement; // \ Those two must be siblings, in the right order!
     var to = instance.selection.endElement;     // /
     var registerContent = [];

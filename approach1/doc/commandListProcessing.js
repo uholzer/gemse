@@ -260,7 +260,19 @@ function doc_commandDetailTableRow(s, b) {
     td3.appendChild(document.createTextNode(b.type));
     tr.appendChild(td3);
     var td4 = document.createElement("td");
-    td4.appendChild(document.createTextNode(b.argument));
+    if (b.argument == "characters") {
+        td4.appendChild(document.createTextNode(
+            b.argumentCharacterCount + (b.argumentCharacterCount > 1 ?  " characters" : " character")
+        ));
+    }
+    if (b.argument == "newlineTerminated") {
+        td4.appendChild(document.createTextNode(
+            b.argumentLineCount > 1 ? (b.argumentLineCount + " lines") : "1 line"
+        ));
+    }
+    else {
+        td4.appendChild(document.createTextNode(b.argument));
+    }
     tr.appendChild(td4);
     return tr;
 }

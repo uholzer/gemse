@@ -35,6 +35,9 @@ ucdInsertModeCommands = {
         implementation: trivialInsertModeCommand_cursorJump
     },
 }
+ucdInsertModeCommands[KEYMOD_CONTROL] = {
+    type: "disamb",
+}
 ucdInsertModeCommands[KEYMOD_CONTROL + "t"] = {
     type: "command",
     argument: "none",
