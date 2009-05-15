@@ -1,69 +1,113 @@
 
-// Are we allowed to steal commands from trivial insert mode? Hmm,
+// Are we allowed to steal instances from trivial insert mode? Hmm,
 // we do without asking. However, this asks for problems, but it
 // should work as long as our putElement is compatible with the
 // one from trivial mode.
 
+ucdInsertModeCommandOptions = {
+    repeating: false, // Must be false, since digits have to be treated as tokens!
+}
+
 ucdInsertModeCommands = {
     "^": {
-        execute: function ucdInsertModeCommand_msup (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msup") }
+        type: "command",
+        argument: "none",
+        implementation: function ucdInsertModeCommand_msup (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msup") }
     },
     "_": {
-        execute: function ucdInsertModeCommand_msub (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msub") }
+        type: "command",
+        argument: "none",
+        implementation: function ucdInsertModeCommand_msub (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msub") }
     },
     " ": {
-        execute: function trivialInsertModeCommand_mrow (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mrow") }
+        type: "command",
+        argument: "none",
+        implementation: function ucdInsertModeCommand_mrow (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mrow") }
     },
     "/": {
-        execute: function trivialInsertModeCommand_mfrac (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mfrac") }
+        type: "command",
+        argument: "none",
+        implementation: function ucdInsertModeCommand_mfrac (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mfrac") }
     },
     "\n": {
-        execute: trivialInsertModeCommand_cursorJump
+        type: "command",
+        argument: "none",
+        implementation: trivialInsertModeCommand_cursorJump
     },
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "t"] = {
-    execute: trivialInsertModeCommand_mtext
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_mtext (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mtext") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "e"] = {
-    execute: function ucdInsertModeCommand_menclose (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"menclose") }
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_menclose (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"menclose") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "r"] = {
-    execute: function ucdInsertModeCommand_msqrt (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msqrt") }
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_msqrt (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msqrt") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "R"] = {
-    execute: function ucdInsertModeCommand_mroot (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mroot") }
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_mroot (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mroot") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "f"] = {
-    execute: function ucdInsertModeCommand_mfenced (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mfenced") }
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_mfenced (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mfenced") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "u"] = {
-    execute: function ucdInsertModeCommand_munder (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"munder") }
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_munder (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munder") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "v"] = {
-    execute: function ucdInsertModeCommand_mover (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mover") }
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_mover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mover") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "U"] = {
-    execute: function ucdInsertModeCommand_munderover (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"munderover") }
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_munderover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munderover") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "m"] = {
-    execute: function ucdInsertModeCommand_mmultiscripts (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mmultiscripts") }
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_mmultiscripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mmultiscripts") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "p"] = {
-    execute: function ucdInsertModeCommand_mprescripts (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mprescripts") }
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_mprescripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mprescripts") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "t"] = {
-    execute: trivialInsertModeCommand_table // For inserting table, tr or td elements
+    type: "command",
+    argument: "none",
+    implementation: trivialInsertModeCommand_table // For inserting table, tr or td elements
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "T"] = {
-    execute: trivialInsertModeCommand_mlabeledtr
+    type: "command",
+    argument: "none",
+    implementation: trivialInsertModeCommand_mlabeledtr
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "h"] = {
-    execute: trivialInsertModeCommand_oneMoreToSurround
+    type: "command",
+    argument: "none",
+    implementation: trivialInsertModeCommand_oneMoreToSurround
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "l"] = {
-    execute: trivialInsertModeCommand_oneLessToSurround
+    type: "command",
+    argument: "none",
+    implementation: trivialInsertModeCommand_oneLessToSurround
 }
 ucdInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
-    execute: ucdInsertModeCommand_exit
+    type: "command",
+    argument: "none",
+    implementation: ucdInsertModeCommand_exit
 }
 
