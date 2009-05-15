@@ -10,6 +10,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         endElement:   startElement,
         moving:       this.END,
     };
+    this.commandHandler = new CommandHandler(this,visualSelectionModeCommandOptions,visualSelectionModeCommands);
 }
 VisualSelectionMode.prototype = {
     name: "visual",
@@ -82,50 +83,14 @@ VisualSelectionMode.prototype = {
         throw "Never reached!";
     },
     inputHandler: function() {
-        command = this.editor.inputBuffer;
-        visualCommandObject = visualSelectionModeCommands[command.uCharAt(0)];
-        editCommandObject = editModeCommands[command.uCharAt(0)];
-        if (visualCommandObject) {
-            visualCommandObject.execute(this,command.uCharAt(0))
-            this.editor.eatInput(1);
+        var instance = this.commandHandler.parse();
+        if (instance.isReadyToExecute) {
+            instance.execute();
             return true;
         }
-        else if (editCommandObject && editCommandObject.type == "movement") {
-            var newCursor = this.createCursor();
-            var destNode = editCommandObject.execute(
-                this,
-                (this.cursor.moving == this.START) ? this.cursor.startElement : this.cursor.endElement
-            )
-            // We only move the cursor if the new element is a
-            // sibling of the current ones
-            if (destNode && this.isSibling(destNode,this.cursor.startElement)) {
-                if (this.cursor.moving == this.START) { // move start node
-                    if (this.compareSiblings(destNode,this.cursor.endElement) >= 0) { 
-                        newCursor.startElement = destNode;
-                    }
-                    else {
-                        newCursor.startElement = newCursor.endElement;
-                        newCursor.endElement = destNode;
-                        newCursor.moving = this.END;
-                    }
-                }
-                else { // move end node
-                    if (this.compareSiblings(this.cursor.startElement,destNode) >= 0) { 
-                        newCursor.endElement = destNode;
-                    }
-                    else {
-                        newCursor.endElement = newCursor.startElement;
-                        newCursor.startElement = destNode;
-                        newCursor.moving = this.START;
-                    }
-                }
-                this.moveCursor(newCursor);
-            }
-            this.editor.eatInput(1);
-            return true;
-        }
-        else {
-            // TODO: Handle the command as editMode command. If it
+        else if (instance.notFound) {
+            // Handle the command as editMode command. 
+            // TODO: If it
             // gets processed as such, leave visual mode, otherwise
             // stay in visual mode.
 
@@ -140,6 +105,9 @@ VisualSelectionMode.prototype = {
             // the user. If he enters a nonexistant command, the
             // visual mode seems gone, but the selection will be
             // applied on the next command.
+            // However, since the visual mode and the edit mode now use the
+            // CommandHandler to parse input, this might be easier to
+            // omplement.
             this.dispatch();
             return true;
             /*candidateCommand = command[0];
@@ -154,6 +122,9 @@ VisualSelectionMode.prototype = {
                 throw "Command not found";
                 return false;
             }*/
+        }
+        else {
+            return false;
         }
     },
     cancel: function() {
@@ -170,6 +141,40 @@ VisualSelectionMode.prototype = {
         // the buffer. (But we will enforce it now. XXX: Perhaps this is bad)
         this.equationEnv.mode.inputHandler();
     },
+}
+
+function visualSelectionModeExecutionHandler_movement(mode,instance) {
+    var newCursor = mode.createCursor();
+    var destNode = instance.implementation(
+        mode,
+        (mode.cursor.moving == mode.START) ? mode.cursor.startElement : mode.cursor.endElement
+    )
+    // We only move the cursor if the new element is a
+    // sibling of the current one
+    if (destNode && mode.isSibling(destNode,mode.cursor.startElement)) {
+        if (mode.cursor.moving == mode.START) { // move start node
+            if (mode.compareSiblings(destNode,mode.cursor.endElement) >= 0) { 
+                newCursor.startElement = destNode;
+            }
+            else {
+                newCursor.startElement = newCursor.endElement;
+                newCursor.endElement = destNode;
+                newCursor.moving = mode.END;
+            }
+        }
+        else { // move end node
+            if (mode.compareSiblings(mode.cursor.startElement,destNode) >= 0) { 
+                newCursor.endElement = destNode;
+            }
+            else {
+                newCursor.endElement = newCursor.startElement;
+                newCursor.startElement = destNode;
+                newCursor.moving = mode.START;
+            }
+        }
+        mode.moveCursor(newCursor);
+    }
+    return true;
 }
 
 

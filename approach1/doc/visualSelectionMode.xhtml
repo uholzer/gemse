@@ -20,12 +20,14 @@
     <title>Visual Selection Mode</title>
     <link rel="stylesheet" href="../gemse.css" type="text/css" />
     <script src="../const.js"/>
+    <script src="../editMode.js"/>
+    <script src="../editMode_commandTable.js"/>
     <script src="../visualSelectionMode.js"/>
     <script src="../visualSelectionMode_commandTable.js"/>
     <script src="commandListProcessing.js"/>
 </head>
 
-<body onload="modeCommands = visualSelectionModeCommands; init()">
+<body onload="modeCommands = visualSelectionModeCommands; doc_init()">
 
 <h1>Visual Selection Mode</h1>
 
@@ -33,16 +35,16 @@
 <h2>Commands</h2>
 
 <table>
-<thead><tr><th>Command</th><th>title</th><th>Function name</th><th>type</th></tr></thead>
+<thead><tr><th>Command</th><th>title</th><th>Function name</th></tr></thead>
 <tbody id="commandTableBody">
 
 </tbody>
 </table>
 
-<p>Additionally you can use every edit mode movement command that
-moves along siblings. As soon as you start entering another edit mode
-command, visual mode terminates. When you have finished entering the
-command, it is executed on the selection.</p>
+<p>This list includes all movement commands from the edit mode. They
+are not documented here. You use them to move around, that is, to
+change the selection. However, such a command only has an effect if it
+moves to a sibling of the current position.</p>
 
 <div class="commandDocumentation" id="visualSelectionModeCommand_switchMoving">
     <h3 class="commandTitle">Move the other end of the selection</h3>
