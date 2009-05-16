@@ -200,7 +200,7 @@ EditMode.gemseOptions = {
         }
     },
     "currentInsertMode": {
-        defaultValue: "trivial",
+        defaultValue: "ucd",
         validator: function(value,editor) {
             return (value == "trivial" || value == "ucd");
         },
