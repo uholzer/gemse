@@ -253,7 +253,7 @@ function trivialInsertModeCommand_insertDescribedElement(mode, instance, element
     else if (description.type == "mrow") {
         newElement.appendChild(placeholder.cloneNode(true));
     }
-    else if (description.type == "special") {
+    else if (description.type == "token") {
         // The argument of the instance gives us the content for the
         // token elment
         newElement.appendChild(document.createTextNode(instance.argument));

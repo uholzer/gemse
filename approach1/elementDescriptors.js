@@ -8,21 +8,21 @@ elementDescriptions = {
 mi: {
     name: "mi",
     namespace: NS_MathML,
-    type: "special",
+    type: "token",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mi",
 },
 
 mn: {
     name: "mn",
     namespace: NS_MathML,
-    type: "special",
+    type: "token",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mn",
 },
 
 mo: {
     name: "mo",
     namespace: NS_MathML,
-    type: "special",
+    type: "token",
     attributes: {
         // The default attribute values of a given mo element are
         // determined by the operator dictionary. They highly depend
@@ -152,7 +152,7 @@ mo: {
 mtext: {
     name: "mtext",
     namespace: NS_MathML,
-    type: "special",
+    type: "token",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mtext",
 },
 
