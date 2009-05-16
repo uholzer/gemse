@@ -1,5 +1,5 @@
 
-GemsePEditor.knownClasses.push(EditMode);
+if (window.GemsePEditor) { GemsePEditor.knownClasses.push(EditMode) }
 
 /**
  * After creation of the object, its init method must be called.
@@ -20,6 +20,7 @@ function EditMode(editor, equationEnv) {
      * @constant
      */
     this.equationEnv = equationEnv;
+    this.commandHandler = new CommandHandler(this,editModeCommandOptions,editModeCommands);
     /**
      * The selection (as returned by the visual mode) the next command
      * will operate on. This is set after the visual mode terminates
@@ -85,90 +86,20 @@ EditMode.prototype = {
     get contextNode() { return this.cursor; },
     /**
      * Handles the first command from the input buffer. This method is
-     * called if the input buffer changes.
-     * @returns true if the first command from the input buffer was
-     *               successfully executed and removed from the input
-     *               buffer, false if the command does not exist or is
-     *               not yet complete
+     * called if the input buffer changes. It does not parse the
+     * command itself but uses the CommandHandler.
+     * @returns true if a command was removed from the input buffer.
+     *          If there was nothing removed, that is, there was no
+     *          complete command, false is returned.
      */
     inputHandler: function() {
-        var command = this.editor.inputBuffer;
-        // endOfCommandIndex points to the end of the command in the
-        // input buffer. It counts unicode characters, not UTF16
-        // characters.
-        var endOfCommandIndex = 0;
-        var commandArg = null;
-        var forceFlag = false;
-        var singleCharacterArgs = [];
-        while (command[0] == '"') {
-            if (command.length < 2) { return } // Returns if the user has not yet entered the character
-            singleCharacterArgs.push(command.uCharAt(1));
-            command = command.uSlice(2);
-            endOfCommandIndex += 2;
-        }
-        if (command[0] == ":") { // Treate this as a long command
-            var inf = /^(:[^\s\n!]*)(!?)(\s+([^\n]*))?\n$/.exec(command);
-            if (inf) {
-                command = inf[1];
-                if (inf[2]) { forceFlag = true }
-                commandArg = inf[4] || ""; // Prevent commandArg from being null (XXX: is this good?)
-                endOfCommandIndex += inf[0].uLength + 1;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            var firstCommand = command.uSlice(0,1);
-            while (!editModeCommands[firstCommand] && firstCommand.length < command.length) { 
-                firstCommand = command.uSlice(0,firstCommand.uLength + 1);
-            }
-            command = firstCommand;
-            endOfCommandIndex += firstCommand.uLength;
-        }
-        commandObject = editModeCommands[command];
-        if (commandObject) {
-            if (commandObject.type == "long") {
-                var executionResult = commandObject.execute(this,commandArg,forceFlag)
-                // TODO: Only clear buffer if it returns true?
-                editor.eatInput(endOfCommandIndex);
-            }
-            else if (commandObject.type == "movement") {
-                var executionResult = commandObject.execute(this,this.cursor)
-                // A movement method must return a node or null
-                // (A movement command is not allowed to have side
-                // effect.)
-                if (executionResult) {
-                    this.moveCursor(executionResult);
-                }
-                // If executionResult is null, we do not move the
-                // cursor
-                editor.eatInput(endOfCommandIndex);
-            }
-            else {
-                if (this.userSelectionForNextCommand) {
-                    // For debugging purposes:
-                    if (!(this.userSelectionForNextCommand.startElement && this.userSelectionForNextCommand.endElement)) {
-                        throw "A selection must have a startElement and an endElement.";
-                    }
-                }
-                if (commandObject.type == "operator" && !this.userSelectionForNextCommand) {
-                    // An operator expects a selection, so if none is present,
-                    // take the cursor as the only selected element.
-                    // This will be revised later.
-                    this.userSelectionForNextCommand = {startElement: this.cursor, endElement: this.cursor};
-                }
-                var executionResult = commandObject.execute(this,command,singleCharacterArgs,this.userSelectionForNextCommand);
-                // TODO: Only clear buffer if it returns true?
-                editor.eatInput(endOfCommandIndex);
-            }
-            this.userSelectionForNextCommand = null;
-            return true; // TODO: Or should it return executionResult?
-        }
-        else {
-            // Command not found
-            return false;
-        }
+        this.commandHandler.selection = 
+            this.userSelectionForNextCommand || { startElement: this.cursor, endElement: this.cursor };
+        var instance = this.commandHandler.parse();
+        if (!instance.isReadyToExecute) { return false }
+        this.userSelectionForNextCommand = null;
+        instance.execute();
+        return true;
     },
     /** 
      * Starts insert mode. This is useful for commands that open the
@@ -285,6 +216,12 @@ EditMode.gemseOptions = {
     },
 }
 
+/* Execution handler for movement commands */
+
+function editModeExecutionHandler_movement(mode,instance) {
+    var destination = instance.implementation(mode,mode.cursor);
+    if (destination) { mode.moveCursor(destination) }
+}
 
 /* Commands */
 /* For documentation look into the user documentation */
@@ -329,7 +266,7 @@ function editModeCommand_moveToPreviousLeaf(mode, currentElement) {
     return mml_previousLeaf(currentElement);
 }
 
-function editModeCommand_undo(mode) {
+function editModeCommand_undo(mode,instance) {
     // The glorious undo
     mode.hideCursor();
     if (!mode.equationEnv.history.goBack(mode.equationEnv)) {
@@ -339,7 +276,7 @@ function editModeCommand_undo(mode) {
     return true;
 }
 
-function editModeCommand_redo(mode) {
+function editModeCommand_redo(mode,instance) {
     // The inverse of the glorious undo
     mode.hideCursor();
     if (!mode.equationEnv.history.goForward(mode.equationEnv)) {
@@ -349,7 +286,7 @@ function editModeCommand_redo(mode) {
     return true;
 }
 
-function editModeCommand_kill(mode) {
+function editModeCommand_kill(mode,instance) {
     var target = mode.cursor;
     var parentOfTarget = target.parentNode;
     var change = mode.equationEnv.history.createChange();
@@ -362,13 +299,13 @@ function editModeCommand_kill(mode) {
     return true;
 }
 
-function editModeCommand_delete(mode,command,singleCharacterArgs,userSelection) {
-    var from = userSelection.startElement; // \ Those two must be siblings, in the right order!
-    var to = userSelection.endElement;     // /
+function editModeCommand_delete(mode,instance) {
+    var from = instance.selection.startElement; // \ Those two must be siblings, in the right order!
+    var to = instance.selection.endElement;     // /
     if (!(from && to)) {
         throw "Delete wants a startElement and an endElement in the selection!";
     }
-    var parentOfTargets = userSelection.startElement.parentNode;
+    var parentOfTargets = instance.selection.startElement.parentNode;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,parentOfTargets);
     mode.moveCursor(mml_nextSibling(to) || mml_previousSibling(from) || parentOfTargets);
@@ -384,13 +321,13 @@ function editModeCommand_delete(mode,command,singleCharacterArgs,userSelection) 
     return true;
 }
 
-function editModeCommand_change(mode,command,singleCharacterArgs,userSelection) {
-    var from = userSelection.startElement; // \ Those two must be siblings, in the right order!
-    var to = userSelection.endElement;     // /
+function editModeCommand_change(mode,instance) {
+    var from = instance.selection.startElement; // \ Those two must be siblings, in the right order!
+    var to = instance.selection.endElement;     // /
     if (!(from && to)) {
         throw "Change wants a startElement and an endElement in the selection!";
     }
-    var parentOfTargets = userSelection.startElement.parentNode;
+    var parentOfTargets = instance.selection.startElement.parentNode;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,parentOfTargets);
     var cursorBefore = mml_nextSibling(to);
@@ -406,7 +343,7 @@ function editModeCommand_change(mode,command,singleCharacterArgs,userSelection) 
     return mode.callInsertMode(parentOfTargets, cursorBefore, change, parentOfTargets);
 }
 
-function editModeCommand_attributeMode(mode) {
+function editModeCommand_attributeMode(mode,instance) {
     mode.infoAboutCalledMode = {
         change: mode.equationEnv.history.createChange(),
         changeElement: mode.cursor
@@ -455,19 +392,15 @@ function editModeCommand_insertAtEnd(mode) {
     return editModeCommand_insertAfter(mode);
 }
 
-function editModeCommand_set(mode, argString) {
-
-}
-
 function editModeCommand_redisplay(mode) {
     mode.moveCursor(mode.cursor);
     return true;
 }
 
-function editModeCommand_serialize(mode, argString) {
+function editModeCommand_serialize(mode, instance) {
     var serializer = new XMLSerializer();
     var rootNode;
-    if (argString.indexOf("raw") != -1) { //argString contains "raw"
+    if (instance.argument.indexOf("raw") != -1) { //argString contains "raw"
         rootNode = mode.equationEnv.equation;
     }
     else {
@@ -478,7 +411,7 @@ function editModeCommand_serialize(mode, argString) {
         doc.appendChild(rootNode);
         mode.equationEnv.cleanSubtreeOfDocument(doc, rootNode);
     }
-    if (argString.indexOf("pretty") != -1) {
+    if (instance.argument.indexOf("pretty") != -1) {
         var xmlString = XML(serializer.serializeToString(rootNode)).toXMLString();
     }
     else {
@@ -489,11 +422,11 @@ function editModeCommand_serialize(mode, argString) {
     return true;
 }
 
-function editModeCommand_export(mode, argString) {
+function editModeCommand_export(mode, instance) {
 
     // Fetch exporter stylesheet
     var stylesheet;
-    if (argString == "tex" || !argString) {
+    if (instance.argument == "tex" || !instance.argument) {
         // Create request
         var request = new XMLHttpRequest();
         request.open("GET", "exporters/xsltml/mmltex.xsl", false);
@@ -502,7 +435,7 @@ function editModeCommand_export(mode, argString) {
         delete request;
     }
     else {
-        throw "Unknown exporter: " + argString;
+        throw "Unknown exporter: " + instance.argument;
     }
 
     // Create new document, since cleanSubtreeOfDocument requires
@@ -541,45 +474,45 @@ function editModeCommand_newEquation(mode) {
     return true;
 }
 
-function editModeCommand_load(mode, argString) {
-    mode.editor.loadURI(argString);
+function editModeCommand_load(mode, instance) {
+    mode.editor.loadURI(instance.argument);
     return true;
 }
-function editModeCommand_loadById(mode, argString) {
-    var inf = argString.match(/^(\S+)\s(.*)$/);
+function editModeCommand_loadById(mode, instance) {
+    var inf = instance.argument.match(/^(\S+)\s(.*)$/);
     if (!inf) { throw "Wrong argument format" }
     var uri = inf[1];
     var id = inf[2];
     mode.editor.loadURI(uri, id);
     return true;
 }
-function editModeCommand_loadByXPath(mode, argString) {
-    var inf = argString.match(/^(\S+)\s(.*)$/);
+function editModeCommand_loadByXPath(mode, instance) {
+    var inf = instance.argument.match(/^(\S+)\s(.*)$/);
     if (!inf) { throw "Wrong argument format" }
     var uri = inf[1];
     var xpathString = inf[2];
     mode.editor.loadURI(uri,null,xpathString);
     return true;
 }
-function editModeCommand_loadAll(mode, argString) {
-    mode.editor.loadURI(argString,null,"//m:math");
+function editModeCommand_loadAll(mode, instance) {
+    mode.editor.loadURI(instance.argument,null,"//m:math");
     return true;
 }
 
-function editModeCommand_save(mode, argString) {
-    mode.equationEnv.save(argString); // argString may be null
+function editModeCommand_save(mode, instance) {
+    mode.equationEnv.save(instance.argument); // instance.argument may be null
     return true;
 }
 
-function editModeCommand_saveAll(mode, argString) {
+function editModeCommand_saveAll(mode) {
     mode.editor.equations.forEach(function (e) {
         e.save();
     });
     return true;
 }
 
-function editModeCommand_close(mode, argString, forceFlag) {
-    mode.equationEnv.close(forceFlag);
+function editModeCommand_close(mode, instance) {
+    mode.equationEnv.close(instance.forceFlag);
     return true;
 }
 
@@ -603,8 +536,8 @@ function editModeCommand_previousEquation(mode) {
     return true;
 }
 
-function editModeCommand_help(mode, argString) {
-    var args = argString.split(/\s+/);
+function editModeCommand_help(mode, instance) {
+    var args = instance.argument.split(/\s+/);
     if (args[0] == "tutorial") {
         window.open("doc/tutorial.xhtml", "_blank");
     }
@@ -623,9 +556,8 @@ function editModeCommand_help(mode, argString) {
     return true;
 }
 
-function editModeCommand_putAfter(mode,commandString,args) {
-    var registerName = "";
-    if (args != null) { registerName = args[0]; }
+function editModeCommand_putAfter(mode,instance) {
+    var registerName = instance.singleCharacterPreArguments[0] || "";
     var position = mml_nextSibling(mode.cursor);
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
@@ -639,9 +571,8 @@ function editModeCommand_putAfter(mode,commandString,args) {
     return true;
 }
 
-function editModeCommand_putBefore(mode,commandString,args) {
-    var registerName = "";
-    if (args != null) { registerName = args[0]; }
+function editModeCommand_putBefore(mode,instance) {
+    var registerName = instance.singleCharacterPreArguments[0] || "";
     var position = mode.cursor;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
@@ -655,10 +586,9 @@ function editModeCommand_putBefore(mode,commandString,args) {
     return true;
 }
 
-function editModeCommand_putIn(mode,commandString,args) {
+function editModeCommand_putIn(mode,instance) {
     // Put the content of a register into an _empty_ element
-    var registerName = "";
-    if (args != null) { registerName = args[0]; }
+    var registerName = instance.singleCharacterPreArguments[0] || "";
     var position = null;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor);
@@ -672,23 +602,23 @@ function editModeCommand_putIn(mode,commandString,args) {
     return true;
 }
 
-function editModeCommand_mrowEnvelop(mode,commandString,args,userSelection) {
+function editModeCommand_mrowEnvelop(mode,instance) {
     // Put an mrow element around the selection
     var change = mode.equationEnv.history.createChange();
-    var parentNode = userSelection.startElement.parentNode;
-    var positionInParentNode = userSelection.endElement.nextSibling;
+    var parentNode = instance.selection.startElement.parentNode;
+    var positionInParentNode = instance.selection.endElement.nextSibling;
     change.recordBefore(mode.equationEnv.equation,parentNode);
 
     var newMrow = document.createElementNS(NS_MathML, "mrow");
     
     // Fill the new mrow
-    var pos = userSelection.startElement;
-    while (pos != userSelection.endElement) {
+    var pos = instance.selection.startElement;
+    while (pos != instance.selection.endElement) {
         var nextPos = mml_nextSibling(pos);
         newMrow.appendChild(pos);
         pos = nextPos;
     }
-    newMrow.appendChild(userSelection.endElement);
+    newMrow.appendChild(instance.selection.endElement);
 
     // Put the mrow where it belongs
     parentNode.insertBefore(newMrow, positionInParentNode);
@@ -700,11 +630,11 @@ function editModeCommand_mrowEnvelop(mode,commandString,args,userSelection) {
     return true;
 }
 
-function editModeCommand_copyToRegister(mode,commandString,args,userSelection) {
+function editModeCommand_copyToRegister(mode,instance) {
     var registerName = "";
-    if (args != null) { registerName = args[0]; }
-    var from = userSelection.startElement; // \ Those two must be siblings, in the right order!
-    var to = userSelection.endElement;     // /
+    if (instance.singleCharacterPreArguments.length > 0) { registerName = instance.singleCharacterPreArguments[0]; }
+    var from = instance.selection.startElement; // \ Those two must be siblings, in the right order!
+    var to = instance.selection.endElement;     // /
     var registerContent = [];
     mode.hideCursor();
     while (from != to) {
@@ -717,7 +647,7 @@ function editModeCommand_copyToRegister(mode,commandString,args,userSelection) {
     return true;
 }
 
-function editModeCommand_startstopUserRecording(name) {
+function editModeCommand_startstopUserRecording(mode,instance) {
 
 }
 
@@ -735,9 +665,11 @@ function editModeCommand_cycleInsertMode(mode) {
     return true;
 }
 
-function editModeCommand_set(mode, argString) {
-    var args = argString.match(/^(global )?([^=\s]+)(=(.*))?$/);
-    if (!args) { throw "I do not understand " + argString; }
+function editModeCommand_set(mode, instance) {
+    // TODO: Use parameter parsing facility from the CommandHandler
+    // instead of doing our own. Problem: set global?
+    var args = instance.argument.match(/^(global )?([^=\s]+)(=(.*))?$/);
+    if (!args) { throw "I do not understand " + instance.argument; }
     var global = args[1];
     var key = args[2];
     var value = args[4];

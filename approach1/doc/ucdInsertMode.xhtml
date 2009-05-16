@@ -26,7 +26,7 @@
     <script src="commandListProcessing.js"/>
 </head>
 
-<body onload="modeCommands = ucdInsertModeCommands; init()">
+<body onload="modeCommands = ucdInsertModeCommands; doc_init()">
 
 <h1>UCD Insert Mode</h1>
 
@@ -39,7 +39,7 @@ for example you do not need to hit <kbd>o</kbd> before hitting
 <kbd>=</kbd> in order to tell Gemse that it is an operator. Yo can
 simply hit <kbd>=</kbd> and the ucd insert mode looks into the UCD in
 order to find out wether it is an operator, an identifier or a digit.
-For example <kbd>a+b=2c</kbd> would insert an identifier <code>A</code>, an
+For example <kbd>a+b=2c</kbd> would insert an identifier <code>a</code>, an
 operator <code>+</code>, an identifier <code>b</code>, an operator
 <code>=</code>, a number <code>2</code> and an
 identifier <code>c</code>.</p>
@@ -51,19 +51,19 @@ identifier <code>c</code>.</p>
 <h2>Commands</h2>
 
 <table>
-<thead><tr><th>Command</th><th>title</th><th>Function name</th><th>type</th></tr></thead>
+<thead><tr><th>Command</th><th>title</th><th>Function name</th></tr></thead>
 <tbody id="commandTableBody">
 
 </tbody>
 </table>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_mrow">
+<div class="commandDocumentation" id="ucdInsertModeCommand_mrow">
     <h3 class="commandTitle">mrow</h3>
 
     <p>Inserts an <code>mrow</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_mfrac">
+<div class="commandDocumentation" id="ucdInsertModeCommand_mfrac">
     <h3 class="commandTitle">mfrac</h3>
 
     <p>Inserts an <code>mfrac</code> element, a fraction.</p>

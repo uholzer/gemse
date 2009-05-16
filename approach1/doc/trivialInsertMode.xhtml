@@ -25,11 +25,11 @@
     <script src="commandListProcessing.js"/>
 </head>
 
-<body onload="modeCommands = trivialInsertModeCommands; init()">
+<body onload="modeCommands = trivialInsertModeCommands; doc_init()">
 
 <h1>Trivial Insert Mode</h1>
 
-<h2></h2>
+<h2>Introduction</h2>
 
 <p>The trivial insert mode works like this: First you have to tell
 what element you want, then you can enter its content. When you are
@@ -41,15 +41,15 @@ manner. Okay, this sounds a little bit esoterically.</p>
 that contain text directly can be usually created in two ways. One way
 is to create an element with one character as content:
 For example
-<kbd><internal:cmdph ref="trivialInsertModeCommand_miSingle"/></kbd>
+<kbd><internal:cmdph ref="trivialInsertModeCommand_mi" select="b.argument=='characters'"/></kbd>
 is used to create an <code>mi</code> element. Now you need to enter
 the character which will be the content and the element will be
-created immediately and the cursor placed behind it. So, for example.
-<kbd><internal:cmdph ref="trivialInsertModeCommand_miSingle"/>α</kbd>
+created immediately and the cursor placed behind it. So, for example
+<kbd><internal:cmdph ref="trivialInsertModeCommand_mi" select="b.argument=='characters'"/>α</kbd>
 enters an <code>mi</code> element containing α.
 The second way is to create an element with more than one character.
 For example 
-<kbd><internal:cmdph ref="trivialInsertModeCommand_miLong"/>sin&enter;</kbd>
+<kbd><internal:cmdph ref="trivialInsertModeCommand_mi" select="b.argument=='newlineTerminated'"/>sin&enter;</kbd>
 creates an <code>mi</code> element containing <code>sin</code>.</p>
 
 <p>Elements that actually can have children are treated differently.
@@ -68,91 +68,24 @@ are inserting.</p>
 <h2>Commands</h2>
 
 <table>
-<thead><tr><th>Command</th><th>title</th><th>Function name</th><th>type</th></tr></thead>
+<thead><tr><th>Command</th><th>title</th><th>Function name</th></tr></thead>
 <tbody id="commandTableBody">
 
 </tbody>
 </table>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_miSingle">
-    <h3 class="commandTitle">Single character identifier</h3>
-
-    <p>Inserts an identifier (an <code>mi</code> element) containing a
-    single character. Simply type the command and then the
-    character.</p>
+<div class="commandDocumentation" id="trivialInsertModeCommand_mi">
+    <h3 class="commandTitle">Identifier</h3>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_miLong">
-    <h3 class="commandTitle">Multi character identifier</h3>
-
-    <p>Inserts an identifier (an <code>mi</code> element) containing
-    as many characters as you want. Type the command, then the
-    characters the element should contain. Terminate with
-    <kbd>&enter;</kbd>.</p>
+<div class="commandDocumentation" id="trivialInsertModeCommand_mo">
+    <h3 class="commandTitle">Operator</h3>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_moNormal">
-    <h3 class="commandTitle">Single character operator</h3>
-
-    <p>Inserts an operator (an <code>mo</code> element) containing a
-    single character. Simply type the command and then the
-    character.</p>
+<div class="commandDocumentation" id="trivialInsertModeCommand_mn">
+    <h3 class="commandTitle">Number</h3>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_moLong">
-    <h3 class="commandTitle">Multi character identifier</h3>
-
-    <p>Inserts an operator (an <code>mo</code> element) containing
-    as many characters as you want. Type the command, then the
-    characters the element should contain. Terminate with
-    <kbd>&enter;</kbd>.</p>
-</div>
-
-<div class="commandDocumentation" id="trivialInsertModeCommand_mnNormal">
-    <h3 class="commandTitle">Normal Number</h3>
-
-    <p>Inserts a number (an <code>mn</code> element) containing
-    a number which may begin with <code>+</code> or <code>-</code> and
-    consists otherwise only of digits (0 to 9) and a (dezimal)
-    point. After typing the command, you can type the number right
-    away. When you type a character that can not belong to the number,
-    the insert mode detects that the number is complete and will
-    insert it. The last character inserted will be considered for the
-    next command. If you are not going to insert another character
-    behind the number (for example because you want to terminate the mode),
-    you can use the space bar to force termination. Be aware that
-    because of a bug, if you want to hit <kbd>&enter;</kbd> afterwards,
-    you must use <kbd>&space;</kbd> first.</p>
-
-    <p>In order to get 
-    <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <mrow>
-        <mn>250</mn>
-        <mo>×</mo>
-        <mn>0.4</mn>
-        <mo>=</mo>
-        <mn>5</mn>
-      </mrow>
-    </math>
-    you can type
-    <kbd><internal:cmdph/>250<internal:cmdph ref="trivialInsertModeCommand_moNormal"/>×<internal:cmdph/>0.4<internal:cmdph ref="trivialInsertModeCommand_moNormal"/>=<internal:cmdph/>5<internal:cmdph ref="trivialInsertModeCommand_cursorJump"/></kbd>
-    </p>
-
-</div>
-
-<div class="commandDocumentation" id="trivialInsertModeCommand_mnLong">
-    <h3 class="commandTitle">Long number</h3>
-
-    <p>If you need an exotically written number or a number of a
-    script Gemse does not know about, you can use this command. For
-    example <kbd><internal:cmdph/>7e00&enter;</kbd> inserts a number
-    in hexadecimal notation.</p>
-
-    <p>Do not use this command to insert complex numbers like
-    <code><![CDATA[<mn>1+2𝕚</mn>]]></code>. In this case you should
-    use <code><![CDATA[<mrow><mn>1</mn><mo>+</mo><mn>2</mn><mi>𝕚</mi></mrow>]]></code>!</p>
-
-</div>
 
 <div class="commandDocumentation" id="trivialInsertModeCommand_mrow">
     <h3 class="commandTitle">mrow</h3>

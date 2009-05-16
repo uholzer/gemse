@@ -16,6 +16,7 @@ function UCDInsertMode(editor, equationEnv, inElement, beforeElement) {
         numberOfElementsToSurround: 0
     };
     this.cursorStack = [];
+    this.commandHandler = new CommandHandler(this,ucdInsertModeCommandOptions,ucdInsertModeCommands);
 }
 UCDInsertMode.prototype = {
     name: "insert (UCD)",
@@ -97,20 +98,12 @@ UCDInsertMode.prototype = {
     },
     get contextNode() { return null }, // TODO
     inputHandler: function() {
-        // First check wheter this could be a command from the command
-        // table. Otherwise handle it as indicated by the UCD
-        var command = this.editor.inputBuffer;
-        var firstCommand = command.slice(0,1);
-        while (!ucdInsertModeCommands[firstCommand] && firstCommand.length < command.length) { 
-            firstCommand = command.slice(0,firstCommand.length + 1);
+        var instance = this.commandHandler.parse();
+        if (instance.isReadyToExecute) {
+            instance.execute();
+            return true;
         }
-        var command = firstCommand;
-        var commandObject = ucdInsertModeCommands[command];
-        if (commandObject) {
-            // The first endOfCommandIndex+1 characters are a command.
-            return commandObject.execute(this,command);
-        }
-        else {
+        else if (instance.notFound) {
             // The input buffer does not begin with a command, so look
             // into the UCD to decide what to do.
 
@@ -190,6 +183,11 @@ UCDInsertMode.prototype = {
             else {
                 throw "I don't know what to do with " + c + ", it seems not to be an operator, a digit or an identifier.";
             }
+
+            return true;
+        }
+        else {
+            return false;
         }
     },
     getNewPlaceholderElement: function() {

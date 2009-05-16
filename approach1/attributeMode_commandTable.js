@@ -1,52 +1,81 @@
 
+attributeModeCommandOptions = {
+    repeating: true,
+}
 attributeModeCommands = {
     "j": {
-        type: "movement",
-        execute: attributeModeCommand_down
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: attributeModeCommand_down
     },
     "k": {
-        type: "movement",
-        execute: attributeModeCommand_up
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: attributeModeCommand_up
     },
     "x": {
-        type: "action",
-        execute: attributeModeCommand_kill
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: attributeModeCommand_kill
     },
     "c": {
-        type: "action",
-        execute: attributeModeCommand_changeValue
+        type: "command",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: attributeModeCommand_changeValue
     },
     "C": {
-        type: "action",
-        execute: attributeModeCommand_changeName
+        type: "command",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: attributeModeCommand_changeName
     },
     "n": {
-        type: "action",
-        execute: attributeModeCommand_changeNS
+        type: "command",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: attributeModeCommand_changeNS
     },
     "i": {
-        type: "action",
-        execute: attributeModeCommand_insertDefault
+        type: "command",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        argumentLineCount: 2,
+        implementation: attributeModeCommand_insertDefault
     },
     "I": {
-        type: "action",
-        execute: attributeModeCommand_insertForeign
+        type: "command",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        argumentLineCount: 3,
+        implementation: attributeModeCommand_insertForeign
     },
     "!": {
-        type: "action",
-        execute: attributeModeCommand_setDefaultForMissing
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: attributeModeCommand_setDefaultForMissing
     },
     "-": {
-        type: "action",
-        execute: attributeModeCommand_clearAll
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: attributeModeCommand_clearAll
     },
     "=": {
-        type: "action",
-        execute: attributeModeCommand_setFromDictionary
+        type: "command",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: attributeModeCommand_setFromDictionary
     },
 }
 attributeModeCommands[String.fromCharCode(0x1b)] = { // Escape
-    type: "action",
-    execute: attributeModeCommand_exit
+    type: "command",
+    repeating: "prevent",
+    argument: "none",
+    implementation: attributeModeCommand_exit
 }
 

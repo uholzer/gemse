@@ -1,88 +1,192 @@
+trivialInsertModeCommandOptions = {
+    repeating: true,
+}
 
 trivialInsertModeCommands = {
     "i": {
-        execute: trivialInsertModeCommand_miSingle
+        type: "command",
+        repeating: "external",
+        argument: "characters",
+        argumentCharacterCount: 1,
+        implementation: function trivialInsertModeCommand_mi (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mi") }
     },
     "I": {
-        execute: trivialInsertModeCommand_miLong
+        type: "command",
+        repeating: "external",
+        argument: "newlineTerminated",
+        implementation: function trivialInsertModeCommand_mi (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mi") }
     },
     "n": {
-        execute: trivialInsertModeCommand_mnNormal
+        type: "command",
+        repeating: "external",
+        argument: "manual",
+        extractArgument: function(commandHandler) {
+            var s = commandHandler.buffer.slice(commandHandler.pos);
+            // The following regex is intentionally made such that it
+            // does not much if and only if the argument is not known
+            // to be complete.
+            var res = /^([+-]?[0-9.]*)[^0-9.]/.exec(s);
+            if (res) {
+                commandHandler.pos += res[1].length;
+                return res[1];
+            }
+            else { 
+                // Command is not complete
+                return undefined;
+            }
+        },
+        implementation: function trivialInsertModeCommand_mn (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mn") }
     },
     "N": {
-        execute: trivialInsertModeCommand_mnLong
+        type: "command",
+        repeating: "external",
+        argument: "newlineTerminated",
+        implementation: function trivialInsertModeCommand_mn (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mn") }
     },
     "o": {
-        execute: trivialInsertModeCommand_moNormal
+        type: "command",
+        repeating: "external",
+        argument: "characters",
+        argumentCharacterCount: 1,
+        implementation: function trivialInsertModeCommand_mo (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mo") }
     },
     "O": {
-        execute: trivialInsertModeCommand_moLong
+        type: "command",
+        repeating: "external",
+        argument: "newlineTerminated",
+        implementation: function trivialInsertModeCommand_mo (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mo") }
     },
     "t": {
-        execute: trivialInsertModeCommand_mtext
+        type: "command",
+        repeating: "external",
+        argument: "newlineTerminated",
+        implementation: function trivialInsertModeCommand_mtext (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mtext") }
     },
     " ": {
-        execute: function trivialInsertModeCommand_mrow (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mrow") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_mrow (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mrow") }
     },
     "/": {
-        execute: function trivialInsertModeCommand_mfrac (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mfrac") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_mfrac (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mfrac") }
     },
     "e": {
-        execute: function trivialInsertModeCommand_menclose (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"menclose") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_menclose (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"menclose") }
     },
     "r": {
-        execute: function trivialInsertModeCommand_msqrt (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msqrt") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_msqrt (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msqrt") }
     },
     "R": {
-        execute: function trivialInsertModeCommand_mroot (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mroot") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_mroot (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mroot") }
     },
     "f": {
-        execute: function trivialInsertModeCommand_mfenced (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mfenced") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_mfenced (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mfenced") }
     },
     "^": {
-        execute: function trivialInsertModeCommand_msup (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msup") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_msup (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msup") }
     },
     "_": {
-        execute: function trivialInsertModeCommand_msub (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msub") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_msub (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msub") }
     },
     "=": {
-        execute: function trivialInsertModeCommand_msubsup (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"msubsup") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_msubsup (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msubsup") }
     },
     "u": {
-        execute: function trivialInsertModeCommand_munder (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"munder") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_munder (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munder") }
     },
     "v": {
-        execute: function trivialInsertModeCommand_mover (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mover") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_mover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mover") }
     },
     "U": {
-        execute: function trivialInsertModeCommand_munderover (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"munderover") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_munderover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munderover") }
     },
     "m": {
-        execute: function trivialInsertModeCommand_mmultiscripts (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mmultiscripts") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_mmultiscripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mmultiscripts") }
     },
     ".": {
-        execute: function trivialInsertModeCommand_none (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"none") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_none (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"none") }
     },
     "p": {
-        execute: function trivialInsertModeCommand_mprescripts (mode,command) { return trivialInsertModeCommand_insertDescribedElement(mode,command,"mprescripts") }
+        type: "instance",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_mprescripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mprescripts") }
     },
     "t": {
-        execute: trivialInsertModeCommand_table // For inserting table, tr or td elements
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: trivialInsertModeCommand_table // For inserting table, tr or td elements
     },
     "T": {
-        execute: trivialInsertModeCommand_mlabeledtr // For inserting table, tr or td elements
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: trivialInsertModeCommand_mlabeledtr // For inserting table, tr or td elements
     },
     "\n": {
-        execute: trivialInsertModeCommand_cursorJump
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: trivialInsertModeCommand_cursorJump
     },
     "h": {
-        execute: trivialInsertModeCommand_oneMoreToSurround
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: trivialInsertModeCommand_oneMoreToSurround
     },
     "l": {
-        execute: trivialInsertModeCommand_oneLessToSurround
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: trivialInsertModeCommand_oneLessToSurround
     },
 }
 trivialInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
-    execute: trivialInsertModeCommand_exit
+    type: "command",
+    repeating: "prevent",
+    argument: "none",
+    implementation: trivialInsertModeCommand_exit
 }
 
