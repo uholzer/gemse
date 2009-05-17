@@ -17,6 +17,11 @@ function UCDInsertMode(editor, equationEnv, inElement, beforeElement) {
     };
     this.cursorStack = [];
     this.commandHandler = new CommandHandler(this,ucdInsertModeCommandOptions,ucdInsertModeCommands);
+    /** Set to true if the next character must not be added to the
+     * content of the preceding element. This is useful if the user
+     * wants to insert two mn elements behind each other.
+     */
+    this.forceNewElement = false;
 }
 UCDInsertMode.prototype = {
     name: "insert (UCD)",
@@ -101,6 +106,9 @@ UCDInsertMode.prototype = {
         var instance = this.commandHandler.parse();
         if (instance.isReadyToExecute) {
             instance.execute();
+            // Do not do
+            //   this.forceNewElement = false;
+            // here, since otherwise the user can not set it to true
             return true;
         }
         else if (instance.notFound) {
@@ -165,11 +173,11 @@ UCDInsertMode.prototype = {
             }
             else if (ucd.isDigit(c)) {
                 // We assume that it does not happen that the user
-                // wants to have two consecutive mn elements. (For
-                // indecies that consist of two numbers, please put an
-                // invisible comma between them.)
+                // wants to have two consecutive mn elements. This is
+                // not good, since for example in a subsup element,
+                // both children can be mn.
                 var precedingElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
-                if (precedingElement && precedingElement.namespaceURI == NS_MathML && precedingElement.localName == "mn") {
+                if (precedingElement && precedingElement.namespaceURI == NS_MathML && precedingElement.localName == "mn" && !this.forceNewElement) {
                     precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities or similar?
                     this.equationEnv.updateViews();
                 }
@@ -184,6 +192,7 @@ UCDInsertMode.prototype = {
                 throw "I don't know what to do with " + c + ", it seems not to be an operator, a digit or an identifier.";
             }
 
+            this.forceNewElement = false;
             return true;
         }
         else {
@@ -298,11 +307,13 @@ UCDInsertMode.prototype = {
     },
 }
 
+function ucdInsertModeCommand_forceNewElement(mode) {
+    mode.forceNewElement = true;
+    return true;
+}
 
-
-function ucdInsertModeCommand_exit(mode,command) {
+function ucdInsertModeCommand_exit(mode) {
     mode.finish();
-    mode.editor.eatInput(command.length);
     return true;
 }
 

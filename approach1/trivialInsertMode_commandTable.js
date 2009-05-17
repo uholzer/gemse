@@ -56,7 +56,7 @@ trivialInsertModeCommands = {
         argument: "newlineTerminated",
         implementation: function trivialInsertModeCommand_mo (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mo") }
     },
-    "t": {
+    "s": {
         type: "command",
         repeating: "external",
         argument: "newlineTerminated",

@@ -38,9 +38,24 @@ ucdInsertModeCommands = {
 ucdInsertModeCommands[KEYMOD_CONTROL] = {
     type: "disamb",
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "t"] = {
+ucdInsertModeCommands[KEYMOD_CONTROL + "i"] = {
     type: "command",
-    argument: "none",
+    argument: "newlineTerminated",
+    implementation: function ucdInsertModeCommand_mi (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mi") }
+}
+ucdInsertModeCommands[KEYMOD_CONTROL + "o"] = {
+    type: "command",
+    argument: "newlineTerminated",
+    implementation: function ucdInsertModeCommand_mo (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mo") }
+}
+ucdInsertModeCommands[KEYMOD_CONTROL + "n"] = {
+    type: "command",
+    argument: "newlineTerminated",
+    implementation: function ucdInsertModeCommand_mn (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mn") }
+}
+ucdInsertModeCommands[KEYMOD_CONTROL + "s"] = {
+    type: "command",
+    argument: "newlineTerminated",
     implementation: function ucdInsertModeCommand_mtext (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mtext") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "e"] = {
@@ -63,6 +78,11 @@ ucdInsertModeCommands[KEYMOD_CONTROL + "f"] = {
     argument: "none",
     implementation: function ucdInsertModeCommand_mfenced (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mfenced") }
 }
+ucdInsertModeCommands[KEYMOD_CONTROL + "^"] = {
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_msubsup (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msubsup") }
+}
 ucdInsertModeCommands[KEYMOD_CONTROL + "u"] = {
     type: "command",
     argument: "none",
@@ -82,6 +102,11 @@ ucdInsertModeCommands[KEYMOD_CONTROL + "m"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_mmultiscripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mmultiscripts") }
+}
+ucdInsertModeCommands[KEYMOD_CONTROL + "."] = {
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_none (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"none") }
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "p"] = {
     type: "command",
@@ -107,6 +132,11 @@ ucdInsertModeCommands[KEYMOD_CONTROL + "l"] = {
     type: "command",
     argument: "none",
     implementation: trivialInsertModeCommand_oneLessToSurround
+}
+ucdInsertModeCommands[KEYMOD_CONTROL + ","] = {
+    type: "command",
+    argument: "none",
+    implementation: ucdInsertModeCommand_forceNewElement
 }
 ucdInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
     type: "command",
