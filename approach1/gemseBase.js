@@ -1995,3 +1995,10 @@ function mml_previousLeaf(element) {
     return previousLeaf;
 }
 
+/**
+ * Removes all child nodes of the element
+ */
+function xml_flushElement(element) {
+    while (element.hasChildNodes()) { element.removeChild(element.firstChild); }
+}
+

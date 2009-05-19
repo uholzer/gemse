@@ -138,7 +138,8 @@ table.doc_commandDetailTable td {
 [internal|function="documentation"] h1,
 [internal|function="documentation"] h2,
 [internal|function="documentation"] h3,
-[internal|function="documentation"] h4 {
+[internal|function="documentation"] h4,
+[internal|function="documentation"] div.commandDocumentation {
     clear: both;
 }
 

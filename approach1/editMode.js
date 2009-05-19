@@ -659,8 +659,26 @@ function editModeCommand_cycleInsertMode(mode) {
     else if (index >= 0) { current = selectable[index+1] }
     else { current = selectable[0] }
     mode.editor.setOption("currentInsertMode",current);
+    xml_flushElement(mode.equationEnv.notificationDisplay);
     mode.equationEnv.notificationDisplay.appendChild(
         document.createTextNode("You changed the insert mode to " + mode.editor.getOption("currentInsertMode"))
+    );
+    return true;
+}
+
+function editModeCommand_contentInfo(mode) {
+    // TODO: Improve that
+    var s = "Contents: <";
+    var content = new String(mode.cursor.textContent);
+    for (i = 0; i < content.uLength; ++i) {
+        if (i>0) { s += ", " }
+        s += "U+" + content.uCharCodeAt(i).toString(16) + " ";
+        s += ucd.lookupName(content.uCharAt(i));
+    }
+    s += ">";
+    xml_flushElement(mode.equationEnv.notificationDisplay);
+    mode.equationEnv.notificationDisplay.appendChild(
+        document.createTextNode(s)
     );
     return true;
 }

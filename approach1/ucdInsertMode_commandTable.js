@@ -1,5 +1,5 @@
 
-// Are we allowed to steal instances from trivial insert mode? Hmm,
+// Are we allowed to steal methods from trivial insert mode? Hmm,
 // we do without asking. However, this asks for problems, but it
 // should work as long as our putElement is compatible with the
 // one from trivial mode.

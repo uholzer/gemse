@@ -89,6 +89,13 @@ editModeCommands = {
         executionHandler: editModeExecutionHandler_movement,
         implementation: editModeCommand_moveToPreviousLeaf
     },
+    "ga": {
+        category: "action",
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_contentInfo
+    },
     "x": {
         category: "action",
         type: "command",
