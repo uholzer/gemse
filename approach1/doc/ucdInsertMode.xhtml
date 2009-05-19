@@ -57,10 +57,49 @@ identifier <code>c</code>.</p>
 </tbody>
 </table>
 
+<div class="commandDocumentation" id="ucdInsertModeCommand_mi">
+    <h3 class="commandTitle">explicit mi</h3>
+
+    <p>Inserts an <code>mi</code> element. Use this command when you
+    need an <code>mi</code> element consisting of more than one
+    character or of a character that is not treated as identifier by
+    default.</p>
+</div>
+<div class="commandDocumentation" id="ucdInsertModeCommand_mo">
+    <h3 class="commandTitle">explicit mo</h3>
+
+    <p>Inserts an <code>mo</code> element. Use this command when you
+    need an <code>mo</code> element consisting of more than one
+    character or of a character that is not treated as operator by
+    default.</p>
+</div>
+<div class="commandDocumentation" id="ucdInsertModeCommand_mn">
+    <h3 class="commandTitle">explicit mn</h3>
+
+    <p>Inserts an <code>mn</code> element. Use this command when you
+    need an <code>mn</code> element consisting of a sequence of
+    characters that is not placed into one <code>mn</code> element by
+    default.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_mtext">
+    <h3 class="commandTitle">mtext</h3>
+
+    <p>Inserts an <code>mtext</code> element.</p>
+</div>
+
 <div class="commandDocumentation" id="ucdInsertModeCommand_mrow">
     <h3 class="commandTitle">mrow</h3>
 
     <p>Inserts an <code>mrow</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_none">
+    <h3 class="commandTitle">none</h3>
+
+    <p>Inserts a <code>none</code> element. This is used only inside
+    an <code>mmultiscript</code> element, designating an empty
+    script.</p>
 </div>
 
 <div class="commandDocumentation" id="ucdInsertModeCommand_mfrac">
@@ -79,6 +118,12 @@ identifier <code>c</code>.</p>
     <h3 class="commandTitle">msup</h3>
 
     <p>Inserts an <code>msup</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_msubsup">
+    <h3 class="commandTitle">msubsup</h3>
+
+    <p>Inserts an <code>msubsup</code> element.</p>
 </div>
 
 <div class="commandDocumentation" id="ucdInsertModeCommand_msqrt">
@@ -177,6 +222,17 @@ identifier <code>c</code>.</p>
     <p>Please read the 
     <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_cursorJump">description 
     of this command in the documentation of the trivial insert mode</a>.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_forceNewElement">
+    <h3 class="commandTitle">Begin new element</h3>
+
+    <p>If you enter digits and the element before the cursor is a
+    <code>mn</code> element, the digits get added to the content of
+    that element. If you want to create a new element instead (for
+    examle in a <code>subsup</code> element, where both, subscript and
+    superstcript are numbers), you can call this command and
+    afterwards insert the digits of the new element.</p>
 </div>
 
 <div class="commandDocumentation" id="ucdInsertModeCommand_exit">
