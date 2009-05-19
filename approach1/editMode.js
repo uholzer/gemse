@@ -216,6 +216,36 @@ EditMode.gemseOptions = {
     },
 }
 
+/* Some tools used by the Commands */
+
+/**
+ * Copies a sequence of elements to a register
+ * @param mode
+ * @param selection   An object descrbing the selection. (As given by
+ *                    instance.selection.)  
+ * @param resiterName If this is missing or
+ *                    undefined, the default register * is used.
+
+ */
+function editModeTool_copySelectedElementsToRegister(mode,selection,registerName) {
+    var from = selection.startElement; // \ Those two must be siblings, in the right order!
+    var to = selection.endElement;     // /
+    var registerContent = [];
+    mode.hideCursor();
+    while (from != to) {
+        registerContent.push(from.cloneNode(true));
+        from = mml_nextSibling(from);
+    }
+    registerContent.push(to.cloneNode(true));
+    if (registerName) { // If an explicit register is given
+        mode.editor.registers[registerName] = new Register(registerName, registerContent);
+    }
+    // Always fill the default register, like vim does
+    mode.editor.registers['"'] = new Register('"', registerContent);
+    mode.showCursor();
+    return true;
+}
+
 /* Execution handler for movement commands */
 
 function editModeExecutionHandler_movement(mode,instance) {
@@ -289,6 +319,9 @@ function editModeCommand_redo(mode,instance) {
 function editModeCommand_kill(mode,instance) {
     var target = mode.cursor;
     var parentOfTarget = target.parentNode;
+    // Copy element to default register
+    editModeTool_copySelectedElementsToRegister(mode,{startElement: mode.cursor, endElement: mode.cursor},instance.singleCharacterPreArguments[0]);
+    // Delete element under the cursor
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,parentOfTarget);
     mode.moveCursor(mml_nextSibling(target) || mml_previousSibling(target) || parentOfTarget);
@@ -306,6 +339,9 @@ function editModeCommand_delete(mode,instance) {
         throw "Delete wants a startElement and an endElement in the selection!";
     }
     var parentOfTargets = instance.selection.startElement.parentNode;
+    // Copy the elements we are going to delete
+    editModeTool_copySelectedElementsToRegister(mode,instance.selection,instance.singleCharacterPreArguments[0]);
+    // Remove the elements
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,parentOfTargets);
     mode.moveCursor(mml_nextSibling(to) || mml_previousSibling(from) || parentOfTargets);
@@ -328,6 +364,9 @@ function editModeCommand_change(mode,instance) {
         throw "Change wants a startElement and an endElement in the selection!";
     }
     var parentOfTargets = instance.selection.startElement.parentNode;
+    // Copy elements to be changed to register
+    editModeTool_copySelectedElementsToRegister(mode,instance.selection,instance.singleCharacterPreArguments[0]);
+    // Make the change
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,parentOfTargets);
     var cursorBefore = mml_nextSibling(to);
@@ -557,7 +596,7 @@ function editModeCommand_help(mode, instance) {
 }
 
 function editModeCommand_putAfter(mode,instance) {
-    var registerName = instance.singleCharacterPreArguments[0] || "";
+    var registerName = instance.singleCharacterPreArguments[0] || '"';
     var position = mml_nextSibling(mode.cursor);
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
@@ -572,7 +611,7 @@ function editModeCommand_putAfter(mode,instance) {
 }
 
 function editModeCommand_putBefore(mode,instance) {
-    var registerName = instance.singleCharacterPreArguments[0] || "";
+    var registerName = instance.singleCharacterPreArguments[0] || '"';
     var position = mode.cursor;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
@@ -588,7 +627,7 @@ function editModeCommand_putBefore(mode,instance) {
 
 function editModeCommand_putIn(mode,instance) {
     // Put the content of a register into an _empty_ element
-    var registerName = instance.singleCharacterPreArguments[0] || "";
+    var registerName = instance.singleCharacterPreArguments[0] || '"';
     var position = null;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor);
@@ -631,20 +670,7 @@ function editModeCommand_mrowEnvelop(mode,instance) {
 }
 
 function editModeCommand_copyToRegister(mode,instance) {
-    var registerName = "";
-    if (instance.singleCharacterPreArguments.length > 0) { registerName = instance.singleCharacterPreArguments[0]; }
-    var from = instance.selection.startElement; // \ Those two must be siblings, in the right order!
-    var to = instance.selection.endElement;     // /
-    var registerContent = [];
-    mode.hideCursor();
-    while (from != to) {
-        registerContent.push(from.cloneNode(true));
-        from = mml_nextSibling(from);
-    }
-    registerContent.push(to.cloneNode(true));
-    mode.editor.registers[registerName] = new Register (registerName, registerContent);
-    mode.showCursor();
-    return true;
+    return editModeTool_copySelectedElementsToRegister(mode,instance.selection,instance.singleCharacterPreArguments[0]);
 }
 
 function editModeCommand_startstopUserRecording(mode,instance) {
