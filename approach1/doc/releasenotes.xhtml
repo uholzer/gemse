@@ -25,6 +25,30 @@
 
 <h1>Release Notes</h1>
 
+<h2>1.0.4</h2>
+
+<ul>
+<li>The UCD insert mode now treats combining characters in a special
+way.</li>
+<li>The processing of commands has been completely revised. A new
+class CommandHandler is used by the modes to process commands. This
+saves a lot of code replication and all features are available to all
+modes. The modes can further process input if no command have been
+found or if an error occured. As a side effect, the documentation of
+the commands has changed.</li>
+<li>The default insert mode is now the UCD insert mode. The insert
+mode can be changed by pressing the tabulator key while in edit
+mode.</li>
+<li>The default register is now called ". Change and delete commands
+now put a copy of the removed elements into the default register. Copy
+commands also put a second copy the the yanked elements onto the
+default register. So the behaviour now equals vim's behaviour in this
+regard.</li>
+<li>A lot of documentation in the source code has been added. The
+code has been improved in many places.</li>
+<li>More commands and bugfixes.</li>
+</ul>
+
 <h2>1.0.3</h2>
 
 <ul>
