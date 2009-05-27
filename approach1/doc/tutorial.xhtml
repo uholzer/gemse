@@ -2,6 +2,7 @@
 
 <!DOCTYPE html [
   <!ENTITY  enter  "↵">
+  <!ENTITY  tab    "TAB">
   <!ENTITY  esc    "ESC">
   <!ENTITY  ctrl   "CRTL+">
   <!ENTITY  alt    "ALT+">
@@ -536,6 +537,17 @@ mode, but it looks different. Well, it doesn't only look different, it
 has a further very important difference: It lies between two elements,
 not on an element.</p>
 
+<p>It is important to know that the insert mode of gemse is not yet mature and
+will most certainly change in the future. Even more, different insert
+modes can coexist. At the moment, there are two insert modes, the UCD
+insert mode and the trivial insert mode. While in edit mode, you can
+switch the insert mode to be used by hitting <kbd>&tab;</kbd>. In this
+tutorial we will use the UCD insert mode which is the default.
+If you want, you can also take a look at the documentation of the
+trivial insert mode. This mode is called like that because it was
+trivial to implement, not because it is trivial to use it. Though it
+is tricky to use it, it is easy to grasp how it works.</p>
+
 <p>Position the cursor over the <code>munderover</code> element of the
 sum sign, like this:</p>
 
@@ -605,7 +617,7 @@ of the sum sign, or more precicely, in front of the
 
 <p>However, for the moment we let it be. Press <kbd>&esc;</kbd>.
 (Well, here you have to hit the escape key, not E then S then C and so
-on.) This puts you right back into edit mode.</p>
+on.) This puts you right back into the edit mode.</p>
 
 <!-- Idea: change the infinite sum into a limes of partial sums. -->
 
@@ -647,9 +659,8 @@ immmediately add one.</p>
 </div>
 </div>
 
-<p>Press <kbd>in</kbd>. <kbd>i</kbd> tells the
-insert mode that you want to insert an identifier that consists of one
-sign. Then you enter the sign, which is n in this case. Now close the
+<p>Press <kbd>n</kbd>. The insert mode recognizes <code>n</code> as a
+letter and inserts it as a identifier into the equation. Now close the
 insert mode with <kbd>&esc;</kbd>.</p>
 
 <div class="documentationScreenshot">
@@ -716,18 +727,17 @@ limes. Press <kbd>i</kbd>.</p>
 </div>
 </div>
 
-<p>Well, the currently implemented insert mode is not intelligent. The
-main problem is, that if you want to write
+<p>Well, the current implementations of the insert modes are sometimes
+cumbersome. The
+main problem (of both insert modes) is that if you want to write
 <m:math><m:msup><m:mi>a</m:mi><m:mn>2</m:mn></m:msup></m:math>, you have to tell it,
 that you want to put the 2 into superposition before you enter the
 a. But if you write down a formula on paper, you first think of the a.
 (Well, the insert mode has a solution to this problem. You will see
 that in a later section in this tutorial.)
-Also, the insert mode does not find out whether a character denotes an
-indentifier, operator or number, you always have to tell it.
-Nonetheless, the insert mode has some nice features.</p>
+</p> 
 
-<p>We want to insert an operator <m:math><m:mo>limes</m:mo></m:math> 
+<p>We want to insert an operator <m:math><m:mo>lim</m:mo></m:math> 
 and under it we want to have the identifier 
 <m:math><m:mi>n</m:mi></m:math>, the operator 
 <m:math><m:mo>→</m:mo></m:math> and the identifier
@@ -738,7 +748,7 @@ and under it we want to have the identifier
 <kbd>u</kbd> and try again.</p>
 
 <p>To do that we need an <code>munder</code> element. Press
-<kbd>u</kbd> to tell the insert mode that you want to have such an
+<kbd>&ctrl;u</kbd> to tell the insert mode that you want to have such an
 element.</p>
 
 <div class="documentationScreenshot">
@@ -772,13 +782,22 @@ element.</p>
 </div>
 
 <p>You can see it already. When you now continue to insert elements,
-they will replace the boxes you can see. Now press <kbd>O</kbd>. This
-says that you are going to insert an operator. <kbd>o</kbd> means the
-same thing, but only works for operators which consist of one
-character. Now press <kbd>lim</kbd>. If you had used <kbd>o</kbd>
-instead of <kbd>O</kbd>, the insert mode would have taken <q>l</q> as
-the content of the operator. In our case however, the mode waits until
-you press <kbd>ENTER</kbd>. Do that now.</p>
+they will replace the boxes you can see. Now press <kbd>&ctrl;o</kbd>. This
+says that you are going to insert an operator. Now insert
+<kbd>lim&enter;</kbd>. We can not insert <kbd>lim</kbd> directly
+without indicating explicitely that we enter an operator using
+<kbd>&ctrl;o</kbd>, because if we did, the insert mode would think
+that we want the identifier <code>l</code> followed by the identifier
+<code>i</code> followed by <code>m</code>.</p>
+
+<p>Actually, always if we need an identifier or an operator which is
+longer than one character or which is treated by the insert mode the
+wrong way, we have to first hit <kbd>&ctrl;o</kbd> for an operator or
+<kbd>&ctrl;i</kbd> for an identifier, then we have to enter the
+characters and finally terminate with <kbd>&enter;</kbd>. Similarly,
+for numbers you can use <kbd>&ctrl;n</kbd>, but normally you do not
+need to do that, since the UCD insert mode is more clever when it
+comes to numbers.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -844,9 +863,9 @@ that by hitting <kbd>&space;</kbd> (denoting the space bar).</p>
 </div>
 </div>
 
-<p>Now press <kbd>in</kbd>. Again, the i says that you insert an
-identifier consisting of one character. Then press <kbd>o→</kbd> and
-finally <kbd>i∞</kbd>.</p>
+<p>Now press <kbd>n</kbd>. It is put as an identifier into the
+<code>mrow</code> element. Hit <kbd>→</kbd> to get the arrow operator
+and finally <kbd>∞</kbd> for the infinity sign.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -958,7 +977,7 @@ between the two. (And <kbd>:close&enter;</kbd> or
 </div>
 
 <p>The newly created equation is a <code>math</code> element
-containing an mrow element. Move the cursor to the mrow element.
+containing an <code>mrow</code> element. Move the cursor to the <code>mrow</code> element.
 Unfortunately, we can not use <kbd>i</kbd> nor <kbd>a</kbd>, since
 they would insert before or after the <code>mrow</code> element. We want to insert
 <em>in</em> the <code>mrow</code>. To do this, there is the command
@@ -975,13 +994,12 @@ they would insert before or after the <code>mrow</code> element. We want to inse
 </div>
 </div>
 
-<p>Press <kbd>r</kbd>. This creates a squareroot. (<kbd>R</kbd> would
-give you a general root.) Now type <kbd>^ian2&space;&enter;</kbd>.
-(The &space; should be optional, but if you are going to hit <kbd>&enter;</kbd>, it
-is required because of a bug.) Then <kbd>o+&space;</kbd>. Here, the spacebar
+<p>Press <kbd>&ctrl;r</kbd>. This creates a squareroot. (<kbd>&ctrl;R</kbd> would
+give you a general root.) Now type <kbd>^a2&enter;</kbd>.
+Then <kbd>+&space;</kbd>. Here, the spacebar
 creates an <code>mrow</code> element. Go on with
-<kbd>n2iaib&enter;</kbd>, <kbd>o+^ibn2&space;&enter;&enter;</kbd>,
-<kbd>o=</kbd>.</p>
+<kbd>2ab&enter;</kbd>, <kbd>+^b2&enter;&enter;</kbd>,
+<kbd>=</kbd>.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -994,7 +1012,7 @@ creates an <code>mrow</code> element. Go on with
 </div>
 </div>
 
-<p>And now <kbd>ro(&space;iao+ib&enter;o)</kbd>.</p>
+<p>And now <kbd>&ctrl;r(&space;a+b&enter;)</kbd>.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -1016,7 +1034,7 @@ Usually, one thinks of the potency after having written the base.
 Unfortunately, the current insert mode does not work like that, it
 needs you to enter the <kbd>^</kbd> before writing the base. However,
 there is a feature that allows you to fix this situation. Find out
-yourself what the commands <kbd>h</kbd> and <kbd>l</kbd> do. Well,
+yourself what the commands <kbd>&ctrl;h</kbd> and <kbd>&ctrl;l</kbd> do. Well,
 they select what you already wrote. Good. use these two commands to
 select the brackets and their content:</p>
 
@@ -1046,8 +1064,8 @@ select the brackets and their content:</p>
 </div>
 </div>
 
-<p>Now, we put the exponent <kbd>n2&space;</kbd> and continue with our
-work: <kbd>&enter;&enter;o=</kbd>.</p>
+<p>Now, we put the exponent <kbd>2</kbd> and continue with our
+work: <kbd>&enter;&enter;=</kbd>.</p>
 
 <div class="documentationScreenshot">
 <div internal:function="container" internal:selected="equationFocus">
@@ -1060,13 +1078,13 @@ work: <kbd>&enter;&enter;o=</kbd>.</p>
 </div>
 </div>
 
-<p>To finish the whole thing, press <kbd>&space;o(&space;iao+ib&enter;o)&enter;&enter;</kbd>.
+<p>To finish the whole thing, press <kbd>&space;(&space;a+b&enter;)&enter;&enter;</kbd>.
 Actually, the last hit of the enter key terminates the insert mode,
 you also could have used <kbd>&esc;</kbd> instead.</p>
 
 <p>Done. Note that at certain places, we could have skipped the
-insertion of an mrow. As you will see in the next section, such
-optional mrows can be added easely later on in edit mode.</p>
+insertion of an <code>mrow</code>. As you will see in the next section, such
+optional mrows can be added easily later on in the edit mode.</p>
 
 <p>You can now close this equation. Since you do not have saved your
 changes, <kbd>:close&enter;</kbd> will not work. Instead, use
@@ -1081,8 +1099,8 @@ mode (name inspired by vim), you can select a set of siblings.</p>
 
 <p>Put the cursor on the <code>munderover</code> element of the sum
 sign. We are going to put the <code>munderover</code> element and the
-following <code>mfrac</code> element into an mrow element. This makes
-sense, since they together form the argument of the lim operator.</p>
+following <code>mfrac</code> element into an <code>mrow</code> element. This makes
+sense, since they together form the argument of the <code>lim</code> operator.</p>
 
 <p>Press <kbd>v</kbd>. This throws you directly into visual mode.</p>
 
@@ -1188,7 +1206,7 @@ elements.</p>
 </div>
 
 <p>You are back in the edit mode. In the tree view you can see the
-new mrow element. The cursor is currently on it.</p>
+new <code>mrow</code> element. The cursor is currently on it.</p>
 
 <h2>Copying and Pasting</h2>
 
@@ -1197,7 +1215,7 @@ difficult. Gemse uses the command <kbd>y</kbd> for copying the
 (with visual mode) selected elements into a register. A register is
 simply a place where copied elements are stored. If you use a command
 that works on a register and you do not say on which one, it will use
-the default register. Except the default register, every register
+the default register. Every register
 has a name consisting of exactly one character. (Unlike in vim, you
 can use every unicode character as name. This extends the amount of
 available registers far beyond 26. Gemse's register names are case
