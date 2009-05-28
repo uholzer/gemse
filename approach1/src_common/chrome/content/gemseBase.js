@@ -847,14 +847,63 @@ StatusbarView.prototype = {
 }
 
 /**
- * @class Register holding data that can be put somewhere (so to say, an
- * internal clipboard)
+ * @class Manages the registers (sort of internal clipboards) for the
+ * GemseEditor. 
+ * The register * denotes the system clip board. So reading this
+ * register actually reads the system clipboard, setting it writes to
+ * the system clipboard.
+ */
+function RegisterManager() {
+    /**
+     * Holds the data of internal regisers, that is, all registers
+     * except *.
+     */
+    this.internal = {};
+}
+RegisterManager.prototype = {
+    set: function(name, data) {
+        if (name == "*") {
+            this.setSystemClipboard(data);
+        }
+        else {
+            this.internal[name] = data;
+        }
+    },
+    get: function(name) {
+        if (name == "*") {
+            return this.getSystemClipboard();
+        }
+        else {
+            return this.internal[name];
+        }
+    },
+    /**
+     * Get data from system clipboard and create a RegisterData object
+     * for it.
+     * @private
+     */
+    getSystemClipboard: function() {
+
+    },
+    /**
+     * Put data on system clipboard from a RegisterData object.
+     * @private
+     */
+    setSystemClipboard: function(data) {
+
+    },
+}
+
+/**
+ * @class Stores data (sequence of DOM nodes). It is used when
+ * interacting with the RegisterManager, that is, to fill a
+ * register or to read a register.
  * @param name the name the user has to use to access this Register,
  * consisting of one unicode character
  * @param content an array of DOM Nodes of the same type
  * @param [type] overrides the automatically detected type of the content
  */
-function Register(name, content, type) {
+function RegisterData(name, content, type) {
     /** 
      * Name of the register consisting of one unicode character 
      * @type String
@@ -1309,7 +1358,7 @@ function GemsePEditor() {
     /**
      * Maps single unicode characters to register objects
      */
-    this.registers = {};
+    this.registerManager = new RegisterManager();
     /**
      * Array of EquationEnv objects
      * @private
