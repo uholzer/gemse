@@ -8,6 +8,11 @@ const NS_internal = "http://www.andonyar.com/rec/2008-12/gemse/internalns";
  * @constant
  */
 const NS_MathML = "http://www.w3.org/1998/Math/MathML";
+/** 
+ * The namespace of HTML 
+ * @constant
+ */
+const NS_HTML = "http://www.w3.org/1999/xhtml";
 //const KEYMOD_ALT = String.fromCharCode(KeyEvent.DOM_VK_ALT);
 //const KEYMOD_CONTROL = String.fromCharCode(KeyEvent.DOM_VK_CONTROL);
 //XXX: Knows the heck why KeyEvent.DOM_VK_* are undefined here ...
