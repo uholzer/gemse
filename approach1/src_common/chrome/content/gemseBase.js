@@ -890,7 +890,45 @@ RegisterManager.prototype = {
      * @private
      */
     setSystemClipboard: function(data) {
+        if (data.type != "element") { throw "clipboard interaction only supports elements" }
 
+        // Serialize data.content[0]
+        var doc = document.implementation.createDocument(null, null, null);
+        var rootNode;
+        if (data.content.length != 1 || data.content[0].localName != "math" || data.content[0].namespaceURI != NS_MathML) {
+            rootNode = doc.createElementNS(NS_MathML, "math");
+            data.content.forEach(function(e) {
+                rootNode.appendChild(doc.importNode(e, true));
+            });
+        }
+        else {
+            rootNode = doc.importNode(data.content[0], true);
+        }
+        doc.appendChild(rootNode);
+        //XXX: mode.equationEnv.cleanSubtreeOfDocument(doc, rootNode);
+        var serializer = new XMLSerializer();
+        var xmlString = serializer.serializeToString(doc);
+
+        var str = Components.classes["@mozilla.org/supports-string;1"].  
+        createInstance(Components.interfaces.nsISupportsString);  
+        if (!str) throw "Error while obtaining String component";
+          
+        str.data = xmlString;  
+          
+        var trans = Components.classes["@mozilla.org/widget/transferable;1"].  
+        createInstance(Components.interfaces.nsITransferable);  
+        if (!trans) throw "Error while obtaining transferable component";
+          
+        trans.addDataFlavor("application/mathml+xml");  
+        trans.setTransferData("application/mathml+xml", str, xmlString.length * 2);  
+        trans.addDataFlavor("text/unicode");  
+        trans.setTransferData("text/unicode", str, xmlString.length * 2);  
+          
+        var clipid = Components.interfaces.nsIClipboard;  
+        var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(clipid);  
+        if (!clip) throw "Error while obtaining clipboard component";
+          
+        clip.setData(trans, null, clipid.kGlobalClipboard);  
     },
 }
 
