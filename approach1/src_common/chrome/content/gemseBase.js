@@ -880,13 +880,50 @@ RegisterManager.prototype = {
     /**
      * Get data from system clipboard and create a RegisterData object
      * for it.
+     * This is implemented according to
+     * https://developer.mozilla.org/En/Using_the_Clipboard
      * @private
      */
     getSystemClipboard: function() {
+        var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(Components.interfaces.nsIClipboard);
+        if (!clip) throw "Error while obtaining clipboard component";
+        var trans = Components.classes["@mozilla.org/widget/transferable;1"].createInstance(Components.interfaces.nsITransferable);
+        if (!trans) throw "Error while obtaining transferable component";
+        trans.addDataFlavor("text/unicode"); //XXX: Should be application/mathml+xml
 
+        clip.getData(trans, clip.kGlobalClipboard);
+        var str       = new Object();
+        var strLength = new Object();
+        trans.getTransferData("text/unicode", str, strLength);
+        str = str.value.QueryInterface(Components.interfaces.nsISupportsString);
+        var dataString = str.data.substring(0, strLength.value / 2);
+
+        var parser = new DOMParser();
+        var clipboardDOM = parser.parseFromString(dataString, "text/xml");
+
+        var registerData;
+        if (clipboardDOM.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml") {
+            throw "An error occured while parsing the clipboard content:\n"
+                  + clipboardDOM.documentElement.textContent;
+        }
+        else if (clipboardDOM.documentElement.localName == "math" && clipboardDOM.documentElement.namespaceURI == NS_MathML) {
+            // Put the child elements into an array
+            var arrayOfElements = [];
+            for (i=0; i < clipboardDOM.documentElement.childNodes.length; ++i) {
+                arrayOfElements.push(clipboardDOM.documentElement.childNodes[i]);
+            }
+            registerData = new RegisterData('*',arrayOfElements);
+        }
+        else {
+            registerData = new RegisterData('*',[clipboardDOM.documentElement]);
+        }
+
+        return registerData;
     },
     /**
      * Put data on system clipboard from a RegisterData object.
+     * This is implemented according to
+     * https://developer.mozilla.org/En/Using_the_Clipboard
      * @private
      */
     setSystemClipboard: function(data) {
