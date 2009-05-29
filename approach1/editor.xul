@@ -76,7 +76,7 @@
 
     ]]></script>
 
-<html:div id="pool">
+<vbox id="pool" flex="1">
 
 <html:div internal:function="container" id="startEquationEnv">
     <html:div internal:function="equation">
@@ -123,7 +123,7 @@
     <html:pre internal:function="notificationDisplay"></html:pre>
 </html:div>
 
-</html:div>
+</vbox>
 
 <html:div internal:function="container" id="containerTemplate">
     <html:div internal:function="equation">
