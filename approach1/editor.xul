@@ -45,7 +45,10 @@
             window.name = "globalGemseInstance";
 
             // Load MathML elements provided by arguments
-            if (window.arguments && window.arguments.length > 0) {
+            // (But check first the type of the argument, since it
+            // seems that windows for XUL documents receive some
+            // arguments ...)
+            if (window.arguments && window.arguments.length > 0 && window.arguments[0] && window.arguments[0].forEach) {
                 window.arguments[0].forEach(function (m) {
                     editor.loadFromOpenDocument(m.doc, m.element);
                 });

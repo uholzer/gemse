@@ -1,4 +1,12 @@
 @namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
+@namespace XUL "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+/* Initial size of window, when using the XUL interface (if this is
+set to a higher value than the size of the screen, the window is made
+smaller */
+XUL|window {
+    width: 1200px;
+    height: 900px;
+}
 div {
     background-color: rgba(255,255,255,0.7);
     color: #000;
