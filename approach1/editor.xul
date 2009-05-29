@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="gemse.css" type="text/css"?>
+
+<window
+    id="GemseWindow"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="Gemse"
+    orient="vertical"
+    onload="start()">
+    <script src="const.js"/>
+    <script src="UString.js"/>
+    <script src="gemseBase.js"/>
+    <script src="elementDescriptors.js"/>
+    <script src="ucd.js"/>
+    <script src="editMode.js"/>
+    <script src="editMode_commandTable.js"/>
+    <script src="attributeMode.js"/>
+    <script src="attributeMode_commandTable.js"/>
+    <script src="trivialInsertMode.js"/>
+    <script src="trivialInsertMode_commandTable.js"/>
+    <script src="ucdInsertMode.js"/>
+    <script src="ucdInsertMode_commandTable.js"/>
+    <script src="visualSelectionMode.js"/>
+    <script src="visualSelectionMode_commandTable.js"/>
+    <script src="operatorDictionary.js"/>
+    <script src="inputSubstitution/core.js"/>
+    <script src="defaultOptions.js"/>
+    <script><![CDATA[
+        var editor;
+
+        function start() {
+            editor = new GemsePEditor();
+            editor.containerTemplate = document.getElementById("containerTemplate");
+            editor.inputElement = document.getElementById("input");
+            editor.inputElement.focus();
+
+            // Detach containerTemplate from document:
+            editor.containerTemplate.parentNode.removeChild(editor.containerTemplate);
+            editor.containerTemplate.removeAttribute("id");
+
+            // Give the window a name:
+            window.name = "globalGemseInstance";
+
+            // Load MathML elements provided by arguments
+            if (window.arguments && window.arguments.length > 0) {
+                window.arguments[0].forEach(function (m) {
+                    editor.loadFromOpenDocument(m.doc, m.element);
+                });
+            }
+
+            // If there are no equations up to now, use the
+            // startEquationEnv from this document
+            var startEquationEnv = document.getElementById("startEquationEnv");
+            if (editor.equations.length==0) {
+                editor.attachNewEquationEnvToElement(startEquationEnv);
+            }
+            else {
+                startEquationEnv.parentNode.removeChild(startEquationEnv);
+            }
+        }
+
+        /* Event processing */
+        // The curent event processing is completely broken. Perhaps I
+        // should use XUL right away to clean up the mess?
+
+        function processKey(event) {
+            editor.keyEvent(event);
+        }
+
+        function processInput() {
+            editor.inputEvent();
+        }
+
+    ]]></script>
+
+<html:div id="pool">
+
+<html:div internal:function="container" id="startEquationEnv">
+    <html:div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow>
+            <mrow>
+                <munderover>
+                    <mo>∑</mo>
+                    <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+                    <mi>n</mi>
+                </munderover>
+                <msub><mi>a</mi><mi>i</mi></msub>
+            </mrow>
+            <mo>+</mo>
+            <mroot>
+                <mrow>
+                    <msup>
+                        <mi>x</mi>
+                        <mn>2</mn>
+                    </msup>
+                    <mo>+</mo>
+                    <mi>b</mi>
+                </mrow>
+                <mi>3</mi>
+            </mroot>
+            <mo>+</mo>
+            <mfenced open="&lt;" close="&gt;" separators=",">
+                <mi>a</mi>
+                <mi>b</mi>
+            </mfenced>
+            </mrow> 
+        </math>
+    </html:div>
+    <html:div internal:function="treeView">
+
+    </html:div>
+    <html:div internal:function="attributeView">
+
+    </html:div>
+    <html:div internal:function="dictionaryView">
+
+    </html:div>
+    <html:div internal:function="modeName"></html:div>
+    <html:pre internal:function="notificationDisplay"></html:pre>
+</html:div>
+
+</html:div>
+
+<html:div internal:function="container" id="containerTemplate">
+    <html:div internal:function="equation">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow></mrow>
+        </math>
+    </html:div>
+    <html:div internal:function="treeView">
+
+    </html:div>
+    <html:div internal:function="attributeView">
+
+    </html:div>
+    <html:div internal:function="dictionaryView">
+
+    </html:div>
+    <html:div internal:function="modeName"></html:div>
+    <html:pre internal:function="notificationDisplay"></html:pre>
+</html:div>
+
+<textbox id="input" multiline="true" onkeypress="processKey(event)" oninput="processInput()"/>
+<!-- If the textbox does not work as expected, we can use HTML instead:
+<form>
+    <textarea id="input" onkeypress="processKey(event)" oninput="processInput()"/>
+</form>
+-->
+
+</window>
