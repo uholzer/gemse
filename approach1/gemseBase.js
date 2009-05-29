@@ -1093,6 +1093,8 @@ GemsePEditor.prototype = {
      * This method must only be called by methods of equationEnv.
      * The equationEnv gets dropped from this.equations and this.focus
      * gets adjusted if needed.
+     * If the last equation is removed, the window gets closed,
+     * terminating Gemse.
      * @param equationEnv {EquationEnv} Equation environment to be
      *                                  eliminated
      */
@@ -1106,7 +1108,12 @@ GemsePEditor.prototype = {
         if (this.focus > index) { this.moveFocusTo(this.focus-1) }
         if (this.focus == index && index > 0) { --this.focus; this.moveFocusTo(this.focus) }
         else { this.moveFocusTo(this.focus) }
-        // TODO: What to do if all equations are gone?
+
+        // XXX: What to do if all equations are gone? Here, we just
+        // close the window. (Perhaps this should be configurable?)
+        if (this.equations.length==0) {
+            window.close();
+        }
     },
     /**
      * Attaches a new EquationEnv to an already present element in the
