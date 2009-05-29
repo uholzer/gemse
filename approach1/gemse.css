@@ -74,7 +74,7 @@ table {
 *.defaultAttribute * {
     color: black; background-color: #afa;
 }
-/**[internal|function="container"]:not([internal|selected="equationFocus"]) > * {
+*[internal|function="container"]:not([internal|selected="equationFocus"]) > * {
     display: none;
 }
 *[internal|function="container"]:not([internal|selected="equationFocus"]) *[internal|function="equation"] {
@@ -84,7 +84,7 @@ table {
 }
 *[internal|function="container"]:not([internal|selected="equationFocus"]) *[internal|function="equation"] * {
     color: inherit; background-color: inherit;
-}*/
+}
 #input {
     position: relative;
     left: 40%; 
