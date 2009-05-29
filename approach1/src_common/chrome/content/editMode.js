@@ -247,10 +247,10 @@ function editModeTool_copySelectedElementsToRegister(mode,selection,registerName
     }
     registerContent.push(to.cloneNode(true));
     if (registerName) { // If an explicit register is given
-        mode.editor.registers[registerName] = new Register(registerName, registerContent);
+        mode.editor.registerManager.set(registerName, new RegisterData(registerName, registerContent));
     }
     // Always fill the default register, like vim does
-    mode.editor.registers['"'] = new Register('"', registerContent);
+    mode.editor.registerManager.set('"', new RegisterData('"', registerContent));
     mode.showCursor();
     return true;
 }
@@ -637,7 +637,7 @@ function editModeCommand_putAfter(mode,instance) {
     var position = mml_nextSibling(mode.cursor);
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
-    mode.editor.registers[registerName].content.forEach(function (e) {
+    mode.editor.registerManager.get(registerName).content.forEach(function (e) {
         mode.cursor.parentNode.insertBefore(e.cloneNode(true), position);
     });
     change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
@@ -652,7 +652,7 @@ function editModeCommand_putBefore(mode,instance) {
     var position = mode.cursor;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
-    mode.editor.registers[registerName].content.forEach(function (e) {
+    mode.editor.registerManager.get(registerName).content.forEach(function (e) {
         mode.cursor.parentNode.insertBefore(e.cloneNode(true), position);
     });
     change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
@@ -668,7 +668,7 @@ function editModeCommand_putIn(mode,instance) {
     var position = null;
     var change = mode.equationEnv.history.createChange();
     change.recordBefore(mode.equationEnv.equation,mode.cursor);
-    mode.editor.registers[registerName].content.forEach(function (e) {
+    mode.editor.registerManager.get(registerName).content.forEach(function (e) {
         mode.cursor.insertBefore(e.cloneNode(true), position);
     });
     change.recordAfter(mode.equationEnv.equation,mode.cursor);
