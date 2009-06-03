@@ -1,2 +1,0 @@
-content gemse file:///home/urs/p/gemse/approach1/ contentaccessible=yes
-overlay chrome://browser/content/browser.xul chrome://gemse/content/callGemseFromDocumentOverlay.xul 
