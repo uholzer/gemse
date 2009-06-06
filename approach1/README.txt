@@ -31,10 +31,15 @@ test_XULRunnerApplication
   the only exception thoguh.
 
 The file makepackages.sh is a small shell script that creates the
-packages gemseFirefoxExtension.xpi and gemseXULRunnerApplication.xpi
-using zip. For gemseFirefoxExtension.xpi, it merges src_common and
+packages gemseFirefoxExtension.xpi, gemseXULRunnerApplication.xpi,
+gemseMinimal.zip using zip and gemse_src.tar.gz using tar.
+For gemseFirefoxExtension.xpi, it merges src_common and
 src_FirefoxExtension. For gemseXULRunnerApplication.xpi it merges
-src_common and src_XULRunnerApplication.
+src_common and src_XULRunnerApplication. gemseMinimal.zip contains the
+content of the folder src_common/chrome/content, it is intended to be
+used as unprivileged (that is not in chrome) application in Firefox.
+It is the same as the demo on the website. gemse_src.tar.gz contains the
+whole development directory gemse/approach1.
 
 Be aware that there is no automatic mechanism to update the version
 numbers in the various files. You have to do that by hand.
