@@ -1,0 +1,2 @@
+content gemse chrome/content/ contentaccessible=yes
+overlay chrome://browser/content/browser.xul chrome://gemse/content/callGemseFromDocumentOverlay.xul
