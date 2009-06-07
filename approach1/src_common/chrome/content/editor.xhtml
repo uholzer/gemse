@@ -46,7 +46,7 @@
             window.name = "globalGemseInstance";
 
             // Load MathML elements provided by arguments
-            if (window.arguments && window.arguments.length > 0) {
+            if (window.arguments && window.arguments.length > 0 && window.arguments[0].forEach) {
                 window.arguments[0].forEach(function (m) {
                     editor.loadFromOpenDocument(m.doc, m.element);
                 });
