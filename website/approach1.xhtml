@@ -20,19 +20,42 @@ interface is highly inspired by the text editor vi. The goal is to be
 able to edit equations as fast as possible.</p>
 
 <p>Gemse Approach 1 is implemented in JavaScript using DOM. It runs in
-the webbrowser Firefox 3.</p>
+the webbrowser Firefox 3 and in XULRunner 1.9.</p>
 
-<p>Finally version 1.0.4 is ready with huge internal improvements.
+<p>Version 1.0.5 can be easily installed as Firefox extension.
 But be aware, that this version still is not a production release,
-its intention is only to get feedback from potential users.</p>
+its intention is only to get feedback from potential users. Read the
+<a href="demo/doc/releasenotes.xhtml">release notes</a> or the <a
+href="demo/doc/index.xhtml">documentation</a>.</p>
+
+<h2>Download and install</h2>
+
+<p>You can choose from the following variants:</p>
 
 <ul>
 <li>If you are using Firefox 3, <a href="demo/editor.xhtml">try the
-demo</a>.</li>
-<li>Read the <a href="demo/doc/">documentation</a> or the 
-<a href="demo/doc/releasenotes.xhtml">release notes</a></li>
-<li>Download <a href="releases/gemse-1-0-4.zip">Gemse 1.0.4 as zip file</a></li>
+online demo</a>.</li>
+<li><a href="releases/gemseFirefoxExtension-1-0-5.xpi">Install Gemse as
+Firefox extension</a>. Then you can open it by
+visiting <code>chrome://gemse/content/editor.xhtml</code> and read its
+documentation at <code>chrome://gemse/content/doc/index.xhtml</code>.</li>
+<li>Get <a href="releases/gemseXULRunnerApplication-1-0-5.zip">Gemse
+as XULRunner application</a> and run it with XULRunner 1.9.</li>
+<li>Use the <a href="releases/gemseMinimal-1-0-5.zip">minimal version</a> with 
+less weird directory structure, intended to be
+run outside of Firefox chrome, like the demo. Just unzip it and open
+<code>editor.xhtml</code> in Firefox. (If you do that, not
+all commands will work since Firefox prevents access to your system.)</li>
+<li>Get the <a href="releases/gemse_src-1-0-5.tar.gz">whole source</a>. (As
+tar ball, since the directory structure I use for development makes
+use of symbolic links.)</li>
 </ul>
+
+<p>Please be aware that Gemse is not yet mature, so it could cause
+damage if not used with care. For example it does overwrite existing
+files without asking when you save an equation. However, if you use
+the demo or the minimal version, you are save, since Firefox prevents access to your
+system.</p>
 
 <h2>What it is and what it is not</h2>
 
