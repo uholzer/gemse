@@ -17,13 +17,13 @@
 >
 
 <head>
-    <title>Gemse Base</title>
+    <title>Gemse Basics</title>
     <link rel="stylesheet" href="../gemse.css" type="text/css" />
 </head>
 
 <body>
 
-<h1>Gemse Base</h1>
+<h1>Gemse Basics</h1>
 
 <h2>User interface</h2>
 
@@ -81,7 +81,7 @@ it into the input box. But I am sure, nobody wants to do that.</p>
 
 <p>The best and recommended way is to configure your operating system
 so it allows you to input such characters by hitting a sequence of
-keys. For example if you hit <kbd>\forall</kbd> it inserts ∀ .
+keys. For example if you hit <kbd>\forall</kbd> it inserts ∀.
 I do not know about Windows or Mac, but for
 Linux, I can provide 
 <a href="http://www.andonyar.com/rec/2008-03/mathinput/">one way to do
@@ -144,49 +144,70 @@ without placing a character, so you can try again.</p>
 <h2>Installation</h2>
 
 <p>Gemse requires Mozilla. That means, you either need Firefox 3 or
-you have to use XULRunner. Unfortunately, Gemse is not yet prepared
-for XULRunner, but I believe it is easy to do that.</p>
+you have to use XULRunner 1.9.</p>
 
-<p>You can run the demo of Gemse directly from its website using
-Firefox 3. Also, you can download the package, unpack it into some
-directory and open the file <code>editor.xhtml</code> in Firefox 3.
-Both variants have the drawback that Gemse will run with restricted
-permissions. This mainly means that you are unable to use the save and
-load functions.</p>
+<p>Basically, there are three variants how to use Gemse.</p>
 
-<p>You can also put Gemse into the chrome of your Firefox. Put in the
-chrome directory a file named <code>gemse.manifest</code> containing</p>
+<h3>Unprivileged in Firefox</h3>
 
-<pre>content gemse file:///home/urs/p/gemse/approach1/ contentaccessible=yes</pre>
+<p>For this variant you need at least Firefox 3. Run the demo on
+Gemse's website or download the minimal version and open
+<code>editor.xhtml</code> in Firefox. This allows you to check out
+Gemse without risk, since Firefox prevents it from accessing your
+system. However, because of the same reason, not all features
+work.</p>
 
-<p>Of course, you have to replace <code>file:///home/urs/p/gemse/approach1/</code>
-with the name of the directory where you unpacked the Gemse package. I
-unpacked it somewhere in my home directory, but of course, you can
-also unpack it somewhere in the chrome directory. Then you can enter
-<code>chrome://gemse/content/editor.xhtml</code> in the adress bar of
-Firefox and the editor opens up with the full privileges. You will now
-be able to load and save files where you want. <em>Be aware that you
-should not put untrusted code into the chrome of your browser. Also
-note that Gemse's code is very young and not well tested and as such
-might do damage, especially if you use the save command not
-carefully. (For example, it does not ask before overwriting existing
-files.)</em></p>
+<h3>Firefox Extension</h3>
 
-<p>However, by installing Gemse into the chrome, you can enable a
-powerful feature: Gemse provides a (so called) overlay for Firefox. It
-adds an entry to the context menu called <q>edit in Gemse</q>. So, if
-you open the context menu on a <code>math</code> element and select
-this new entry, it gets
-opened in Gemse. There you can edit it and save it, which puts your
-changes into the document and saves the document to disk. You can also
-open the context menu on any other element of your document. In such a
-case, all <code>math</code> elements which are contained in (i.e. are
-descendants of) the said element are loaded. You can also select a
-part of the document and open the context menu. In this case, all
-(partially) selected math elements are loaded. If you want to activate
-this feature, you have to put an additional line in your
-<code>gemse.manifest</code>. You can look into the manifest file
-packaged with gemse, in order to find out how it has to look like.</p>
+<p>You can install Gemse as a Firefox extension, if you have at least
+Firefox 3. This works as easy as for all Firefox extensions, you can
+directly install it from Gemse's website.</p>
+
+<p>In order to run Gemse, go to
+<code>chrome://gemse/content/editor.xhtml</code>. If you want to read
+the documentation, use the command <kbd>:help</kbd> or go to
+<code>chrome://gemse/content/editor.xhtml</code>.</p>
+
+<p>Running as an extension, Gemse can access your file system, so you
+can load and save files on your filesystem. Gemse also provides an
+overlay for the browser. When you open the context menu on a website,
+you can select the new entry "open in Gemse". If you do that on a
+MathML element, it gets opened in Gemse. If you do it on a selection,
+all selected MathML elements get opened in Gemse, including the ones
+that are only partially selected. If you do it on an element that is
+not part of an equation, All MathML elements that it contains are
+loaded.</p>
+
+<h3>XULRunner</h3>
+
+<p>If you do not like Firefox or you want to have Gemse separated from
+Firefox, you can run it as a XULRunner application. Just download the
+XULRunner version from Gemse's website, unzip it in an empty folder
+and run <code>xulrunner-1.9 application.ini</code>.</p>
+
+<p>Running Gemse as XULRunner application, it can access your file
+system, so you can save and load files from your filesystem.</p>
+
+<h3>For developers</h3>
+
+<p>If you want to modify Gemse, you can also download the source
+package which contains Gemse in a directory structure as I use it for
+development. The directory <code>src_common</code> contains the main code
+and documentation. <code>src_FirefoxExtension</code> and
+<code>src_XULRunner</code> contain files only needed by the Firefox
+extension or the XULRunner application respectively. The
+<code>test_*</code> directories contain symbolic links to the
+<code>src_*</code> directories. In
+<code>test_XULRunnerApplication</code> you can run <code>xulrunner-1.9
+application.ini</code>. <code>test_FirefoxExtension</code> can be used
+as a firefox extension directly. For this you can create a text file
+called <code>Gemse@andonyar.com</code>
+in the extension folder of your Firefox profile directory, which
+contains the full path to the <code>test_FireforxExtension</code>
+directory. After restarting Firefox, the Gemse extension should be
+installed. Like this, you can modify Gemse and see the changes
+directly in Firefox, without removing, repackageing and reinstalling
+the extension.</p>
 
 <h2>Author</h2>
 
