@@ -30,7 +30,7 @@ function EquationEnv(editor, container) {
      * regenerated based on the equation.
      * @private
      */
-    this.treeView = document.evaluate(".//.[@internal:function='treeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+    this.treeView = new TreeView(this.editor, this, document.evaluate(".//.[@internal:function='treeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue);
 
     /**
      * The element containing the attribute view.
@@ -38,7 +38,7 @@ function EquationEnv(editor, container) {
      * element
      * @private
      */
-    this.attributeView = document.evaluate(".//.[@internal:function='attributeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+    this.attributeView = new AttributeView(this.editor, this, document.evaluate(".//.[@internal:function='attributeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue);
 
     /**
      * The element containing the dictionary view.
@@ -46,7 +46,7 @@ function EquationEnv(editor, container) {
      * about the current element.
      * @private
      */
-    this.dictionaryView = document.evaluate(".//.[@internal:function='dictionaryView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+    this.dictionaryView = new DictionaryView(this.editor, this, document.evaluate(".//.[@internal:function='dictionaryView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue);
 
     /**
      * The element containing the name of the current mode.
@@ -111,251 +111,23 @@ EquationEnv.prototype = {
 
     /** Rebuilds all currently visible views. */
     updateViews: function() {
-        if (this.treeView) { this.buildTreeView(); }
+        if (this.treeView) { this.treeView.build(); }
         if (this.attributeView && this.mode.contextNode) { 
             var element = this.mode.contextNode;
             while (element.nodeType != Node.ELEMENT_NODE) { element = element.parentNode; }
-            this.buildAttributeView(element); 
+            this.attributeView.build(); 
         }
         if (this.dictionaryView && this.mode.contextNode) { 
             var element = this.mode.contextNode;
             while (element.nodeType != Node.ELEMENT_NODE) { element = element.parentNode; }
-            this.buildDictionaryView(element); 
+            this.dictionaryView.build(); 
         }
         if (this.modeNameIndicator) {
             this.modeNameIndicator.textContent = this.mode.name;
         }
     },
 
-    /** 
-     * Rebuilds the tree view. For showing the tree structure, nested
-     * div elements are used. The view is built up from scratch every
-     * time. The internal:selected attributes from elements in the
-     * equation are also placed in the tree view. 
-     * @private
-     */
-    buildTreeView: function() {
-        var treeWalker = document.createTreeWalker(
-            this.equation,
-            NodeFilter.SHOW_ALL,
-            { acceptNode: function(node) { return (node.nodeType == Node.ELEMENT_NODE || !(/^\s*$/.test(node.nodeValue))) ?  NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } },
-            false
-        );
-        while (this.treeView.hasChildNodes()) { this.treeView.removeChild(this.treeView.firstChild); }
-        var root = document.createElement("div");
-        this.treeView.appendChild(root);
-        var pos = root;
-        var reachedEnd = false;
-        while (!reachedEnd) {
-            // Create node
-            var node = document.createElement("div");
-            pos.appendChild(node);
-            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE) {
-                node.setAttribute("class", "element");
-                node.appendChild(document.createTextNode(treeWalker.currentNode.localName));
-            }
-            else {
-                node.setAttribute("class", "nodeValue");
-                node.appendChild(document.createTextNode(treeWalker.currentNode.nodeValue));
-            }
-            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE && treeWalker.currentNode.getAttributeNS(NS_internal, "selected")) {
-                node.setAttributeNS(NS_internal, "selected", treeWalker.currentNode.getAttributeNS(NS_internal, "selected"));
-            }
-            // Move to next node
-            if (treeWalker.firstChild()) {
-                pos = node;
-            }
-            else if (treeWalker.nextSibling()) {
-                // do nothing
-            }
-            else {
-                // Go up until there is a nextSibling, then select
-                // it
-                while (!treeWalker.nextSibling()) {
-                    if (!treeWalker.parentNode()) { 
-                        reachedEnd = true;
-                        break;
-                    }
-                    pos = pos.parentNode;
-                }
-            }
-        }
 
-    },
-
-    /**
-     * Builds the attribute view
-     * @private
-     * @param forElement the element for which the attribute view
-     *                   should be generated
-     */
-    buildAttributeView: function (forElement) {
-        while (this.attributeView.hasChildNodes()) { this.attributeView.removeChild(this.attributeView.firstChild); }
-        // Place attribute information inside an Array
-        var attributes = [];
-        var attributeNodeMap = forElement.attributes;
-        for(var i=0; i<attributeNodeMap.length; i++) {
-            attributes.push(attributeNodeMap[i]);
-        }
-
-        // Sort the array (and filter out internal attributes)
-        attributes = attributes.filter(function (a) { return a.namespaceURI != NS_internal });
-        attributes = attributes.sort(
-            function (a, b) { 
-                if (a.namespaceURI < b.namespaceURI) return -1
-                else if (a.namespaceURI > b.namespaceURI) return 1
-                else if (a.localName < b.localName) return -1
-                else if (a.localName > b.localName) return 1
-                else return 0;
-            }
-        );
-
-        generateRow = function (ns, name, value, cursor, selected) {
-            var t_ns = document.createElement("td");
-            t_ns.appendChild(document.createTextNode(ns));
-            var t_name = document.createElement("td");
-            t_name.appendChild(document.createTextNode(name));
-            var t_value = document.createElement("td");
-            t_value.appendChild(document.createTextNode(value));
-            var row = document.createElement("tr");
-            if (cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor") }
-            if (selected) { row.setAttributeNS(NS_internal, "selected", "selection") }
-            if (selected && cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor selection") }
-            row.appendChild(t_ns);
-            row.appendChild(t_name);
-            row.appendChild(t_value);
-            return row;
-        }
-
-        // Generate table
-        var table = document.createElement("table");
-        var caption = document.createElement("caption");
-        caption.appendChild(document.createTextNode("attributes"));
-        table.appendChild(caption);
-        for (var i = 0; i < attributes.length; i++) {
-            table.appendChild(generateRow(
-                attributes[i].namespaceURI,
-                attributes[i].localName,
-                attributes[i].nodeValue,
-                attributes[i].nodeName == forElement.getAttributeNS(NS_internal, "attributeCursor"),
-                forElement.getAttributeNS(NS_internal, "selectedAttributes").split(' ').indexOf(attributes[i].nodeName) != -1
-            ));
-        }
-        this.attributeView.appendChild(table);
-
-        // Generate table of default attributes
-        if (elementDescriptions[forElement.localName] && elementDescriptions[forElement.localName].attributes) {
-            table = document.createElement("table");
-            table.setAttribute("class", "defaultAttribute");
-            var caption = document.createElement("caption");
-            caption.appendChild(document.createTextNode("default attributes"));
-            table.appendChild(caption);
-            var defaultAttributesHash = elementDescriptions[forElement.localName].attributes;
-            var defaultAttributes = [];
-            for (a in defaultAttributesHash) {
-                defaultAttributes.push(defaultAttributesHash[a]);
-            }
-            for (var i = 0; i < defaultAttributes.length; i++) {
-                table.appendChild(generateRow(
-                    defaultAttributes[i].namespace || "",
-                    defaultAttributes[i].name,
-                    defaultAttributes[i].defaultValue,
-                    false,
-                    false
-                ));
-            }
-            this.attributeView.appendChild(table);
-        }
-    },
-
-    /** 
-     * Builds the dictionary view
-     * @private
-     * @param forElement the element for which the view is built
-     */
-    buildDictionaryView: function (forElement) {
-        while (this.dictionaryView.hasChildNodes()) { this.dictionaryView.removeChild(this.dictionaryView.firstChild); }
-        // Return immediately if we are not on an mo element
-        if (! (forElement.namespaceURI==NS_MathML && forElement.localName=="mo")) { return }
-
-        var table = document.createElement("table");
-        var caption = document.createElement("caption");
-        caption.appendChild(document.createTextNode("dictionary entries"));
-        table.appendChild(caption);
-        var titleRow = document.createElement("tr");
-        var th = document.createElement("th");
-        th.appendChild(document.createTextNode("name"));
-        th.setAttribute("colspan", "3");
-        titleRow.appendChild(th);
-        var th = document.createElement("th");
-        th.appendChild(document.createTextNode("comments"));
-        th.setAttribute("colspan", "3");
-        titleRow.appendChild(th);
-        var th = document.createElement("th");
-        th.appendChild(document.createTextNode("attributes"));
-        titleRow.appendChild(th);
-        var th = document.createElement("th");
-        th.appendChild(document.createTextNode("other"));
-        th.setAttribute("colspan", "2");
-        titleRow.appendChild(th);
-        table.appendChild(titleRow);
-
-        // XXX: Do we need to remove whitespacve at beginning and end?
-        var entries = operatorDictionary.entriesByContent(forElement.textContent);
-        entries.forEach(function (entry) {
-            var tr = document.createElement("tr");
-            
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.content));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.form));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.disamb));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.contentComment));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.comment));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.description));
-            tr.appendChild(td);
-            
-            var td = document.createElement("td");
-            for (a in entry.attributes) {
-                var text = document.createTextNode(
-                    a + " = " + entry.attributes[a]
-                );
-                td.appendChild(text);
-                td.appendChild(document.createElement("br"));
-            }
-            tr.appendChild(td);
-
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.groupingPrecedence));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.isSpec ? "spec" : "user"));
-            tr.appendChild(td);
-
-            tr.setAttribute("class", entry.isSpec ? "spec" : "user");
-            // If all attributes match, we mark the entry as "applied"
-            var matches = true;
-            for (a in entry.attributes) {
-                if (entry.attributes[a] != forElement.getAttribute(a)) { matches = false }
-            }
-            if (matches) {
-                tr.setAttribute("class", tr.getAttribute("class") + " applied");
-            }
-            
-            table.appendChild(tr);
-        });
-
-        this.dictionaryView.appendChild(table);
-    },
 
     /**
      * Does inportant initialisation and must be called after creating
@@ -570,6 +342,272 @@ EquationEnv.prototype = {
 
         // close
         this.editor.eliminateEquationEnv(this);
+    },
+}
+
+/**
+ * @class tree view
+ */
+function TreeView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+TreeView.prototype = {    
+    /** 
+     * Builds the tree view. For showing the tree structure, nested
+     * div elements are used. The view is built up from scratch every
+     * time. The internal:selected attributes from elements in the
+     * equation are also placed in the tree view. 
+     */
+    build: function() {
+        var treeWalker = document.createTreeWalker(
+            this.equationEnv.equation,
+            NodeFilter.SHOW_ALL,
+            { acceptNode: function(node) { return (node.nodeType == Node.ELEMENT_NODE || !(/^\s*$/.test(node.nodeValue))) ?  NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } },
+            false
+        );
+        xml_flushElement(this.viewport);
+        var root = document.createElement("div");
+        this.viewport.appendChild(root);
+        var pos = root;
+        var reachedEnd = false;
+        while (!reachedEnd) {
+            // Create node
+            var node = document.createElement("div");
+            pos.appendChild(node);
+            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE) {
+                node.setAttribute("class", "element");
+                node.appendChild(document.createTextNode(treeWalker.currentNode.localName));
+            }
+            else {
+                node.setAttribute("class", "nodeValue");
+                node.appendChild(document.createTextNode(treeWalker.currentNode.nodeValue));
+            }
+            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE && treeWalker.currentNode.getAttributeNS(NS_internal, "selected")) {
+                node.setAttributeNS(NS_internal, "selected", treeWalker.currentNode.getAttributeNS(NS_internal, "selected"));
+            }
+            // Move to next node
+            if (treeWalker.firstChild()) {
+                pos = node;
+            }
+            else if (treeWalker.nextSibling()) {
+                // do nothing
+            }
+            else {
+                // Go up until there is a nextSibling, then select
+                // it
+                while (!treeWalker.nextSibling()) {
+                    if (!treeWalker.parentNode()) { 
+                        reachedEnd = true;
+                        break;
+                    }
+                    pos = pos.parentNode;
+                }
+            }
+        }
+    },
+}
+
+/**
+ * @class attribute view
+ */
+function AttributeView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+AttributeView.prototype = {    
+    /**
+     * Builds the attribute view
+     */
+    build: function () {
+        var forElement = this.equationEnv.mode.contextNode;
+
+        xml_flushElement(this.viewport);
+        // Place attribute information inside an Array
+        var attributes = [];
+        var attributeNodeMap = forElement.attributes;
+        for (var i=0; i<attributeNodeMap.length; i++) {
+            attributes.push(attributeNodeMap[i]);
+        }
+
+        // Sort the array (and filter out internal attributes)
+        attributes = attributes.filter(function (a) { return a.namespaceURI != NS_internal });
+        attributes = attributes.sort(
+            function (a, b) { 
+                if (a.namespaceURI < b.namespaceURI) return -1
+                else if (a.namespaceURI > b.namespaceURI) return 1
+                else if (a.localName < b.localName) return -1
+                else if (a.localName > b.localName) return 1
+                else return 0;
+            }
+        );
+
+        generateRow = function (ns, name, value, cursor, selected) {
+            var t_ns = document.createElement("td");
+            t_ns.appendChild(document.createTextNode(ns));
+            var t_name = document.createElement("td");
+            t_name.appendChild(document.createTextNode(name));
+            var t_value = document.createElement("td");
+            t_value.appendChild(document.createTextNode(value));
+            var row = document.createElement("tr");
+            if (cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor") }
+            if (selected) { row.setAttributeNS(NS_internal, "selected", "selection") }
+            if (selected && cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor selection") }
+            row.appendChild(t_ns);
+            row.appendChild(t_name);
+            row.appendChild(t_value);
+            return row;
+        }
+
+        // Generate table
+        var table = document.createElement("table");
+        var caption = document.createElement("caption");
+        caption.appendChild(document.createTextNode("attributes"));
+        table.appendChild(caption);
+        for (var i = 0; i < attributes.length; i++) {
+            table.appendChild(generateRow(
+                attributes[i].namespaceURI,
+                attributes[i].localName,
+                attributes[i].nodeValue,
+                attributes[i].nodeName == forElement.getAttributeNS(NS_internal, "attributeCursor"),
+                forElement.getAttributeNS(NS_internal, "selectedAttributes").split(' ').indexOf(attributes[i].nodeName) != -1
+            ));
+        }
+        this.viewport.appendChild(table);
+
+        // Generate table of default attributes
+        if (elementDescriptions[forElement.localName] && elementDescriptions[forElement.localName].attributes) {
+            table = document.createElement("table");
+            table.setAttribute("class", "defaultAttribute");
+            var caption = document.createElement("caption");
+            caption.appendChild(document.createTextNode("default attributes"));
+            table.appendChild(caption);
+            var defaultAttributesHash = elementDescriptions[forElement.localName].attributes;
+            var defaultAttributes = [];
+            for (a in defaultAttributesHash) {
+                defaultAttributes.push(defaultAttributesHash[a]);
+            }
+            for (var i = 0; i < defaultAttributes.length; i++) {
+                table.appendChild(generateRow(
+                    defaultAttributes[i].namespace || "",
+                    defaultAttributes[i].name,
+                    defaultAttributes[i].defaultValue,
+                    false,
+                    false
+                ));
+            }
+            this.viewport.appendChild(table);
+        }
+    },
+}
+
+/**
+ * @class dictionary view
+ */
+function DictionaryView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+DictionaryView.prototype = {    
+    /** 
+     * Builds the dictionary view
+     */
+    build: function() {
+        var forElement = this.equationEnv.mode.contextNode;
+        
+        xml_flushElement(this.viewport);
+        // Return immediately if we are not on an mo element
+        if (! (forElement.namespaceURI==NS_MathML && forElement.localName=="mo")) { return }
+
+        var table = document.createElement("table");
+        var caption = document.createElement("caption");
+        caption.appendChild(document.createTextNode("dictionary entries"));
+        table.appendChild(caption);
+        var titleRow = document.createElement("tr");
+        var th = document.createElement("th");
+        th.appendChild(document.createTextNode("name"));
+        th.setAttribute("colspan", "3");
+        titleRow.appendChild(th);
+        var th = document.createElement("th");
+        th.appendChild(document.createTextNode("comments"));
+        th.setAttribute("colspan", "3");
+        titleRow.appendChild(th);
+        var th = document.createElement("th");
+        th.appendChild(document.createTextNode("attributes"));
+        titleRow.appendChild(th);
+        var th = document.createElement("th");
+        th.appendChild(document.createTextNode("other"));
+        th.setAttribute("colspan", "2");
+        titleRow.appendChild(th);
+        table.appendChild(titleRow);
+
+        // XXX: Do we need to remove whitespacve at beginning and end?
+        var entries = operatorDictionary.entriesByContent(forElement.textContent);
+        entries.forEach(function (entry) {
+            var tr = document.createElement("tr");
+            
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.content));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.form));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.disamb));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.contentComment));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.comment));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.description));
+            tr.appendChild(td);
+            
+            var td = document.createElement("td");
+            for (a in entry.attributes) {
+                var text = document.createTextNode(
+                    a + " = " + entry.attributes[a]
+                );
+                td.appendChild(text);
+                td.appendChild(document.createElement("br"));
+            }
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.groupingPrecedence));
+            tr.appendChild(td);
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(entry.isSpec ? "spec" : "user"));
+            tr.appendChild(td);
+
+            tr.setAttribute("class", entry.isSpec ? "spec" : "user");
+            // If all attributes match, we mark the entry as "applied"
+            var matches = true;
+            for (a in entry.attributes) {
+                if (entry.attributes[a] != forElement.getAttribute(a)) { matches = false }
+            }
+            if (matches) {
+                tr.setAttribute("class", tr.getAttribute("class") + " applied");
+            }
+            
+            table.appendChild(tr);
+        });
+
+        this.viewport.appendChild(table);
     },
 }
 
