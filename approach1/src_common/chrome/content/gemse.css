@@ -1,6 +1,14 @@
 @namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
 @namespace html     "http://www.w3.org/1999/xhtml";
 
+/*** The window (XUL) **/
+/* Initial size of window, when using the XUL interface (if this is
+set to a higher value than the size of the screen, the window is made
+smaller automatically */
+XUL|window {
+    width: 1200px;
+    height: 900px;
+}
 
 /*** Boxes and tables ***/
 

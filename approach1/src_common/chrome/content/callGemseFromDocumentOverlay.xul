@@ -80,7 +80,7 @@
     }
 
     // Now open a new Gemse editor. Inform it about the elements to load
-    window.openDialog("chrome://gemse/content/editor.xhtml",
+    window.openDialog("chrome://gemse/content/editor.xul",
                       "_blank", "scrollbars,resizable,chrome,dialog=no",
                       mathElements);
   }

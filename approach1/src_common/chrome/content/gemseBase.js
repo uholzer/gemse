@@ -128,7 +128,6 @@ EquationEnv.prototype = {
     },
 
 
-
     /**
      * Does inportant initialisation and must be called after creating
      * the object.
@@ -371,13 +370,13 @@ TreeView.prototype = {
             false
         );
         xml_flushElement(this.viewport);
-        var root = document.createElement("div");
+        var root = document.createElementNS(NS_HTML,"div");
         this.viewport.appendChild(root);
         var pos = root;
         var reachedEnd = false;
         while (!reachedEnd) {
             // Create node
-            var node = document.createElement("div");
+            var node = document.createElementNS(NS_HTML,"div");
             pos.appendChild(node);
             if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE) {
                 node.setAttribute("class", "element");
@@ -451,13 +450,13 @@ AttributeView.prototype = {
         );
 
         generateRow = function (ns, name, value, cursor, selected) {
-            var t_ns = document.createElement("td");
+            var t_ns = document.createElementNS(NS_HTML,"td");
             t_ns.appendChild(document.createTextNode(ns));
-            var t_name = document.createElement("td");
+            var t_name = document.createElementNS(NS_HTML,"td");
             t_name.appendChild(document.createTextNode(name));
-            var t_value = document.createElement("td");
+            var t_value = document.createElementNS(NS_HTML,"td");
             t_value.appendChild(document.createTextNode(value));
-            var row = document.createElement("tr");
+            var row = document.createElementNS(NS_HTML,"tr");
             if (cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor") }
             if (selected) { row.setAttributeNS(NS_internal, "selected", "selection") }
             if (selected && cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor selection") }
@@ -468,8 +467,8 @@ AttributeView.prototype = {
         }
 
         // Generate table
-        var table = document.createElement("table");
-        var caption = document.createElement("caption");
+        var table = document.createElementNS(NS_HTML,"table");
+        var caption = document.createElementNS(NS_HTML,"caption");
         caption.appendChild(document.createTextNode("attributes"));
         table.appendChild(caption);
         for (var i = 0; i < attributes.length; i++) {
@@ -485,9 +484,9 @@ AttributeView.prototype = {
 
         // Generate table of default attributes
         if (elementDescriptions[forElement.localName] && elementDescriptions[forElement.localName].attributes) {
-            table = document.createElement("table");
+            table = document.createElementNS(NS_HTML,"table");
             table.setAttribute("class", "defaultAttribute");
-            var caption = document.createElement("caption");
+            var caption = document.createElementNS(NS_HTML,"caption");
             caption.appendChild(document.createTextNode("default attributes"));
             table.appendChild(caption);
             var defaultAttributesHash = elementDescriptions[forElement.localName].attributes;
@@ -531,23 +530,23 @@ DictionaryView.prototype = {
         // Return immediately if we are not on an mo element
         if (! (forElement.namespaceURI==NS_MathML && forElement.localName=="mo")) { return }
 
-        var table = document.createElement("table");
-        var caption = document.createElement("caption");
+        var table = document.createElementNS(NS_HTML,"table");
+        var caption = document.createElementNS(NS_HTML,"caption");
         caption.appendChild(document.createTextNode("dictionary entries"));
         table.appendChild(caption);
-        var titleRow = document.createElement("tr");
-        var th = document.createElement("th");
+        var titleRow = document.createElementNS(NS_HTML,"tr");
+        var th = document.createElementNS(NS_HTML,"th");
         th.appendChild(document.createTextNode("name"));
         th.setAttribute("colspan", "3");
         titleRow.appendChild(th);
-        var th = document.createElement("th");
+        var th = document.createElementNS(NS_HTML,"th");
         th.appendChild(document.createTextNode("comments"));
         th.setAttribute("colspan", "3");
         titleRow.appendChild(th);
-        var th = document.createElement("th");
+        var th = document.createElementNS(NS_HTML,"th");
         th.appendChild(document.createTextNode("attributes"));
         titleRow.appendChild(th);
-        var th = document.createElement("th");
+        var th = document.createElementNS(NS_HTML,"th");
         th.appendChild(document.createTextNode("other"));
         th.setAttribute("colspan", "2");
         titleRow.appendChild(th);
@@ -556,41 +555,41 @@ DictionaryView.prototype = {
         // XXX: Do we need to remove whitespacve at beginning and end?
         var entries = operatorDictionary.entriesByContent(forElement.textContent);
         entries.forEach(function (entry) {
-            var tr = document.createElement("tr");
+            var tr = document.createElementNS(NS_HTML,"tr");
             
-            var td = document.createElement("td");
+            var td = document.createElementNS(NS_HTML,"td");
             td.appendChild(document.createTextNode(entry.content));
             tr.appendChild(td);
-            var td = document.createElement("td");
+            var td = document.createElementNS(NS_HTML,"td");
             td.appendChild(document.createTextNode(entry.form));
             tr.appendChild(td);
-            var td = document.createElement("td");
+            var td = document.createElementNS(NS_HTML,"td");
             td.appendChild(document.createTextNode(entry.disamb));
             tr.appendChild(td);
-            var td = document.createElement("td");
+            var td = document.createElementNS(NS_HTML,"td");
             td.appendChild(document.createTextNode(entry.contentComment));
             tr.appendChild(td);
-            var td = document.createElement("td");
+            var td = document.createElementNS(NS_HTML,"td");
             td.appendChild(document.createTextNode(entry.comment));
             tr.appendChild(td);
-            var td = document.createElement("td");
+            var td = document.createElementNS(NS_HTML,"td");
             td.appendChild(document.createTextNode(entry.description));
             tr.appendChild(td);
             
-            var td = document.createElement("td");
+            var td = document.createElementNS(NS_HTML,"td");
             for (a in entry.attributes) {
                 var text = document.createTextNode(
                     a + " = " + entry.attributes[a]
                 );
                 td.appendChild(text);
-                td.appendChild(document.createElement("br"));
+                td.appendChild(document.createElementNS(NS_HTML,"br"));
             }
             tr.appendChild(td);
 
-            var td = document.createElement("td");
+            var td = document.createElementNS(NS_HTML,"td");
             td.appendChild(document.createTextNode(entry.groupingPrecedence));
             tr.appendChild(td);
-            var td = document.createElement("td");
+            var td = document.createElementNS(NS_HTML,"td");
             td.appendChild(document.createTextNode(entry.isSpec ? "spec" : "user"));
             tr.appendChild(td);
 
