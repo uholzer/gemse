@@ -1,11 +1,12 @@
 @namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
 @namespace html     "http://www.w3.org/1999/xhtml";
+@namespace xul      "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
 /*** The window (XUL) **/
 /* Initial size of window, when using the XUL interface (if this is
 set to a higher value than the size of the screen, the window is made
 smaller automatically */
-XUL|window {
+xul|window {
     width: 1200px;
     height: 900px;
 }
@@ -34,10 +35,11 @@ html|table {
 *[internal|selected="insertCursorBefore"]        { border-left:  3px solid #050 !important }
 *[internal|selected="insertCursorAfter"]         { border-right: 3px solid #050 !important }
 
+*[internal|function="viewport"] { width: 50%; }
 
 /*** the equation ***/
 
-*[internal|function="equation"] {
+*[internal|viewClass="equation"] {
     border: 1px solid black;
     text-align: center;
     font-size: x-large;
@@ -46,13 +48,13 @@ html|table {
 
 /*** tree view. ***/
 
-*[internal|function="treeView"] {
+*[internal|viewClass="treeView"] {
     border: 1px solid black;
     margin: 1px; padding: 1px 1px 5ex 1px;
     text-align: center;
     font-size: small;
 }
-*[internal|function="treeView"] html|div.element {
+*[internal|viewClass="treeView"] html|div.element {
     display: inline-block;
     border: 1px solid black;
     margin: 1px; padding: 1px;
@@ -60,7 +62,7 @@ html|table {
     top: 5px;
     text-align: center;
 }
-*[internal|function="treeView"] html|div.nodeValue {
+*[internal|viewClass="treeView"] html|div.nodeValue {
     color: blue;
     font-size: larger;
 }
@@ -68,11 +70,11 @@ html|table {
 
 /*** attribute view. ***/
 
-*[internal|function="attributeView"] {
+*[internal|viewClass="attributeView"] {
     float: left;
     margin: 1ex;
 }
-*[internal|function="attributeView"] * {
+*[internal|viewClass="attributeView"] * {
     border: 1px solid black;
 }
 *.defaultAttribute * {
@@ -82,19 +84,19 @@ html|table {
 
 /*** dictionary view. ***/
 
-*[internal|function="dictionaryView"] {
+*[internal|viewClass="dictionaryView"] {
     margin: 1ex;
 }
-*[internal|function="dictionaryView"] * {
+*[internal|viewClass="dictionaryView"] * {
     border: 1px solid black;
 }
-*[internal|function="dictionaryView"] html|td:first-child {
+*[internal|viewClass="dictionaryView"] html|td:first-child {
     font-size: x-large;
 }
-*[internal|function="dictionaryView"] html|tr.user {
+*[internal|viewClass="dictionaryView"] html|tr.user {
     color: #008;
 }
-*[internal|function="dictionaryView"] html|tr.applied {
+*[internal|viewClass="dictionaryView"] html|tr.applied {
     background-color: #f88;
 }
 

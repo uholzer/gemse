@@ -3,62 +3,17 @@
  * @param editor The editor object the new environment will belong to
  * @param container The DOM element that will contain this environment
  */
-function EquationEnv(editor, container) {
-    /** @private */
-    this.container = container;
+function EquationEnv(editor, equation) {
     /** @private */
     this.editor = editor;
-
-    /* The container must provide some elements. They are
-      located by the function attribute. */
 
     var nsResolver = standardNSResolver;
 
     /**
      * Root element of the equation.
-     * The element with function "equation" is the one that
-     * actually contains the MathML element. It must already
-     * contain one now, not nessecairily empty.
      * @private
      */
-    this.equation = document.evaluate(".//.[@internal:function='equation']/*", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
-
-    /**
-     * The element containing the tree view.
-     * The tree view shows the tree structure of the equation
-     * using nested div elements. This view is always
-     * regenerated based on the equation.
-     * @private
-     */
-    this.treeView = new TreeView(this.editor, this, document.evaluate(".//.[@internal:function='treeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue);
-
-    /**
-     * The element containing the attribute view.
-     * The attribute view lists all attributes of the current
-     * element
-     * @private
-     */
-    this.attributeView = new AttributeView(this.editor, this, document.evaluate(".//.[@internal:function='attributeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue);
-
-    /**
-     * The element containing the dictionary view.
-     * The dictionary view shows information taken from a dictionary
-     * about the current element.
-     * @private
-     */
-    this.dictionaryView = new DictionaryView(this.editor, this, document.evaluate(".//.[@internal:function='dictionaryView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue);
-
-    /**
-     * The element containing the name of the current mode.
-     * @private
-     */
-    this.modeNameIndicator = document.evaluate(".//.[@internal:function='modeName']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
-
-    /**
-     * The element containing various notifications.
-     * @private
-     */
-    this.notificationDisplay = document.evaluate(".//.[@internal:function='notificationDisplay']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+    this.equation = equation;
 
     /**
      * Where the equation originates from.
@@ -97,36 +52,25 @@ function EquationEnv(editor, container) {
 EquationEnv.prototype = {
     /* Methods */
 
+    /**
+     * Update view via the editor's viewsetManager.
+     * XXX: Get rid of that, since this should be done by the editor
+     */
+    updateViews: function() {
+        this.editor.viewsetManager.build();
+    },
+
     /** 
      * Replaces a currenly open equation with a different one.
      * You must not set this.equation directly. You must use
      * this method instead. You also have to call reInit of
      * the current mode afterwards.
+     * XXX: Should get rid of this method?
      * @param e the root node of the new equation
      */
     replaceEquation: function(e) {
-        this.equation.parentNode.replaceChild(e, this.equation);
         this.equation = e;
     },
-
-    /** Rebuilds all currently visible views. */
-    updateViews: function() {
-        if (this.treeView) { this.treeView.build(); }
-        if (this.attributeView && this.mode.contextNode) { 
-            var element = this.mode.contextNode;
-            while (element.nodeType != Node.ELEMENT_NODE) { element = element.parentNode; }
-            this.attributeView.build(); 
-        }
-        if (this.dictionaryView && this.mode.contextNode) { 
-            var element = this.mode.contextNode;
-            while (element.nodeType != Node.ELEMENT_NODE) { element = element.parentNode; }
-            this.dictionaryView.build(); 
-        }
-        if (this.modeNameIndicator) {
-            this.modeNameIndicator.textContent = this.mode.name;
-        }
-    },
-
 
     /**
      * Does inportant initialisation and must be called after creating
@@ -198,6 +142,7 @@ EquationEnv.prototype = {
     /**
      * Removes all attributes in the internal namespace. This method
      * must be applied on a subtree of a document.
+     * XXX: Can this be done on nodes not part of any document?
      * @param doc  The document that contains the subtree
      * @param root The root node of the subtree
      */
@@ -914,6 +859,110 @@ Change.prototype = {
 }
 
 /**
+ * @class Manages viewsets.
+ */
+function ViewsetManager(editor,dock) {
+    this.editor = editor;
+    /**
+     * The DOM element that acts as the dock, that is the element that
+     * contains the current viewset.
+     */
+    this.dock = dock;
+    /**
+     * List of DOM elements which are viewsets
+     */
+    this.viewsets = [];
+    /**
+     * Contains the view objects of the current view used.
+     * They have to be recreated when
+     * - the focus is moved to another equation
+     * - The viewset is changed
+     */
+    this.views = [];
+}
+ViewsetManager.prototype = {
+    /**
+     * Maps names of classes (strings) to the constructor function.
+     * Every view must be registered here.
+     * XXX: To be stored somewhere else?
+     * @private
+     */
+    viewClasses: { 
+        /*DirectView: DirectView,*/
+        TreeView: TreeView,
+        AttributeView: AttributeView,
+        DictionaryView: DictionaryView,
+    },
+    /**
+     * Builds all views.
+     * It loops over all views of the current viewset and calls there
+     * build method.
+     */
+    build: function() {
+        this.views.forEach(function (v) { v.build() });
+    },
+    /**
+     * Creates the views of a viewset
+     * @param viewsetNumber The number of the desired viewset, 0 by
+     *                      default.
+     */
+    create: function(viewsetNumber) {
+        // The default viewset is the first one
+        if (viewsetNumber===undefined) { viewsetNumber = 0 }
+        if (!this.viewsets[viewsetNumber]) {
+            throw "There is no viewset with number " + viewsetNumber;
+        }
+        // Get rid of current views
+        this.views = [];
+        // Clear the dock
+        xml_flushElement(this.dock);
+        // Make deep copy of the viewset
+        var newViewset = this.viewsets[viewsetNumber].cloneNode(true);
+        // Fill the dock
+        var e;
+        while (e = newViewset.firstChild) {
+            this.dock.appendChild(e);
+        }
+        // Find the viewport elements
+        var viewports = [];
+        var xpathResult = document.evaluate(
+            ".//*[@internal:function='viewport']", 
+            this.dock, 
+            standardNSResolver, 
+            XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+            null
+        );
+        var viewport;
+        while (viewport = xpathResult.iterateNext()) { viewports.push(viewport) }
+        // Create view objects
+        for (var i=0;i<viewports.length;++i) {
+            // Find out the class
+            var className = viewports[i].getAttributeNS(NS_internal, "viewClass");
+            var constructor = this.viewClasses[className];
+            if (!constructor) {
+                throw "There is no view with the name " + className;
+            }
+            // Create view
+            //XXX: Is this ok?
+            this.views.push(new constructor(this.editor,this.editor.equations[this.editor.focus],viewports[i]));
+        }
+    },
+    /**
+     * Load viewsets contained in a DOM element.
+     * @param element DOM element containing internal:viewset elements
+     */
+    loadViewsets: function(element) {
+        var viewset = element.firstChild;
+        while (viewset) {
+            if (viewset.nodeType == Node.ELEMENT_NODE) {
+                this.viewsets.push(viewset);
+            }
+            viewset = viewset.nextSibling;
+        }
+    },
+}
+
+/**
  * @class The Gemse main object. It hosts all equation environments, handles
  * input by the user, keeps registers, options, and so on.
  */
@@ -934,14 +983,21 @@ function GemsePEditor() {
     this.focus = -1;
     /**
      * The input box where the user enters commands
+     * (The constructor of the editor looks for the element with id
+     * "input".)
      * @private
      */
-    this.inputElement;
+    this.inputElement = document.getElementById("input");
     /**
-     * A template as a DOM element of a container for a new equation environment
+     * A template as a DOM element of a new equation.
+     * (The constructor of this class does set this property by
+     * looking for an element with id "equationTemplate"
+     * It also detaches this
+     * element from the document itself.)
      * @private
      */
-    this.containerTemplate;
+    this.equationTemplate = document.getElementById("equationTemplate");
+    this.equationTemplate.parentNode.removeChild(this.equationTemplate);
     /**
      * Globally set options by name
      * @private
@@ -953,12 +1009,18 @@ function GemsePEditor() {
      */
     this.inputRecordings = { };
     /**
-     * The DOM element that horts all equation Environments, it is
-     * called pool. If it is null, then the user can not
-     * create new equations.
+     * Manages the view sets.
+     * (The constructor of the editor does use the element with id
+     * "viewsetDock" as dock. It also calls
+     * viewsetManager.loadViewsets handing over the first
+     * internal:viewsets element of the document. This element is
+     * removed from the document afterwards.)
      * @private
      */
-    this.pool = null;
+    this.viewsetManager = new ViewsetManager(this,document.getElementById("viewsetDock"));
+    var viewsets = document.getElementsByTagNameNS(NS_internal, "viewsets")[0];
+    this.viewsetManager.loadViewsets(viewsets);
+    viewsets.parentNode.removeChild(viewsets);
     /**
      * Internal input substitution method. This is implemented in
      * inputSubstitution/cors.js and is perhaps not even present.
@@ -1139,8 +1201,6 @@ GemsePEditor.prototype = {
         var index = this.equations.indexOf(equationEnv);
         if (index < 0) { throw "This equationEnv is not even registered!" }
 
-        var pool = document.getElementById("pool");
-        pool.removeChild(this.equations[index].container);
         this.equations.splice(index,1);
         if (this.focus > index) { this.moveFocusTo(this.focus-1) }
         if (this.focus == index && index > 0) { --this.focus; this.moveFocusTo(this.focus) }
@@ -1153,15 +1213,13 @@ GemsePEditor.prototype = {
         }
     },
     /**
-     * Attaches a new EquationEnv to an already present element in the
-     * document. If one has created a complete container
-     * (a dom element with internal:purpos="container") containing all
-     * needed elements, including the equation, this method can be
+     * Attaches a new EquationEnv to an already present element in
+     * memory. If one has created an math element, this method can be
      * used to create an equation environment object that is attached
-     * to the container and added to the list of equations.
+     * to the math element and added to the list of equations.
      * This method is mainly used internally but is also used from the
      * outside sometimes.
-     * @param element the cotnainer element
+     * @param element the math element
      * @returns {EquationEnv} the new equation environment
      */
     attachNewEquationEnvToElement: function (element) {
@@ -1172,34 +1230,24 @@ GemsePEditor.prototype = {
         return newEquationEnv;
     },
     /**
-     * Create new equation and its environment. A new EquationEnv gets
-     * created and also a new container element. For the new
-     * container, this.containerTemplate is used.
-     * @param equation this DOM element is used as the equation and
-     *                 placed into its location in the container
-     *                 element. No fullcopy is made beforehand. If
-     *                 this parameter is missing, the equation from
-     *                 the tamplate is used
+     * Creates a new equation along with a new EquationEnv. 
+     * To cunstruct the new equation, this.equationTemplate is used.
+     * @param equation this DOM element is used as the equation
+     *                 directly, no fullcopy is made beforehand. If
+     *                 this parameter is missing, a copy of the equation
+     *                 this.equationTemplate is used
      * @returns {EquationEnv} the new equation environment
      */
     newEquation: function (equation) {
-        // Creates a new EquationEnv and also a new Element in the
-        // document. If the argument equation is not given, an empty
-        // one gets created. Returns the newly created EquationEnv.
-        if (!this.containerTemplate) { throw "No template defined" }
-        var pool = document.getElementById("pool");
-        if (!pool) { throw "No pool element present" }
+        if (!this.equationTemplate) { throw "No equation template defined" }
+        // Create the equation if not given
+        if (!equation) {
+            equation = this.equationTemplate.cloneNode(true);
+        }
         // Create new container in the XML document
-        var newContainer = this.containerTemplate.cloneNode(true);
-        pool.appendChild(newContainer);
-        // Attach element to it
-        var newEquationEnv = new EquationEnv(this, newContainer);
+        var newEquationEnv = new EquationEnv(this, equation);
         newEquationEnv.init();
         this.equations.push(newEquationEnv);
-        if (equation) {
-            newEquationEnv.replaceEquation(equation);
-            newEquationEnv.mode.reInit(); //XXX: Find better solution
-        }
         this.moveFocusTo(this.equations.length-1);
         return newEquationEnv;
     },
@@ -1324,11 +1372,9 @@ GemsePEditor.prototype = {
     moveFocusTo: function(dest) {
         if (dest >= this.equations.length) { return false }
         if (dest < 0) { return false }
-        if (this.focus >= 0) {
-            this.equations[this.focus].container.removeAttributeNS(NS_internal, "selected");
-        }
         this.focus = dest;
-        this.equations[this.focus].container.setAttributeNS(NS_internal, "selected", "equationFocus");
+        this.viewsetManager.create();
+        this.viewsetManager.build();
     },
     /**
      * Get an option's handler object, which defines a validator and a
