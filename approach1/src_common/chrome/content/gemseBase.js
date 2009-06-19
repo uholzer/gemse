@@ -290,6 +290,40 @@ EquationEnv.prototype = {
 }
 
 /**
+ * @class direct view of the equation by directly putting the math
+ * element into the document.
+ * There must not be more than one instance of this view, since if
+ * there are, the same DOM element (i.e. the math element) is put at
+ * different places in the document, which is not possible.
+ */
+function DirectView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+DirectView.prototype = {
+    /** 
+     * Builds the tree view. For showing the tree structure, nested
+     * div elements are used. The view is built up from scratch every
+     * time. The internal:selected attributes from elements in the
+     * equation are also placed in the tree view. 
+     */
+    build: function() {
+        // Put the equation as child into the viewport, but only if it
+        // is not yet there. We must be careful, since sometimes
+        // this.equationEnv.equation itself changes.
+        if (mml_firstChild(this.viewport)!=this.equationEnv) {
+            xml_flushElement(this.viewport);
+            this.viewport.appendChild(this.equationEnv.equation);
+        }
+    }
+}
+
+
+/**
  * @class tree view
  */
 function TreeView(editor,equationEnv,viewport) {
@@ -888,7 +922,7 @@ ViewsetManager.prototype = {
      * @private
      */
     viewClasses: { 
-        /*DirectView: DirectView,*/
+        DirectView: DirectView,
         TreeView: TreeView,
         AttributeView: AttributeView,
         DictionaryView: DictionaryView,

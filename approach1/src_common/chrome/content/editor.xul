@@ -76,6 +76,7 @@
 <internal:viewsets>
     <internal:viewset name="foo">
         <vbox>
+            <html:div internal:function="viewport" internal:viewClass="DirectView"/>
             <html:div internal:function="viewport" internal:viewClass="TreeView"/>
             <hbox>
                 <html:div internal:function="viewport" internal:viewClass="AttributeView"/>
@@ -85,6 +86,7 @@
     </internal:viewset>
     <internal:viewset name="bar">
         <vbox>
+            <vbox internal:function="viewport" internal:viewClass="DirectView"/>
             <vbox internal:function="viewport" internal:viewClass="TreeView"/>
             <vbox internal:function="viewport" internal:viewClass="AttributeView"/>
             <vbox internal:function="viewport" internal:viewClass="DictionaryView"/>

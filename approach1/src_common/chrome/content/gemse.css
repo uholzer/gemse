@@ -35,11 +35,10 @@ html|table {
 *[internal|selected="insertCursorBefore"]        { border-left:  3px solid #050 !important }
 *[internal|selected="insertCursorAfter"]         { border-right: 3px solid #050 !important }
 
-*[internal|function="viewport"] { width: 50%; }
 
 /*** the equation ***/
 
-*[internal|viewClass="equation"] {
+*[internal|viewClass="DirectView"], *[internal|viewClass="EquationView"] {
     border: 1px solid black;
     text-align: center;
     font-size: x-large;
