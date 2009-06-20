@@ -590,6 +590,64 @@ DictionaryView.prototype = {
 }
 
 /**
+ * @class Others view, shows the other open equations.
+ *        XXX: I fear that this implementation is slow when there are
+ *        many open equations.
+ */
+function OthersView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+
+    // This view is generated when it is created, that is, here:
+    // XXX: Is this save?
+    for (var i=0;i<editor.equations.length;++i) {
+        var copy = editor.equations[i].equation.cloneNode(true);
+        var containment = document.createElementNS(NS_HTML,"div")
+        containment.appendChild(copy);
+        this.viewport.appendChild(containment);
+        this.equationEnv.cleanSubtreeOfDocument(document,copy);
+        if (this.equationEnv == editor.equations[i]) {
+            containment.setAttributeNS(NS_internal,"selected","editcursor"); //XXX: Good?
+        }
+    }
+}
+OthersView.prototype = {    
+    /**
+     * Builds the view
+     */
+    build: function () {
+        // This view does only change when created, so do nothing!
+    },
+}
+
+/**
+ * @class Statusbar view, shows various information
+ */
+function StatusbarView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+StatusbarView.prototype = {    
+    /**
+     * Builds the view
+     */
+    build: function () {
+        xml_flushElement(this.viewport);
+        modeNameLabel = document.createElementNS(NS_HTML,"div");
+        modeNameLabel.appendChild(document.createTextNode(this.equationEnv.mode.name));
+        this.viewport.appendChild(modeNameLabel);
+    },
+}
+
+/**
  * @class Register holding data that can be put somewhere (so to say, an
  * internal clipboard)
  * @param name the name the user has to use to access this Register,
@@ -926,6 +984,8 @@ ViewsetManager.prototype = {
         TreeView: TreeView,
         AttributeView: AttributeView,
         DictionaryView: DictionaryView,
+        OthersView: OthersView,
+        StatusbarView: StatusbarView,
     },
     /**
      * Builds all views.
