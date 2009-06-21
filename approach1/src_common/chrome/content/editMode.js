@@ -709,6 +709,26 @@ function editModeCommand_contentInfo(mode) {
     return true;
 }
 
+function editModeCommand_showView(mode, instance) {
+    if (instance.argument == "all") {
+        mode.editor.viewsetManager.showAllViews();
+    }
+    else {
+        mode.editor.viewsetManager.showView(instance.argument);
+    }
+    return true;
+}
+
+function editModeCommand_hideView(mode, instance) {
+    mode.editor.viewsetManager.hideView(instance.argument);
+    return true;
+}
+
+function editModeCommand_chooseViewset(mode, instance) {
+    mode.editor.viewsetManager.chooseViewset(instance.argument);
+    return true;
+}
+
 function editModeCommand_set(mode, instance) {
     // TODO: Use parameter parsing facility from the CommandHandler
     // instead of doing our own. Problem: set global?

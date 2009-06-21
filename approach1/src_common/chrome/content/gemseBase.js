@@ -391,6 +391,88 @@ TreeView.prototype = {
 }
 
 /**
+ * @class source view
+ */
+function SourceView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+SourceView.prototype = {    
+    /** 
+     * Builds the source view.
+     * It does not show real serielized source, but it does emulate it
+     * in some way.
+     */
+    build: function() {
+        xml_flushElement(this.viewport);
+        var pre = document.createElementNS(NS_HTML,"pre");
+        this.viewport.appendChild(pre);
+        this.writeSourceOfElement(this.equationEnv.equation,pre,"");
+    },
+    /**
+     * Writes the source for of an element to the document.
+     * @private
+     * @param src    The element the source should be generated for
+     * @param dest   The source gets appended to this element
+     * @param indentString Whitespaces for indentation
+     * @param inline True if the code for this element should be put
+     *               on the same line, false if it has its own lines.
+     */
+    writeSourceOfElement: function(src,dest,indentString,inline) {
+        var indentMoreString = indentString + "  ";
+        // Take a new span for this element
+        var elementSpan = document.createElementNS(NS_HTML,"span");
+        // Put internal:selected attribute if present
+        if (src.getAttributeNS(NS_internal, "selected")) {
+            elementSpan.setAttributeNS(NS_internal, "selected", src.getAttributeNS(NS_internal, "selected"));
+        }
+        // Add it to dest
+        dest.appendChild(elementSpan);
+
+        // Now fill in the contents of elementSpan:
+
+        if (!mml_firstChild(src) && !src.firstChild) {
+            // src is empty
+            elementSpan.appendChild(document.createTextNode(
+                inline ?
+                "<" + src.localName + "/>" :
+                indentString + "<" + src.localName + "/>\n"
+            ));
+        }
+        else if (!mml_firstChild(src)) {
+            // src contains text but no elements
+            elementSpan.appendChild(document.createTextNode(
+                inline ?
+                "<" + src.localName + ">" :
+                indentString + "<" + src.localName + ">"
+            ));
+            elementSpan.appendChild(document.createTextNode(src.textContent));
+            elementSpan.appendChild(document.createTextNode(
+                "</" + src.localName + ">" + (inline ? "" : "\n")
+            ));
+        }
+        else {
+            // Element contains children
+            elementSpan.appendChild(document.createTextNode(
+                indentString + "<" + src.localName + ">\n"
+            ));
+            var child = mml_firstChild(src);
+            while (child) {
+                this.writeSourceOfElement(child,elementSpan,indentMoreString,false);
+                child = mml_nextSibling(child);
+            }
+            elementSpan.appendChild(document.createTextNode(
+                indentString + "</" + src.localName + ">\n"
+            ));
+        }
+    },
+}
+
+/**
  * @class attribute view
  */
 function AttributeView(editor,equationEnv,viewport) {
@@ -971,6 +1053,13 @@ function ViewsetManager(editor,dock) {
      * - The viewset is changed
      */
     this.views = [];
+    /**
+     * The viewset to be used.
+     * In the future, the user will be able to use different viewsets
+     * for different formulas or modes.
+     * @private
+     */
+    this.globalViewsetNumber = 0;
 }
 ViewsetManager.prototype = {
     /**
@@ -982,6 +1071,7 @@ ViewsetManager.prototype = {
     viewClasses: { 
         DirectView: DirectView,
         TreeView: TreeView,
+        SourceView: SourceView,
         AttributeView: AttributeView,
         DictionaryView: DictionaryView,
         OthersView: OthersView,
@@ -997,12 +1087,10 @@ ViewsetManager.prototype = {
     },
     /**
      * Creates the views of a viewset
-     * @param viewsetNumber The number of the desired viewset, 0 by
-     *                      default.
      */
-    create: function(viewsetNumber) {
-        // The default viewset is the first one
-        if (viewsetNumber===undefined) { viewsetNumber = 0 }
+    create: function() {
+        // Find out which viewset to use
+        var viewsetNumber = this.globalViewsetNumber;
         if (!this.viewsets[viewsetNumber]) {
             throw "There is no viewset with number " + viewsetNumber;
         }
@@ -1053,6 +1141,41 @@ ViewsetManager.prototype = {
             }
             viewset = viewset.nextSibling;
         }
+    },
+    /**
+     * Selects the viewset to be used from now on. This is normally
+     * called from a command executed by teh user.
+     * @param viewsetName Name or number of the viewset to be used.
+     *                    Up to now, only a number is allowed, names
+     *                    are not yet implemented! TODO!
+     * @param scope       Tells whether the viewset should be used for
+     *                    all equations, just for the equation on
+     *                    focus or for a given mode. (Not yet
+     *                    implemented!) TODO!
+     */
+    chooseViewset: function(viewsetName,scope) {
+        this.globalViewsetNumber = viewsetName;
+        // XXX: Is the following a good idea or does it break something?
+        this.create();
+        this.build();
+    },
+    /**
+     * Hides a view of the current viewset. Usually called by a command invoked by the user.
+     */
+    hideView: function(viewNumber) {
+        this.views[viewNumber].viewport.style.display = "none";
+    },
+    /**
+     * Shows a view of the current viewset. Usually called by a command invoked by the user.
+     */
+    showView: function(viewNumber) {
+        this.views[viewNumber].viewport.style.display = "block";
+    },
+    /**
+     * Shows all views of the current viewset. Usually called by a command invoked by the user.
+     */
+    showAllViews: function(viewNumber) {
+        this.views.forEach(function (v) { v.viewport.style.display = "block" });
     },
 }
 
