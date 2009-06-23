@@ -489,8 +489,9 @@ AttributeView.prototype = {
      */
     build: function () {
         var forElement = this.equationEnv.mode.contextNode;
-
         xml_flushElement(this.viewport);
+        if (!forElement) { return }
+
         // Place attribute information inside an Array
         var attributes = [];
         var attributeNodeMap = forElement.attributes;
@@ -586,8 +587,9 @@ DictionaryView.prototype = {
      */
     build: function() {
         var forElement = this.equationEnv.mode.contextNode;
-        
         xml_flushElement(this.viewport);
+        if (!forElement) { return }
+
         // Return immediately if we are not on an mo element
         if (! (forElement.namespaceURI==NS_MathML && forElement.localName=="mo")) { return }
 
@@ -1163,6 +1165,9 @@ ViewsetManager.prototype = {
      * Hides a view of the current viewset. Usually called by a command invoked by the user.
      */
     hideView: function(viewNumber) {
+        // TODO: It is very important that hidden views are not built,
+        // because one reason for deactivating a view is that it slows
+        // down the editor. But this is not yet implemented!!
         this.views[viewNumber].viewport.style.display = "none";
     },
     /**
