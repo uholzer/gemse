@@ -150,6 +150,34 @@
     <p>Creates a new empty equation.</p>
 </div>
 
+<h3>Views and viewsets</h3>
+
+<div class="commandDocumentation" id="editModeCommand_hideView">
+    <h4 class="commandTitle">hides a view</h4>
+
+    <p>Hides a view of the current viewset. The argument must be the
+    number of the view in this viewset. Views are counted in the order
+    they turn up in the XUL description of the viewset, beginning 0
+    and hidden views are always counted as well.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_showView">
+    <h4 class="commandTitle">show a view</h4>
+
+    <p>Shows a previously hidden view. The argument must be the number
+    of the view or <code>all</code>. In the latter case, all hidden
+    views are shown again.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_chooseViewset">
+    <h4 class="commandTitle">choose a viewset</h4>
+
+    <p>Changes the viewset. The argument is the number of the viewset.
+    They are counted in the order they are defined in
+    <code>editor.xul</code>. The first one has number 0 and is the
+    default.</p>
+</div>
+
 <h3>Various</h3>
 
 <div class="commandDocumentation" id="editModeCommand_redisplay">
