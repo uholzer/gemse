@@ -1666,7 +1666,7 @@ attributes in order to get back to the edit mode.</p>
 rendering, its tree structure shown by using nested boxes, its XML source
 and more. These are what is called views in Gemse. But in Gemse the
 concept of views goes even further. The list of attributes of the
-selected element, the list of dictionary entries, the least of the
+selected element, the list of dictionary entries, the list of the
 other opened equations and the status bar are views as well. (However,
 the input box is not a view.) The arrangement of views in the window
 is called a viewset.</p>
@@ -1676,11 +1676,26 @@ lets you choose the viewset you want to use. Currently, you are using
 viewset 0. Type <kbd>:viewset 1&enter;</kbd>.</p>
 
 <p>Although the viewsets can not be changed while Gemse is running,
-you can deactivate a view of the current viewset: TODO</p>
+you can deactivate a view of the current viewset: Enter 
+<kbd>:hideview 1&enter;</kbd>. The tree view is no longer visible. The
+views are counted in the order they appear in the XUL description of
+the viewset in <code>editor.xul</code>, beginning at 0. Type
+<kbd>:hideview 0&enter;</kbd> and the view of the rendering of the
+equation is gone. Now reactivate the tree view by writing
+<code>:showview 1&enter;</code>. You can also reactivate all hidden views
+with <code>:showview all&enter;</code>.</p>
+
+<p>Counting views and remembering the numbers of the viewsets is not
+very userfriendly. This situation will be improved in a future version
+of Gemse. Also, hiding a single view does not deactivate it, it is
+constructed anyway but just not shown. This will change in the future
+as well, because constructing a view can take too much time on slow
+machines and deactivating a view should be a way to speed up
+things.</p>
 
 <h2>Customizing</h2>
 
-<p>If you want to change the appreance of Gemse, you have to lay hands on
+<p>If you want to change the appearance of Gemse, you have to lay hands on
 the file <code>gemse.css</code>. Note that the documentation also uses this
 stylesheet file, so the examples in it are always consistent with your
 changes.</p>
