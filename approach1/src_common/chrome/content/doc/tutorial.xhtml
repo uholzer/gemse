@@ -11,6 +11,7 @@
 
 <html
     xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
     xmlns:m="http://www.w3.org/1998/Math/MathML"
     xml:lang="en"
@@ -35,7 +36,9 @@ hopefully will be a powerful tool once it is finished. However, I am
 sure you will master it, if you want to.</p>
 
 <p>You wont need any knowledge about vim for this tutorial. But you
-will need knowledge about presentation MathML. You can find tutorials
+will need knowledge about presentation MathML. Gemse's documentation
+contains a short <a href="introPMathML.xhtml">introduction to
+presentation MathML</a>. Additionally, you can find tutorials
 and the specification of MathML on the 
 <a href="http://www.w3.org/Math/">MathML page of the w3c</a>. Note
 that you do not need to care about content MathML, you only need basic
@@ -43,19 +46,15 @@ knowledge about the presentation markup of MathML. Of course learning
 presentation MathML requires learning the fundamentals of XML. Gemse
 directly edits the XML structure of presentation MathML.</p>
 
-<h2>Starting Gemse</h2>
+<h2>Starting Gemse and loading formulas</h2>
 
 <p>Gemse 1 is an application written in Javascript using Mozilla. So,
-if you have installed Firefox 3, you are already lucky. Otherwise I can
-not help for the moment.</p>
+if you have installed Firefox 3, you are already lucky. If you do not
+like the idea of installing Firefox 3, you can use XULRunner 1.9.
+Please refer to the <a href="base.xhtml">base documentation</a>
+to find out how to install and run Gemse.</p>
 
-<p>You can start Gemse by starting the demo on Gemse's website or by
-downloading and extracting a Gemse release on your computer. In the
-latter case, you have to open the file <code>editor.xhtml</code> in
-Firefox. (I guess I do not need to mention that you have to turn on
-JavaScript.)</p>
-
-<p>There is an input box at the top. The cursor should be placed there
+<p>There is an input box at the very bottom. The cursor should be placed there
 automatically. If not, do that manually, for example by clicking in
 the box. Now you can start typing commands. As soon as you have
 entered a complete command, it will be executed and the box will be
@@ -69,61 +68,13 @@ the file <code>doc/example01.xml</code>. If you installed Gemse
 locally the URI is <code>file://</code> followed by the full path of
 the file. If you use the demo, this should be
 <code>http://www.andonyar.com/rec/2008-12/gemse/approach1/demo/doc/example01.xml</code>.
-If you installed Gemse in to the chrome, you must use
+If you installed Gemse as Firefox extension or as XULRunner
+application, you must use
 <code>chrome://gemse/content/doc/example01.xml</code>.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" internal:selected="editcursor">
-    <mrow>
-        <mi>exp</mi>
-        <mo>(</mo>
-        <mi>x</mi>
-        <mo>)</mo>
-    </mrow>
-    <mo>=</mo>
-    <mrow>
-        <munderover>
-            <mo>∑</mo>
-            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
-            <mi>∞</mi>
-        </munderover>
-        <mfrac>
-            <msup><mi>x</mi><mi>k</mi></msup>
-            <mrow><mi>k</mi><mo>!</mo></mrow>
-        </mfrac>
-    </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element" internal:selected="editcursor">math<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div>
-    <div internal:function="attributeView"><table><tr><td>http://www.w3.org/2000/xmlns/</td><td>xmlns</td><td>http://www.w3.org/1998/Math/MathML</td></tr></table></div>
-    <div internal:function="modeName">edit</div>
-    <pre internal:function="notificationDisplay"/>
-</div>
-</div>
-
-<p>The first box contains the rendering of the current equation,
-whereas the second box shows the MathML tree structure of it. After
-the second box, you can see a table which shows the attributes of the
-selected element. At the bottom, there is a status line which informs
-you about the current state the editor is in. In the following
-sections you will learn what all this means.</p>
-
-<p>From now on, I will show you only those boxes that I think are
-important.</p>
-
-<h2>Moving around</h2>
-
-<p>The most important thing is the cursor. It highlights an element of
-the equation. If you issue a command, it gets applied on the
-highlighted element. Currently, the cursor is at the <code>math</code>
-element, the topmost element of the equation.</p>
-
-<div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" internal:selected="editcursor">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><hbox><vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="editcursor">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -144,10 +95,135 @@ element, the topmost element of the equation.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element" internal:selected="editcursor">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div><hbox><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span internal:selected="editcursor">&lt;math&gt;
+<html:span>  &lt;mrow&gt;
+<html:span>    &lt;mrow&gt;
+<html:span>      &lt;mi&gt;exp&lt;/mi&gt;
+</html:span><html:span>      &lt;mo&gt;(&lt;/mo&gt;
+</html:span><html:span>      &lt;mi&gt;x&lt;/mi&gt;
+</html:span><html:span>      &lt;mo&gt;)&lt;/mo&gt;
+</html:span>    &lt;/mrow&gt;
+</html:span><html:span>    &lt;mo&gt;=&lt;/mo&gt;
+</html:span><html:span>    &lt;mrow&gt;
+<html:span>      &lt;munderover&gt;
+<html:span>        &lt;mo&gt;∑&lt;/mo&gt;
+</html:span><html:span>        &lt;mrow&gt;
+<html:span>          &lt;mi&gt;k&lt;/mi&gt;
+</html:span><html:span>          &lt;mo&gt;=&lt;/mo&gt;
+</html:span><html:span>          &lt;mi&gt;0&lt;/mi&gt;
+</html:span>        &lt;/mrow&gt;
+</html:span><html:span>        &lt;mi&gt;∞&lt;/mi&gt;
+</html:span>      &lt;/munderover&gt;
+</html:span><html:span>      &lt;mfrac&gt;
+<html:span>        &lt;msup&gt;
+<html:span>          &lt;mi&gt;x&lt;/mi&gt;
+</html:span><html:span>          &lt;mi&gt;k&lt;/mi&gt;
+</html:span>        &lt;/msup&gt;
+</html:span><html:span>        &lt;mrow&gt;
+<html:span>          &lt;mi&gt;k&lt;/mi&gt;
+</html:span><html:span>          &lt;mo&gt;!&lt;/mo&gt;
+</html:span>        &lt;/mrow&gt;
+</html:span>      &lt;/mfrac&gt;
+</html:span>    &lt;/mrow&gt;
+</html:span>  &lt;/mrow&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div><html:div internal:function="viewport" internal:viewClass="AttributeView"><html:table><html:caption>attributes</html:caption><html:tr><html:td></html:td><html:td>display</html:td><html:td>block</html:td></html:tr><html:tr><html:td>http://www.w3.org/2000/xmlns/</html:td><html:td>xmlns</html:td><html:td>http://www.w3.org/1998/Math/MathML</html:td></html:tr></html:table></html:div><html:div internal:function="viewport" internal:viewClass="DictionaryView"/></hbox></vbox><vbox internal:function="viewport" internal:viewClass="OthersView"><html:div><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+            <mi>n</mi>
+        </munderover>
+        <msub><mi>a</mi><mi>i</mi></msub>
+    </mrow>
+    <mo>+</mo>
+    <mroot>
+        <mrow>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mi>b</mi>
+        </mrow>
+        <mi>3</mi>
+    </mroot>
+    <mo>+</mo>
+    <mfenced open="&lt;" close="&gt;" separators=",">
+        <mi>a</mi>
+        <mi>b</mi>
+    </mfenced>
+</mrow> 
+</math></html:div><html:div internal:selected="editcursor"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math></html:div></vbox></hbox><spacer flex="1"/><hbox internal:function="viewport" internal:viewClass="StatusbarView"><html:div>edit</html:div></hbox></vbox>
+</vbox>
 </div>
+
+<p>The topmost box contains the rendering of the current equation,
+whereas the second box from the top shows the MathML tree structure of it.
+Below the second box, you can see the (a little bit simplified) source 
+of the equation and a table of attributes of the selected element.
+On the righthand side, you can see a list of all equations that you
+currently have opened. At the bottom, there is a status line which informs
+you about the current state the editor is in. In the following
+sections you will learn what all this means.</p>
+
+<p>From now on, I will show you only those boxes that I think are
+important.</p>
+
+<h2>Moving around</h2>
+
+<p>The most important thing is the cursor. It highlights an element of
+the equation. If you issue a command, it gets applied on the
+highlighted element. Currently, the cursor is at the <code>math</code>
+element, the topmost element of the equation.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="editcursor">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+    </mrow>
+    <mo>=</mo>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mi>∞</mi>
+        </munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow>
+</mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p> You can move the cursor
@@ -164,9 +240,8 @@ highlighted element. However, the <code>math</code> element is the
 topmost element. Now press <kbd>j</kbd>.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" internal:selected="parent">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
 <mrow internal:selected="editcursor">
     <mrow>
         <mi>exp</mi>
@@ -187,20 +262,18 @@ topmost element. Now press <kbd>j</kbd>.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element" internal:selected="editcursor">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">math<html:div class="element" internal:selected="editcursor">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
-<p>It seems that nothing has changed. In order to see what happened,
+<p>The cursor has been moved, but it is difficult to see where exactly. 
+In order to see exactly which element the cursor is on now,
 look at the tree view in the box below the equation. Press
 <kbd>j</kbd> again.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow internal:selected="parent">
     <mrow internal:selected="editcursor">
         <mi>exp</mi>
@@ -221,10 +294,8 @@ look at the tree view in the box below the equation. Press
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element" internal:selected="editcursor">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="parent">mrow<html:div class="element" internal:selected="editcursor">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p><kbd>j</kbd> moves the cursor to the first child element. Now you
@@ -236,7 +307,7 @@ to it.</p>
 
 <p>Observe that <kbd>h</kbd>, <kbd>l</kbd> do not always mean <q>to
 the right</q> or <q>to the left</q> respectively. For example, select
-the <code>mfrac</code> element. You can reach it my putting the cursor
+the <code>mfrac</code> element. You can reach it by putting the cursor
 over the <code>math</code> element by using <kbd>k</kbd> several times
 followed by <kbd>jjlljl</kbd>. (Note that I sometimes join commands
 that you have to enter together. This for example means that you have
@@ -245,9 +316,8 @@ Now hit <kbd>j</kbd> once again. This selects the first child of the
 <code>mfrac</code> element.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -268,10 +338,8 @@ Now hit <kbd>j</kbd> once again. This selects the first child of the
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element" internal:selected="parent">mfrac<div class="element" internal:selected="editcursor">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element" internal:selected="parent">mfrac<html:div class="element" internal:selected="editcursor">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>In MathML, the first child of an <code>mfrac</code> element is the
@@ -300,9 +368,8 @@ its descendants. Move the cursor to the <code>(</code> after the
 <code>exp</code> and hit <kbd>x</kbd>. What you get is</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow internal:selected="parent">
         <mi>exp</mi>
@@ -323,19 +390,16 @@ its descendants. Move the cursor to the <code>(</code> after the
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element" internal:selected="parent">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element" internal:selected="editcursor">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element" internal:selected="parent">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element" internal:selected="editcursor">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Do the same with the closing bracket <code>)</code> by
 <kbd>lx</kbd>. Now you have</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow internal:selected="parent">
         <mi>exp</mi>
@@ -356,10 +420,8 @@ its descendants. Move the cursor to the <code>(</code> after the
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element" internal:selected="parent">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element" internal:selected="editcursor">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element" internal:selected="parent">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element" internal:selected="editcursor">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Beware: <kbd>x</kbd> is dangerous. This may be configurable in a
@@ -368,15 +430,14 @@ hitting <kbd>klljljl</kbd>. Now hit <kbd>x</kbd> to delete it. You
 immediately see that this was not good.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
-        <mo>(</mo>
+        
         <mi>x</mi>
-        <mo>)</mo>
+        
     </mrow>
     <mo>=</mo>
     <mrow>
@@ -391,10 +452,8 @@ immediately see that this was not good.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element" internal:selected="parent">mfrac<div class="element" internal:selected="editcursor">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element" internal:selected="parent">mfrac<html:div class="element" internal:selected="editcursor">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>What does cause this? Well, some MathML elements must have a fixed
@@ -418,9 +477,8 @@ releaste alt.) Now hit <kbd>u</kbd>. The denominator you just deleted
 is back.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -441,10 +499,8 @@ is back.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element" internal:selected="parent">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element" internal:selected="editcursor">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element" internal:selected="parent">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>You can not only undo the last change, you can even undo changes
@@ -452,9 +508,8 @@ before it. For this hit <kbd>uu</kbd>. Now the two brackets you
 deleted are back too.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow internal:selected="parent">
         <mi>exp</mi>
@@ -475,10 +530,8 @@ deleted are back too.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element" internal:selected="parent">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element" internal:selected="editcursor">mo<div class="nodeValue">(</div></div><div class="element">mi<div class="nodeValue">x</div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element" internal:selected="parent">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element" internal:selected="editcursor">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>If you have undone too many changes, you can reapply them by
@@ -486,14 +539,13 @@ hitting <kbd>&ctrl;r</kbd>. Now, do that twice. The brackets are gone
 again.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow internal:selected="parent">
-    <mrow internal:selected="editcursor">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow internal:selected="parent">
         <mi>exp</mi>
         
-        <mi>x</mi>
+        <mi internal:selected="editcursor">x</mi>
         
     </mrow>
     <mo>=</mo>
@@ -509,10 +561,8 @@ again.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element" internal:selected="editcursor">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element" internal:selected="parent">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element" internal:selected="editcursor">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Of course, you can undo again what you have redone, and so on.</p>
@@ -541,20 +591,21 @@ not on an element.</p>
 will most certainly change in the future. Even more, different insert
 modes can coexist. At the moment, there are two insert modes, the UCD
 insert mode and the trivial insert mode. While in edit mode, you can
-switch the insert mode to be used by hitting <kbd>&tab;</kbd>. In this
+switch the insert mode to be used by hitting <kbd>&tab;</kbd>
+(the tabulator key). In this
 tutorial we will use the UCD insert mode which is the default.
 If you want, you can also take a look at the documentation of the
 trivial insert mode. This mode is called like that because it was
 trivial to implement, not because it is trivial to use it. Though it
 is tricky to use it, it is easy to grasp how it works.</p>
 
-<p>Position the cursor over the <code>munderover</code> element of the
+<p>But let us concentrate on the UCD insert mode:
+Position the cursor over the <code>munderover</code> element of the
 sum sign, like this:</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -575,10 +626,8 @@ sum sign, like this:</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="parent">mrow<div class="element" internal:selected="editcursor">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="parent">mrow<html:div class="element" internal:selected="editcursor">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Now hit <kbd>i</kbd>. Do you see the cursor? It is right in front
@@ -586,9 +635,8 @@ of the sum sign, or more precicely, in front of the
 <code>munderover</code> element.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -609,10 +657,8 @@ of the sum sign, or more precicely, in front of the
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="insertCursorIn">mrow<div class="element" internal:selected="insertCursorBefore">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">∞</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="insertCursorIn">mrow<html:div class="element" internal:selected="insertCursorBefore">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">∞</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>However, for the moment we let it be. Press <kbd>&esc;</kbd>.
@@ -630,9 +676,8 @@ munderover is not valid, it has not enough children, but we will
 immmediately add one.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -653,20 +698,17 @@ immmediately add one.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element" internal:selected="insertCursorIn">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element" internal:selected="insertCursorAfter">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element" internal:selected="insertCursorIn">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element" internal:selected="insertCursorAfter">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Press <kbd>n</kbd>. The insert mode recognizes <code>n</code> as a
-letter and inserts it as a identifier into the equation. Now close the
+letter and inserts it as an identifier into the equation. Now close the
 insert mode with <kbd>&esc;</kbd>.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -678,19 +720,17 @@ insert mode with <kbd>&esc;</kbd>.</p>
     <mrow>
         <munderover internal:selected="parent">
             <mo>∑</mo>
-            <mrow internal:selected="editcursor"><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
             
-        <mi>n</mi></munderover>
+        <mi internal:selected="editcursor">n</mi></munderover>
         <mfrac>
             <msup><mi>x</mi><mi>k</mi></msup>
             <mrow><mi>k</mi><mo>!</mo></mrow>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element" internal:selected="parent">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element" internal:selected="editcursor">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element" internal:selected="parent">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Now press <kbd>k</kbd> in order to put the cursor on the
@@ -698,9 +738,8 @@ insert mode with <kbd>&esc;</kbd>.</p>
 limes. Press <kbd>i</kbd>.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -721,10 +760,8 @@ limes. Press <kbd>i</kbd>.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="insertCursorIn">mrow<div class="element" internal:selected="insertCursorBefore">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="insertCursorIn">mrow<html:div class="element" internal:selected="insertCursorBefore">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Well, the current implementations of the insert modes are sometimes
@@ -752,9 +789,8 @@ and under it we want to have the identifier
 element.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -775,10 +811,8 @@ element.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element" internal:selected="insertCursorIn">munder<div class="element" internal:selected="insertCursorBefore">mi<div class="nodeValue">□</div></div><div class="element">mi<div class="nodeValue">□</div></div></div><div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element" internal:selected="insertCursorIn">munder<html:div class="element" internal:selected="insertCursorBefore">mi<html:div class="nodeValue">□</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">□</html:div></html:div></html:div><html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>You can see it already. When you now continue to insert elements,
@@ -800,9 +834,8 @@ need to do that, since the UCD insert mode is more clever when it
 comes to numbers.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -812,7 +845,7 @@ comes to numbers.</p>
     </mrow>
     <mo>=</mo>
     <mrow>
-        <munder internal:selected="insertCursorIn"><mi internal:selected="insertCursorAfter">lim</mi><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi></munder><munderover>
+        <munder internal:selected="insertCursorIn"><mo internal:selected="insertCursorAfter">lim</mo><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi></munder><munderover>
             <mo>∑</mo>
             <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
             
@@ -823,10 +856,8 @@ comes to numbers.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element" internal:selected="insertCursorIn">munder<div class="element" internal:selected="insertCursorAfter">mi<div class="nodeValue">lim</div></div><div class="element" internal:selected="insertCursorBefore">mi<div class="nodeValue">□</div></div></div><div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element" internal:selected="insertCursorIn">munder<html:div class="element" internal:selected="insertCursorAfter">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element" internal:selected="insertCursorBefore">mi<html:div class="nodeValue">□</html:div></html:div></html:div><html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Good. Since what we want to write below the limes consists of
@@ -834,9 +865,8 @@ multiple elements, we have to insert an <code>mrow</code> element. Do
 that by hitting <kbd>&space;</kbd> (denoting the space bar).</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -846,7 +876,7 @@ that by hitting <kbd>&space;</kbd> (denoting the space bar).</p>
     </mrow>
     <mo>=</mo>
     <mrow>
-        <munder><mi>lim</mi><mrow internal:selected="insertCursorIn"><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi></mrow></munder><munderover>
+        <munder><mo>lim</mo><mrow internal:selected="insertCursorIn"><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi></mrow></munder><munderover>
             <mo>∑</mo>
             <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
             
@@ -857,10 +887,8 @@ that by hitting <kbd>&space;</kbd> (denoting the space bar).</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element" internal:selected="insertCursorIn">mrow<div class="element" internal:selected="insertCursorBefore">mi<div class="nodeValue">□</div></div></div></div><div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element" internal:selected="insertCursorIn">mrow<html:div class="element" internal:selected="insertCursorBefore">mi<html:div class="nodeValue">□</html:div></html:div></html:div></html:div><html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Now press <kbd>n</kbd>. It is put as an identifier into the
@@ -868,9 +896,8 @@ that by hitting <kbd>&space;</kbd> (denoting the space bar).</p>
 and finally <kbd>∞</kbd> for the infinity sign.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -880,7 +907,7 @@ and finally <kbd>∞</kbd> for the infinity sign.</p>
     </mrow>
     <mo>=</mo>
     <mrow>
-        <munder><mi>lim</mi><mrow internal:selected="insertCursorIn"><mi>n</mi><mo>→</mo><mi internal:selected="insertCursorAfter">∞</mi></mrow></munder><munderover>
+        <munder internal:selected="parent"><mo>lim</mo><mrow internal:selected="insertCursorIn"><mi>n</mi><mo>→</mo><mi internal:selected="insertCursorAfter">∞</mi></mrow></munder><munderover>
             <mo>∑</mo>
             <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
             
@@ -891,10 +918,8 @@ and finally <kbd>∞</kbd> for the infinity sign.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element" internal:selected="insertCursorIn">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element" internal:selected="insertCursorAfter">mi<div class="nodeValue">∞</div></div></div></div><div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element" internal:selected="parent">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element" internal:selected="insertCursorIn">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element" internal:selected="insertCursorAfter">mi<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Now hit <kbd>&esc;</kbd> and we are done.</p>
@@ -943,7 +968,7 @@ with the given id. When you save later on, the equation will be put
 back into the document and the document will be saved. If the element
 you want to load has no id, you can use an xpath expression instead,
 with the command <kbd>:loadxpath</kbd>. The most crazy load command is
-<kbd>:loadalla</kbd> followed by a URI. It will load all equation it
+<kbd>:loadall</kbd> followed by a URI. It will load all equation it
 can find in the given document.</p>
 
 <p>Please be aware, that every of the load commands load the document
@@ -966,14 +991,11 @@ between the two. (And <kbd>:close&enter;</kbd> or
 <kbd>:close!&enter;</kbd> gets rid of one.) Here, I show you only the new one.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="editcursor">
-            <mrow/>
-        </math>
-    </div>
-    <div internal:function="treeView"><div><div class="element" internal:selected="editcursor">math<div class="element">mrow</div></div></div></div>
-</div>
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="editcursor">
+<mrow/> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">math<html:div class="element">mrow</html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>The newly created equation is a <code>math</code> element
@@ -984,14 +1006,11 @@ they would insert before or after the <code>mrow</code> element. We want to inse
 <kbd>&ctrl;i</kbd>, which you now perform.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
-            <mrow internal:selected="insertCursorIn"/>
-        </math>
-    </div>
-    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element" internal:selected="insertCursorIn">mrow</div></div></div></div>
-</div>
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+<mrow internal:selected="insertCursorIn"/> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">math<html:div class="element" internal:selected="insertCursorIn">mrow</html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Press <kbd>&ctrl;r</kbd>. This creates a squareroot. (<kbd>&ctrl;R</kbd> would
@@ -1002,34 +1021,28 @@ creates an <code>mrow</code> element. Go on with
 <kbd>=</kbd>.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-            <mrow internal:selected="insertCursorIn"><msqrt internal:selected="insertCursorAfter"><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt></mrow>
-        </math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="insertCursorIn">mrow<div class="element" internal:selected="insertCursorAfter">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div></div></div></div></div>
-</div>
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+<mrow internal:selected="insertCursorIn"><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo internal:selected="insertCursorAfter">=</mo></mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">math<html:div class="element" internal:selected="insertCursorIn">mrow<html:div class="element">msqrt<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mrow<html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div></html:div><html:div class="element" internal:selected="insertCursorAfter">mo<html:div class="nodeValue">=</html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>And now <kbd>&ctrl;r(&space;a+b&enter;)</kbd>.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
-            <mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt internal:selected="insertCursorIn"><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo internal:selected="insertCursorAfter">)</mo></msqrt></mrow>
-        </math>
-    </div>
-    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element">mrow<div class="element">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="insertCursorIn">msqrt<div class="element">mo<div class="nodeValue">(</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element" internal:selected="insertCursorAfter">mo<div class="nodeValue">)</div></div></div></div></div></div></div>
-</div>
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+<mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt internal:selected="insertCursorIn"><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo internal:selected="insertCursorAfter">)</mo></msqrt></mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">math<html:div class="element">mrow<html:div class="element">msqrt<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mrow<html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="insertCursorIn">msqrt<html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element" internal:selected="insertCursorAfter">mo<html:div class="nodeValue">)</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p> Rats! We have
 forgotten something important. The expression inside the brackets
 including the brackets actually should be the base of a potency.
 Actually, we should have hit <kbd>^&space;</kbd> right before the
-<kbd>o(</kbd>. This mistake happens regularly (at least to me).
+<kbd>(</kbd>. This mistake happens regularly (at least to me).
 Usually, one thinks of the potency after having written the base.
 Unfortunately, the current insert mode does not work like that, it
 needs you to enter the <kbd>^</kbd> before writing the base. However,
@@ -1039,14 +1052,11 @@ they select what you already wrote. Good. use these two commands to
 select the brackets and their content:</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
-            <mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt internal:selected="insertCursorIn"><mo internal:selected="userSelection">(</mo><mrow internal:selected="userSelection"><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo internal:selected="userSelection">)</mo></msqrt></mrow>
-        </math>
-    </div>
-    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element">mrow<div class="element">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="insertCursorIn">msqrt<div class="element" internal:selected="userSelection">mo<div class="nodeValue">(</div></div><div class="element" internal:selected="userSelection">mrow<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element" internal:selected="userSelection">mo<div class="nodeValue">)</div></div></div></div></div></div></div>
-</div>
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+<mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt internal:selected="insertCursorIn"><mo internal:selected="userSelection">(</mo><mrow internal:selected="userSelection"><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo internal:selected="userSelection">)</mo></msqrt></mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">math<html:div class="element">mrow<html:div class="element">msqrt<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mrow<html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="insertCursorIn">msqrt<html:div class="element" internal:selected="userSelection">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element" internal:selected="userSelection">mrow<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element" internal:selected="userSelection">mo<html:div class="nodeValue">)</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Now, hit <kbd>^</kbd>. The selected elements are enclosed inside an
@@ -1054,33 +1064,35 @@ select the brackets and their content:</p>
 <code>msup</code> element.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
-            <mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt><msup internal:selected="insertCursorIn"><mrow internal:selected="insertCursorAfter"><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi></msup></msqrt></mrow>
-        </math>
-    </div>
-    <div internal:function="treeView"><div><div class="element" internal:selected="parent">math<div class="element">mrow<div class="element">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">msqrt<div class="element" internal:selected="insertCursorIn">msup<div class="element" internal:selected="insertCursorAfter">mrow<div class="element">mo<div class="nodeValue">(</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element" internal:selected="insertCursorBefore">mi<div class="nodeValue">□</div></div></div></div></div></div></div></div>
-</div>
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+<mrow><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt><msup internal:selected="insertCursorIn"><mrow internal:selected="insertCursorAfter"><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow><mi internal:missing="1" internal:selected="insertCursorBefore">□</mi></msup></msqrt></mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">math<html:div class="element">mrow<html:div class="element">msqrt<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mrow<html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">msqrt<html:div class="element" internal:selected="insertCursorIn">msup<html:div class="element" internal:selected="insertCursorAfter">mrow<html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element" internal:selected="insertCursorBefore">mi<html:div class="nodeValue">□</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Now, we put the exponent <kbd>2</kbd> and continue with our
 work: <kbd>&enter;&enter;=</kbd>.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-            <mrow internal:selected="insertCursorIn"><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt><msup><mrow><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow><mn>2</mn></msup></msqrt><mo internal:selected="insertCursorAfter">=</mo></mrow>
-        </math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="insertCursorIn">mrow<div class="element">msqrt<div class="element">msup<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mn<div class="nodeValue">2</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mrow<div class="element">mn<div class="nodeValue">2</div></div><div class="element">mi<div class="nodeValue">a</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">msup<div class="element">mi<div class="nodeValue">b</div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">msqrt<div class="element">msup<div class="element">mrow<div class="element">mo<div class="nodeValue">(</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">a</div></div><div class="element">mo<div class="nodeValue">+</div></div><div class="element">mi<div class="nodeValue">b</div></div></div><div class="element">mo<div class="nodeValue">)</div></div></div><div class="element">mn<div class="nodeValue">2</div></div></div></div><div class="element" internal:selected="insertCursorAfter">mo<div class="nodeValue">=</div></div></div></div></div></div>
-</div>
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+<mrow internal:selected="insertCursorIn"><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt><msup><mrow><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow><mn>2</mn></msup></msqrt><mo internal:selected="insertCursorAfter">=</mo></mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">math<html:div class="element" internal:selected="insertCursorIn">mrow<html:div class="element">msqrt<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mrow<html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">msqrt<html:div class="element">msup<html:div class="element">mrow<html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div></html:div><html:div class="element" internal:selected="insertCursorAfter">mo<html:div class="nodeValue">=</html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>To finish the whole thing, press <kbd>&space;(&space;a+b&enter;)&enter;&enter;</kbd>.
 Actually, the last hit of the enter key terminates the insert mode,
 you also could have used <kbd>&esc;</kbd> instead.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+<mrow internal:selected="parent"><msqrt><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mrow><mn>2</mn><mi>a</mi><mi>b</mi></mrow><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt><msup><mrow><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow><mn>2</mn></msup></msqrt><mo>=</mo><mrow internal:selected="editcursor"><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow></mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">math<html:div class="element" internal:selected="parent">mrow<html:div class="element">msqrt<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mrow<html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">msqrt<html:div class="element">msup<html:div class="element">mrow<html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div><html:div class="element">mn<html:div class="nodeValue">2</html:div></html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="editcursor">mrow<html:div class="element">mo<html:div class="nodeValue">(</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">a</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">+</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">b</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">)</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
 
 <p>Done. Note that at certain places, we could have skipped the
 insertion of an <code>mrow</code>. As you will see in the next section, such
@@ -1105,9 +1117,8 @@ sense, since they together form the argument of the <code>lim</code> operator.</
 <p>Press <kbd>v</kbd>. This throws you directly into visual mode.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -1117,7 +1128,7 @@ sense, since they together form the argument of the <code>lim</code> operator.</
     </mrow>
     <mo>=</mo>
     <mrow internal:selected="parent">
-        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder><munderover internal:selected="userSelectionCursor">
+        <munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><munderover internal:selected="userSelectionCursor">
             <mo>∑</mo>
             <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
             
@@ -1128,11 +1139,8 @@ sense, since they together form the argument of the <code>lim</code> operator.</
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="parent">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element" internal:selected="userSelectionCursor">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-    <div internal:function="modeName">visual</div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="parent">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element" internal:selected="userSelectionCursor">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>If you use the default skin, you now see a beautiful blue. You can
@@ -1141,9 +1149,8 @@ what they do. Be careful not to hit any other key. Now select the sum
 and the fraction.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -1153,7 +1160,7 @@ and the fraction.</p>
     </mrow>
     <mo>=</mo>
     <mrow internal:selected="parent">
-        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder><munderover internal:selected="userSelection">
+        <munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><munderover internal:selected="userSelection">
             <mo>∑</mo>
             <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
             
@@ -1164,10 +1171,8 @@ and the fraction.</p>
         </mfrac>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="parent">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element" internal:selected="userSelection">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element" internal:selected="userSelectionCursor">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="parent">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element" internal:selected="userSelection">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element" internal:selected="userSelectionCursor">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>Now you can hit a command from the editMode. In this case, execute
@@ -1176,9 +1181,8 @@ command puts an <code>mrow</code> element around the selected
 elements.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -1188,7 +1192,7 @@ elements.</p>
     </mrow>
     <mo>=</mo>
     <mrow internal:selected="parent">
-        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
+        <munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder>
         <mrow internal:selected="editcursor"><munderover>
             <mo>∑</mo>
             <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
@@ -1199,10 +1203,8 @@ elements.</p>
         </mfrac></mrow>
     </mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="parent">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element" internal:selected="editcursor">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="parent">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
 </div>
 
 <p>You are back in the edit mode. In the tree view you can see the
@@ -1215,159 +1217,329 @@ difficult. Gemse uses the command <kbd>y</kbd> for copying the
 (with visual mode) selected elements into a register. A register is
 simply a place where copied elements are stored. If you use a command
 that works on a register and you do not say on which one, it will use
-the default register. Every register
+the default register (which is called <code>"</code>).</p>
+
+<p>Delete commands put the removed nodes into a register. Let us try
+that. Move the cursor to the left side of the equation.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow internal:selected="parent">
+    <mrow internal:selected="editcursor">
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow></mrow>
+</mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="parent">mrow<html:div class="element" internal:selected="editcursor">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>Hit <kbd>x</kbd> to remove it and move the cursor to the right side
+of the equation.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow internal:selected="parent">
+    
+    <mo>=</mo>
+    <mrow internal:selected="editcursor"><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow></mrow>
+</mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="parent">mrow<html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="editcursor">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>Hit <kbd>p</kbd>. This command pastes the content of a register
+after the cursor.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow internal:selected="parent">
+    
+    <mo>=</mo>
+    <mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow></mrow>
+<mrow internal:selected="editcursor">
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow></mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="parent">mrow<html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>Move the cursor to the equal sign and hit <kbd>xp</kbd> again.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow internal:selected="parent">
+    
+    
+    <mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow></mrow>
+<mo internal:selected="editcursor">=</mo><mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow></mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="parent">mrow<html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>You can use <kbd>xp</kbd> to interchange the numerator and
+denominator: Put the cursor on the numerator.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    
+    
+    <mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac internal:selected="parent">
+            <msup internal:selected="editcursor"><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow></mrow>
+<mo>=</mo><mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow></mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element" internal:selected="parent">mfrac<html:div class="element" internal:selected="editcursor">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>Now hit <kbd>xp</kbd>.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    
+    
+    <mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac internal:selected="parent">
+            
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        <msup internal:selected="editcursor"><mi>x</mi><mi>k</mi></msup></mfrac>
+    </mrow></mrow>
+<mo>=</mo><mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow></mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element" internal:selected="parent">mfrac<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div></html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>There is also the command <kbd>P</kbd> which puts the content of a
+register before the cursor as opposed to after it. Sometimes one wants
+to put something into an empty element. In such a case, <kbd>P</kbd>
+and <kbd>p</kbd> do not help. Select all children of the topmost
+<code>mrow</code> element (not the element itself, but its children).
+You can do that for example by typing <kbd>ggjjv$</kbd>.
+(<kbd>gg</kbd> moves the cursor to the <code>math</code> element.
+<kbd>$</kbd> moves to the last sibling of the current element.)</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow internal:selected="parent">
+    
+    
+    <mrow internal:selected="userSelection"><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        <msup><mi>x</mi><mi>k</mi></msup></mfrac>
+    </mrow></mrow>
+<mo internal:selected="userSelection">=</mo><mrow internal:selected="userSelectionCursor">
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow></mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="parent">mrow<html:div class="element" internal:selected="userSelection">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div><html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div></html:div></html:div></html:div><html:div class="element" internal:selected="userSelection">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="userSelectionCursor">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>Now delete the selected stuff, that is, hit <kbd>d</kbd>. This
+leaves you with an empty <code>mrow</code> element.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" internal:selected="parent">
+<mrow internal:selected="editcursor">
+    
+    
+    
+</mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">math<html:div class="element" internal:selected="editcursor">mrow</html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>Press <kbd>&ctrl;p</kbd>. What we removed is back in.</p>
+
+<p>Select the equal sign and the right hand side of the equation using
+the visual mode (<kbd>v</kbd>).</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow internal:selected="parent">
+    
+    
+    
+<mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        <msup><mi>x</mi><mi>k</mi></msup></mfrac>
+    </mrow></mrow><mo internal:selected="userSelection">=</mo><mrow internal:selected="userSelectionCursor">
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow></mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="parent">mrow<html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div><html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div></html:div></html:div></html:div><html:div class="element" internal:selected="userSelection">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="userSelectionCursor">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>Hit <kbd>y</kbd>. This copies the selected nodes into a register
+without removing them. (This command is not named <kbd>c</kbd>, since
+this letter is already used for the change command. You can think of
+<kbd>y</kbd> as <q>yank</q>.) Move the cursor to the right and press
+<kbd>p</kbd>.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow internal:selected="parent">
+    
+    
+    
+<mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac>
+            
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        <msup><mi>x</mi><mi>k</mi></msup></mfrac>
+    </mrow></mrow><mo>=</mo><mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow><mo>=</mo><mrow internal:selected="editcursor">
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow></mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="parent">mrow<html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element">mfrac<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div><html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div></html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element" internal:selected="editcursor">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div></html:div></html:div></html:div></html:div></vbox>
+</vbox>
+</div>
+
+<p>Be aware that delte, copy and even change commands all put the
+respective elements into a register. By default, they use the default
+register. This makes it sometimes tricky to use the default register.
+You gan prepend <kbd>"x</kbd> to such a command or to a paste command
+in order to use another register, where you have to write the name of
+the register in the place of <code>x</code>.
+Every register
 has a name consisting of exactly one character. (Unlike in vim, you
 can use every unicode character as name. This extends the amount of
 available registers far beyond 26. Gemse's register names are case
-sensitive, for example, register A and a are distinct registers.) By
-prefixing a command with <kbd>"</kbd> followed by the name of the
-register, you can tell it to use that register. Let's try it:</p>
+sensitive, for example, register A and a are distinct registers.)</p> 
 
-<p>Place the cursor on the equal sign and press <kbd>v</kbd> to start
-the visual mode. Select the equal sign and the term on its right, like
-this:</p>
+<p>Hit <kbd>u</kbd> once to undo the mess from above. Move the cursor
+to the left hand of the equation and type <kbd>"ay</kbd>. Put the
+cursor on the righthand side and hit <kbd>"by</kbd>. Now try
+<kbd>"ap</kbd> and <kbd>"bp</kbd> and see what happens.</p>
 
-<div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow internal:selected="parent">
-    <mrow>
-        <mi>exp</mi>
-        
-        <mi>x</mi>
-        
-    </mrow>
-    <mo internal:selected="userSelection">=</mo>
-    <mrow internal:selected="userSelectionCursor">
-        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
-        <mrow><munderover>
-            <mo>∑</mo>
-            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
-            
-        <mi>n</mi></munderover><mfrac>
-            <msup><mi>x</mi><mi>k</mi></msup>
-            <mrow><mi>k</mi><mo>!</mo></mrow>
-        </mfrac></mrow>
-    </mrow>
-</mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element" internal:selected="userSelection">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="userSelectionCursor">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
-</div>
-</div>
+<p>Note that the commands that put something into a register always
+put the stuff in the default register as well when you tell them to
+use another register. The main reason for this is that it is done like
+that in Vim.</p>
 
-<p>Now hit <kbd>y</kbd>. Now, a copy of those two elements is in the
-default register. Now select the term on the left and the equal sign
-and press <kbd>"ay</kbd>. This puts those two elements into the register
-a. <em>Beware:</em> In visual mode, if you start to enter a command that is
-longer than one character (for example <kbd>"ay</kbd>) it seems as if
-the selection is lost (i.e. the visual mode disappears too soon), but
-it is not. Indeed, if you finish to enter the command, the selection
-will be applied. This is a problem that will hopefully be removed in
-future versions.</p>
-
-<p>Ok, now we want to know! Move the cursor to the right end 
-for example by pressing <kbd>$</kbd>. The command <kbd>p</kbd> puts
-the content of the default register after the cursor. Try it.</p>
-
-<div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow internal:selected="parent">
-    <mrow>
-        <mi>exp</mi>
-        
-        <mi>x</mi>
-        
-    </mrow>
-    <mo>=</mo>
-    <mrow>
-        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
-        <mrow><munderover>
-            <mo>∑</mo>
-            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
-            
-        <mi>n</mi></munderover><mfrac>
-            <msup><mi>x</mi><mi>k</mi></msup>
-            <mrow><mi>k</mi><mo>!</mo></mrow>
-        </mfrac></mrow>
-    </mrow>
-<mo>=</mo><mrow internal:selected="editcursor">
-        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
-        <mrow><munderover>
-            <mo>∑</mo>
-            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
-            
-        <mi>n</mi></munderover><mfrac>
-            <msup><mi>x</mi><mi>k</mi></msup>
-            <mrow><mi>k</mi><mo>!</mo></mrow>
-        </mfrac></mrow>
-    </mrow></mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element" internal:selected="editcursor">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
-</div>
-</div>
-
-<p>Now put the cursor at the beginning, using for example
-<kbd>0</kbd>. The command <kbd>"aP</kbd> puts the content of the
-register a before the cursor. So this yields</p>
-
-<div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow internal:selected="parent">
-    <mrow>
-        <mi>exp</mi>
-        
-        <mi>x</mi>
-        
-    </mrow><mo internal:selected="editcursor">=</mo><mrow>
-        <mi>exp</mi>
-        
-        <mi>x</mi>
-        
-    </mrow>
-    <mo>=</mo>
-    <mrow>
-        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
-        <mrow><munderover>
-            <mo>∑</mo>
-            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
-            
-        <mi>n</mi></munderover><mfrac>
-            <msup><mi>x</mi><mi>k</mi></msup>
-            <mrow><mi>k</mi><mo>!</mo></mrow>
-        </mfrac></mrow>
-    </mrow>
-<mo>=</mo><mrow>
-        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
-        <mrow><munderover>
-            <mo>∑</mo>
-            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
-            
-        <mi>n</mi></munderover><mfrac>
-            <msup><mi>x</mi><mi>k</mi></msup>
-            <mrow><mi>k</mi><mo>!</mo></mrow>
-        </mfrac></mrow>
-    </mrow></mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element" internal:selected="parent">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element" internal:selected="editcursor">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
-</div>
-</div>
-
-<p><kbd>uu</kbd> cleans up the mess we created. Like
-<kbd>&ctrl;i</kbd> there is also <kbd>&ctrl;p</kbd> which puts the
-content of a register into an empty element.</p>
 
 <h2>The attribute mode</h2>
 
 <p>In MathML, one can put various attributes on elements. They control
-their semantically significant appeareance. It is also possible to put
+their (semantically significant) appeareance. It is also possible to put
 attributes of a foreign namespace on them. One useful example for this
 are attributes from XLink, which allow you to make links out of MathML
 elements.</p>
@@ -1393,9 +1565,8 @@ list of attributes and indeed, the fraction changed its
 appeareance.</p>
 
 <div class="documentationScreenshot">
-<div internal:function="container" internal:selected="equationFocus">
-    <div internal:function="equation">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
     <mrow>
         <mi>exp</mi>
@@ -1404,37 +1575,108 @@ appeareance.</p>
         
     </mrow>
     <mo>=</mo>
-    <mrow>
-        <munder><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi>∞</mi></mrow></munder>
-        <mrow internal:selected="parent"><munderover>
+    <mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow internal:selected="parent">
+        <munderover>
             <mo>∑</mo>
             <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
             
-        <mi>n</mi></munderover><mfrac internal:selected="editcursor" internal:selectedAttributes="" internal:attributeCursor="bevelled" bevelled="true">
+        <mi>n</mi></munderover>
+        <mfrac internal:selected="editcursor" internal:selectedAttributes="" internal:attributeCursor="bevelled" bevelled="true">
             <msup><mi>x</mi><mi>k</mi></msup>
             <mrow><mi>k</mi><mo>!</mo></mrow>
-        </mfrac></mrow>
-    </mrow>
+        </mfrac>
+    </mrow></mrow>
 </mrow>
-</math>
-    </div>
-    <div internal:function="treeView"><div><div class="element">math<div class="element">mrow<div class="element">mrow<div class="element">mi<div class="nodeValue">exp</div></div><div class="element">mi<div class="nodeValue">x</div></div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mrow<div class="element">munder<div class="element">mi<div class="nodeValue">lim</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">n</div></div><div class="element">mo<div class="nodeValue">→</div></div><div class="element">mi<div class="nodeValue">∞</div></div></div></div><div class="element" internal:selected="parent">mrow<div class="element">munderover<div class="element">mo<div class="nodeValue">∑</div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">=</div></div><div class="element">mi<div class="nodeValue">0</div></div></div><div class="element">mi<div class="nodeValue">n</div></div></div><div class="element" internal:selected="editcursor">mfrac<div class="element">msup<div class="element">mi<div class="nodeValue">x</div></div><div class="element">mi<div class="nodeValue">k</div></div></div><div class="element">mrow<div class="element">mi<div class="nodeValue">k</div></div><div class="element">mo<div class="nodeValue">!</div></div></div></div></div></div></div></div></div></div>
-    <div internal:function="attributeView"><table><caption>attributes</caption><tr internal:selected="attributeCursor"><td></td><td>bevelled</td><td>true</td></tr></table><table class="defaultAttribute"><caption>default attributes</caption><tr><td></td><td>linethickness</td><td>1</td></tr><tr><td></td><td>numalign</td><td>center</td></tr><tr><td></td><td>denomalign</td><td>center</td></tr><tr><td></td><td>bevelled</td><td>false</td></tr></table></div>
-    <div internal:function="modeName">attribute</div>
-    <pre internal:function="notificationDisplay"/>
-</div>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element" internal:selected="parent">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div><hbox><html:div internal:function="viewport" internal:viewClass="AttributeView"><html:table><html:caption>attributes</html:caption><html:tr internal:selected="attributeCursor"><html:td></html:td><html:td>bevelled</html:td><html:td>true</html:td></html:tr></html:table><html:table class="defaultAttribute"><html:caption>default attributes</html:caption><html:tr><html:td></html:td><html:td>linethickness</html:td><html:td>1</html:td></html:tr><html:tr><html:td></html:td><html:td>numalign</html:td><html:td>center</html:td></html:tr><html:tr><html:td></html:td><html:td>denomalign</html:td><html:td>center</html:td></html:tr><html:tr><html:td></html:td><html:td>bevelled</html:td><html:td>false</html:td></html:tr></html:table></html:div><html:div internal:function="viewport" internal:viewClass="DictionaryView"/></hbox><hbox internal:function="viewport" internal:viewClass="StatusbarView"><html:div>attribute</html:div></hbox></vbox>
+</vbox>
 </div>
 
 <p>Let us add another attribute:
 <kbd>ilinethickness&enter;0&enter;</kbd>. And antother one:
 <kbd>ifoo&enter;bar&enter;</kbd>.</p>
 
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow internal:selected="parent">
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac internal:attributeCursor="bevelled" bevelled="true" internal:selected="editcursor" internal:selectedAttributes="" linethickness="0" foo="bar">
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow></mrow>
+</mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element" internal:selected="parent">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div><hbox><html:div internal:function="viewport" internal:viewClass="AttributeView"><html:table><html:caption>attributes</html:caption><html:tr internal:selected="attributeCursor"><html:td></html:td><html:td>bevelled</html:td><html:td>true</html:td></html:tr><html:tr><html:td></html:td><html:td>foo</html:td><html:td>bar</html:td></html:tr><html:tr><html:td></html:td><html:td>linethickness</html:td><html:td>0</html:td></html:tr></html:table><html:table class="defaultAttribute"><html:caption>default attributes</html:caption><html:tr><html:td></html:td><html:td>linethickness</html:td><html:td>1</html:td></html:tr><html:tr><html:td></html:td><html:td>numalign</html:td><html:td>center</html:td></html:tr><html:tr><html:td></html:td><html:td>denomalign</html:td><html:td>center</html:td></html:tr><html:tr><html:td></html:td><html:td>bevelled</html:td><html:td>false</html:td></html:tr></html:table></html:div><html:div internal:function="viewport" internal:viewClass="DictionaryView"/></hbox><hbox internal:function="viewport" internal:viewClass="StatusbarView"><html:div>attribute</html:div></hbox></vbox>
+</vbox>
+</div>
+
 <p>By looking at the attributes table you can see that there 
 is also a cursor in the attribute mode.
 You can move it with <kbd>j</kbd> and <kbd>k</kbd>. Select the
 <code>bevelled</code> attribute and insert <kbd>cfalse&enter;</kbd>.
 This changes the value of the attribute under the cursor. You can also
-remove the attribute by hitting <kbd>x</kbd>.</p>
+remove an attribute by moving the cursor to it and hitting
+<kbd>x</kbd>. Do that now with the <code>foo</code> attribute.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow>
+        <mi>exp</mi>
+        
+        <mi>x</mi>
+        
+    </mrow>
+    <mo>=</mo>
+    <mrow><munder><mo>lim</mo><mrow><mi>n</mi><mo>→</mo><mo>∞</mo></mrow></munder><mrow internal:selected="parent">
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mi>0</mi></mrow>
+            
+        <mi>n</mi></munderover>
+        <mfrac internal:attributeCursor="linethickness" bevelled="false" internal:selected="editcursor" internal:selectedAttributes="" linethickness="0">
+            <msup><mi>x</mi><mi>k</mi></msup>
+            <mrow><mi>k</mi><mo>!</mo></mrow>
+        </mfrac>
+    </mrow></mrow>
+</mrow>
+</math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">mrow<html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">exp</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mrow<html:div class="element">munder<html:div class="element">mo<html:div class="nodeValue">lim</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">→</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">∞</html:div></html:div></html:div></html:div><html:div class="element" internal:selected="parent">mrow<html:div class="element">munderover<html:div class="element">mo<html:div class="nodeValue">∑</html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">=</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">0</html:div></html:div></html:div><html:div class="element">mi<html:div class="nodeValue">n</html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">mfrac<html:div class="element">msup<html:div class="element">mi<html:div class="nodeValue">x</html:div></html:div><html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div></html:div><html:div class="element">mrow<html:div class="element">mi<html:div class="nodeValue">k</html:div></html:div><html:div class="element">mo<html:div class="nodeValue">!</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div><hbox><html:div internal:function="viewport" internal:viewClass="AttributeView"><html:table><html:caption>attributes</html:caption><html:tr><html:td></html:td><html:td>bevelled</html:td><html:td>false</html:td></html:tr><html:tr internal:selected="attributeCursor"><html:td></html:td><html:td>linethickness</html:td><html:td>0</html:td></html:tr></html:table><html:table class="defaultAttribute"><html:caption>default attributes</html:caption><html:tr><html:td></html:td><html:td>linethickness</html:td><html:td>1</html:td></html:tr><html:tr><html:td></html:td><html:td>numalign</html:td><html:td>center</html:td></html:tr><html:tr><html:td></html:td><html:td>denomalign</html:td><html:td>center</html:td></html:tr><html:tr><html:td></html:td><html:td>bevelled</html:td><html:td>false</html:td></html:tr></html:table></html:div><html:div internal:function="viewport" internal:viewClass="DictionaryView"/></hbox><hbox internal:function="viewport" internal:viewClass="StatusbarView"><html:div>attribute</html:div></hbox></vbox>
+</vbox>
+</div>
+
+<p>Don't forget to hit <kbd>&esc;</kbd> after you are done with the
+attributes in order to get back to the edit mode.</p>
+
+<h2>Views and viewsets</h2>
+
+<p>Gemse provides different ways to look at an equation: Its
+rendering, its tree structure shown by using nested boxes, its XML source
+and more. These are what is called views in Gemse. But in Gemse the
+concept of views goes even further. The list of attributes of the
+selected element, the list of dictionary entries, the least of the
+other opened equations and the status bar are views as well. (However,
+the input box is not a view.) The arrangement of views in the window
+is called a viewset.</p>
+
+<p>There are some predefined viewsets. The command <kbd>:viewset</kbd>
+lets you choose the viewset you want to use. Currently, you are using
+viewset 0. Type <kbd>:viewset 1&enter;</kbd>.</p>
+
+<p>Although the viewsets can not be changed while Gemse is running,
+you can deactivate a view of the current viewset: TODO</p>
 
 <h2>Customizing</h2>
 
@@ -1445,15 +1687,19 @@ changes.</p>
 
 <p>For example, if you want to change the size of the renderings of
 the formula, open gemse.css in a text editor, look out for
-<code>*[internal|function="equation"]</code> and change the
+<code>*[internal|viewClass="DirectView"], *[internal|viewClass="EquationView"]</code>
+and change the
 <code>font-size</code> for example to <code>large</code>.</p>
+
+<p>If you want to modify the viewsets, you find them in the file
+<code>editor.xul</code>.</p>
 
 <p>If you do not like the keyboard layout, i.e. you want to change the
 name of the commands, you have to look into the javascript file
 for the table for the respective mode. For example, if you want to
 change the commands of the attribute mode, open the file
 <code>attributeMode_commandTable.js</code>. Those files are not
-exactly self-explaining, but you can try to change it.</p>
+exactly self-explaining, but you can try to change them.</p>
 
 <h2>How to go on?</h2>
 
