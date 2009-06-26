@@ -1,7 +1,8 @@
 
 /* Descriptions of Presentation MathML elements */
 
-// Core elements, which are hardcoded
+// This data is from http://www.w3.org/TR/2009/WD-MathML3-20090604/
+// It has been extracted by hand, so mistakes are likely
 
 elementDescriptions = {
 
@@ -9,6 +10,11 @@ mi: {
     name: "mi",
     namespace: NS_MathML,
     type: "token",
+    attributes: {
+        mathvariant: {
+            name: "mathvariant",
+        }
+    },
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mi",
 },
 
@@ -74,7 +80,7 @@ mo: {
         minsize: {
             name: "minsize",
             fromDictionary: true,
-            defaultValue: "1",
+            defaultValue: "1em",
         },
         largeop: {
             name: "largeop",
@@ -91,16 +97,6 @@ mo: {
             fromDictionary: true,
             defaultValue: "false",
         },
-        linebreakstyle : {
-            name: "linebreakstyle ",
-            fromDictionary: true,
-            defaultValue: "lbbinary",
-        },
-        linebreakmultchar: {
-            name: "linebreakmultchar",
-            inherited: true,
-            defaultValue: "⁢", //invisible times
-        },
         linebreak: {
             name: "linebreak",
             defaultValue: "auto",
@@ -110,35 +106,45 @@ mo: {
             inherited: true,
             defaultValue: "100%",
         },
+        linebreakstyle : {
+            name: "linebreakstyle",
+            fromDictionary: true,
+            defaultValue: "after",
+        },
+        linebreakmultchar: {
+            name: "linebreakmultchar",
+            inherited: true,
+            defaultValue: "⁢", //invisible times
+        },
         indentstyle: {
             name: "indentstyle",
             inherited: true,
             defaultValue: "auto",
-        },
-        indentstylefirst: {
-            name: "indentstylefirst",
-            inherited: true,
-            defaultValue: "indentstyle",
-        },
-        indentstylelast: {
-            name: "indentstylelast",
-            inherited: true,
-            defaultValue: "indentstyle",
-        },
-        indenttarget: {
-            name: "indenttarget",
-            inherited: true,
-            defaultValue: "",
         },
         indentoffset: {
             name: "indentoffset",
             inherited: true,
             defaultValue: "0",
         },
+        indenttarget: {
+            name: "indenttarget",
+            inherited: true,
+            defaultValue: "",
+        },
+        indentstylefirst: {
+            name: "indentstylefirst",
+            inherited: true,
+            defaultValue: "indentstyle",
+        },
         indentoffsetfirst: {
             name: "indentoffsetfirst",
             inherited: true,
             defaultValue: "indentoffset",
+        },
+        indentstylelast: {
+            name: "indentstylelast",
+            inherited: true,
+            defaultValue: "indentstyle",
         },
         indentoffsetlast: {
             name: "indentoffsetlast",
@@ -156,14 +162,79 @@ mtext: {
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mtext",
 },
 
+mspace: {
+    name: "mspace",
+    namespace: NS_MathML,
+    type: "token",
+    attributes: {
+        width: {
+            name: "width",
+            defaultValue: "0em",
+        },
+        height: {
+            name: "height",
+            defaultValue: "0ex",
+        },
+        depth: {
+            name: "depth",
+            defaultValue: "0ex",
+        },
+        linebreak: {
+            name: "linebreak",
+            defaultValue: "auto",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mspace",
+},
+
+ms: {
+    name: "ms",
+    namespace: NS_MathML,
+    type: "token",
+    attributes: {
+        lquote: {
+            name: "lquote",
+            defaultValue: '"',
+        },
+        rquote: {
+            name: "rquote",
+            defaultValue: '"',
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.ms",
+},
+
+mglyph: {
+    name: "mglyph",
+    namespace: NS_MathML,
+    type: "token",
+    attributes: {
+        src: {
+            name: "src",
+        },
+        width: {
+            name: "width",
+        },
+        height: {
+            name: "height",
+        },
+        valign: {
+            name: "valign",
+            defaultValue: "0em",
+        },
+        alt: {
+            name: "alt",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mglyph",
+},
+
 mrow: {
     name: "mrow",
     namespace: NS_MathML,
     type: "mrow",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mrow",
 },
-
-// General elements
 
 mfrac: {
     name: "mfrac",
@@ -173,7 +244,7 @@ mfrac: {
     attributes: {
         linethickness: {
             name: "linethickness",
-            defaultValue: "1",
+            defaultValue: "medium",
         },
         numalign: {
             name: "numalign",
@@ -195,7 +266,7 @@ msqrt: {
     name: "msqrt",
     namespace: NS_MathML,
     type: "inferred_mrow",
-    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.msqrt",
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mroot", // also contains documentation for msqrt
 },
 
 mroot: {
@@ -204,6 +275,78 @@ mroot: {
     type: "fixedChildren",
     childCount: 2,
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mroot",
+},
+
+mstyle: {
+    name: "mstyle",
+    namespace: NS_MathML,
+    type: "inferred_mrow",
+    attributes: {
+        scriptlevel: {
+            name: "scriptlevel",
+            inherited: true,
+        },
+        displaystyle: {
+            name: "displaystyle",
+            inherited: true,
+        },
+        scriptsizemultiplier: {
+            name: "scriptsizemultiplier",
+            defaultValue: "0.71",
+        },
+        scriptminsize: {
+            name: "scriptminsize",
+            defaultValue: "8pt",
+        },
+        mathbackground: {
+            name: "mathbackground",
+            defaultValue: "transparent",
+        },
+        infixlinebreakstyle: {
+            name: "infixlinebreakstyle",
+            defaultValue: "before",
+        },
+        decimalseparator: {
+            name: "decimalseparator",
+            defaultValue: ".",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mstyle",
+},
+
+merror: {
+    name: "merror",
+    namespace: NS_MathML,
+    type: "inferred_mrow",
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.merror",
+},
+
+mpadded: {
+    name: "mpadded",
+    namespace: NS_MathML,
+    type: "inferred_mrow",
+    attributes: {
+        width: {
+            name: "width",
+        },
+        lspace: {
+            name: "lspace",
+        },
+        height: {
+            name: "height",
+        },
+        depth: {
+            name: "depth",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mpadded",
+},
+
+mphantom: {
+    name: "mphantom",
+    namespace: NS_MathML,
+    type: "inferred_mrow",
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mphantom",
 },
 
 mfenced: {
@@ -344,8 +487,6 @@ munderover: {
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.munderover",
 },
 
-// Crazy elements
-
 mmultiscripts: {
     name: "mmultiscripts",
     namespace: NS_MathML,
@@ -367,14 +508,14 @@ mprescripts: {
     name: "mprescripts",
     namespace: NS_MathML,
     type: "empty",
-    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mprescripts",
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mmultiscripts", // belongs to mmultiscripts
 },
 
 none: {
     name: "none", // Indeed, it is called "none", not "mnone".
     namespace: NS_MathML,
     type: "empty",
-    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.none",
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mmultiscripts", // belongs to mmultiscripts
 },
 
 mtable: {
@@ -497,12 +638,13 @@ mlabeledtr: {
             defaultValue: "inherited",
         },
     },
-    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mtr",
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mlabeledtr",
 },
 
 mtd: {
     name: "mtd",
     namespace: NS_MathML,
+    type: "inferred_mrow",
     attributes: {
         rowspan: {
             name: "rowspan",
@@ -525,8 +667,196 @@ mtd: {
             defaultValue: "inherited",
         },
     },
-    type: "childList",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mtd",
+},
+
+maligngroup: {
+    name: "maligngroup",
+    namespace: NS_MathML,
+    type: "empty",
+    attributes: {
+        groupalign: {
+            name: "groupalign",
+            inherited: true,
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.malign",
+},
+
+malignmark: {
+    name: "malignmark",
+    namespace: NS_MathML,
+    type: "empty",
+    attributes: {
+        edge: {
+            name: "edge",
+            defaultValue: "left",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.malign",
+},
+
+mstack: {
+    name: "mstack",
+    namespace: NS_MathML,
+    type: "childList",
+    attributes: {
+        align: {
+            name: "align",
+            defaultValue: "baseline",
+        },
+        stackalign: {
+            name: "stackalign",
+            defaultValue: "decimalseparator",
+        },
+        charalign: {
+            name: "charalign",
+            defaultValue: "right",
+        },
+        charspacing: {
+            name: "charspacing",
+            defaultValue: "0.1em",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mstack",
+},
+
+mlongdiv: {
+    name: "mlongdiv",
+    namespace: NS_MathML,
+    type: "childList",
+    attributes: {
+        longdivstyle: {
+            name: "longdivstyle",
+            defaultValue: "lefttop",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mlongdiv",
+},
+
+msgroup: {
+    name: "msgroup",
+    namespace: NS_MathML,
+    type: "childList",
+    attributes: {
+        position: {
+            name: "position",
+            defaultValue: "0",
+        },
+        shift: {
+            name: "shift",
+            defaultValue: "0",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.msgroup",
+},
+
+msrow: {
+    name: "msrow",
+    namespace: NS_MathML,
+    type: "childList",
+    attributes: {
+        position: {
+            name: "position",
+            defaultValue: "0",
+        },
+        shift: {
+            name: "shift",
+            defaultValue: "0",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.msrow",
+},
+
+mscarries: {
+    name: "mscarries",
+    namespace: NS_MathML,
+    type: "childList",
+    attributes: {
+        position: {
+            name: "position",
+            defaultValue: "0",
+        },
+        location: {
+            name: "location",
+            defaultValue: "n",
+        },
+        crossout: {
+            name: "none",
+            defaultValue: "none",
+        },
+        scriptsizemultiplier: {
+            name: "scriptsizemultiplier",
+            defaultValue: "0.6",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mscarries",
+},
+
+mscarry: {
+    name: "mscarry",
+    namespace: NS_MathML,
+    type: "inferred_mrow",
+    attributes: {
+        location: {
+            name: "location",
+            defaultValue: "n",
+        },
+        crossout: {
+            name: "none",
+            defaultValue: "none",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mscarry",
+},
+
+msline: {
+    name: "msline",
+    namespace: NS_MathML,
+    type: "empty",
+    attributes: {
+        position: {
+            name: "position",
+            defaultValue: "0",
+        },
+        mslinethickness: {
+            name: "mslinethickness",
+            defaultValue: "medium",
+        },
+        length: {
+            name: "length",
+            defaultValue: "0",
+        },
+        leftoverhang: {
+            name: "leftoverhang",
+            defaultValue: "0",
+        },
+        rightoverhang: {
+            name: "rightoverhang",
+            defaultValue: "0",
+        },
+        mathcolor: {
+            name: "mathcolor",
+            inherited: true,
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.msline",
+},
+
+maction: {
+    name: "maction",
+    namespace: NS_MathML,
+    type: "childList",
+    attributes: {
+        actiontype: {
+            name: "actiontype",
+        },
+        crossout: {
+            name: "selection",
+            defaultValue: "1",
+        },
+    },
+    help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.maction",
 },
 
 }
