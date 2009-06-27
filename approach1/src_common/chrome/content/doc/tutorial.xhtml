@@ -46,7 +46,7 @@ knowledge about the presentation markup of MathML. Of course learning
 presentation MathML requires learning the fundamentals of XML. Gemse
 directly edits the XML structure of presentation MathML.</p>
 
-<h2>Starting Gemse and loading formulas</h2>
+<h2>Introduction</h2>
 
 <p>Gemse 1 is an application written in Javascript using Mozilla. So,
 if you have installed Firefox 3, you are already lucky. If you do not
@@ -58,19 +58,41 @@ to find out how to install and run Gemse.</p>
 automatically. If not, do that manually, for example by clicking in
 the box. Now you can start typing commands. As soon as you have
 entered a complete command, it will be executed and the box will be
-cleared. If you typed something wrong, the box can be cleared manually
-by hitting the escape key. The first command you have to type is for
-loading an equation we will use in this tutorial. Type <kbd>:load
-doc/example01.xml</kbd> and hit enter. Now you should see something like shown below.</p>
+cleared. If you have typed something wrong, you can clear the box manually
+by hitting the escape key.</p>
 
-<p>Maybe it does not work. In this case try to give the full URI of
-the file <code>doc/example01.xml</code>. If you installed Gemse
-locally the URI is <code>file://</code> followed by the full path of
-the file. If you use the demo, this should be
-<code>http://www.andonyar.com/rec/2008-12/gemse/approach1/demo/doc/example01.xml</code>.
-If you installed Gemse as Firefox extension or as XULRunner
-application, you must use
-<code>chrome://gemse/content/doc/example01.xml</code>.</p>
+<p>Let's try it: Enter <kbd>:help&enter;</kbd> (&enter; means that you
+have to hit the enter key.) This opens the index of Gemse's help
+sites in a new window or a new tab. Close it to get back to the
+editor. Observe that the input box is empty at this point. If you
+have made a typo, hit <kbd>&esc;</kbd> (that is, hit the escape key.)
+to clear the input box and try again.</p>
+
+<p>There are a couple example equations included in the documentation of Gemse.
+We will use some of them. You will now learn how to load them.</p>
+
+<p>Basically loading works like this: You enter <kbd>:load</kbd> followed
+by a space and the URI of the file you want to load. Finally, you hit
+enter. Yes, you have to enter the URI. This allows you to load any
+file from the web you can access. Of course, files on your computer
+also can be loaded like that too. Their URIs begin with
+<code>file://</code>. So, for example, in order to load the file
+<code>/home/urs/foo.xml</code> you have to use the URI
+<code>file:///home/urs/foo.xml</code> and in this case, the command is
+<kbd>:load file:///home/urs/foo.xml&enter;</kbd>. You can also use
+a relative URI.</p>
+
+<p>In this tutorial, when I tell you to load a file
+<code>doc/foo.xml</code>, you have to do that like this: If you use
+Gemse as Firefox extension or as XULRunner application, type
+<kbd>:load chrome://gemse/content/doc/foo.xml&enter;</kbd>.
+If you use the demo on the web or if you opened
+<code>editor.xul</code> in your browser not using a
+<code>chrome://</code> URI, try
+<kbd>:load doc/foo.xml&enter;</kbd>.</p>
+
+<p>Try it: Load the file <code>doc/example01.xml</code>.
+You should see something like shown below.</p>
 
 <div class="documentationScreenshot">
 <vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -190,7 +212,8 @@ you about the current state the editor is in. In the following
 sections you will learn what all this means.</p>
 
 <p>From now on, I will show you only those boxes that I think are
-important.</p>
+important. Actually, these boxes are called views as you will learn in
+a later section of this tutorial.</p>
 
 <h2>Moving around</h2>
 
@@ -310,7 +333,7 @@ the right</q> or <q>to the left</q> respectively. For example, select
 the <code>mfrac</code> element. You can reach it by putting the cursor
 over the <code>math</code> element by using <kbd>k</kbd> several times
 followed by <kbd>jjlljl</kbd>. (Note that I sometimes join commands
-that you have to enter together. This for example means that you have
+that you have to enter one after the other. This for example means that you have
 to hit <kbd>j</kbd>, then <kbd>j</kbd>, then <kbd>l</kbd> and so on.)
 Now hit <kbd>j</kbd> once again. This selects the first child of the
 <code>mfrac</code> element.</p>
@@ -424,8 +447,8 @@ its descendants. Move the cursor to the <code>(</code> after the
 </vbox>
 </div>
 
-<p>Beware: <kbd>x</kbd> is dangerous. This may be configurable in a
-future version of Gemse. Select the denominator of the fraction by
+<p>Beware: <kbd>x</kbd> can be dangerous:
+Select the denominator of the fraction by
 hitting <kbd>klljljl</kbd>. Now hit <kbd>x</kbd> to delete it. You
 immediately see that this was not good.</p>
 
@@ -459,7 +482,7 @@ immediately see that this was not good.</p>
 <p>What does cause this? Well, some MathML elements must have a fixed
 number of children, in case of <code>mfrac</code> this number is two.
 If a <code>mfrac</code> element does not have two children, it is
-invalid. The MathML renderer no longer understands what is meaned by
+invalid. The MathML renderer no longer understands what is meant by
 the <code>mfrac</code> element and can not render the equation
 completely. If something like this happens, you have to look at the
 tree view in order to fix the problem, since the rendering of the
@@ -471,8 +494,8 @@ as you will learn in the next section.</p>
 <p>Of course, Gemse has also undo and redo commands. <kbd>u</kbd>
 undoes your last change. <kbd>&ctrl;r</kbd> undoes your last undo.
 (<kbd>&ctrl;r</kbd> means that you have to hold down the control key
-and hit r. Something like <kbd>&alt;ab&alt;c</kbd> says that you have to
-hold control, hit a, releae control, hit b, hold down ALT, hit c and
+and hit r. Something like <kbd>&ctrl;ab&alt;c</kbd> says that you have to
+hold control, hit a, releae control, hit b, hold down alt, hit c and
 releaste alt.) Now hit <kbd>u</kbd>. The denominator you just deleted
 is back.</p>
 
@@ -662,8 +685,8 @@ of the sum sign, or more precicely, in front of the
 </div>
 
 <p>However, for the moment we let it be. Press <kbd>&esc;</kbd>.
-(Well, here you have to hit the escape key, not E then S then C and so
-on.) This puts you right back into the edit mode.</p>
+(Well, here you have to hit the escape key, not E then S then C.) 
+This puts you right back into the edit mode.</p>
 
 <!-- Idea: change the infinite sum into a limes of partial sums. -->
 
@@ -926,9 +949,10 @@ and finally <kbd>∞</kbd> for the infinity sign.</p>
 
 <h2>Saving your work</h2>
 
-<p>I think we have done enough to get a break. I will now tell you how
-to save your work, so you can continue later, without doing everything
-again from the beginning.</p>
+<p>I think we have done enough to get a break. You do not need to save
+the equation for this tutorial, since later, you can just load the
+equation as it is now from a file included in the documentation. But
+anyway, I want to tell you here how to save an equation to a file.</p>
 
 <p><em>Important:</em> <strong>Be careful!</strong> This software is
 very young and the implementation of laoding and saving is rather a
@@ -936,10 +960,8 @@ hack. For example, it will overwrite existing files without moaning.
 If you give the save or load commands a relative URI, then it is
 considered to be relative to the current working directory, as
 indicated by firefox. Also be aware, that if you are using gemse
-directly from the web, for example if you are using the demo from
-gemse's website, it has no permission to write to your harddisk. (You
-can always use <kbd>:serialize&enter;</kbd> to get the XML code of the
-equation.)</p>
+not as firefox extension or XULRunner application,
+it has no permission to write to your harddisk.</p>
 
 <p>For saving you simply write <kbd>:save&space;</kbd>, followed by the
 URI where you want to save your equation, followed by
@@ -959,24 +981,9 @@ bit different.</p>
 In such a case you can use <kbd>:save&enter;</kbd> to write it back
 into this file.</p>
 
-<p><kbd>:load</kbd> folowed by an URI loads a file. This must be an
-XML file containing a <code>math</code> element as root element.
-However, you can also load equations contained in XHTML or OMDoc
-files. One option is to use <kbd>:loadid</kbd> followed by an URI and
-an id. Like this, gemse will load the resource and extract the element
-with the given id. When you save later on, the equation will be put
-back into the document and the document will be saved. If the element
-you want to load has no id, you can use an xpath expression instead,
-with the command <kbd>:loadxpath</kbd>. The most crazy load command is
-<kbd>:loadall</kbd> followed by a URI. It will load all equation it
-can find in the given document.</p>
-
-<p>Please be aware, that every of the load commands load the document
-into memory, not only the equation. Later, when you save your
-equation, the whole document from memory gets written.
-So if you load one equation out of
-a large document, and the document gets changed somewhere else, this
-changes will get lost when you save your work later on.</p>
+<p>Alternatively, instead of saving to a file, you can also use the
+command <kbd>:serialize&enter;</kbd> which displays the XML source
+code on the screen.</p>
 
 <h2>More fun with the insert mode</h2>
 
@@ -1104,6 +1111,12 @@ changes, <kbd>:close&enter;</kbd> will not work. Instead, use
 changes.</p>
 
 <h2>The visual mode</h2>
+
+<p>In this section we are going to use the equation from the file
+<code>doc/example01a.xml</code>. If you started from the beginning of
+this tutorial, this is what you should have now. If this is not the
+case, simply load it as described in the introduction to this
+tutorial.</p>
 
 <p>Sometimes you want to do something not only with the element the
 cursor is on, but with a whole sequence of elements. Using the visual
@@ -1528,7 +1541,8 @@ sensitive, for example, register A and a are distinct registers.)</p>
 <p>Hit <kbd>u</kbd> once to undo the mess from above. Move the cursor
 to the left hand of the equation and type <kbd>"ay</kbd>. Put the
 cursor on the righthand side and hit <kbd>"by</kbd>. Now try
-<kbd>"ap</kbd> and <kbd>"bp</kbd> and see what happens.</p>
+<kbd>"ap</kbd> and <kbd>"bp</kbd> and see what happens. Undo your
+changes afterwards.</p>
 
 <p>Note that the commands that put something into a register always
 put the stuff in the default register as well when you tell them to
@@ -1537,6 +1551,9 @@ that in Vim.</p>
 
 
 <h2>The attribute mode</h2>
+
+<p>If you start here, load <code>doc/example01a.xml</code>. It is
+what you should have now if you went through the last section.</p>
 
 <p>In MathML, one can put various attributes on elements. They control
 their (semantically significant) appeareance. It is also possible to put
