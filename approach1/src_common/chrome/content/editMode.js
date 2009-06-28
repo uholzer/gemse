@@ -457,7 +457,9 @@ function editModeCommand_serialize(mode, instance) {
         var xmlString = serializer.serializeToString(rootNode);
     }
 
-    mode.equationEnv.notificationDisplay.textContent = xmlString;
+    var pre = document.createElementNS(NS_HTML,"pre");
+    pre.appendChild(document.createTextNode(xmlString));
+    mode.editor.showMessage(pre);
     return true;
 }
 
@@ -504,7 +506,9 @@ function editModeCommand_export(mode, instance) {
         serialized = serializer.serializeToString(resultDoc);
     }
 
-    mode.equationEnv.notificationDisplay.textContent = serialized;
+    var pre = document.createElementNS(NS_HTML,"pre");
+    pre.appendChild(document.createTextNode(serialized));
+    mode.editor.showMessage(pre);
     return true;
 }
 
@@ -685,10 +689,7 @@ function editModeCommand_cycleInsertMode(mode) {
     else if (index >= 0) { current = selectable[index+1] }
     else { current = selectable[0] }
     mode.editor.setOption("currentInsertMode",current);
-    xml_flushElement(mode.equationEnv.notificationDisplay);
-    mode.equationEnv.notificationDisplay.appendChild(
-        document.createTextNode("You changed the insert mode to " + mode.editor.getOption("currentInsertMode"))
-    );
+    mode.editor.showMessage("You changed the insert mode to " + mode.editor.getOption("currentInsertMode"));
     return true;
 }
 
@@ -702,10 +703,9 @@ function editModeCommand_contentInfo(mode) {
         s += ucd.lookupName(content.uCharAt(i));
     }
     s += ">";
-    xml_flushElement(mode.equationEnv.notificationDisplay);
-    mode.equationEnv.notificationDisplay.appendChild(
-        document.createTextNode(s)
-    );
+    var code = document.createElementNS(NS_HTML, "code");
+    code.appendChild(document.createTextNode(s));
+    mode.editor.showMessage(code);
     return true;
 }
 
@@ -744,7 +744,7 @@ function editModeCommand_set(mode, instance) {
     else {
         // Only show the user the current setting
         value = mode.editor.getOption(key);
-        mode.equationEnv.notificationDisplay.textContent = value;
+        mode.editor.showMessage(key + "=" + value);
     }
     return true;
 }

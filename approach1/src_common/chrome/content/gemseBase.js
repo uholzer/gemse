@@ -306,18 +306,43 @@ function DirectView(editor,equationEnv,viewport) {
 }
 DirectView.prototype = {
     /** 
-     * Builds the tree view. For showing the tree structure, nested
-     * div elements are used. The view is built up from scratch every
-     * time. The internal:selected attributes from elements in the
-     * equation are also placed in the tree view. 
+     * Builds the direct view. 
      */
     build: function() {
         // Put the equation as child into the viewport, but only if it
         // is not yet there. We must be careful, since sometimes
         // this.equationEnv.equation itself changes.
-        if (mml_firstChild(this.viewport)!=this.equationEnv) {
+        if (mml_firstChild(this.viewport)!=this.equationEnv.equation) {
             xml_flushElement(this.viewport);
             this.viewport.appendChild(this.equationEnv.equation);
+        }
+    }
+}
+
+/**
+ * @class This view shows the last message to the user.
+ * There must not be more than one instance of this view, since the
+ * DOM node editor.lastMessage is put directly into the view element.
+ */
+function MessageView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+MessageView.prototype = {
+    /** 
+     * Builds the view.
+     */
+    build: function() {
+        // Put the editor.lastMessage as only child into the viewport.
+        if (mml_firstChild(this.viewport)!=this.editor.lastMessage) {
+            xml_flushElement(this.viewport);
+            if (this.editor.lastMessage) {
+                this.viewport.appendChild(this.editor.lastMessage);
+            }
         }
     }
 }
@@ -1072,6 +1097,7 @@ ViewsetManager.prototype = {
      */
     viewClasses: { 
         DirectView: DirectView,
+        MessageView: MessageView,
         TreeView: TreeView,
         SourceView: SourceView,
         AttributeView: AttributeView,
@@ -1231,6 +1257,12 @@ function GemsePEditor() {
      */
     this.inputRecordings = { };
     /**
+     * The last message for the user stored as DOM node.
+     * If there is no last message or the user does not want to see it
+     * any more, this is set to null.
+     */
+    this.lastMessage = null;
+    /**
      * Manages the view sets.
      * (The constructor of the editor does use the element with id
      * "viewsetDock" as dock. It also calls
@@ -1291,7 +1323,7 @@ GemsePEditor.prototype = {
             while (this.inputBuffer && this.equations[this.focus].mode.inputHandler()) {};
         }
         catch (e if false) {
-            this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
+            this.showMessage(e);
         }
         finally {
             // Now, if there is still something in the buffer, it is
@@ -1673,6 +1705,21 @@ GemsePEditor.prototype = {
             this.equations[this.focus].options[key] = value;
         }
     },
+    /**
+     * Shows a message to the user
+     * @param message The message as DOM node or string
+     */
+    showMessage: function(message) {
+        if (message.nodeType) {
+            // message is a DOM node
+            this.lastMessage = message;
+        }
+        else {
+            // message is a String
+            this.lastMessage = document.createElementNS(NS_HTML,"div")
+            this.lastMessage.appendChild(document.createTextNode(message));
+        }
+    }
 }
 
 GemsePEditor.knownClasses = [];
