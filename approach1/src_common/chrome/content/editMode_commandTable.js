@@ -218,6 +218,28 @@ editModeCommands = {
         argument: "newlineTerminated",
         implementation: editModeCommand_set
     },
+    ":hideview": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_hideView
+    },
+    ":showview": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_showView
+    },
+    ":viewset": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_chooseViewset
+    },
+
     ":serialize": {
         category: "action",
         type: "long",

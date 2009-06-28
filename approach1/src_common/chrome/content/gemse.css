@@ -1,6 +1,15 @@
 @namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
 @namespace html     "http://www.w3.org/1999/xhtml";
+@namespace xul      "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
+/*** The window (XUL) **/
+/* Initial size of window, when using the XUL interface (if this is
+set to a higher value than the size of the screen, the window is made
+smaller automatically */
+xul|window {
+    width: 1200px;
+    height: 900px;
+}
 
 /*** Boxes and tables ***/
 
@@ -29,7 +38,7 @@ html|table {
 
 /*** the equation ***/
 
-*[internal|function="equation"] {
+*[internal|viewClass="DirectView"], *[internal|viewClass="EquationView"] {
     border: 1px solid black;
     text-align: center;
     font-size: x-large;
@@ -38,13 +47,13 @@ html|table {
 
 /*** tree view. ***/
 
-*[internal|function="treeView"] {
+*[internal|viewClass="TreeView"] {
     border: 1px solid black;
     margin: 1px; padding: 1px 1px 5ex 1px;
     text-align: center;
     font-size: small;
 }
-*[internal|function="treeView"] html|div.element {
+*[internal|viewClass="TreeView"] html|div.element {
     display: inline-block;
     border: 1px solid black;
     margin: 1px; padding: 1px;
@@ -52,19 +61,26 @@ html|table {
     top: 5px;
     text-align: center;
 }
-*[internal|function="treeView"] html|div.nodeValue {
+*[internal|viewClass="TreeView"] html|div.nodeValue {
     color: blue;
     font-size: larger;
 }
 
 
+/*** source view. ***/
+
+*[internal|viewClass="SourceView"] {
+    font-size: small;
+}
+
+
 /*** attribute view. ***/
 
-*[internal|function="attributeView"] {
+*[internal|viewClass="AttributeView"] {
     float: left;
     margin: 1ex;
 }
-*[internal|function="attributeView"] * {
+*[internal|viewClass="AttributeView"] * {
     border: 1px solid black;
 }
 *.defaultAttribute * {
@@ -74,58 +90,34 @@ html|table {
 
 /*** dictionary view. ***/
 
-*[internal|function="dictionaryView"] {
+*[internal|viewClass="DictionaryView"] {
     margin: 1ex;
 }
-*[internal|function="dictionaryView"] * {
+*[internal|viewClass="DictionaryView"] * {
     border: 1px solid black;
 }
-*[internal|function="dictionaryView"] html|td:first-child {
+*[internal|viewClass="DictionaryView"] html|td:first-child {
     font-size: x-large;
 }
-*[internal|function="dictionaryView"] html|tr.user {
+*[internal|viewClass="DictionaryView"] html|tr.user {
     color: #008;
 }
-*[internal|function="dictionaryView"] html|tr.applied {
+*[internal|viewClass="DictionaryView"] html|tr.applied {
     background-color: #f88;
 }
 
 
+/*** OthersView ***/
+
+*[internal|viewClass="OthersView"] > * {
+    border: 1px solid gray;
+}
+
 /*** Status bar ***/
 
-*[internal|function="modeName"] {
+*[internal|viewClass="StatusbarView"] {
     color: white; background-color: black;
     clear: both;
-}
-
-
-/*** Containers ***/
-
-/* There are two variants for containers: */
-
-/* Variant 1: Use opacity for the containers not on focus, but display
-them in full size */
-/*
-*[internal|function="container"] {
-    opacity: 0.4;
-}
-*[internal|selected="equationFocus"] {
-    opacity: 1;
-}
-*/
-
-/* Variant 2: For containers not on focus, display only the equation
-with a small font. */
-*[internal|function="container"]:not([internal|selected="equationFocus"]) > * {
-    display: none;
-}
-*[internal|function="container"]:not([internal|selected="equationFocus"]) *[internal|function="equation"] {
-    display: block;
-    font-size: small;
-    color: black; background-color: white;
-}
-*[internal|function="container"]:not([internal|selected="equationFocus"]) *[internal|function="equation"] * {
-    color: inherit; background-color: inherit;
 }
 
 

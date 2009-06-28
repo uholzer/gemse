@@ -1,0 +1,29 @@
+<math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+            <mi>n</mi>
+        </munderover>
+        <msub><mi>a</mi><mi>i</mi></msub>
+    </mrow>
+    <mo>+</mo>
+    <mroot>
+        <mrow>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mi>b</mi>
+        </mrow>
+        <mi>3</mi>
+    </mroot>
+    <mo>+</mo>
+    <mfenced open="&lt;" close="&gt;" separators=",">
+        <mi>a</mi>
+        <mi>b</mi>
+    </mfenced>
+</mrow> 
+</math>

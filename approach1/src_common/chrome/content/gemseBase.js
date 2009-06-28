@@ -3,62 +3,17 @@
  * @param editor The editor object the new environment will belong to
  * @param container The DOM element that will contain this environment
  */
-function EquationEnv(editor, container) {
-    /** @private */
-    this.container = container;
+function EquationEnv(editor, equation) {
     /** @private */
     this.editor = editor;
-
-    /* The container must provide some elements. They are
-      located by the function attribute. */
 
     var nsResolver = standardNSResolver;
 
     /**
      * Root element of the equation.
-     * The element with function "equation" is the one that
-     * actually contains the MathML element. It must already
-     * contain one now, not nessecairily empty.
      * @private
      */
-    this.equation = document.evaluate(".//.[@internal:function='equation']/*", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
-
-    /**
-     * The element containing the tree view.
-     * The tree view shows the tree structure of the equation
-     * using nested div elements. This view is always
-     * regenerated based on the equation.
-     * @private
-     */
-    this.treeView = document.evaluate(".//.[@internal:function='treeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
-
-    /**
-     * The element containing the attribute view.
-     * The attribute view lists all attributes of the current
-     * element
-     * @private
-     */
-    this.attributeView = document.evaluate(".//.[@internal:function='attributeView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
-
-    /**
-     * The element containing the dictionary view.
-     * The dictionary view shows information taken from a dictionary
-     * about the current element.
-     * @private
-     */
-    this.dictionaryView = document.evaluate(".//.[@internal:function='dictionaryView']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
-
-    /**
-     * The element containing the name of the current mode.
-     * @private
-     */
-    this.modeNameIndicator = document.evaluate(".//.[@internal:function='modeName']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
-
-    /**
-     * The element containing various notifications.
-     * @private
-     */
-    this.notificationDisplay = document.evaluate(".//.[@internal:function='notificationDisplay']", container, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+    this.equation = equation;
 
     /**
      * Where the equation originates from.
@@ -97,264 +52,24 @@ function EquationEnv(editor, container) {
 EquationEnv.prototype = {
     /* Methods */
 
+    /**
+     * Update view via the editor's viewsetManager.
+     * XXX: Get rid of that, since this should be done by the editor
+     */
+    updateViews: function() {
+        this.editor.viewsetManager.build();
+    },
+
     /** 
      * Replaces a currenly open equation with a different one.
      * You must not set this.equation directly. You must use
      * this method instead. You also have to call reInit of
      * the current mode afterwards.
+     * XXX: Should get rid of this method?
      * @param e the root node of the new equation
      */
     replaceEquation: function(e) {
-        this.equation.parentNode.replaceChild(e, this.equation);
         this.equation = e;
-    },
-
-    /** Rebuilds all currently visible views. */
-    updateViews: function() {
-        if (this.treeView) { this.buildTreeView(); }
-        if (this.attributeView && this.mode.contextNode) { 
-            var element = this.mode.contextNode;
-            while (element.nodeType != Node.ELEMENT_NODE) { element = element.parentNode; }
-            this.buildAttributeView(element); 
-        }
-        if (this.dictionaryView && this.mode.contextNode) { 
-            var element = this.mode.contextNode;
-            while (element.nodeType != Node.ELEMENT_NODE) { element = element.parentNode; }
-            this.buildDictionaryView(element); 
-        }
-        if (this.modeNameIndicator) {
-            this.modeNameIndicator.textContent = this.mode.name;
-        }
-    },
-
-    /** 
-     * Rebuilds the tree view. For showing the tree structure, nested
-     * div elements are used. The view is built up from scratch every
-     * time. The internal:selected attributes from elements in the
-     * equation are also placed in the tree view. 
-     * @private
-     */
-    buildTreeView: function() {
-        var treeWalker = document.createTreeWalker(
-            this.equation,
-            NodeFilter.SHOW_ALL,
-            { acceptNode: function(node) { return (node.nodeType == Node.ELEMENT_NODE || !(/^\s*$/.test(node.nodeValue))) ?  NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } },
-            false
-        );
-        while (this.treeView.hasChildNodes()) { this.treeView.removeChild(this.treeView.firstChild); }
-        var root = document.createElement("div");
-        this.treeView.appendChild(root);
-        var pos = root;
-        var reachedEnd = false;
-        while (!reachedEnd) {
-            // Create node
-            var node = document.createElement("div");
-            pos.appendChild(node);
-            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE) {
-                node.setAttribute("class", "element");
-                node.appendChild(document.createTextNode(treeWalker.currentNode.localName));
-            }
-            else {
-                node.setAttribute("class", "nodeValue");
-                node.appendChild(document.createTextNode(treeWalker.currentNode.nodeValue));
-            }
-            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE && treeWalker.currentNode.getAttributeNS(NS_internal, "selected")) {
-                node.setAttributeNS(NS_internal, "selected", treeWalker.currentNode.getAttributeNS(NS_internal, "selected"));
-            }
-            // Move to next node
-            if (treeWalker.firstChild()) {
-                pos = node;
-            }
-            else if (treeWalker.nextSibling()) {
-                // do nothing
-            }
-            else {
-                // Go up until there is a nextSibling, then select
-                // it
-                while (!treeWalker.nextSibling()) {
-                    if (!treeWalker.parentNode()) { 
-                        reachedEnd = true;
-                        break;
-                    }
-                    pos = pos.parentNode;
-                }
-            }
-        }
-
-    },
-
-    /**
-     * Builds the attribute view
-     * @private
-     * @param forElement the element for which the attribute view
-     *                   should be generated
-     */
-    buildAttributeView: function (forElement) {
-        while (this.attributeView.hasChildNodes()) { this.attributeView.removeChild(this.attributeView.firstChild); }
-        // Place attribute information inside an Array
-        var attributes = [];
-        var attributeNodeMap = forElement.attributes;
-        for(var i=0; i<attributeNodeMap.length; i++) {
-            attributes.push(attributeNodeMap[i]);
-        }
-
-        // Sort the array (and filter out internal attributes)
-        attributes = attributes.filter(function (a) { return a.namespaceURI != NS_internal });
-        attributes = attributes.sort(
-            function (a, b) { 
-                if (a.namespaceURI < b.namespaceURI) return -1
-                else if (a.namespaceURI > b.namespaceURI) return 1
-                else if (a.localName < b.localName) return -1
-                else if (a.localName > b.localName) return 1
-                else return 0;
-            }
-        );
-
-        generateRow = function (ns, name, value, cursor, selected) {
-            var t_ns = document.createElement("td");
-            t_ns.appendChild(document.createTextNode(ns));
-            var t_name = document.createElement("td");
-            t_name.appendChild(document.createTextNode(name));
-            var t_value = document.createElement("td");
-            t_value.appendChild(document.createTextNode(value));
-            var row = document.createElement("tr");
-            if (cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor") }
-            if (selected) { row.setAttributeNS(NS_internal, "selected", "selection") }
-            if (selected && cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor selection") }
-            row.appendChild(t_ns);
-            row.appendChild(t_name);
-            row.appendChild(t_value);
-            return row;
-        }
-
-        // Generate table
-        var table = document.createElement("table");
-        var caption = document.createElement("caption");
-        caption.appendChild(document.createTextNode("attributes"));
-        table.appendChild(caption);
-        for (var i = 0; i < attributes.length; i++) {
-            table.appendChild(generateRow(
-                attributes[i].namespaceURI,
-                attributes[i].localName,
-                attributes[i].nodeValue,
-                attributes[i].nodeName == forElement.getAttributeNS(NS_internal, "attributeCursor"),
-                forElement.getAttributeNS(NS_internal, "selectedAttributes").split(' ').indexOf(attributes[i].nodeName) != -1
-            ));
-        }
-        this.attributeView.appendChild(table);
-
-        // Generate table of default attributes
-        if (elementDescriptions[forElement.localName] && elementDescriptions[forElement.localName].attributes) {
-            table = document.createElement("table");
-            table.setAttribute("class", "defaultAttribute");
-            var caption = document.createElement("caption");
-            caption.appendChild(document.createTextNode("default attributes"));
-            table.appendChild(caption);
-            var defaultAttributesHash = elementDescriptions[forElement.localName].attributes;
-            var defaultAttributes = [];
-            for (a in defaultAttributesHash) {
-                defaultAttributes.push(defaultAttributesHash[a]);
-            }
-            for (var i = 0; i < defaultAttributes.length; i++) {
-                table.appendChild(generateRow(
-                    defaultAttributes[i].namespace || "",
-                    defaultAttributes[i].name,
-                    defaultAttributes[i].defaultValue,
-                    false,
-                    false
-                ));
-            }
-            this.attributeView.appendChild(table);
-        }
-    },
-
-    /** 
-     * Builds the dictionary view
-     * @private
-     * @param forElement the element for which the view is built
-     */
-    buildDictionaryView: function (forElement) {
-        while (this.dictionaryView.hasChildNodes()) { this.dictionaryView.removeChild(this.dictionaryView.firstChild); }
-        // Return immediately if we are not on an mo element
-        if (! (forElement.namespaceURI==NS_MathML && forElement.localName=="mo")) { return }
-
-        var table = document.createElement("table");
-        var caption = document.createElement("caption");
-        caption.appendChild(document.createTextNode("dictionary entries"));
-        table.appendChild(caption);
-        var titleRow = document.createElement("tr");
-        var th = document.createElement("th");
-        th.appendChild(document.createTextNode("name"));
-        th.setAttribute("colspan", "3");
-        titleRow.appendChild(th);
-        var th = document.createElement("th");
-        th.appendChild(document.createTextNode("comments"));
-        th.setAttribute("colspan", "3");
-        titleRow.appendChild(th);
-        var th = document.createElement("th");
-        th.appendChild(document.createTextNode("attributes"));
-        titleRow.appendChild(th);
-        var th = document.createElement("th");
-        th.appendChild(document.createTextNode("other"));
-        th.setAttribute("colspan", "2");
-        titleRow.appendChild(th);
-        table.appendChild(titleRow);
-
-        // XXX: Do we need to remove whitespacve at beginning and end?
-        var entries = operatorDictionary.entriesByContent(forElement.textContent);
-        entries.forEach(function (entry) {
-            var tr = document.createElement("tr");
-            
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.content));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.form));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.disamb));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.contentComment));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.comment));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.description));
-            tr.appendChild(td);
-            
-            var td = document.createElement("td");
-            for (a in entry.attributes) {
-                var text = document.createTextNode(
-                    a + " = " + entry.attributes[a]
-                );
-                td.appendChild(text);
-                td.appendChild(document.createElement("br"));
-            }
-            tr.appendChild(td);
-
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.groupingPrecedence));
-            tr.appendChild(td);
-            var td = document.createElement("td");
-            td.appendChild(document.createTextNode(entry.isSpec ? "spec" : "user"));
-            tr.appendChild(td);
-
-            tr.setAttribute("class", entry.isSpec ? "spec" : "user");
-            // If all attributes match, we mark the entry as "applied"
-            var matches = true;
-            for (a in entry.attributes) {
-                if (entry.attributes[a] != forElement.getAttribute(a)) { matches = false }
-            }
-            if (matches) {
-                tr.setAttribute("class", tr.getAttribute("class") + " applied");
-            }
-            
-            table.appendChild(tr);
-        });
-
-        this.dictionaryView.appendChild(table);
     },
 
     /**
@@ -427,6 +142,7 @@ EquationEnv.prototype = {
     /**
      * Removes all attributes in the internal namespace. This method
      * must be applied on a subtree of a document.
+     * XXX: Can this be done on nodes not part of any document?
      * @param doc  The document that contains the subtree
      * @param root The root node of the subtree
      */
@@ -570,6 +286,473 @@ EquationEnv.prototype = {
 
         // close
         this.editor.eliminateEquationEnv(this);
+    },
+}
+
+/**
+ * @class direct view of the equation by directly putting the math
+ * element into the document.
+ * There must not be more than one instance of this view, since if
+ * there are, the same DOM element (i.e. the math element) is put at
+ * different places in the document, which is not possible.
+ */
+function DirectView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+DirectView.prototype = {
+    /** 
+     * Builds the direct view. 
+     */
+    build: function() {
+        // Put the equation as child into the viewport, but only if it
+        // is not yet there. We must be careful, since sometimes
+        // this.equationEnv.equation itself changes.
+        if (mml_firstChild(this.viewport)!=this.equationEnv.equation) {
+            xml_flushElement(this.viewport);
+            this.viewport.appendChild(this.equationEnv.equation);
+        }
+    }
+}
+
+/**
+ * @class This view shows the last message to the user.
+ * There must not be more than one instance of this view, since the
+ * DOM node editor.lastMessage is put directly into the view element.
+ */
+function MessageView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+MessageView.prototype = {
+    /** 
+     * Builds the view.
+     */
+    build: function() {
+        // Put the editor.lastMessage as only child into the viewport.
+        if (mml_firstChild(this.viewport)!=this.editor.lastMessage) {
+            xml_flushElement(this.viewport);
+            if (this.editor.lastMessage) {
+                this.viewport.appendChild(this.editor.lastMessage);
+            }
+        }
+    }
+}
+
+
+/**
+ * @class tree view
+ */
+function TreeView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+TreeView.prototype = {    
+    /** 
+     * Builds the tree view. For showing the tree structure, nested
+     * div elements are used. The view is built up from scratch every
+     * time. The internal:selected attributes from elements in the
+     * equation are also placed in the tree view. 
+     */
+    build: function() {
+        var treeWalker = document.createTreeWalker(
+            this.equationEnv.equation,
+            NodeFilter.SHOW_ALL,
+            { acceptNode: function(node) { return (node.nodeType == Node.ELEMENT_NODE || !(/^\s*$/.test(node.nodeValue))) ?  NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } },
+            false
+        );
+        xml_flushElement(this.viewport);
+        var root = document.createElementNS(NS_HTML,"div");
+        this.viewport.appendChild(root);
+        var pos = root;
+        var reachedEnd = false;
+        while (!reachedEnd) {
+            // Create node
+            var node = document.createElementNS(NS_HTML,"div");
+            pos.appendChild(node);
+            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE) {
+                node.setAttribute("class", "element");
+                node.appendChild(document.createTextNode(treeWalker.currentNode.localName));
+            }
+            else {
+                node.setAttribute("class", "nodeValue");
+                node.appendChild(document.createTextNode(treeWalker.currentNode.nodeValue));
+            }
+            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE && treeWalker.currentNode.getAttributeNS(NS_internal, "selected")) {
+                node.setAttributeNS(NS_internal, "selected", treeWalker.currentNode.getAttributeNS(NS_internal, "selected"));
+            }
+            // Move to next node
+            if (treeWalker.firstChild()) {
+                pos = node;
+            }
+            else if (treeWalker.nextSibling()) {
+                // do nothing
+            }
+            else {
+                // Go up until there is a nextSibling, then select
+                // it
+                while (!treeWalker.nextSibling()) {
+                    if (!treeWalker.parentNode()) { 
+                        reachedEnd = true;
+                        break;
+                    }
+                    pos = pos.parentNode;
+                }
+            }
+        }
+    },
+}
+
+/**
+ * @class source view
+ */
+function SourceView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+SourceView.prototype = {    
+    /** 
+     * Builds the source view.
+     * It does not show real serielized source, but it does emulate it
+     * in some way.
+     */
+    build: function() {
+        xml_flushElement(this.viewport);
+        var pre = document.createElementNS(NS_HTML,"pre");
+        this.viewport.appendChild(pre);
+        this.writeSourceOfElement(this.equationEnv.equation,pre,"");
+    },
+    /**
+     * Writes the source for of an element to the document.
+     * @private
+     * @param src    The element the source should be generated for
+     * @param dest   The source gets appended to this element
+     * @param indentString Whitespaces for indentation
+     * @param inline True if the code for this element should be put
+     *               on the same line, false if it has its own lines.
+     */
+    writeSourceOfElement: function(src,dest,indentString,inline) {
+        var indentMoreString = indentString + "  ";
+        // Take a new span for this element
+        var elementSpan = document.createElementNS(NS_HTML,"span");
+        // Put internal:selected attribute if present
+        if (src.getAttributeNS(NS_internal, "selected")) {
+            elementSpan.setAttributeNS(NS_internal, "selected", src.getAttributeNS(NS_internal, "selected"));
+        }
+        // Add it to dest
+        dest.appendChild(elementSpan);
+
+        // Now fill in the contents of elementSpan:
+
+        if (!mml_firstChild(src) && !src.firstChild) {
+            // src is empty
+            elementSpan.appendChild(document.createTextNode(
+                inline ?
+                "<" + src.localName + "/>" :
+                indentString + "<" + src.localName + "/>\n"
+            ));
+        }
+        else if (!mml_firstChild(src)) {
+            // src contains text but no elements
+            elementSpan.appendChild(document.createTextNode(
+                inline ?
+                "<" + src.localName + ">" :
+                indentString + "<" + src.localName + ">"
+            ));
+            elementSpan.appendChild(document.createTextNode(src.textContent));
+            elementSpan.appendChild(document.createTextNode(
+                "</" + src.localName + ">" + (inline ? "" : "\n")
+            ));
+        }
+        else {
+            // Element contains children
+            elementSpan.appendChild(document.createTextNode(
+                indentString + "<" + src.localName + ">\n"
+            ));
+            var child = mml_firstChild(src);
+            while (child) {
+                this.writeSourceOfElement(child,elementSpan,indentMoreString,false);
+                child = mml_nextSibling(child);
+            }
+            elementSpan.appendChild(document.createTextNode(
+                indentString + "</" + src.localName + ">\n"
+            ));
+        }
+    },
+}
+
+/**
+ * @class attribute view
+ */
+function AttributeView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+AttributeView.prototype = {    
+    /**
+     * Builds the attribute view
+     */
+    build: function () {
+        var forElement = this.equationEnv.mode.contextNode;
+        xml_flushElement(this.viewport);
+        if (!forElement) { return }
+
+        // Place attribute information inside an Array
+        var attributes = [];
+        var attributeNodeMap = forElement.attributes;
+        for (var i=0; i<attributeNodeMap.length; i++) {
+            attributes.push(attributeNodeMap[i]);
+        }
+
+        // Sort the array (and filter out internal attributes)
+        attributes = attributes.filter(function (a) { return a.namespaceURI != NS_internal });
+        attributes = attributes.sort(
+            function (a, b) { 
+                if (a.namespaceURI < b.namespaceURI) return -1
+                else if (a.namespaceURI > b.namespaceURI) return 1
+                else if (a.localName < b.localName) return -1
+                else if (a.localName > b.localName) return 1
+                else return 0;
+            }
+        );
+
+        generateRow = function (ns, name, value, cursor, selected) {
+            var t_ns = document.createElementNS(NS_HTML,"td");
+            t_ns.appendChild(document.createTextNode(ns));
+            var t_name = document.createElementNS(NS_HTML,"td");
+            t_name.appendChild(document.createTextNode(name));
+            var t_value = document.createElementNS(NS_HTML,"td");
+            t_value.appendChild(document.createTextNode(value));
+            var row = document.createElementNS(NS_HTML,"tr");
+            if (cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor") }
+            if (selected) { row.setAttributeNS(NS_internal, "selected", "selection") }
+            if (selected && cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor selection") }
+            row.appendChild(t_ns);
+            row.appendChild(t_name);
+            row.appendChild(t_value);
+            return row;
+        }
+
+        // Generate table
+        var table = document.createElementNS(NS_HTML,"table");
+        var caption = document.createElementNS(NS_HTML,"caption");
+        caption.appendChild(document.createTextNode("attributes"));
+        table.appendChild(caption);
+        for (var i = 0; i < attributes.length; i++) {
+            table.appendChild(generateRow(
+                attributes[i].namespaceURI,
+                attributes[i].localName,
+                attributes[i].nodeValue,
+                attributes[i].nodeName == forElement.getAttributeNS(NS_internal, "attributeCursor"),
+                forElement.getAttributeNS(NS_internal, "selectedAttributes").split(' ').indexOf(attributes[i].nodeName) != -1
+            ));
+        }
+        this.viewport.appendChild(table);
+
+        // Generate table of default attributes
+        if (elementDescriptions[forElement.localName] && elementDescriptions[forElement.localName].attributes) {
+            table = document.createElementNS(NS_HTML,"table");
+            table.setAttribute("class", "defaultAttribute");
+            var caption = document.createElementNS(NS_HTML,"caption");
+            caption.appendChild(document.createTextNode("default attributes"));
+            table.appendChild(caption);
+            var defaultAttributesHash = elementDescriptions[forElement.localName].attributes;
+            var defaultAttributes = [];
+            for (a in defaultAttributesHash) {
+                defaultAttributes.push(defaultAttributesHash[a]);
+            }
+            for (var i = 0; i < defaultAttributes.length; i++) {
+                table.appendChild(generateRow(
+                    defaultAttributes[i].namespace || "",
+                    defaultAttributes[i].name,
+                    defaultAttributes[i].defaultValue,
+                    false,
+                    false
+                ));
+            }
+            this.viewport.appendChild(table);
+        }
+    },
+}
+
+/**
+ * @class dictionary view
+ */
+function DictionaryView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+DictionaryView.prototype = {    
+    /** 
+     * Builds the dictionary view
+     */
+    build: function() {
+        var forElement = this.equationEnv.mode.contextNode;
+        xml_flushElement(this.viewport);
+        if (!forElement) { return }
+
+        // Return immediately if we are not on an mo element
+        if (! (forElement.namespaceURI==NS_MathML && forElement.localName=="mo")) { return }
+
+        var table = document.createElementNS(NS_HTML,"table");
+        var caption = document.createElementNS(NS_HTML,"caption");
+        caption.appendChild(document.createTextNode("dictionary entries"));
+        table.appendChild(caption);
+        var titleRow = document.createElementNS(NS_HTML,"tr");
+        var th = document.createElementNS(NS_HTML,"th");
+        th.appendChild(document.createTextNode("name"));
+        th.setAttribute("colspan", "3");
+        titleRow.appendChild(th);
+        var th = document.createElementNS(NS_HTML,"th");
+        th.appendChild(document.createTextNode("comments"));
+        th.setAttribute("colspan", "3");
+        titleRow.appendChild(th);
+        var th = document.createElementNS(NS_HTML,"th");
+        th.appendChild(document.createTextNode("attributes"));
+        titleRow.appendChild(th);
+        var th = document.createElementNS(NS_HTML,"th");
+        th.appendChild(document.createTextNode("other"));
+        th.setAttribute("colspan", "2");
+        titleRow.appendChild(th);
+        table.appendChild(titleRow);
+
+        // XXX: Do we need to remove whitespacve at beginning and end?
+        var entries = operatorDictionary.entriesByContent(forElement.textContent);
+        entries.forEach(function (entry) {
+            var tr = document.createElementNS(NS_HTML,"tr");
+            
+            var td = document.createElementNS(NS_HTML,"td");
+            td.appendChild(document.createTextNode(entry.content));
+            tr.appendChild(td);
+            var td = document.createElementNS(NS_HTML,"td");
+            td.appendChild(document.createTextNode(entry.form));
+            tr.appendChild(td);
+            var td = document.createElementNS(NS_HTML,"td");
+            td.appendChild(document.createTextNode(entry.disamb));
+            tr.appendChild(td);
+            var td = document.createElementNS(NS_HTML,"td");
+            td.appendChild(document.createTextNode(entry.contentComment));
+            tr.appendChild(td);
+            var td = document.createElementNS(NS_HTML,"td");
+            td.appendChild(document.createTextNode(entry.comment));
+            tr.appendChild(td);
+            var td = document.createElementNS(NS_HTML,"td");
+            td.appendChild(document.createTextNode(entry.description));
+            tr.appendChild(td);
+            
+            var td = document.createElementNS(NS_HTML,"td");
+            for (a in entry.attributes) {
+                var text = document.createTextNode(
+                    a + " = " + entry.attributes[a]
+                );
+                td.appendChild(text);
+                td.appendChild(document.createElementNS(NS_HTML,"br"));
+            }
+            tr.appendChild(td);
+
+            var td = document.createElementNS(NS_HTML,"td");
+            td.appendChild(document.createTextNode(entry.groupingPrecedence));
+            tr.appendChild(td);
+            var td = document.createElementNS(NS_HTML,"td");
+            td.appendChild(document.createTextNode(entry.isSpec ? "spec" : "user"));
+            tr.appendChild(td);
+
+            tr.setAttribute("class", entry.isSpec ? "spec" : "user");
+            // If all attributes match, we mark the entry as "applied"
+            var matches = true;
+            for (a in entry.attributes) {
+                if (entry.attributes[a] != forElement.getAttribute(a)) { matches = false }
+            }
+            if (matches) {
+                tr.setAttribute("class", tr.getAttribute("class") + " applied");
+            }
+            
+            table.appendChild(tr);
+        });
+
+        this.viewport.appendChild(table);
+    },
+}
+
+/**
+ * @class Others view, shows the other open equations.
+ *        XXX: I fear that this implementation is slow when there are
+ *        many open equations.
+ */
+function OthersView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+
+    // This view is generated when it is created, that is, here:
+    // XXX: Is this save?
+    for (var i=0;i<editor.equations.length;++i) {
+        var copy = editor.equations[i].equation.cloneNode(true);
+        var containment = document.createElementNS(NS_HTML,"div")
+        containment.appendChild(copy);
+        this.viewport.appendChild(containment);
+        this.equationEnv.cleanSubtreeOfDocument(document,copy);
+        if (this.equationEnv == editor.equations[i]) {
+            containment.setAttributeNS(NS_internal,"selected","editcursor"); //XXX: Good?
+        }
+    }
+}
+OthersView.prototype = {    
+    /**
+     * Builds the view
+     */
+    build: function () {
+        // This view does only change when created, so do nothing!
+    },
+}
+
+/**
+ * @class Statusbar view, shows various information
+ */
+function StatusbarView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+StatusbarView.prototype = {    
+    /**
+     * Builds the view
+     */
+    build: function () {
+        xml_flushElement(this.viewport);
+        modeNameLabel = document.createElementNS(NS_HTML,"div");
+        modeNameLabel.appendChild(document.createTextNode(this.equationEnv.mode.name));
+        this.viewport.appendChild(modeNameLabel);
     },
 }
 
@@ -877,6 +1060,157 @@ Change.prototype = {
 }
 
 /**
+ * @class Manages viewsets.
+ */
+function ViewsetManager(editor,dock) {
+    this.editor = editor;
+    /**
+     * The DOM element that acts as the dock, that is the element that
+     * contains the current viewset.
+     */
+    this.dock = dock;
+    /**
+     * List of DOM elements which are viewsets
+     */
+    this.viewsets = [];
+    /**
+     * Contains the view objects of the current view used.
+     * They have to be recreated when
+     * - the focus is moved to another equation
+     * - The viewset is changed
+     */
+    this.views = [];
+    /**
+     * The viewset to be used.
+     * In the future, the user will be able to use different viewsets
+     * for different formulas or modes.
+     * @private
+     */
+    this.globalViewsetNumber = 0;
+}
+ViewsetManager.prototype = {
+    /**
+     * Maps names of classes (strings) to the constructor function.
+     * Every view must be registered here.
+     * XXX: To be stored somewhere else?
+     * @private
+     */
+    viewClasses: { 
+        DirectView: DirectView,
+        MessageView: MessageView,
+        TreeView: TreeView,
+        SourceView: SourceView,
+        AttributeView: AttributeView,
+        DictionaryView: DictionaryView,
+        OthersView: OthersView,
+        StatusbarView: StatusbarView,
+    },
+    /**
+     * Builds all views.
+     * It loops over all views of the current viewset and calls there
+     * build method.
+     */
+    build: function() {
+        this.views.forEach(function (v) { v.build() });
+    },
+    /**
+     * Creates the views of a viewset
+     */
+    create: function() {
+        // Find out which viewset to use
+        var viewsetNumber = this.globalViewsetNumber;
+        if (!this.viewsets[viewsetNumber]) {
+            throw "There is no viewset with number " + viewsetNumber;
+        }
+        // Get rid of current views
+        this.views = [];
+        // Clear the dock
+        xml_flushElement(this.dock);
+        // Make deep copy of the viewset
+        var newViewset = this.viewsets[viewsetNumber].cloneNode(true);
+        // Fill the dock
+        var e;
+        while (e = newViewset.firstChild) {
+            this.dock.appendChild(e);
+        }
+        // Find the viewport elements
+        var viewports = [];
+        var xpathResult = document.evaluate(
+            ".//*[@internal:function='viewport']", 
+            this.dock, 
+            standardNSResolver, 
+            XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+            null
+        );
+        var viewport;
+        while (viewport = xpathResult.iterateNext()) { viewports.push(viewport) }
+        // Create view objects
+        for (var i=0;i<viewports.length;++i) {
+            // Find out the class
+            var className = viewports[i].getAttributeNS(NS_internal, "viewClass");
+            var constructor = this.viewClasses[className];
+            if (!constructor) {
+                throw "There is no view with the name " + className;
+            }
+            // Create view
+            //XXX: Is this ok?
+            this.views.push(new constructor(this.editor,this.editor.equations[this.editor.focus],viewports[i]));
+        }
+    },
+    /**
+     * Load viewsets contained in a DOM element.
+     * @param element DOM element containing internal:viewset elements
+     */
+    loadViewsets: function(element) {
+        var viewset = element.firstChild;
+        while (viewset) {
+            if (viewset.nodeType == Node.ELEMENT_NODE) {
+                this.viewsets.push(viewset);
+            }
+            viewset = viewset.nextSibling;
+        }
+    },
+    /**
+     * Selects the viewset to be used from now on. This is normally
+     * called from a command executed by teh user.
+     * @param viewsetName Name or number of the viewset to be used.
+     *                    Up to now, only a number is allowed, names
+     *                    are not yet implemented! TODO!
+     * @param scope       Tells whether the viewset should be used for
+     *                    all equations, just for the equation on
+     *                    focus or for a given mode. (Not yet
+     *                    implemented!) TODO!
+     */
+    chooseViewset: function(viewsetName,scope) {
+        this.globalViewsetNumber = viewsetName;
+        // XXX: Is the following a good idea or does it break something?
+        this.create();
+        this.build();
+    },
+    /**
+     * Hides a view of the current viewset. Usually called by a command invoked by the user.
+     */
+    hideView: function(viewNumber) {
+        // TODO: It is very important that hidden views are not built,
+        // because one reason for deactivating a view is that it slows
+        // down the editor. But this is not yet implemented!!
+        this.views[viewNumber].viewport.style.display = "none";
+    },
+    /**
+     * Shows a view of the current viewset. Usually called by a command invoked by the user.
+     */
+    showView: function(viewNumber) {
+        this.views[viewNumber].viewport.style.display = "block";
+    },
+    /**
+     * Shows all views of the current viewset. Usually called by a command invoked by the user.
+     */
+    showAllViews: function(viewNumber) {
+        this.views.forEach(function (v) { v.viewport.style.display = "block" });
+    },
+}
+
+/**
  * @class The Gemse main object. It hosts all equation environments, handles
  * input by the user, keeps registers, options, and so on.
  */
@@ -897,14 +1231,21 @@ function GemsePEditor() {
     this.focus = -1;
     /**
      * The input box where the user enters commands
+     * (The constructor of the editor looks for the element with id
+     * "input".)
      * @private
      */
-    this.inputElement;
+    this.inputElement = document.getElementById("input");
     /**
-     * A template as a DOM element of a container for a new equation environment
+     * A template as a DOM element of a new equation.
+     * (The constructor of this class does set this property by
+     * looking for an element with id "equationTemplate"
+     * It also detaches this
+     * element from the document itself.)
      * @private
      */
-    this.containerTemplate;
+    this.equationTemplate = document.getElementById("equationTemplate");
+    this.equationTemplate.parentNode.removeChild(this.equationTemplate);
     /**
      * Globally set options by name
      * @private
@@ -916,12 +1257,24 @@ function GemsePEditor() {
      */
     this.inputRecordings = { };
     /**
-     * The DOM element that horts all equation Environments, it is
-     * called pool. If it is null, then the user can not
-     * create new equations.
+     * The last message for the user stored as DOM node.
+     * If there is no last message or the user does not want to see it
+     * any more, this is set to null.
+     */
+    this.lastMessage = null;
+    /**
+     * Manages the view sets.
+     * (The constructor of the editor does use the element with id
+     * "viewsetDock" as dock. It also calls
+     * viewsetManager.loadViewsets handing over the first
+     * internal:viewsets element of the document. This element is
+     * removed from the document afterwards.)
      * @private
      */
-    this.pool = null;
+    this.viewsetManager = new ViewsetManager(this,document.getElementById("viewsetDock"));
+    var viewsets = document.getElementsByTagNameNS(NS_internal, "viewsets")[0];
+    this.viewsetManager.loadViewsets(viewsets);
+    viewsets.parentNode.removeChild(viewsets);
     /**
      * Internal input substitution method. This is implemented in
      * inputSubstitution/cors.js and is perhaps not even present.
@@ -970,7 +1323,7 @@ GemsePEditor.prototype = {
             while (this.inputBuffer && this.equations[this.focus].mode.inputHandler()) {};
         }
         catch (e if false) {
-            this.equations[this.focus].notificationDisplay.textContent = "Last error: " + e;
+            this.showMessage(e);
         }
         finally {
             // Now, if there is still something in the buffer, it is
@@ -1102,8 +1455,6 @@ GemsePEditor.prototype = {
         var index = this.equations.indexOf(equationEnv);
         if (index < 0) { throw "This equationEnv is not even registered!" }
 
-        var pool = document.getElementById("pool");
-        pool.removeChild(this.equations[index].container);
         this.equations.splice(index,1);
         if (this.focus > index) { this.moveFocusTo(this.focus-1) }
         if (this.focus == index && index > 0) { --this.focus; this.moveFocusTo(this.focus) }
@@ -1116,15 +1467,13 @@ GemsePEditor.prototype = {
         }
     },
     /**
-     * Attaches a new EquationEnv to an already present element in the
-     * document. If one has created a complete container
-     * (a dom element with internal:purpos="container") containing all
-     * needed elements, including the equation, this method can be
+     * Attaches a new EquationEnv to an already present element in
+     * memory. If one has created an math element, this method can be
      * used to create an equation environment object that is attached
-     * to the container and added to the list of equations.
+     * to the math element and added to the list of equations.
      * This method is mainly used internally but is also used from the
      * outside sometimes.
-     * @param element the cotnainer element
+     * @param element the math element
      * @returns {EquationEnv} the new equation environment
      */
     attachNewEquationEnvToElement: function (element) {
@@ -1135,34 +1484,24 @@ GemsePEditor.prototype = {
         return newEquationEnv;
     },
     /**
-     * Create new equation and its environment. A new EquationEnv gets
-     * created and also a new container element. For the new
-     * container, this.containerTemplate is used.
-     * @param equation this DOM element is used as the equation and
-     *                 placed into its location in the container
-     *                 element. No fullcopy is made beforehand. If
-     *                 this parameter is missing, the equation from
-     *                 the tamplate is used
+     * Creates a new equation along with a new EquationEnv. 
+     * To cunstruct the new equation, this.equationTemplate is used.
+     * @param equation this DOM element is used as the equation
+     *                 directly, no fullcopy is made beforehand. If
+     *                 this parameter is missing, a copy of the equation
+     *                 this.equationTemplate is used
      * @returns {EquationEnv} the new equation environment
      */
     newEquation: function (equation) {
-        // Creates a new EquationEnv and also a new Element in the
-        // document. If the argument equation is not given, an empty
-        // one gets created. Returns the newly created EquationEnv.
-        if (!this.containerTemplate) { throw "No template defined" }
-        var pool = document.getElementById("pool");
-        if (!pool) { throw "No pool element present" }
+        if (!this.equationTemplate) { throw "No equation template defined" }
+        // Create the equation if not given
+        if (!equation) {
+            equation = this.equationTemplate.cloneNode(true);
+        }
         // Create new container in the XML document
-        var newContainer = this.containerTemplate.cloneNode(true);
-        pool.appendChild(newContainer);
-        // Attach element to it
-        var newEquationEnv = new EquationEnv(this, newContainer);
+        var newEquationEnv = new EquationEnv(this, equation);
         newEquationEnv.init();
         this.equations.push(newEquationEnv);
-        if (equation) {
-            newEquationEnv.replaceEquation(equation);
-            newEquationEnv.mode.reInit(); //XXX: Find better solution
-        }
         this.moveFocusTo(this.equations.length-1);
         return newEquationEnv;
     },
@@ -1287,11 +1626,9 @@ GemsePEditor.prototype = {
     moveFocusTo: function(dest) {
         if (dest >= this.equations.length) { return false }
         if (dest < 0) { return false }
-        if (this.focus >= 0) {
-            this.equations[this.focus].container.removeAttributeNS(NS_internal, "selected");
-        }
         this.focus = dest;
-        this.equations[this.focus].container.setAttributeNS(NS_internal, "selected", "equationFocus");
+        this.viewsetManager.create();
+        this.viewsetManager.build();
     },
     /**
      * Get an option's handler object, which defines a validator and a
@@ -1368,6 +1705,21 @@ GemsePEditor.prototype = {
             this.equations[this.focus].options[key] = value;
         }
     },
+    /**
+     * Shows a message to the user
+     * @param message The message as DOM node or string
+     */
+    showMessage: function(message) {
+        if (message.nodeType) {
+            // message is a DOM node
+            this.lastMessage = message;
+        }
+        else {
+            // message is a String
+            this.lastMessage = document.createElementNS(NS_HTML,"div")
+            this.lastMessage.appendChild(document.createTextNode(message));
+        }
+    }
 }
 
 GemsePEditor.knownClasses = [];

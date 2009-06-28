@@ -47,6 +47,11 @@ meaning than hitting the same key in insert mode. Except for the edit
 mode, any mode can be terminated by hitting the escape key while the
 input box is empty.</p>
 
+<p>Gemse's window is separated into parts which are called views. An
+arrangement of such views in the window is called a viewset. In the
+edit mode, you can choose among predefined viewsets. It is also
+possible to hide a single view of the current viewset.</p>
+
 <h2>Accessibility</h2>
 
 <p>First, Gemse is only useful to people who can see. On the other
@@ -92,7 +97,7 @@ that</a>.
 
 <p>There is another way implemented
 in Gemse directly. To use it, you have first to activate it. Open the
-file <code>editor.xhtml</code> and watch out for the line containing
+file <code>editor.xul</code> and watch out for the line containing
 <code><![CDATA[<script src="inputSubstitution/core.js"/>]]></code>. If it is
 commented out, i.e. if it is surrounded by <code>&lt;!--</code> and
 <code>--&gt;</code>, you must remove those comment signs. It may be
@@ -152,7 +157,7 @@ you have to use XULRunner 1.9.</p>
 
 <p>For this variant you need at least Firefox 3. Run the demo on
 Gemse's website or download the minimal version and open
-<code>editor.xhtml</code> in Firefox. This allows you to check out
+<code>editor.xul</code> in Firefox. This allows you to check out
 Gemse without risk, since Firefox prevents it from accessing your
 system. However, because of the same reason, not all features
 work.</p>
@@ -164,9 +169,9 @@ Firefox 3. This works as easy as for all Firefox extensions, you can
 directly install it from Gemse's website.</p>
 
 <p>In order to run Gemse, go to
-<code>chrome://gemse/content/editor.xhtml</code>. If you want to read
+<code>chrome://gemse/content/editor.xul</code>. If you want to read
 the documentation, use the command <kbd>:help</kbd> or go to
-<code>chrome://gemse/content/editor.xhtml</code>.</p>
+<code>chrome://gemse/content/editor.xul</code>.</p>
 
 <p>Running as an extension, Gemse can access your file system, so you
 can load and save files on your filesystem. Gemse also provides an
