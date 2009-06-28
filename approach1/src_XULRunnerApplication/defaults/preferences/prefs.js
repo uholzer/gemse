@@ -1,1 +1,1 @@
-pref("toolkit.defaultChromeURI", "chrome://gemse/content/editor.xhtml");
+pref("toolkit.defaultChromeURI", "chrome://gemse/content/editor.xul");
