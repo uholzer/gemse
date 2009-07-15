@@ -646,13 +646,23 @@ function editModeCommand_putIn(mode,instance) {
 }
 
 function editModeCommand_mrowEnvelop(mode,instance) {
-    // Put an mrow element around the selection
+    // Put an mrow or an apply element around the selection
     var change = mode.equationEnv.history.createChange();
     var parentNode = instance.selection.startElement.parentNode;
     var positionInParentNode = instance.selection.endElement.nextSibling;
     change.recordBefore(mode.equationEnv.equation,parentNode);
 
-    var newMrow = document.createElementNS(NS_MathML, "mrow");
+    // XXX: In order to partially support content MathML, we have to use an
+    // apply element some time. This is a hack which works at the
+    // moment, but is completely wrong otherwise. It is important to
+    // be careful that Presentation MathML support does not break.
+    var newMrow;
+    if (instance.selection.startElement.localName[1]=="m" || elementDescriptions[instance.selection.startElement.localName]) {
+        var newMrow = document.createElementNS(NS_MathML, "mrow");
+    }
+    else {
+        var newMrow = document.createElementNS(NS_MathML, "apply");
+    }
     
     // Fill the new mrow
     var pos = instance.selection.startElement;
