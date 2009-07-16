@@ -8,6 +8,11 @@ const NS_internal = "http://www.andonyar.com/rec/2008-12/gemse/internalns";
  * @constant
  */
 const NS_MathML = "http://www.w3.org/1998/Math/MathML";
+/**
+ * Namespace of XML
+ * @constant
+ */
+const NS_XML = "http://www.w3.org/XML/1998/namespace";
 /** 
  * The namespace of HTML 
  * @constant
@@ -50,6 +55,7 @@ function standardNSResolver(prefix) {
     else if (prefix == "m") { return NS_MathML }
     else if (prefix == "math") { return NS_MathML }
     else if (prefix == "mathml") { return NS_MathML }
+    else if (prefix == "xml") { return NS_XML }
     else { return null }
 }
 
