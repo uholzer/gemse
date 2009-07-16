@@ -89,6 +89,14 @@ editModeCommands = {
         executionHandler: editModeExecutionHandler_movement,
         implementation: editModeCommand_moveToPreviousLeaf
     },
+    "f": {
+        category: "movement",
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        executionHandler: editModeExecutionHandler_movement,
+        implementation: editModeCommand_followRef
+    },
     "ga": {
         category: "action",
         type: "command",

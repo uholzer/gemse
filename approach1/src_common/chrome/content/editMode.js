@@ -296,6 +296,19 @@ function editModeCommand_moveToPreviousLeaf(mode, currentElement) {
     return mml_previousLeaf(currentElement);
 }
 
+function editModeCommand_followRef(mode, currentElement) {
+    var destID;
+    var destElement = null;
+    if (destID = currentElement.getAttribute("xref")) {
+        destElement = document.evaluate(".//.[@id='"+destID+"' or @xml:id='"+destID+"']", mode.equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+    }
+    else if (destID = (currentElement.getAttribute("id")||currentElement.getAttributeNS(NS_XML,"id"))) {
+        // Follow backwards
+        destElement = document.evaluate(".//.[@xref='"+destID+"']", mode.equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+    }
+    return destElement;
+}
+
 function editModeCommand_undo(mode,instance) {
     // The glorious undo
     mode.hideCursor();
