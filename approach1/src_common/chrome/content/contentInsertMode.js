@@ -154,23 +154,35 @@ ContentInsertMode.prototype = {
             return false;
         }
     },
-    putElement: function(newElement, recursive) {
+    putElement: function(newElement, recursive, isOperator) {
         // Puts an element where the cursor is located. If an element
         // follows which is marked with the missing attribute, it gets
         // deleted
 
         this.hideCursor();
  
-        // Put element into the equation
-        this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
-        // Handle surrounding
+
         if (this.cursor.numberOfElementsToSurround) {
+            if (isOperator) { 
+                var operator = newElement;
+                newElement = document.createElementNS(NS_MathML, "apply");
+            }
+            this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
             for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
                 newElement.insertBefore(
                     mml_previousSibling(newElement),
                     newElement.firstChild
                 );
             }
+            if (isOperator) { 
+                newElement.insertBefore(
+                    operator,
+                    newElement.firstChild
+                );
+            }
+        }
+        else {
+            this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
         }
 
         // Place the cursor
@@ -227,7 +239,7 @@ function contentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
             newElement.appendChild(document.createTextNode(argumentLines[1]));
         }
     }
-    mode.putElement(newElement, false);
+    mode.putElement(newElement, false, true);
     return true;
 }
 
@@ -253,7 +265,7 @@ function contentInsertModeCommand_apply(mode, instance) {
 
 function contentInsertModeCommand_arbitraryOperator(mode, instance) {
     var newElement = document.createElementNS(NS_MathML, instance.argument);
-    mode.putElement(newElement, false);
+    mode.putElement(newElement, false, true);
     return true;
 }
 
