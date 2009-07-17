@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html [
+  <!ENTITY  enter  "↵">
+  <!ENTITY  esc    "ESC">
+  <!ENTITY  ctrl   "CRTL+">
+  <!ENTITY  alt    "ALT+">
+  <!ENTITY  space  "␣">
+]>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xml:lang="en"
+    internal:function="documentation"
+>
+
+<head>
+    <title>Trivial Insert Mode</title>
+    <link rel="stylesheet" href="../gemse.css" type="text/css" />
+    <script src="../const.js"/>
+    <script src="../contentInsertMode.js"/>
+    <script src="../contentInsertMode_commandTable.js"/>
+    <script src="commandListProcessing.js"/>
+</head>
+
+<body onload="modeCommands = contentInsertModeCommands; doc_init()">
+
+<h1>Content Insert Mode</h1>
+
+<h2>Introduction</h2>
+
+<p>The content insert mode allows you to insert Content MathML. It is
+similar to the UCD insert mode. When you insert a character that is
+not a command, a <code>ci</code> or, if it is a digit, a <code>cn</code> element is
+generated. Various commands let you insert elements. If such an
+element can cotain elements, the cursor is placed inside it instead of
+after it. But the position after the new element gets remembered. When
+you hit <kbd><internal:cmdph ref="contentInsertModeCommand_cursorJump"/></kbd>
+the cursor will jump there.</p>
+
+<div id="commands">
+<h2>Commands</h2>
+
+<table>
+<thead><tr><th>Command</th><th>title</th><th>Function name</th></tr></thead>
+<tbody id="commandTableBody">
+
+</tbody>
+</table>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_exit">
+    <h3 class="commandTitle">Exit mode</h3>
+
+    <p>Terminates the mode.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_apply">
+    <h3 class="commandTitle">Apply</h3>
+
+    <p>Inserts an <code>apply</code> element and positions the cursor
+    inside it.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_ci">
+    <h3 class="commandTitle">Identifier</h3>
+
+    <p>Creates an Identifier with given content.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_cn">
+    <h3 class="commandTitle">Number</h3>
+
+    <p>Creates a number with given content.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_oneMoreToSurround">
+    <h3 class="commandTitle">one more to surround</h3>
+
+    <p>Selects one more element to the left. When you insert the next
+    element, the selection becomes its content.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_oneLessToSurround">
+    <h3 class="commandTitle">one less to surround</h3>
+
+    <p>Removes the leftmost element from the selection. When you insert the next
+    element, the selection becomes its content.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_forceNewElement">
+    <h3 class="commandTitle">Begin new element</h3>
+
+    <p>Forces the creation of a new element for the next character
+    inserted. This is useful when you want to insert two consecutive
+    numbers, since it prevents them to be merged into the same
+    <code>mn</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_cursorJump">
+    <h3 class="commandTitle">Jump to remembered cursor position</h3>
+</div>
+
+
+<div class="commandDocumentation" id="contentInsertModeCommand_symbol">
+    <h3 class="commandTitle">Symbol</h3>
+
+    <p>Inserts a <code>csymbol</code>. For the <code>cd</code>
+    attribute, the first line of the argument is used and for the
+    content of the element, the second line is use.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_arbitraryOperator">
+    <h3 class="commandTitle">Arbitrary operator</h3>
+
+    <p>Inserts an arbitrary empty element in the MathML namespace. You
+    can use this command to insert any pragmatic operator.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_plus">
+    <h3 class="commandTitle">plus symbol</h3>
+
+    <p>Inserts a <code>arith1#plus</code> symbol or <code>plus</code> element. (Depending
+    whether you want to use pragmatic or strict ContentMathML)</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_minus">
+    <h3 class="commandTitle">minus symbol</h3>
+
+    <p>Inserts a <code>arith1#minus</code> symbol or <code>minus</code> element. (Depending
+    whether you want to use pragmatic or strict ContentMathML)</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_times">
+    <h3 class="commandTitle">times symbol</h3>
+
+    <p>Inserts a <code>arith1#times</code> symbol or <code>times</code> element. (Depending
+    whether you want to use pragmatic or strict ContentMathML)</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_divide">
+    <h3 class="commandTitle">divide symbol</h3>
+
+    <p>Inserts a <code>arith1#divide</code> symbol or <code>divide</code> element. (Depending
+    whether you want to use pragmatic or strict ContentMathML)</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_power">
+    <h3 class="commandTitle">power symbol</h3>
+
+    <p>Inserts a <code>power#divide</code> symbol or <code>power</code> element. (Depending
+    whether you want to use pragmatic or strict ContentMathML)</p>
+</div>
+
+</div>
+</body>
+</html>
