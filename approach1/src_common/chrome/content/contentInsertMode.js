@@ -14,7 +14,7 @@ function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
         numberOfElementsToSurround: 0
     };
     this.cursorStack = [];
-    this.commandHandler = new CommandHandler(this,ucdInsertModeCommandOptions,ucdInsertModeCommands);
+    this.commandHandler = new CommandHandler(this,contentInsertModeCommandOptions,contentInsertModeCommands);
     /** Set to true if the next character must not be added to the
      * content of the preceding element. This is useful if the user
      * wants to insert two mn elements behind each other.
@@ -22,7 +22,7 @@ function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
     this.forceNewElement = false;
 }
 ContentInsertMode.prototype = {
-    name: "insert (UCD)",
+    name: "content",
     init: function() {
         this.moveCursor(this.cursor);
     },
@@ -133,11 +133,15 @@ ContentInsertMode.prototype = {
                     this.equationEnv.updateViews();
                 }
                 else {
-                    this.putElement(null, "cn", document.createTextNode(c));
+                    var newElement = document.createElementNS(NS_MathML, "cn");
+                    newElement.appendChild(document.createTextNode(c));
+                    this.putElement(newElement, false);
                 }
             }
             else if (ucd.isIdentifier(c)) { // Identifier
-                this.putElement(null, "ci", document.createTextNode(c));
+                var newElement = document.createElementNS(NS_MathML, "ci");
+                newElement.appendChild(document.createTextNode(c));
+                this.putElement(newElement, false);
             }
             else {
                 throw "I don't know what to do with " + c + ", it seems not to be a digit or an identifier.";
@@ -150,121 +154,49 @@ ContentInsertMode.prototype = {
             return false;
         }
     },
-    getNewPlaceholderElement: function() {
-        var placeholder = document.createElementNS(NS_MathML, "mi");
-        placeholder.setAttributeNS(NS_internal, "missing", "1")
-        placeholder.appendChild(document.createTextNode("□"));
-        return placeholder;
-    },
-    putElement: function() {
+    putElement: function(newElement, recursive) {
         // Puts an element where the cursor is located. If an element
         // follows which is marked with the missing attribute, it gets
         // deleted
 
-        // First delete a possibly present element with attribute
-        // missing
-        if (this.cursor.beforeElement && this.cursor.beforeElement.getAttributeNS(NS_internal, "missing")) {
-            var elementToBeDeleted = this.cursor.beforeElement;
-            this.moveCursor({ 
-                beforeElement: mml_nextSibling(elementToBeDeleted), 
-                inElement: this.cursor.inElement 
-            });
-            elementToBeDeleted.parentNode.removeChild(elementToBeDeleted);
-        }
+        this.hideCursor();
  
-        // Add new element
-        var newElement;
-        if (arguments.length > 1) {
-            var ns = arguments[0];
-            var name = arguments[1];
-            if (ns==null) { ns = NS_MathML }
-            // Hide cursor
-            this.hideCursor();
-            // Create the new element
-            newElement = document.createElementNS(ns, name);
-            for (var i = 2; i < arguments.length; ++i) {
-                newElement.appendChild(arguments[i]);
-            }
-        }
-        else {
-            var newElement = arguments[0];
-            this.hideCursor();
-        }
         // Put element into the equation
         this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
         // Handle surrounding
         if (this.cursor.numberOfElementsToSurround) {
-            var description = elementDescriptions[newElement.localName];
-            if (description.type=="mrow" || description.type=="inferred_mrow" || this.cursor.numberOfElementsToSurround==1) {
-                // clean out children of the new element that are marked as missing.
-                // But clean at most as many elements as are selected
-                for (var i=0; 
-                    i<this.cursor.numberOfElementsToSurround 
-                    && mml_firstChild(newElement)
-                    && mml_firstChild(newElement).getAttributeNS(NS_internal, "missing");
-                    ++i) {
-                    newElement.removeChild(mml_firstChild(newElement)) 
-                }
-                // Put selected elements into the new one
-                for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
-                    newElement.insertBefore(
-                        mml_previousSibling(newElement),
-                        newElement.firstChild
-                    );
-                }
-            }
-            else if (description.type=="fixedChildren" || description.type=="childList") {
-                var surroundingMrow = document.createElementNS(NS_MathML,"mrow");
-                for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
-                    surroundingMrow.insertBefore(
-                        mml_previousSibling(newElement),
-                        surroundingMrow.firstChild
-                    );
-                }
-                newElement.removeChild(mml_firstChild(newElement));
-                newElement.insertBefore(surroundingMrow,newElement.firstChild);
-            }
-            else {
-                // Do not handle surrounding for this element
+            for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
+                newElement.insertBefore(
+                    mml_previousSibling(newElement),
+                    newElement.firstChild
+                );
             }
         }
-        // Position the cursor
-        var firstMissing = mml_firstChild(newElement);
-        while (firstMissing && !firstMissing.getAttributeNS(NS_internal, "missing")) {
-            firstMissing = mml_nextSibling(firstMissing);
-        }
-        if (firstMissing) {
-            // If the element contains a "missing element" marker, put the 
-            // cursor before it. But we must put a cursor behind the new
-            // element on the stack.
-            // XXX: Instead of looking for "missing element" marker elements,
-            // we perhaps should look at the element description?
+
+        // Place the cursor
+        if (recursive) {
+            // Remember old cursor
             this.cursorStack.push({
                 beforeElement: this.cursor.beforeElement,
-                inElement: this.cursor.inElement
-            })
+                inElement: this.cursor.inElement,
+            });
+            // Put the cursor at the end of the newly created element
             this.moveCursor({
-                beforeElement: firstMissing,
-                inElement: newElement
+                beforeElement: null,
+                inElement: newElement,
             });
         }
         else {
-            // Otherwise put it behind it (that's where it is already)
+            // Put the cursor where it already is
             this.moveCursor({
                 beforeElement: this.cursor.beforeElement,
                 inElement: this.cursor.inElement
             });
         }
     },
-    insertElement: function(element) {
-
-    },
-    insertElementRecursive: function(element) {
-
-    },
 }
 
-function ContentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
+function contentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
     // If cd is given, don't look for cd argument in the instance, if name is given as well,
     // don't look for name argument either.
     // Should pragmatic be given, and the user whishes to use
@@ -272,7 +204,10 @@ function ContentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
     // Automatic lookup?)
     // TODO: Implement an option for that. Right now, pragmatic is
     // always used if present.
-    var argumentLines = instance.argument.split("\n");
+    var argumentLines;
+    if (instance.argument) {
+        argumentLines = instance.argument.split("\n");
+    }
     var newElement;
     if (pragmatic) {
         newElement = document.createElementNS(NS_MathML, pragmatic);
@@ -292,43 +227,73 @@ function ContentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
             newElement.appendChild(document.createTextNode(argumentLines[1]));
         }
     }
-    mode.insertElement(newElement);
+    mode.putElement(newElement, false);
     return true;
 }
 
-function ContentInsertModeCommand_ci(mode, instance) {
+function contentInsertModeCommand_ci(mode, instance) {
     var newElement = document.createNodeNS(NS_MathML, "ci");
     newElement.appendChild(document.createTextNode(instance.argument));
-    mode.insertElement(newElement);
+    mode.putElement(newElement, false);
     return true;
 }
 
-function ContentInsertModeCommand_cn(mode, instance) {
+function contentInsertModeCommand_cn(mode, instance) {
     var newElement = document.createNodeNS(NS_MathML, "cn");
     newElement.appendChild(document.createTextNode(instance.argument));
-    mode.insertElement(newElement);
+    mode.putElement(newElement, false);
     return true;
 }
 
-function ContentInsertModeCommand_apply(mode, instance) {
-    var newElement = document.createNodeNS(NS_MathML, "apply");
-    mode.insertElementRecursive(newElement);
+function contentInsertModeCommand_apply(mode, instance) {
+    var newElement = document.createElementNS(NS_MathML, "apply");
+    mode.putElement(newElement, true);
     return true;
 }
 
-function ContentInsertModeCommand_arbitraryOperator(mode, instance) {
+function contentInsertModeCommand_arbitraryOperator(mode, instance) {
     var newElement = document.createNodeNS(NS_MathML, instance.argument);
-    mode.insertElement(newElement);
+    mode.putElement(newElement, false);
     return true;
 }
 
-function ContentInsertModeCommand_forceNewElement(mode) {
+function contentInsertModeCommand_forceNewElement(mode) {
     mode.forceNewElement = true;
     return true;
 }
 
+function contentInsertModeCommand_oneMoreToSurround(mode) {
+    // TODO: Count preceding siblings and prevent to select too many
+        mode.moveCursor({ 
+            beforeElement: mode.cursor.beforeElement,
+            inElement: mode.cursor.inElement,
+            numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) + 1
+        });
+    return true;
+}
 
-function ContentInsertModeCommand_exit(mode) {
+function contentInsertModeCommand_oneLessToSurround(mode) {
+    if (mode.cursor.numberOfElementsToSurround > 0) {
+        mode.moveCursor({ 
+            beforeElement: mode.cursor.beforeElement,
+            inElement: mode.cursor.inElement,
+            numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) - 1
+        });
+    }
+    return true;
+}
+
+function contentInsertModeCommand_cursorJump(mode,instance) {
+    if (mode.cursorStack.length<1) { 
+        // If the stack is empty, the user is done with inserting, so exit
+        return contentInsertModeCommand_exit(mode,instance);
+    }
+    mode.moveCursor(mode.cursorStack.pop());
+    return true;
+}
+
+
+function contentInsertModeCommand_exit(mode) {
     mode.finish();
     return true;
 }
