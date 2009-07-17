@@ -252,7 +252,7 @@ function contentInsertModeCommand_apply(mode, instance) {
 }
 
 function contentInsertModeCommand_arbitraryOperator(mode, instance) {
-    var newElement = document.createNodeNS(NS_MathML, instance.argument);
+    var newElement = document.createElementNS(NS_MathML, instance.argument);
     mode.putElement(newElement, false);
     return true;
 }

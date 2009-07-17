@@ -7,27 +7,27 @@ contentInsertModeCommands = {
     "+": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_msup (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","plus","plus") }
+        implementation: function contentInsertModeCommand_plus (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","plus","plus") }
     },
     "-": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_msup (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","minus","minus") }
+        implementation: function contentInsertModeCommand_minus (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","minus","minus") }
     },
     "^": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_msup (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","power","power") }
+        implementation: function contentInsertModeCommand_power (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","power","power") }
     },
     "*": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_msup (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","times","times") }
+        implementation: function contentInsertModeCommand_times (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","times","times") }
     },
     "/": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_msup (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","divide","divide") }
+        implementation: function contentInsertModeCommand_divide (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","divide","divide") }
     },
     "$": { // Inserts an arbitrary csymbol
         type: "command",
@@ -42,7 +42,7 @@ contentInsertModeCommands = {
     },
     "<": {
         type: "command",
-        argument: "none",
+        argument: "newlineTerminated",
         implementation: contentInsertModeCommand_arbitraryOperator
     },
     "\n": {
