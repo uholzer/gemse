@@ -43,6 +43,11 @@ contentInsertModeCommands = {
     "<": {
         type: "command",
         argument: "newlineTerminated",
+        implementation: contentInsertModeCommand_arbitraryElement
+    },
+    "#": {
+        type: "command",
+        argument: "newlineTerminated",
         implementation: contentInsertModeCommand_arbitraryOperator
     },
     "\n": {

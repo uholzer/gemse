@@ -269,6 +269,12 @@ function contentInsertModeCommand_arbitraryOperator(mode, instance) {
     return true;
 }
 
+function contentInsertModeCommand_arbitraryElement(mode, instance) {
+    var newElement = document.createElementNS(NS_MathML, instance.argument);
+    mode.putElement(newElement, false, false);
+    return true;
+}
+
 function contentInsertModeCommand_forceNewElement(mode) {
     mode.forceNewElement = true;
     return true;
