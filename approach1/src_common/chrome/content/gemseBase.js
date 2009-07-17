@@ -498,6 +498,28 @@ SourceView.prototype = {
 }
 
 /**
+ * @class View for Content MathML
+ */
+function ContentView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    /**
+     * The element containing the view. (Can be any element.)
+     */
+    this.viewport = viewport;
+}
+ContentView.prototype = {    
+    /** 
+     * Builds the view.
+     */
+    build: function() {
+        xml_flushElement(this.viewport);
+
+        //this.viewport.appendChild(???);
+    },
+}
+
+/**
  * @class attribute view
  */
 function AttributeView(editor,equationEnv,viewport) {
@@ -1100,6 +1122,7 @@ ViewsetManager.prototype = {
         MessageView: MessageView,
         TreeView: TreeView,
         SourceView: SourceView,
+        ContentView: ContentView,
         AttributeView: AttributeView,
         DictionaryView: DictionaryView,
         OthersView: OthersView,
