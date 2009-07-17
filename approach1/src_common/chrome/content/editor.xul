@@ -23,6 +23,8 @@
     <script src="trivialInsertMode_commandTable.js"/>
     <script src="ucdInsertMode.js"/>
     <script src="ucdInsertMode_commandTable.js"/>
+    <script src="contentInsertMode.js"/>
+    <script src="contentInsertMode_commandTable.js"/>
     <script src="visualSelectionMode.js"/>
     <script src="visualSelectionMode_commandTable.js"/>
     <script src="operatorDictionary.js"/>

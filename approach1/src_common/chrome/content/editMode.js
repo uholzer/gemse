@@ -190,10 +190,15 @@ EditMode.prototype = {
  */
 EditMode.gemseOptions = {
     "selectableInsertModes": {
-        defaultValue: "trivial,ucd",
+        defaultValue: "trivial,ucd,content",
         validator: function(value,editor) {
-            return (value == "trivial,ucd" || value == "ucd,trivial" ||
-                    value == "trivial"     || value == "ucd");
+            var list = value.split(",");
+            for (var i=0; i<list.length; ++i) {
+                if (!(list[i]=="trivial" || list[i]=="ucd" || list[i]=="content")) {
+                    return false;
+                }
+            }
+            return true;
         },
         parser: function(value,editor) {
             return value.split(",");
@@ -202,15 +207,21 @@ EditMode.gemseOptions = {
     "currentInsertMode": {
         defaultValue: "ucd",
         validator: function(value,editor) {
-            return (value == "trivial" || value == "ucd");
+            return (value == "trivial" || value == "ucd" || value == "content");
         },
         parser: function(value,editor) {
             // Returns a class
             if (value == "trivial") {
                 return TrivialInsertMode;
             }
-            else {
+            else if (value == "ucd") {
                 return UCDInsertMode;
+            }
+            else if (value == "content") {
+                return ContentInsertMode;
+            }
+            else {
+                return null
             }
         }
     },
