@@ -1,7 +1,7 @@
 #!/bin/sh
 rm -f gemse_src.tar.gz
 rm -f gemseFirefoxExtension.xpi
-rm -f gemseXULRunnerApplication.xpi
+rm -f gemseXULRunnerApplication.zip
 rm -f gemseMinimal.zip
 
 cd ../..
@@ -10,7 +10,7 @@ cd gemse/approach1/
 
 cd src_common
 zip -r ../gemseFirefoxExtension.xpi *
-zip -r ../gemseXULRunnerApplication.xpi *
+zip -r ../gemseXULRunnerApplication.zip *
 
 cd ../src_FirefoxExtension
 zip -r ../gemseFirefoxExtension.xpi *
