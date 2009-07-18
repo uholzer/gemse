@@ -1710,6 +1710,61 @@ as well, because constructing a view can take too much time on slow
 machines and deactivating a view should be a way to speed up
 things.</p>
 
+<h2>Working with Content MathML</h2>
+
+<p>Gemse has limited support for Content MathML. You work with it the
+same way as you work with Presentation MathML. However, the insert
+modes for Presentation MathML are useless in this case. There is a
+special insert mode called content insert mode. Recall that you can
+switch the insert mode by hitting <kbd>&tab;</kbd> while you are in
+the edit mode.</p>
+
+<p>Load the file <code>doc/parallelexample01.xml</code>. It contains
+a formula represented as Presentation MathML and as Content MathML.
+This is called parallel markup. The <code>semantics</code> element
+contains the Presentation MathML part as its first child and the
+Content MathML part as the second child. If you place your cursor on
+an element of the Content MathML part, you observe that it has the
+attribute <code>xref</code>. This attribute links to an element of the
+Presentation MathML part. You can jump there using the command
+<kbd>f</kbd>. You even can jump back using <kbd>f</kbd> again.</p>
+
+<p>When your cursor is on a Content MathML element, or the first
+element of the selection is a Content MathML element, then the command
+<kbd>&space;</kbd> creates an <code>appply</code> element instead of
+an <code>mrow</code> element.</p>
+
+<p>Hit <kbd>&tab;</kbd> until the content insert mode is the current
+insert mode. Place the cursor on the <code>and</code> element, which
+is the first child of the <code>apply</code> element contained in the
+<code>annotation-xml</code> element. Hit <kbd>c</kbd> in order to
+replace it with something else. You are now in the content insert
+mode. Hit <kbd>*</kbd>, which inserts a <code>times</code> element.
+The commands <kbd>+</kbd>, <kbd>-</kbd>, <kbd>/</kbd> and others do
+the analog thing. You can also insert a <code>csymbol</code> element
+manually: Hit <kbd>&esc;</kbd>. Move the cursor to the first
+<code>xor</code> element and hit <kbd>c</kbd>. Type
+<kbd>$arith1&enter;plus&enter;</kbd> in order to insert the symbol
+<code>plus</code> from the content dictionary <code>arith1</code>.</p>
+
+<p>Inserting identifiers or numbers works as in the UCD insert mode.
+Hit <kbd>2k</kbd> to insert the number <code>2</code> and
+the identifier <code>k</code>.</p>
+
+<p>Now assume, you wanted to multiply <code>2</code> and
+<code>k</code>. Simply hit <kbd>&ctrl;h</kbd> two times to select
+them. Now hit <kbd>*</kbd>. Observe what happened.</p>
+
+<p>Of course you also could have hit <kbd>&space;*2k</kbd> in the
+first place.
+Try it. The <kbd>&space;</kbd> creates an empty <code>apply</code>
+element and the cursor is placed inside it.</p>
+
+<p>The content insert mode has some more features. For example, look
+up the meaning of the commands <kbd>#</kbd> and <kbd>&lt;</kbd> in
+the documentation of the content insert mode. These commands allow you
+to insert arbitrary elements.</p>
+
 <h2>Customizing</h2>
 
 <p>If you want to change the appearance of Gemse, you have to lay hands on
