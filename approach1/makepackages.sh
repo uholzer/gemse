@@ -16,7 +16,7 @@ cd ../src_FirefoxExtension
 zip -r ../gemseFirefoxExtension.xpi *
 
 cd ../src_XULRunnerApplication
-zip -r ../gemseXULRunnerApplication.xpi *
+zip -r ../gemseXULRunnerApplication.zip *
 
 cd ../src_common/chrome/content/
 zip -r ../../../gemseMinimal.zip *
