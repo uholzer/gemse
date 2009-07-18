@@ -244,14 +244,14 @@ function contentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
 }
 
 function contentInsertModeCommand_ci(mode, instance) {
-    var newElement = document.createNodeNS(NS_MathML, "ci");
+    var newElement = document.createElementNS(NS_MathML, "ci");
     newElement.appendChild(document.createTextNode(instance.argument));
     mode.putElement(newElement, false);
     return true;
 }
 
 function contentInsertModeCommand_cn(mode, instance) {
-    var newElement = document.createNodeNS(NS_MathML, "cn");
+    var newElement = document.createElementNS(NS_MathML, "cn");
     newElement.appendChild(document.createTextNode(instance.argument));
     mode.putElement(newElement, false);
     return true;
