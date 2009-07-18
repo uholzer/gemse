@@ -24,7 +24,7 @@ function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
 ContentInsertMode.prototype = {
     name: "content",
     init: function() {
-        this.moveCursor(this.cursor);
+        this.showCursor();
     },
     finish: function() {
         // TODO: Clean up attribute mess
@@ -97,7 +97,6 @@ ContentInsertMode.prototype = {
         this.hideCursor();
         this.cursor = newCursor;
         this.showCursor()
-        this.equationEnv.updateViews();
     },
     get contextNode() { return null }, // TODO
     inputHandler: function() {
@@ -130,7 +129,6 @@ ContentInsertMode.prototype = {
                 var precedingElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
                 if (precedingElement && precedingElement.namespaceURI == NS_MathML && precedingElement.localName == "cn" && !this.forceNewElement) {
                     precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities or similar?
-                    this.equationEnv.updateViews();
                 }
                 else {
                     var newElement = document.createElementNS(NS_MathML, "cn");

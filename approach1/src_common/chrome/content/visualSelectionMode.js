@@ -24,7 +24,7 @@ VisualSelectionMode.prototype = {
         }
     },
     init: function() {
-        this.moveCursor(this.cursor);
+        this.showCursor();
     },
     hideCursor: function() {
         // Remove all "selected" attributes on selected nodes
@@ -58,7 +58,6 @@ VisualSelectionMode.prototype = {
         this.hideCursor();
         this.cursor = newCursor;
         this.showCursor();
-        this.equationEnv.updateViews();
     },
     get contextNode() { return null }, // TODO
     isSibling: function(e1,e2) {

@@ -48,15 +48,13 @@ EditMode.prototype = {
         this.moveCursor(this.equationEnv.equation); // the element the cursor points to
     },
     /**
-     * Moves the cursor to another element. Afterwards, the views are
-     * rebuilt by callin this.equationEnv.updateViews()
+     * Moves the cursor to another element.
      * @param element destination element
      */
     moveCursor: function(element) {
         this.hideCursor();
         this.cursor = element;
         this.showCursor();
-        this.equationEnv.updateViews();
     },
     /**
      * Puts "selected" attributes for the cursor into the equation.
@@ -129,6 +127,7 @@ EditMode.prototype = {
     callInsertMode: function (cursorInElement, cursorBeforeElement, manualChange, manualChangeElement) {
         // Calls the insert mode
         // If manual change is supplied, then its recordBefore must already have been called.
+        this.hideCursor();
         this.infoAboutCalledMode = {
             change: manualChange || this.equationEnv.history.createChange(),
             changeElement: manualChangeElement || cursorInElement
@@ -166,7 +165,7 @@ EditMode.prototype = {
             this.cursor = returnValue.newCursor;
         }
         delete this.infoAboutCalledMode;
-        this.moveCursor(this.cursor); // In order to update all views
+        this.showCursor();
     },
     /**
      * Resets internal data about the equation, including the position
@@ -180,7 +179,6 @@ EditMode.prototype = {
         var nsResolver = standardNSResolver;
         this.cursor = document.evaluate(".//.[@internal:selected='editcursor']", this.equationEnv.equation, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
         if (!this.cursor) { this.cursor = this.equationEnv.equation }
-        this.moveCursor(this.cursor); // In order to update all views
     },
 }
 
@@ -326,7 +324,6 @@ function editModeCommand_undo(mode,instance) {
     if (!mode.equationEnv.history.goBack(mode.equationEnv)) {
         throw "undo failed";
     }
-    mode.moveCursor(mode.cursor); // In order to update all views
     return true;
 }
 
@@ -336,7 +333,6 @@ function editModeCommand_redo(mode,instance) {
     if (!mode.equationEnv.history.goForward(mode.equationEnv)) {
         throw "redo failed";
     }
-    mode.moveCursor(mode.cursor); // In order to update all views
     return true;
 }
 
@@ -351,7 +347,6 @@ function editModeCommand_kill(mode,instance) {
     mode.moveCursor(mml_nextSibling(target) || mml_previousSibling(target) || parentOfTarget);
     target.parentNode.removeChild(target);
     change.recordAfter(mode.equationEnv.equation,parentOfTarget);
-    mode.moveCursor(mode.cursor); // In order to update all views
     mode.equationEnv.history.reportChange(change);
     return true;
 }
@@ -376,7 +371,6 @@ function editModeCommand_delete(mode,instance) {
     }
     parentOfTargets.removeChild(to);
     change.recordAfter(mode.equationEnv.equation,parentOfTargets);
-    mode.moveCursor(mode.cursor); // In order to update all views
     mode.equationEnv.history.reportChange(change);
     return true;
 }

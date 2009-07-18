@@ -16,7 +16,7 @@ function TrivialInsertMode(editor, equationEnv, inElement, beforeElement) {
 TrivialInsertMode.prototype = {
     name: "insert (trivial)",
     init: function() {
-        this.moveCursor(this.cursor);
+        this.showCursor();
     },
     finish: function() {
         // TODO: Clean up attribute mess
@@ -89,7 +89,6 @@ TrivialInsertMode.prototype = {
         this.hideCursor();
         this.cursor = newCursor;
         this.showCursor()
-        this.equationEnv.updateViews();
     },
     get contextNode() { return null }, // TODO
     inputHandler: function() {

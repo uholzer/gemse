@@ -52,14 +52,6 @@ function EquationEnv(editor, equation) {
 EquationEnv.prototype = {
     /* Methods */
 
-    /**
-     * Update view via the editor's viewsetManager.
-     * XXX: Get rid of that, since this should be done by the editor
-     */
-    updateViews: function() {
-        this.editor.viewsetManager.build();
-    },
-
     /** 
      * Replaces a currenly open equation with a different one.
      * You must not set this.equation directly. You must use
@@ -87,7 +79,6 @@ EquationEnv.prototype = {
      */
     callMode: function (mode) {
         this.modeStack.push(mode);
-        this.updateViews();
     },
     /**
      * Replaces the current mode with a new one. If the current mode
@@ -98,7 +89,6 @@ EquationEnv.prototype = {
      */
     switchMode: function (mode) {
         this.modeStack[this.modeStack.length-1] = mode;
-        this.updateViews();
     },
     /**
      * Closes the current mode and returns control to its parent mode.
@@ -1208,7 +1198,7 @@ ViewsetManager.prototype = {
         this.globalViewsetNumber = viewsetName;
         // XXX: Is the following a good idea or does it break something?
         this.create();
-        this.build();
+        this.build(); // XXX: necessary?
     },
     /**
      * Hides a view of the current viewset. Usually called by a command invoked by the user.
@@ -1330,6 +1320,7 @@ GemsePEditor.prototype = {
      */
     inputEvent: function () {
         // Is called when the input buffer supposedly changed
+        var updateOfViewsNeeded = false;
         if (inputSubstitutionActive) { 
             var allowPropagation = this.inputSubstitution();
             if (!allowPropagation) { return };
@@ -1343,10 +1334,11 @@ GemsePEditor.prototype = {
             // inputHandler must return true if it found a command. In
             // this case, it must remove the command from the input
             // buffer. It must not remove following commands.
-            while (this.inputBuffer && this.equations[this.focus].mode.inputHandler()) {};
+            while (this.inputBuffer && this.equations[this.focus].mode.inputHandler()) { updateOfViewsNeeded = true };
         }
         catch (e if false) {
             this.showMessage(e);
+            this.updateOfViewsNeeded = true;
         }
         finally {
             // Now, if there is still something in the buffer, it is
@@ -1356,6 +1348,8 @@ GemsePEditor.prototype = {
             if (this.inputBuffer.charCodeAt(this.inputBuffer.length-1) == KeyEvent.DOM_VK_ESCAPE) {
                 this.inputBuffer = "";
             }
+            // Update the views
+            if (updateOfViewsNeeded) { this.viewsetManager.build(); }
         }
     },
     /**
@@ -1651,7 +1645,7 @@ GemsePEditor.prototype = {
         if (dest < 0) { return false }
         this.focus = dest;
         this.viewsetManager.create();
-        this.viewsetManager.build();
+        this.viewsetManager.build(); // XXX: necessairy?
     },
     /**
      * Get an option's handler object, which defines a validator and a

@@ -55,7 +55,6 @@ AttributeMode.prototype = {
     moveCursor: function(index) {
         this.cursor = index; // index may be undef if there are no attributes present
         this.element.setAttributeNS(NS_internal, "attributeCursor", (index!=null) ? this.attributes[index].nodeName : "");
-        this.equationEnv.updateViews();
     },
     get contextNode() { return this.element }, // XXX: good like this?
     inputHandler: function() {
@@ -101,7 +100,6 @@ function attributeModeCommand_kill(mode) {
 function attributeModeCommand_changeValue(mode,instance) {
     if (mode.cursor==null) { return true; }
     mode.attributes[mode.cursor].nodeValue = instance.argument;
-    mode.moveCursor(mode.cursor);
     return true;
 }
 
