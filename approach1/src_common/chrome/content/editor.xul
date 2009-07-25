@@ -51,7 +51,9 @@
             }
 
             // If there are no equations up to now, create a new one
-            editor.newEquation();
+            if (editor.equations.length==0) {
+                editor.newEquation();
+            }
         }
 
         /* Event processing */
