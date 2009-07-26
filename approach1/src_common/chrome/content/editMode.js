@@ -577,6 +577,21 @@ function editModeCommand_close(mode, instance) {
     return true;
 }
 
+function editModeCommand_closeAll(mode,instance) {
+    for (var i=mode.editor.equations.length-1;i>=0;--i) {
+        mode.editor.equations[i].close();
+    }
+    return true;
+}
+
+function editModeCommand_saveclose(mode, instance) {
+    return editModeCommand_save(mode, instance) && editModeCommand_close(mode, instance);
+}
+
+function editModeCommand_savecloseAll(mode,instance) {
+    return editModeCommand_saveAll(mode, instance) && editModeCommand_closeAll(mode, instance);
+}
+
 function editModeCommand_nextEquation(mode) {
     if (mode.editor.focus >= mode.editor.equations.length-1) { 
         mode.editor.moveFocusTo(0)

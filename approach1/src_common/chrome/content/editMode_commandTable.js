@@ -216,6 +216,23 @@ editModeCommands = {
         argument: "none",
         implementation: editModeCommand_cycleInsertMode
     },
+    "Z": {
+        type: "disamb",
+    },
+    "ZZ": {
+        category: "action",
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_saveclose
+    },
+    "ZA": {
+        category: "action",
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_savecloseAll
+    },
     ":": {
         type: "longPrefix",
     },
@@ -332,7 +349,7 @@ editModeCommands = {
         argument: "none",
         implementation: editModeCommand_saveAll
     },
-    ":writeall": { // synonym for :save
+    ":writeall": { // synonym for :saveall
         category: "action",
         type: "long",
         repeating: "prevent",
@@ -345,6 +362,13 @@ editModeCommands = {
         repeating: "external",
         argument: "none",
         implementation: editModeCommand_close
+    },
+    ":closeall": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_closeAll
     },
     ":help": {
         category: "action",
