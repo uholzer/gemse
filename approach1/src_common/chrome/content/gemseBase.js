@@ -550,8 +550,16 @@ EquationView.prototype = {
                     node.getAttribute("cd") + "#" + node.textContent
                 ));
             }
-            else if (node.localName=="semantics" && node.namespaceURI=="NS_MathML") {
+            else if (node.localName=="semantics" && node.namespaceURI==NS_MathML) {
                 replacement = document.createElementNS(NS_MathML, "mtable");
+                while (node.hasChildNodes()) {
+                    // Move first child to mfenced element
+                    var row = document.createElementNS(NS_MathML, "mtr");
+                    replacement.appendChild(row);
+                    var cell = document.createElementNS(NS_MathML, "mtd");
+                    row.appendChild(cell);
+                    cell.appendChild(node.firstChild);
+                }
             }
             else if (node.hasChildNodes()) {
                 replacement = document.createElementNS(NS_MathML, "mrow");
