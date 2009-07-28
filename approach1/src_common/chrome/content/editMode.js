@@ -678,6 +678,27 @@ function editModeCommand_putIn(mode,instance) {
     return true;
 }
 
+function editModeCommand_unwrap(mode,instance) {
+    if (mode.cursor==mode.equationEnv.equation) {
+        throw "Unwrap can not be used on root element."
+    }
+    var toBeRemoved = mode.cursor;
+    var parentNode = toBeRemoved.parentNode;
+    var change = mode.equationEnv.history.createChange();
+    change.recordBefore(mode.equationEnv.equation,parentNode);
+    mode.moveCursor(mml_firstChild(toBeRemoved) || parentNode);
+
+    while (toBeRemoved.hasChildNodes()) {
+        parentNode.insertBefore(toBeRemoved.firstChild, toBeRemoved);
+    }
+    parentNode.removeChild(toBeRemoved);
+
+    mode.showCursor();
+    change.recordAfter(mode.equationEnv.equation,parentNode);
+    mode.equationEnv.history.reportChange(change);
+    return true;
+}
+
 function editModeCommand_mrowEnvelop(mode,instance) {
     // Put an mrow or an apply element around the selection
     var change = mode.equationEnv.history.createChange();

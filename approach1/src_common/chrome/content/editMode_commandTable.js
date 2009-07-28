@@ -202,6 +202,13 @@ editModeCommands = {
         argument: "none",
         implementation: editModeCommand_startstopUserRecording
     },
+    "w": {
+        category: "action",
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_unwrap
+    },
     " ": {
         category: "operator",
         type: "command",
