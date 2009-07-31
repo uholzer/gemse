@@ -78,7 +78,11 @@
 <textbox id="input" multiline="true" onkeypress="processKey(event)" oninput="processInput()"/>
 
 <internal:viewsets>
+    <!-- 0 -->
     <internal:viewset>
+        <!-- Shows everything. The eqution is shown using DirectView
+             This view is the best for day-to-day use. It might be a
+             bit slow. -->
         <vbox flex="1">
             <hbox>
                 <vbox flex="1">
@@ -97,6 +101,7 @@
             <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
         </vbox>
     </internal:viewset>
+    <!-- 1 -->
     <internal:viewset>
         <vbox flex="1">
             <html:div internal:function="viewport" internal:viewClass="DirectView"/>
@@ -110,6 +115,7 @@
             <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
         </vbox>
     </internal:viewset>
+    <!-- 2 -->
     <internal:viewset>
         <!-- Viewset for screenshots in tutorial -->
         <vbox flex="1">
@@ -117,6 +123,7 @@
             <html:div internal:function="viewport" internal:viewClass="TreeView"/>
         </vbox>
     </internal:viewset>
+    <!-- 3 -->
     <internal:viewset>
         <!-- Bigger viewset for screenshots in tutorial -->
         <vbox flex="1">
@@ -126,6 +133,29 @@
                 <html:div internal:function="viewport" internal:viewClass="AttributeView"/>
                 <html:div internal:function="viewport" internal:viewClass="DictionaryView"/>
             </hbox>
+            <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
+        </vbox>
+    </internal:viewset>
+    <!-- 4 -->
+    <internal:viewset>
+        <!-- Shows everything. Uses EquationView to show the equation.
+             This might be useful when dealing with Content MathML. It
+             might be slow. -->
+        <vbox flex="1">
+            <hbox>
+                <vbox flex="1">
+                    <html:div internal:function="viewport" internal:viewClass="EquationView"/>
+                    <html:div internal:function="viewport" internal:viewClass="TreeView"/>
+                    <hbox>
+                        <html:div internal:function="viewport" internal:viewClass="SourceView"/>
+                        <html:div internal:function="viewport" internal:viewClass="AttributeView"/>
+                        <html:div internal:function="viewport" internal:viewClass="DictionaryView"/>
+                    </hbox>
+                </vbox>
+                <vbox internal:function="viewport" internal:viewClass="OthersView"/>
+            </hbox>
+            <!--<spacer flex="1"/>-->
+            <box flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
             <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
         </vbox>
     </internal:viewset>
