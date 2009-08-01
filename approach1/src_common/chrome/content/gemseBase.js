@@ -488,9 +488,9 @@ SourceView.prototype = {
 }
 
 /**
- * @class View for Content MathML
+ * @class More advanced view of rendered equation
  */
-function ContentView(editor,equationEnv,viewport) {
+function EquationView(editor,equationEnv,viewport) {
     this.editor = editor;
     this.equationEnv = equationEnv;
     /**
@@ -498,14 +498,92 @@ function ContentView(editor,equationEnv,viewport) {
      */
     this.viewport = viewport;
 }
-ContentView.prototype = {    
+EquationView.prototype = {    
     /** 
      * Builds the view.
      */
     build: function() {
         xml_flushElement(this.viewport);
 
-        //this.viewport.appendChild(???);
+        var context = this.equationEnv.mode.contextNode;
+        var context_xref;
+        var context_id;
+        if (context) {
+            context_xref = context.getAttribute("xref");
+            context_id = context.getAttribute("id") || context.getAttributeNS(NS_XML, "id");
+        }
+
+        var copy = this.equationEnv.equation.cloneNode(true);
+        this.viewport.appendChild(copy);
+
+        var treeWalker = document.createTreeWalker(
+            copy,
+            NodeFilter.SHOW_ELEMENT,
+            null,
+            false
+        );
+        var contentElements = [];
+        while (treeWalker.nextNode()) {
+            var node = treeWalker.currentNode;
+            if (context_xref && (node.getAttribute("id") == context_xref || node.getAttributeNS(NS_XML, "id") == context_xref)) {
+                if (!node.getAttribute("selected")) {
+                    node.setAttributeNS(NS_internal, "selected", "referenced");
+                }
+            }
+            else if (context_id && node.getAttribute("xref")==context_id) {
+                if (!node.getAttribute("selected")) {
+                    node.setAttributeNS(NS_internal, "selected", "referenced");
+                }
+            }
+            if (!elementDescriptions[node.localName]) { //XXX: Will break in the future
+                contentElements.push(node);
+            }
+        }
+        // TODO: Go through all contentElements and replace them with
+        // presentation markup
+        // (Handle semtics elements in a special way.)
+        contentElements.forEach(function(node) {
+            var replacement;
+            if (node.localName=="csymbol" && node.namespaceURI==NS_MathML) {
+                replacement = document.createElementNS(NS_MathML, "mi");
+                replacement.appendChild(document.createTextNode(
+                    node.getAttribute("cd") + "#" + node.textContent
+                ));
+            }
+            else if (node.localName=="semantics" && node.namespaceURI==NS_MathML) {
+                replacement = document.createElementNS(NS_MathML, "mtable");
+                while (node.hasChildNodes()) {
+                    // Move first child to mfenced element
+                    var row = document.createElementNS(NS_MathML, "mtr");
+                    replacement.appendChild(row);
+                    var cell = document.createElementNS(NS_MathML, "mtd");
+                    row.appendChild(cell);
+                    cell.appendChild(node.firstChild);
+                }
+            }
+            else if (node.hasChildNodes()) {
+                replacement = document.createElementNS(NS_MathML, "mrow");
+                var prefix = document.createElementNS(NS_MathML, "mi");
+                prefix.appendChild(document.createTextNode(node.localName));
+                replacement.appendChild(prefix);
+                var fence = document.createElementNS(NS_MathML, "mfenced");
+                while (node.hasChildNodes()) {
+                    // Move first child to mfenced element
+                    fence.appendChild(node.firstChild);
+                }
+                replacement.appendChild(fence);
+            }
+            else { // node is empty
+                replacement = document.createElementNS(NS_MathML, "mi");
+                replacement.appendChild(document.createTextNode(node.localName));
+            }
+            // Copy internal:selected attribute
+            var attributeSelected = node.getAttributeNS(NS_internal,"selected");
+            if (attributeSelected) {
+                replacement.setAttributeNS(NS_internal,"selected",attributeSelected);
+            }
+            node.parentNode.replaceChild(replacement, node);
+        });
     },
 }
 
@@ -1112,7 +1190,7 @@ ViewsetManager.prototype = {
         MessageView: MessageView,
         TreeView: TreeView,
         SourceView: SourceView,
-        ContentView: ContentView,
+        EquationView: EquationView,
         AttributeView: AttributeView,
         DictionaryView: DictionaryView,
         OthersView: OthersView,
