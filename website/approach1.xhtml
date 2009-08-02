@@ -13,7 +13,8 @@
 <h1>Gemse Approach 1: An editor for Presentation MathML</h1>
 
 <p>Gemse Approach 1 is an editor for mathematical formulas using
-Presentation MathML. Unlike other editors, this one is neither intuitive
+Presentation MathML and to some extent also Content MathML.
+Unlike other editors, this one is neither intuitive
 nor easy to learn and you must have a basic understanding of
 Presentation MathML. It is controlled with the keyboard only, its user
 interface is highly inspired by the text editor vi. The goal is to be
@@ -27,10 +28,7 @@ have been implemented. However,
 the newest version still is not a production release,
 its intention is only to get feedback from interested users.</p>
 
-<p>Unexpectedly, limitted support for Content MathML made it into
-Release 1.0.7.</p>
-
-<p>The current release is 1.0.7. Read the
+<p>The current release is 1.0.8. Read the
 <a href="demo/doc/releasenotes.xhtml">release notes</a> or the 
 <a href="demo/doc/index.xhtml">documentation</a>.</p>
 
@@ -41,18 +39,18 @@ Release 1.0.7.</p>
 <ul>
 <li>If you are using Firefox 3, <a href="demo/editor.xul">try the
 online demo</a>.</li>
-<li><a href="releases/gemseFirefoxExtension-1-0-7.xpi">Install Gemse as
+<li><a href="releases/gemseFirefoxExtension-1-0-8.xpi">Install Gemse as
 Firefox extension</a>. Then you can open it by
 visiting <code>chrome://gemse/content/editor.xul</code> and read its
 documentation at <code>chrome://gemse/content/doc/index.xhtml</code>.</li>
-<li>Get <a href="releases/gemseXULRunnerApplication-1-0-7.zip">Gemse
+<li>Get <a href="releases/gemseXULRunnerApplication-1-0-8.zip">Gemse
 as XULRunner application</a> and run it with XULRunner 1.9.</li>
-<li>Use the <a href="releases/gemseMinimal-1-0-7.zip">minimal version</a> with 
+<li>Use the <a href="releases/gemseMinimal-1-0-8.zip">minimal version</a> with 
 less weird directory structure, intended to be
 run outside of Firefox chrome, like the demo. Just unzip it and open
 <code>editor.xul</code> in Firefox. (If you do that, not
 all commands will work since Firefox prevents access to your system.)</li>
-<li>Get the <a href="releases/gemse_src-1-0-7.tar.gz">whole source</a>. (As
+<li>Get the <a href="releases/gemse_src-1-0-8.tar.gz">whole source</a>. (As
 tar ball, since the directory structure I use for development makes
 use of symbolic links.)</li>
 </ul>
@@ -68,13 +66,13 @@ system.</p>
 <p>Gemse is an interactive editor for Presentation MathML, completely
 steered by keyboard. But let us look at that a bit more detailed:</p>
 
-<p>Presentation MathML is</p>
+<p>Presentation MathML</p>
 
 <ul>
-<li>too verbose to edit using a text editor</li>
+<li>is too verbose to edit using a text editor</li>
 <li>represents nicely the structure of a formula</li>
-<li>adapted to be used on the web</li>
-<li>by far not as powerful as LaTeX, since it is not a typesetting
+<li>is adapted to be used on the web</li>
+<li>is by far not as powerful as LaTeX, since it is not a typesetting
 laguage</li>
 <li>does not encode the meaning of a formula, just its
 appeareance</li>

@@ -25,6 +25,27 @@
 
 <h1>Release Notes</h1>
 
+<h2>1.0.8</h2>
+
+<ul>
+<li>When loading an equation at startup, the unnecessairy empty
+equation is no longer created.</li>
+<li>New commands for saving and closing have been added. They make it
+easier to deal with multiple equations. The most useful are
+<kbd>ZZ</kbd> and <kbd>ZA</kbd>.</li>
+<li>The command unwrap has been added. It removes an element and puts
+its children at its old place.</li>
+<li>The input box no longer moves below the window. A scrollbar is
+added, if the views use more space than available.</li>
+<li>A bug in the input substitution has been corrected: It was not
+possible to use entites whose value contain some special character
+(<code>&gt;</code>, <code>&amp;</code> and so on), since they were
+decoded only once but this has to be done twice.</li>
+<li>The EquationView has been added. It shows the rendered equation
+with some visual additions. Most notably, it transforms Content MathML
+to Presentation MathML. Viewset 4 uses this new view.</li>
+</ul>
+
 <h2>1.0.7</h2>
 
 <ul>

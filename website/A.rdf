@@ -14,7 +14,7 @@
     <agv:licenseCategory rdf:resource="http://u.andonyar.com/ageneralvoc/LicenseFree"/>
     <!-- or LicenseFree, LicensePublicDomain -->
     <dcterms:rightsHolder>Urs Holzer</dcterms:rightsHolder>
-    <dcterms:dateCopyrighted>2009-07-18</dcterms:dateCopyrighted>
+    <dcterms:dateCopyrighted>2009-08-02</dcterms:dateCopyrighted>
 
     <dc:creator>Urs Holzer</dc:creator>
 
@@ -27,7 +27,7 @@ its semantics. It is highly inspired by the text editor vi.</dc:description>
     <!--<dc:subject></dc:subject>-->
 
     <dcterms:created>2008-12-24</dcterms:created>
-    <dcterms:modified>2009-07-18</dcterms:modified>
+    <dcterms:modified>2009-08-02</dcterms:modified>
 
   </rdf:Description>
 
@@ -56,8 +56,8 @@ its semantics. It is highly inspired by the text editor vi.</doap:description>
     <doap:release>
         <doap:Version>
             <doap:name>alpha</doap:name>
-            <doap:created>2009-07-18</doap:created>
-            <doap:revision>1.0.7</doap:revision>
+            <doap:created>2009-08-02</doap:created>
+            <doap:revision>1.0.8</doap:revision>
         </doap:Version>
     </doap:release>
   </doap:Project>
