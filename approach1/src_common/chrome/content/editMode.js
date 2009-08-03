@@ -579,7 +579,7 @@ function editModeCommand_close(mode, instance) {
 
 function editModeCommand_closeAll(mode,instance) {
     for (var i=mode.editor.equations.length-1;i>=0;--i) {
-        mode.editor.equations[i].close();
+        mode.editor.equations[i].close(instance.forceFlag);
     }
     return true;
 }
