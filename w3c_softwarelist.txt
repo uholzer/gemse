@@ -1,0 +1,21 @@
+Gemse has an entry in the MathML software list of the w3c at
+http://www.w3.org/Math/Software/
+This is the template used for the current entry:
+
+    <item>
+      <category ref="plugins"/>
+      <category ref="editors"/>
+      <author href="mailto:urs@andonyar.com">Urs Holzer</author>
+      <name href="http://www.andonyar.com/rec/2008-12/gemse/">Gemse</name>
+      <date>August 2009</date>
+      <screenshot href="http://www.andonyar.com/rec/2008-12/gemse/screenshots/w3c_softwarelist.png"/>
+      <short-description><h:p>
+        Gemse is a MathML editor controlled by keyboard only. It has different 
+        modes, similar to the text editor vi. Basically, it lets you edit the 
+        XML structure of MathML. The formula is shown in different ways at the 
+        same time: As rendered equation, as nested boxes and as XML source. It 
+        is written in JavaScript and builds upon Mozilla. It can be installed as 
+        a Firefox extension, XULRunner application or directly be run in 
+        Firefox.
+      </h:p></short-description>
+    </item>
