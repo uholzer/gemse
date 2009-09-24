@@ -1508,6 +1508,48 @@ OptionsAssistant.prototype = {
         }
     }
 }
+OptionsAssistant.validators = {
+    /** For parsers.truthVal */
+    truthVal: function(value) {
+        return (value=="on" ||value=="true" ||value=="1"||value=="yes"||
+                value=="off"||value=="false"||value=="0"||value=="no");
+    },
+    /** For parsers.number_integer */
+    number_integer: function(value) {
+        return /^[+-]?(0x)?\d+/.test(value);
+    },
+    /** For parsers.number_integer */
+    number_positiveInteger: function(value) {
+        return number_integer(value) && (OptionsAssistant.parsers.number_integer(value) > 0);
+    },
+    /** For parsers.number_integer */
+    number_positiveIntegerOrZero: function(value) {
+        return number_integer(value) && (OptionsAssistant.parsers.number_integer(value) >= 0);
+    },
+    /** For parsers.number_float */
+    number_float: function(value) {
+        return /^[+-]?\d+(.\d+)?/.test(value);
+    },
+    /** For parsers.number_float */
+    number_positiveFloat: function(value) {
+        return number_float(value) && (OptionsAssistant.parsers.number_float(value) > 0);
+    },
+    /** For parsers.number_float */
+    number_positiveFloatOrZero: function(value) {
+        return number_float(value) && (OptionsAssistant.parsers.number_float(value) >= 0);
+    },
+};
+OptionsAssistant.parsers = {
+    truthVal: function(value) {
+        return (value=="on"||value=="true"||value=="1"||value=="yes");
+    },
+    number_integer: function(value) {
+        return parseFloat(value);
+    },
+    number_float: function(value) {
+        return parseFloat(value);
+    },
+};
 
 /**
  * @class The Gemse main object. It hosts all equation environments, handles
