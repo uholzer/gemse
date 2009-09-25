@@ -187,42 +187,6 @@ EditMode.prototype = {
  * default values, validators, parsers.
  */
 EditMode.gemseOptions = {
-    "selectableInsertModes": {
-        defaultValue: "trivial,ucd,content",
-        validator: function(value,editor) {
-            var list = value.split(",");
-            for (var i=0; i<list.length; ++i) {
-                if (!(list[i]=="trivial" || list[i]=="ucd" || list[i]=="content")) {
-                    return false;
-                }
-            }
-            return true;
-        },
-        parser: function(value,editor) {
-            return value.split(",");
-        }
-    },
-    "currentInsertMode": {
-        defaultValue: "ucd",
-        validator: function(value,editor) {
-            return (value == "trivial" || value == "ucd" || value == "content");
-        },
-        parser: function(value,editor) {
-            // Returns a class
-            if (value == "trivial") {
-                return TrivialInsertMode;
-            }
-            else if (value == "ucd") {
-                return UCDInsertMode;
-            }
-            else if (value == "content") {
-                return ContentInsertMode;
-            }
-            else {
-                return null
-            }
-        }
-    },
 }
 
 /* Some tools used by the Commands */

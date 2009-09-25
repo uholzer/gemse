@@ -1426,6 +1426,90 @@ ViewsetManager.prototype = {
 }
 
 /**
+ * @class Facility for handling options
+ */
+function OptionsAssistant() {
+    /**
+     * Holds all descriptions. Do not write directly, use
+     * loadDescriptions to add options.
+     */
+    this.descs = {};
+    /**
+     * Holds global options
+     * @private
+     */
+    this.global_o = {};
+}
+OptionsAssistant.prototype = {
+    obtainOptionsObject: function(forClass,forObject) {
+        if (!forClass && !forObject) {
+            return this.global_o;
+        }
+        else if (!forObject) {
+            if (!forClass.o) {
+                forClass.o = { };
+                forClass.o.__proto__ = this.global_o;
+            }            
+            return forClass.o;
+        }
+        else {
+            if (!forObject.o) {
+                forObject.o = { };
+                forObject.o.__proto__ = this.obtainOptionsObject(forClass);
+            }            
+            return forObject.o;
+        }
+    },
+    set: function(name,value,localToClass,localToObject) {
+        if (!this.descs[name]) {
+            throw "There is no option called '" + name + "'.\n";
+        }
+        // Validate
+        if (!this.descs[name].validator(value)) {
+            throw "'" + value + "' is not a valid value for the option '"
+                  + name + "'.\n";
+        }
+        // Find out which options object to use
+        var dest_o;
+        if (localToClass) {
+            dest_o = this.obtainOptionsObject(localToClass);
+        }
+        else if (this.descs[name].localToClass) {
+            dest_o = this.obtainOptionsObject(this.descs[name].localToClass);
+        }
+        else if (localToObject) {
+            dest_o = this.obtainOptionsObject(localToClass,localToObject);
+        }
+        else {
+            dest_o = this.global_o;
+        }
+        // Set into the options object
+        this.descs[name].setter(dest_o,value);
+        dest_o["_" + name] = value;
+    },
+    setDefault: function(name) {
+        this.set(name,this.descs[name].defaultValue);
+    },
+    /**
+     * Loads option descriptions and sets defaults
+     * @private
+     */
+    loadDescriptions: function(newDescs) {
+        // First load all options
+        for (name in newDescs) {
+            this.descs[name] = newDescs[name];
+        }
+        // Set defaults for the loaded options
+        // TODO: An option may depend on another one, so setting it
+        // may require having set the other before. May there arise
+        // problems out of this, is there an easy solution?
+        for (name in newDescs) {
+            this.setDefault(name);
+        }
+    }
+}
+
+/**
  * @class The Gemse main object. It hosts all equation environments, handles
  * input by the user, keeps registers, options, and so on.
  */
@@ -1462,10 +1546,18 @@ function GemsePEditor() {
     this.equationTemplate = document.getElementById("equationTemplate");
     this.equationTemplate.parentNode.removeChild(this.equationTemplate);
     /**
-     * Globally set options by name
-     * @private
+     * OptionsAssistant that handles options
      */
-    this.options = {};
+    this.optionsAssistant = new OptionsAssistant();
+    /* Load global options and options from known classes */
+    this.optionsAssistant.loadDescriptions(gemseGlobalOptions);
+    for (var i=0;i<GemsePEditor.knownClasses.length;++i) {
+        this.optionsAssistant.loadDescriptions(GemsePEditor.knownClasses[i].gemseOptions);
+    }
+    /**
+     * Option object for global options
+     */
+    this.o = this.optionsAssistant.obtainOptionsObject();
     /**
      * Recordings of options created automatically or by the user 
      * @private
@@ -1848,81 +1940,6 @@ GemsePEditor.prototype = {
         this.focus = dest;
         this.viewsetManager.create();
         this.viewsetManager.build(); // XXX: necessairy?
-    },
-    /**
-     * Get an option's handler object, which defines a validator and a
-     * parser.
-     */
-    getOptionHandler: function(key) {
-        for (var i=0; i < GemsePEditor.knownClasses.length; ++i) {
-            if (GemsePEditor.knownClasses[i].gemseOptions &&
-                GemsePEditor.knownClasses[i].gemseOptions[key]) {
-                return GemsePEditor.knownClasses[i].gemseOptions[key];
-            }
-        }
-        return null;
-    },
-    /**
-     * Get the value of an option as string.
-     * @param key name of the option
-     * @returns {String} current value of the option
-     */
-    getOption: function(key) {
-        // Tries to get the option. This may depend on the focused
-        // equation
-        var value = undefined;
-        if (this.focus >= 0) {
-            value = this.equations[this.focus].options[key];
-        }
-        if (value === undefined) {
-            value = this.options[key];
-        }
-        if (value === undefined) {
-            var handler = this.getOptionHandler(key);
-            if (!handler) { throw "Option " + key + " does not exist" }
-            value = handler.defaultValue;
-        }
-        return value;
-    },
-    /**
-     * Get the value of an option as suitable data structure.
-     * The registered parser for the option in question is used to
-     * transform the string value into an arbitrary object.
-     * @param   key name of the requested option
-     * @returns result as given by the registered parser
-     */
-    getOptionParsed: function(key) {
-        var value = this.getOption(key);
-        var handler = this.getOptionHandler(key);
-        return handler.parser(value,this);
-    },
-    /**
-     * Set an option to a string value, globally or locally.
-     * The new value is checked for validity using the
-     * registered validator. If the option does not exist or the value
-     * is invalid, an error is thrown.
-     * @param {String}  key    name of the option to be set
-     * @param {String}  value  new value
-     * @param {Boolean} global If true, the option is set for all
-     *                         equations, if false, it is set only for
-     *                         the current one.
-     */
-    setOption: function(key,value,global) {
-        // Sets the option key to value for the current equation if
-        // global is false. If global is true, the option is set on
-        // all equations
-        var handler = this.getOptionHandler(key);
-        if (!handler) { throw "Option " + key + " does not exist" }
-        if (!handler.validator(value,this)) {
-            throw value + " is not a valid value for the option" + key;
-        }
-        if (global || this.focus == -1) {
-            this.equations.forEach(function(e) { delete e.options[key]; })
-            this.options[key] = value;
-        }
-        else {
-            this.equations[this.focus].options[key] = value;
-        }
     },
     /**
      * Shows a message to the user

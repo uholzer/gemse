@@ -29,7 +29,7 @@
     <script src="visualSelectionMode_commandTable.js"/>
     <script src="operatorDictionary.js"/>
     <script src="inputSubstitution/core.js"/>
-    <script src="defaultOptions.js"/>
+    <script src="globalOptions.js"/>
     <script><![CDATA[
         var editor;
 
