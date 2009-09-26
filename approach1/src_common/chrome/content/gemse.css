@@ -73,6 +73,13 @@ html|table {
 *[internal|viewClass="SourceView"] {
     font-size: small;
 }
+/* If syntax highlighting is turned on, the following styles will be used: */
+*[internal|viewClass="SourceView"] [class="syntax"]             { color: #444; }
+*[internal|viewClass="SourceView"] [class="tagName"]            { color: #080; }
+*[internal|viewClass="SourceView"] [class="attributeName"]      { color: #00A; }
+*[internal|viewClass="SourceView"] [class="attributeValue"]     { color: #00E; }
+*[internal|viewClass="SourceView"] [class="contentText"]        { color: black; font-weight: bolder; }
+*[internal|viewClass="SourceView"] [class="contentPlaceHolder"] { color: black; }
 
 
 /*** attribute view. ***/

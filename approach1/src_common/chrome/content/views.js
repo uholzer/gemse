@@ -153,7 +153,8 @@ SourceView.prototype = {
         xml_flushElement(this.viewport);
         var pre = document.createElementNS(NS_HTML,"pre");
         this.viewport.appendChild(pre);
-        this.writeSourceOfElement(this.equationEnv.equation,pre,"",4);
+        var root = this.equationEnv.equation;
+        this.writeSourceOfElement(root,pre,"",this.o.foldingDepth);
     },
     /**
      * Writes the source for of an element to the document.
@@ -168,7 +169,7 @@ SourceView.prototype = {
         // Collect options
         var indentMoreString = indentString + "  ";
         var highlight = this.o.syntaxHighlighting;
-        var showAttributes = true;
+        var showAttributes = this.o.showAttributes;
         const TAGTYPE_BOTH  = 0;
         const TAGTYPE_START = 1;
         const TAGTYPE_END   = 2;
@@ -195,7 +196,7 @@ SourceView.prototype = {
             // src contains text but no elements
             elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_START,src));
-            elementSpan.appendChild(document.createTextNode(src.textContent));
+            elementSpan.appendChild(contentText(src));
             elementSpan.appendChild(tag(TAGTYPE_END,src));
             elementSpan.appendChild(document.createTextNode("\n"));
         }
@@ -205,7 +206,7 @@ SourceView.prototype = {
             elementSpan.appendChild(tag(TAGTYPE_START,src));
             elementSpan.appendChild(document.createTextNode("\n"));
             var child = mml_firstChild(src);
-            if (foldingLevel > 0) {
+            if (foldingLevel != 0) {
                 while (child) {
                     this.writeSourceOfElement(child,elementSpan,indentMoreString,foldingLevel-1);
                     child = mml_nextSibling(child);
@@ -219,6 +220,17 @@ SourceView.prototype = {
             elementSpan.appendChild(document.createTextNode("\n"));
         }
 
+        function contentText(element) {
+            if (highlight) {
+                var span = document.createElementNS(NS_HTML,"span");
+                span.setAttribute("class","contentText");
+                span.appendChild(document.createTextNode(element.textContent));
+                return span;
+            }
+            else {
+                return document.createTextNode(element.textContent);
+            }
+        }
         function contentPlaceholder(element) {
             if (highlight) {
                 var placeholder = document.createElementNS(NS_HTML,"span");
@@ -238,13 +250,13 @@ SourceView.prototype = {
                 if (type==TAGTYPE_END) {
                     span.appendChild(syntax("/"));
                 }
-                var tagname = document.createElementNS(NS_HTML,"span");
+                var tagName = document.createElementNS(NS_HTML,"span");
                 tagName.setAttribute("class","tagName");
                 tagName.appendChild(document.createTextNode(element.tagName));
                 span.appendChild(tagName);
                 if (showAttributes && !(type==TAGTYPE_END)) {
                     for each (var attr in attributeslist(element)) {
-                        span.appendChild(arrtibute(attr));
+                        span.appendChild(attribute(attr));
                     }
                 }
                 span.appendChild(syntax(">"));
@@ -294,7 +306,7 @@ SourceView.prototype = {
                 span.appendChild(syntax("="));
                 span.appendChild(syntax("\""));
                 var value = document.createElementNS(NS_HTML,"span");
-                value.setAttribute("class","attributeName");
+                value.setAttribute("class","attributeValue");
                 value.appendChild(document.createTextNode(attr.nodeValue));
                 span.appendChild(value);
                 span.appendChild(syntax("\""));
@@ -317,7 +329,37 @@ SourceView.prototype = {
         }
     },
 }
+SourceView.gemseOptions = {
+    "SourceView.syntaxHighlighting": {
+        localToClass: SourceView,
+        defaultValue: "off",
+        validator: OptionsAssistant.validators.truthVal,
+        parser: OptionsAssistant.parsers.truthVal,
+        setter: function(o,value) {
+            o.syntaxHighlighting = this.parser(value);
+        }
+    },
+    "SourceView.showAttributes": {
+        localToClass: SourceView,
+        defaultValue: "off",
+        validator: OptionsAssistant.validators.truthVal,
+        parser: OptionsAssistant.parsers.truthVal,
+        setter: function(o,value) {
+            o.showAttributes = this.parser(value);
+        }
+    },
+    "SourceView.foldingDepth": {
+        localToClass: SourceView,
+        defaultValue: "-1",
+        validator: OptionsAssistant.validators.number_integer,
+        parser: OptionsAssistant.parsers.number_integer,
+        setter: function(o,value) {
+            o.foldingDepth = this.parser(value);
+        }
+    },
+}
 ViewsetManager.viewClasses["SourceView"] = SourceView;
+GemsePEditor.knownClasses.push(SourceView);
 
 /**
  * @class More advanced view of rendered equation
