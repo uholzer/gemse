@@ -415,6 +415,10 @@ function SourceView(editor,equationEnv,viewport) {
      * The element containing the view. (Can be any element.)
      */
     this.viewport = viewport;
+    /**
+     * Option object
+     */
+    this.o = editor.optionsAssistant.obtainOptionsObject(SourceView,this);
 }
 SourceView.prototype = {    
     /** 
@@ -426,7 +430,7 @@ SourceView.prototype = {
         xml_flushElement(this.viewport);
         var pre = document.createElementNS(NS_HTML,"pre");
         this.viewport.appendChild(pre);
-        this.writeSourceOfElement(this.equationEnv.equation,pre,"");
+        this.writeSourceOfElement(this.equationEnv.equation,pre,"",4);
     },
     /**
      * Writes the source for of an element to the document.
@@ -437,10 +441,18 @@ SourceView.prototype = {
      * @param inline True if the code for this element should be put
      *               on the same line, false if it has its own lines.
      */
-    writeSourceOfElement: function(src,dest,indentString,inline) {
+    writeSourceOfElement: function(src,dest,indentString,foldingLevel) {
+        // Collect options
         var indentMoreString = indentString + "  ";
+        var highlight = this.o.syntaxHighlighting;
+        var showAttributes = true;
+        const TAGTYPE_BOTH  = 0;
+        const TAGTYPE_START = 1;
+        const TAGTYPE_END   = 2;
+
         // Take a new span for this element
         var elementSpan = document.createElementNS(NS_HTML,"span");
+        elementSpan.setAttribute("class","element");
         // Put internal:selected attribute if present
         if (src.getAttributeNS(NS_internal, "selected")) {
             elementSpan.setAttributeNS(NS_internal, "selected", src.getAttributeNS(NS_internal, "selected"));
@@ -452,37 +464,133 @@ SourceView.prototype = {
 
         if (!mml_firstChild(src) && !src.firstChild) {
             // src is empty
-            elementSpan.appendChild(document.createTextNode(
-                inline ?
-                "<" + src.localName + "/>" :
-                indentString + "<" + src.localName + "/>\n"
-            ));
+            elementSpan.appendChild(document.createTextNode(indentString));
+            elementSpan.appendChild(tag(TAGTYPE_BOTH,src));
+            elementSpan.appendChild(document.createTextNode("\n"));
         }
         else if (!mml_firstChild(src)) {
             // src contains text but no elements
-            elementSpan.appendChild(document.createTextNode(
-                inline ?
-                "<" + src.localName + ">" :
-                indentString + "<" + src.localName + ">"
-            ));
+            elementSpan.appendChild(document.createTextNode(indentString));
+            elementSpan.appendChild(tag(TAGTYPE_START,src));
             elementSpan.appendChild(document.createTextNode(src.textContent));
-            elementSpan.appendChild(document.createTextNode(
-                "</" + src.localName + ">" + (inline ? "" : "\n")
-            ));
+            elementSpan.appendChild(tag(TAGTYPE_END,src));
+            elementSpan.appendChild(document.createTextNode("\n"));
         }
         else {
             // Element contains children
-            elementSpan.appendChild(document.createTextNode(
-                indentString + "<" + src.localName + ">\n"
-            ));
+            elementSpan.appendChild(document.createTextNode(indentString));
+            elementSpan.appendChild(tag(TAGTYPE_START,src));
+            elementSpan.appendChild(document.createTextNode("\n"));
             var child = mml_firstChild(src);
-            while (child) {
-                this.writeSourceOfElement(child,elementSpan,indentMoreString,false);
-                child = mml_nextSibling(child);
+            if (foldingLevel > 0) {
+                while (child) {
+                    this.writeSourceOfElement(child,elementSpan,indentMoreString,foldingLevel-1);
+                    child = mml_nextSibling(child);
+                }
             }
-            elementSpan.appendChild(document.createTextNode(
-                indentString + "</" + src.localName + ">\n"
-            ));
+            else {
+                elementSpan.appendChild(contentPlaceholder(src));
+            }
+            elementSpan.appendChild(document.createTextNode(indentString));
+            elementSpan.appendChild(tag(TAGTYPE_END,src));
+            elementSpan.appendChild(document.createTextNode("\n"));
+        }
+
+        function contentPlaceholder(element) {
+            if (highlight) {
+                var placeholder = document.createElementNS(NS_HTML,"span");
+                placeholder.setAttribute("class","contentPlaceholder");
+                placeholder.appendChild(document.createTextNode("..."));
+                return placeholder;
+            }
+            else {
+                return document.createTextNode("...");
+            }
+        }
+        function tag(type,element) {
+            if (highlight) {
+                var span = document.createElementNS(NS_HTML,"span");
+                span.setAttribute("class","tag");
+                span.appendChild(syntax("<"));
+                if (type==TAGTYPE_END) {
+                    span.appendChild(syntax("/"));
+                }
+                var tagname = document.createElementNS(NS_HTML,"span");
+                tagName.setAttribute("class","tagName");
+                tagName.appendChild(document.createTextNode(element.tagName));
+                span.appendChild(tagName);
+                if (showAttributes && !(type==TAGTYPE_END)) {
+                    for each (var attr in attributeslist(element)) {
+                        span.appendChild(arrtibute(attr));
+                    }
+                }
+                span.appendChild(syntax(">"));
+                return span;
+            }
+            else {
+                if (!(type==TAGTYPE_END) && showAttributes) {
+                    var span = document.createElementNS(NS_HTML,"span");
+                    span.appendChild(document.createTextNode("<" + element.tagName));
+                    for each (var attr in attributeslist(element)) {
+                        span.appendChild(attribute(attr));
+                    }
+                    span.appendChild(document.createTextNode(type==TAGTYPE_BOTH ? "/>" : ">"));
+                    return span;
+                }
+                else if (type==TAGTYPE_START) {
+                    return document.createTextNode("<" + element.tagName + ">");
+                }
+                else if (type==TAGTYPE_BOTH) {
+                    return document.createTextNode("<" + element.tagName + "/>");
+                }
+                else {
+                    return document.createTextNode("</" + element.tagName + ">");
+                }
+            }
+        }
+        function attributeslist(element) {
+            var attrs = element.attributes;
+            var attrs_array = [];
+            for (var i=attrs.length-1; i>=0; i--) {
+                if (attrs[i].namespaceURI != NS_internal) {
+                    attrs_array.push(attrs[i]);
+                }
+            }
+            return attrs_array.sort(function (a,b) { 
+                return (a.name < b.name ? -1 : 1);
+            });
+        }
+        function attribute(attr) {
+            if (highlight) {
+                var span = document.createElementNS(NS_HTML,"span");
+                span.appendChild(document.createTextNode(" "));
+                var name = document.createElementNS(NS_HTML,"span");
+                name.setAttribute("class","attributeName");
+                name.appendChild(document.createTextNode(attr.localName));
+                span.appendChild(name);
+                span.appendChild(syntax("="));
+                span.appendChild(syntax("\""));
+                var value = document.createElementNS(NS_HTML,"span");
+                value.setAttribute("class","attributeName");
+                value.appendChild(document.createTextNode(attr.nodeValue));
+                span.appendChild(value);
+                span.appendChild(syntax("\""));
+                return span;
+            }
+            else {
+                return document.createTextNode(" " + attr.localName + "=\"" + attr.nodeValue + "\"");
+            }
+        }
+        function syntax(s) {
+            if (highlight) {
+                var span = document.createElementNS(NS_HTML,"span");
+                span.appendChild(document.createTextNode(s));
+                span.setAttribute("class","syntax");
+                return span;
+            }
+            else {
+                return document.createTextNode(s);
+            }
         }
     },
 }
