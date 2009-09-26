@@ -16,6 +16,11 @@ function EditMode(editor, equationEnv) {
      */
     this.editor = editor;
     /**
+     * Options object
+     * @const
+     */
+    this.o = editor.optionsAssistant.obtainOptionsObject(EditMode);
+    /**
      * The equation environment this object belongs to
      * @constant
      */
@@ -135,7 +140,7 @@ EditMode.prototype = {
         if (!manualChange) {
             this.infoAboutCalledMode.change.recordBefore(this.equationEnv.equation,cursorInElement);
         }
-        var editModeClass = this.editor.getOptionParsed("currentInsertMode");
+        var editModeClass = this.o.insertMode;
         var newMode = new editModeClass(this.editor, this.equationEnv, cursorInElement, cursorBeforeElement);
         newMode.init();
         this.equationEnv.callMode(newMode);
@@ -710,14 +715,14 @@ function editModeCommand_startstopUserRecording(mode,instance) {
 }
 
 function editModeCommand_cycleInsertMode(mode) {
-    var current = mode.editor.getOption("currentInsertMode");
-    var selectable = mode.editor.getOptionParsed("selectableInsertModes");
+    var current = mode.o["_currentInsertMode"];
+    var selectable = mode.o.selectableInsertModes;
     var index = selectable.indexOf(current);
     if (index == selectable.length-1) { current = selectable[0] }
     else if (index >= 0) { current = selectable[index+1] }
     else { current = selectable[0] }
-    mode.editor.setOption("currentInsertMode",current);
-    mode.editor.showMessage("You changed the insert mode to " + mode.editor.getOption("currentInsertMode"));
+    mode.editor.optionsAssistant.set("currentInsertMode",current);
+    mode.editor.showMessage("You changed the insert mode to " + current);
     return true;
 }
 
@@ -767,11 +772,11 @@ function editModeCommand_set(mode, instance) {
     var value = args[4];
     if (value!==undefined) {
         // set the option
-        mode.editor.setOption(key,value,global?true:false);
+        mode.editor.optionsAssistant.set(key,value);
     }
     else {
         // Only show the user the current setting
-        value = mode.editor.getOption(key);
+        value = mode.editor.o["_" + key];
         mode.editor.showMessage(key + "=" + value);
     }
     return true;
