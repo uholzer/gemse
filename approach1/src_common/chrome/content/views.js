@@ -154,6 +154,12 @@ SourceView.prototype = {
         var pre = document.createElementNS(NS_HTML,"pre");
         this.viewport.appendChild(pre);
         var root = this.equationEnv.equation;
+        if (this.o.foldingStart < 1 && this.equationEnv.mode.contextNode) {
+            root = this.equationEnv.mode.contextNode;
+            for (var i=0; i>this.o.foldingStart && root!=this.equationEnv.equation; --i) {
+                root = root.parentNode;
+            }
+        }
         this.writeSourceOfElement(root,pre,"",this.o.foldingDepth);
     },
     /**
@@ -204,18 +210,18 @@ SourceView.prototype = {
             // Element contains children
             elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_START,src));
-            elementSpan.appendChild(document.createTextNode("\n"));
             var child = mml_firstChild(src);
             if (foldingLevel != 0) {
+                elementSpan.appendChild(document.createTextNode("\n"));
                 while (child) {
                     this.writeSourceOfElement(child,elementSpan,indentMoreString,foldingLevel-1);
                     child = mml_nextSibling(child);
                 }
+                elementSpan.appendChild(document.createTextNode(indentString));
             }
             else {
                 elementSpan.appendChild(contentPlaceholder(src));
             }
-            elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_END,src));
             elementSpan.appendChild(document.createTextNode("\n"));
         }
@@ -355,6 +361,15 @@ SourceView.gemseOptions = {
         parser: OptionsAssistant.parsers.number_integer,
         setter: function(o,value) {
             o.foldingDepth = this.parser(value);
+        }
+    },
+    "SourceView.foldingStart": {
+        localToClass: SourceView,
+        defaultValue: "1",
+        validator: OptionsAssistant.validators.number_integer,
+        parser: OptionsAssistant.parsers.number_integer,
+        setter: function(o,value) {
+            o.foldingStart = this.parser(value);
         }
     },
 }
