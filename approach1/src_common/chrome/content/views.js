@@ -154,13 +154,22 @@ SourceView.prototype = {
         var pre = document.createElementNS(NS_HTML,"pre");
         this.viewport.appendChild(pre);
         var root = this.equationEnv.equation;
+        var startIndentation = "";
         if (this.o.foldingStart < 1 && this.equationEnv.mode.contextNode) {
-            root = this.equationEnv.mode.contextNode;
+            var root = this.equationEnv.mode.contextNode;
+            // Find the node that will become the root node in our view
             for (var i=0; i>this.o.foldingStart && root!=this.equationEnv.equation; --i) {
                 root = root.parentNode;
             }
+            // If we preserver indentation, find out how much the root
+            // has to be indented.
+            if (this.o.foldingKeepIndentation) {
+                for (var e=root; e!=this.equationEnv.equation; e=e.parentNode) {
+                     startIndentation += this.o.indentation
+                }
+            }
         }
-        this.writeSourceOfElement(root,pre,"",this.o.foldingDepth);
+        this.writeSourceOfElement(root,pre,startIndentation,this.o.foldingDepth);
     },
     /**
      * Writes the source for of an element to the document.
@@ -173,7 +182,7 @@ SourceView.prototype = {
      */
     writeSourceOfElement: function(src,dest,indentString,foldingLevel) {
         // Collect options
-        var indentMoreString = indentString + "  ";
+        var indentMoreString = indentString + this.o.indentation;
         var highlight = this.o.syntaxHighlighting;
         var showAttributes = this.o.showAttributes;
         const TAGTYPE_BOTH  = 0;
@@ -370,6 +379,24 @@ SourceView.gemseOptions = {
         parser: OptionsAssistant.parsers.number_integer,
         setter: function(o,value) {
             o.foldingStart = this.parser(value);
+        }
+    },
+    "SourceView.indentation": {
+        localToClass: SourceView,
+        defaultValue: "    ",
+        validator: function(value) { return true },
+        parser: function(value) { return value },
+        setter: function(o,value) {
+            o.indentation = this.parser(value);
+        }
+    },
+    "SourceView.foldingKeepIndentation": {
+        localToClass: SourceView,
+        defaultValue: "yes",
+        validator: OptionsAssistant.validators.truthVal,
+        parser: OptionsAssistant.parsers.truthVal,
+        setter: function(o,value) {
+            o.foldingKeepIndentation = this.parser(value);
         }
     },
 }
