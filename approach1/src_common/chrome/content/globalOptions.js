@@ -9,6 +9,14 @@
  * used globally
  */
 gemseGlobalOptions = {
+    "pragmaticContent": {
+        defaultValue: "no",
+        validator: OptionsAssistant.validators.truthVal,
+        parser: OptionsAssistant.parsers.truthVal,
+        setter: function(o,value) {
+            o.pragmaticContent = this.parser(value);
+        }
+    },
     "selectableInsertModes": {
         defaultValue: "trivial,ucd,content",
         validator: function(value,editor) {

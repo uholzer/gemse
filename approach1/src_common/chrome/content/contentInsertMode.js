@@ -20,6 +20,11 @@ function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
      * wants to insert two mn elements behind each other.
      */
     this.forceNewElement = false;
+    /**
+     * Options Object
+     * @private
+     */
+    this.o = editor.optionsAssistant.obtainOptionsObject(ContentInsertMode, this);
 }
 ContentInsertMode.prototype = {
     name: "content",
@@ -212,14 +217,12 @@ function contentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
     // Should pragmatic be given, and the user whishes to use
     // pragmatic MathML, a pragmatic element is created. (TODO:
     // Automatic lookup?)
-    // TODO: Implement an option for that. Right now, pragmatic is
-    // always used if present.
     var argumentLines;
     if (instance.argument) {
         argumentLines = instance.argument.split("\n");
     }
     var newElement;
-    if (pragmatic) {
+    if (pragmatic && mode.o.pragmaticContent) {
         newElement = document.createElementNS(NS_MathML, pragmatic);
     }
     else {
