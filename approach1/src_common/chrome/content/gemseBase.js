@@ -1096,7 +1096,7 @@ GemsePEditor.prototype = {
             // buffer. It must not remove following commands.
             while (this.inputBuffer && this.equations[this.focus].mode.inputHandler()) { updateOfViewsNeeded = true };
         }
-        catch (e if false) {
+        catch (e) {
             this.showMessage(e);
             this.updateOfViewsNeeded = true;
         }
