@@ -51,5 +51,13 @@ gemseGlobalOptions = {
             o.insertMode = this.parser(value,editor);
         }
     },
+    "detailedErrors": {
+        defaultValue: "on",
+        validator: OptionsAssistant.validators.truthVal,
+        parser: OptionsAssistant.parsers.truthVal,
+        setter: function(o,value) {
+            o.detailedErrors = this.parser(value);
+        }
+    },
 }
 

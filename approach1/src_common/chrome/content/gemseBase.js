@@ -1098,7 +1098,7 @@ GemsePEditor.prototype = {
         }
         catch (e) {
             this.showMessage(e);
-            this.updateOfViewsNeeded = true;
+            updateOfViewsNeeded = true;
         }
         finally {
             // Now, if there is still something in the buffer, it is
@@ -1409,17 +1409,36 @@ GemsePEditor.prototype = {
     },
     /**
      * Shows a message to the user
-     * @param message The message as DOM node or string
+     * If the message is an instance of Error, the error is shown to the user
+     * in a meaningful way. If it is a DOM node, it is directly placed
+     * in the DOM of the user interface. In any other case, the message
+     * is transformed to a string using its toString method and the
+     * result is presented to the user.
+     * @param message The message as instance of the class Error, as DOM
+     * node or any other object.
      */
     showMessage: function(message) {
-        if (message.nodeType) {
+        if (message instanceof Error) {
+            // Message is an Error object, which we present nicely
+            var errorElement = document.createElementNS(NS_HTML, "div");
+            errorElement.setAttribute("class", "error");
+            errorElement.appendChild(document.createTextNode(message.name + ": " + message.message));
+            if (this.o.detailedErrors) {
+                var stackBacktrace = document.createElementNS(NS_HTML, "pre");
+                stackBacktrace.appendChild(document.createTextNode(message.stack));
+                errorElement.appendChild(stackBacktrace);
+            }
+            this.lastMessage = errorElement;
+        }
+        else if (message.nodeType) { //XXX: Is there a better way to test this?
             // message is a DOM node
             this.lastMessage = message;
         }
         else {
-            // message is a String
+            // message is a String or something that should be
+            // presented as such, using its toString method
             this.lastMessage = document.createElementNS(NS_HTML,"div")
-            this.lastMessage.appendChild(document.createTextNode(message));
+            this.lastMessage.appendChild(document.createTextNode(message.toString()));
         }
     }
 }
