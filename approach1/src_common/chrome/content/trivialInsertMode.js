@@ -258,7 +258,7 @@ function trivialInsertModeCommand_insertDescribedElement(mode, instance, element
         newElement.appendChild(document.createTextNode(instance.argument));
     }
     else {
-        throw description.type + " not yet supported by insertDescribedElement";
+        throw new Error(description.type + " not yet supported by insertDescribedElement");
     }
     mode.putElement(newElement);
     return true;

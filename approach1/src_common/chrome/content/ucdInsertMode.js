@@ -138,7 +138,7 @@ UCDInsertMode.prototype = {
                 }
                 var parentElement = this.cursor.inElement;
                 var baseElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
-                if (!baseElement) { throw "No element before the cursor, so don't know what to do with the combining mark." }
+                if (!baseElement) { throw new Error("No element before the cursor, so don't know what to do with the combining mark.") }
                 var standaloneTextNode = document.createTextNode(standalone);
                 var standaloneElement = document.createElementNS(NS_MathML, "mo");      //TODO!
                 standaloneElement.appendChild(standaloneTextNode);
@@ -187,7 +187,7 @@ UCDInsertMode.prototype = {
                 this.putElement(null, "mi", document.createTextNode(c));
             }
             else {
-                throw "I don't know what to do with " + c + ", it seems not to be an operator, a digit or an identifier.";
+                throw new Error("I don't know what to do with " + c + ", it seems not to be an operator, a digit or an identifier.");
             }
 
             this.forceNewElement = false;

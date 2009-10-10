@@ -17,14 +17,14 @@ String.prototype.__defineGetter__("uLength", function() {
             if (String.isSurrogate(this[i])==2) {
                 // This is a high surrogate, so a low one must follow
                 if (String.isSurrogate(this[i+1])!=1) {
-                    throw "Malformed string: A low surrogate must follow a high one";
+                    throw new Error("Malformed string: A low surrogate must follow a high one");
                 }
                 ++this.uLength_alreadyKnown;
             }
             else if (String.isSurrogate(this[i])==1) {
                 // This is a low surrogate, so a hogh one must precede
                 if (String.isSurrogate(this[i-1])!=2) {
-                    throw "Malformed string: A high surrogate must precede a low one";
+                    throw new Error("Malformed string: A high surrogate must precede a low one");
                 }
                 // Do not increase length here!
             }
@@ -129,9 +129,9 @@ String.prototype.uSubstring = function(start, end) {
  * than this.uLength.
  */
 String.prototype.index_UTo16 = function(indexU) {
-    if (indexU < 0) { throw "negative index not accepted" }
+    if (indexU < 0) { throw new Error("negative index not accepted") }
     if (indexU == this.uLength) { return this.length }
-    if (indexU > this.uLength) { throw "index out of range" }
+    if (indexU > this.uLength) { throw new Error("index out of range") }
     var index16 = -1;
     for (var i=0; i<=indexU; ++i) {
         if (String.isSurrogate(this[index16+1])==1) {
@@ -150,9 +150,9 @@ String.prototype.index_UTo16 = function(indexU) {
  * larger than this.length
  */
 String.prototype.index_16ToU = function(index16) {
-    if (index16 < 0) { throw "negative index not accepted" }
+    if (index16 < 0) { throw new Error("negative index not accepted") }
     if (index16 == this.length) { return this.uLength }
-    if (index16 > this.length) { throw "string is shorter" }
+    if (index16 > this.length) { throw new Error("string is shorter") }
     var indexU = -1;
     for (var i=0; i<=index16; ++i) {
         if (String.isSurrogate(this[i])!=1) {

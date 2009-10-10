@@ -154,7 +154,7 @@ UCD4Gemse.prototype = {
             var l = dataLines[i];
             if (!l) { continue }
             var res = lineRegex.exec(l);
-            if (!res) { throw "Error in UnicodeData.txt? " + l }
+            if (!res) { throw new Error("Error in UnicodeData.txt? " + l) }
             var codepoint = parseInt(res[1],16);
             // We have to use the advanced fromCharCode shipped with
             // gemse, String.fromCharCode can not handle characters
@@ -208,7 +208,7 @@ UCD4Gemse.prototype = {
             var l = dataLines[i];
             if (!l || l[0]=="#") { continue }
             var res = lineRegex.exec(l);
-            if (!res) { throw "Error in Gemse_Combining.txt? " + l }
+            if (!res) { throw new Error("Error in Gemse_Combining.txt? " + l) }
             var codepoint = parseInt(res[1],16);
             var character = String.uFromCharCode(codepoint);
             db[character][2] = parseInt(res[2],10);

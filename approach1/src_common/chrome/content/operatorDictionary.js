@@ -119,10 +119,10 @@ function OperatorDictionary() {
                     // Since we only allow nummeric, hexadecimal entities,
                     // unescapedContent[1] must be #
                     if (sEscaped[1]!="#"||sEscaped[2]!="x") {
-                        throw "Only hexadecimal entities allowed in content dictionary"
+                        throw new Error("Only hexadecimal entities allowed in content dictionary")
                     }
                     endIndex = sEscaped.indexOf(";");
-                    if (endIndex==-1) { throw "Malformed entity in content dictionary" }
+                    if (endIndex==-1) { throw new Error("Malformed entity in content dictionary") }
                     var hexString = sEscaped.slice(3,endIndex);
                     var codepoint = parseInt(hexString,16);
                     s += String.fromCharCode(codepoint);
@@ -184,7 +184,7 @@ function OperatorDictionary() {
                 if (attributes["meta:id"]!==undefined) {
                     groupingPrecedence = attributes["meta:id"];
                 }
-                if (!form) { throw "form must always be given in operator dictionary. (Line " + (i+1) + ")" }
+                if (!form) { throw new Error("form must always be given in operator dictionary. (Line " + (i+1) + ")") }
                 var overloadKey = 0;
 
                 // TODO: Remove "meta:" attributes
@@ -206,11 +206,11 @@ function OperatorDictionary() {
                 if (!this.db[content]) { 
                     this.db[content] = { prefix: {}, infix: {}, postfix: {} };
                 }
-                //if (this.db[content][form][disamb||""]) { throw "You tried to overload the operator " + content + " " + form + " " + (disamb||"") }
+                //if (this.db[content][form][disamb||""]) { throw new Error("You tried to overload the operator " + content + " " + form + " " + (disamb||"")) }
                 this.db[content][form][disamb||""] = entry;
             }
             else {
-                throw "Error in operator dictionary at line " + (i+1);
+                throw new Error("Error in operator dictionary at line " + (i+1));
             }
         }
     }

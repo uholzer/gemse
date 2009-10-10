@@ -105,12 +105,12 @@ function attributeModeCommand_changeValue(mode,instance) {
 
 function attributeModeCommand_changeName(mode) {
     if (mode.cursor==null) { return true; }
-    throw "todo!";
+    throw new Error("todo!");
 }
 
 function attributeModeCommand_changeNS(mode) {
     if (mode.cursor==null) { return true; }
-    throw "todo!";
+    throw new Error("todo!");
 }
 
 function attributeModeCommand_insertDefault(mode,instance) {

@@ -219,7 +219,7 @@ EquationEnv.prototype = {
                 destinationURIString = this.origin.uri;
             }
             else {
-                throw "Can not save to origin";
+                throw new Error("Can not save to origin");
             }
         }
         
@@ -319,9 +319,9 @@ RegisterManager.prototype = {
      */
     getSystemClipboard: function() {
         var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(Components.interfaces.nsIClipboard);
-        if (!clip) throw "Error while obtaining clipboard component";
+        if (!clip) throw new Error("Error while obtaining clipboard component");
         var trans = Components.classes["@mozilla.org/widget/transferable;1"].createInstance(Components.interfaces.nsITransferable);
-        if (!trans) throw "Error while obtaining transferable component";
+        if (!trans) throw new Error("Error while obtaining transferable component");
         trans.addDataFlavor("text/unicode"); //XXX: Should be application/mathml+xml
 
         clip.getData(trans, clip.kGlobalClipboard);
@@ -336,8 +336,8 @@ RegisterManager.prototype = {
 
         var registerData;
         if (clipboardDOM.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml") {
-            throw "An error occured while parsing the clipboard content:\n"
-                  + clipboardDOM.documentElement.textContent;
+            throw new Error("An error occured while parsing the clipboard content:\n"
+                        + clipboardDOM.documentElement.textContent);
         }
         else if (clipboardDOM.documentElement.localName == "math" && clipboardDOM.documentElement.namespaceURI == NS_MathML) {
             // Put the child elements into an array
@@ -360,7 +360,7 @@ RegisterManager.prototype = {
      * @private
      */
     setSystemClipboard: function(data) {
-        if (data.type != "element") { throw "clipboard interaction only supports elements" }
+        if (data.type != "element") { throw new Error("clipboard interaction only supports elements") }
 
         // Serialize data.content[0]
         var doc = document.implementation.createDocument(null, null, null);
@@ -381,13 +381,13 @@ RegisterManager.prototype = {
 
         var str = Components.classes["@mozilla.org/supports-string;1"].  
         createInstance(Components.interfaces.nsISupportsString);  
-        if (!str) throw "Error while obtaining String component";
+        if (!str) throw new Error("Error while obtaining String component");
           
         str.data = xmlString;  
           
         var trans = Components.classes["@mozilla.org/widget/transferable;1"].  
         createInstance(Components.interfaces.nsITransferable);  
-        if (!trans) throw "Error while obtaining transferable component";
+        if (!trans) throw new Error("Error while obtaining transferable component");
           
         trans.addDataFlavor("application/mathml+xml");  
         trans.setTransferData("application/mathml+xml", str, xmlString.length * 2);  
@@ -396,7 +396,7 @@ RegisterManager.prototype = {
           
         var clipid = Components.interfaces.nsIClipboard;  
         var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(clipid);  
-        if (!clip) throw "Error while obtaining clipboard component";
+        if (!clip) throw new Error("Error while obtaining clipboard component");
           
         clip.setData(trans, null, clipid.kGlobalClipboard);  
     },
@@ -492,7 +492,7 @@ History.prototype = {
      * equation. 
      */
     reportChange: function(change) {
-        if (!change.ready) { throw "reported change is not ready" }
+        if (!change.ready) { throw new Error("reported change is not ready") }
         this.length = this.position + 1; // Chop off succeeding changes
         this.push(change);
         ++this.position;
@@ -575,7 +575,7 @@ Change.prototype = {
     undo: function (equationEnv) {
         var equation = equationEnv.equation;
         if (!this.ready) {
-            throw "This Change instance is not ready for undo or redo";
+            throw new Error("This Change instance is not ready for undo or redo");
         }
         var current = this.applyTreePointer(equation, this.treePointer);
         if (current == equation) {
@@ -599,7 +599,7 @@ Change.prototype = {
     redo: function (equationEnv) {
         var equation = equationEnv.equation;
         if (!this.ready) {
-            throw "This Change instance is not ready for undo or redo";
+            throw new Error("This Change instance is not ready for undo or redo");
         }
         var current = this.applyTreePointer(equation, this.treePointer);
         if (current == equation) {
@@ -626,16 +626,16 @@ Change.prototype = {
      */
     recordBefore: function (equation,toBeChangedElement) {
         if (toBeChangedElement.nodeType != Node.ELEMENT_NODE) {
-            throw "Only element nodes can be recorded.";
+            throw new Error("Only element nodes can be recorded.");
         }
         // Derive a pointer into the tree where the element is located
         this.treePointer = this.deriveTreePointer(equation, toBeChangedElement);
 
         // For debugging
         if (this.applyTreePointer(equation, this.treePointer) != toBeChangedElement) {
-            throw "Tree pointer does not resolve to the element it has been creted for. (Bug in implementation.) "
+            throw new Error("Tree pointer does not resolve to the element it has been creted for. (Bug in implementation.) "
                 + "applyTreePointer returns a " + this.applyTreePointer(equation, this.treePointer).localName
-                + " expected is a " + toBeChangedElement.localName;
+                + " expected is a " + toBeChangedElement.localName);
         }
 
         // Make deep copy
@@ -653,13 +653,13 @@ Change.prototype = {
      */
     recordAfter: function (equation,changedElement) {
         if (changedElement.nodeType != Node.ELEMENT_NODE) {
-            throw "Only element nodes can be recorded.";
+            throw new Error("Only element nodes can be recorded.");
         }
         // Check the pointer, it must be the same as computed
         // by recordBefore().
         if (this.treePointer.join(',') != this.deriveTreePointer(equation, changedElement).join(',')) {
-            throw "Position of the element is not the same as recorded before: "
-                + this.treePointer.join(',') + " != " + this.deriveTreePointer(equation, changedElement).join(',');
+            throw new Error("Position of the element is not the same as recorded before: "
+                + this.treePointer.join(',') + " != " + this.deriveTreePointer(equation, changedElement).join(','));
         }
 
         // Make deep copy
@@ -759,7 +759,7 @@ ViewsetManager.prototype = {
         // Find out which viewset to use
         var viewsetNumber = this.globalViewsetNumber;
         if (!this.viewsets[viewsetNumber]) {
-            throw "There is no viewset with number " + viewsetNumber;
+            throw new Error("There is no viewset with number " + viewsetNumber);
         }
         // Get rid of current views
         this.views = [];
@@ -789,7 +789,7 @@ ViewsetManager.prototype = {
             var className = viewports[i].getAttributeNS(NS_internal, "viewClass");
             var constructor = this.viewClasses[className];
             if (!constructor) {
-                throw "There is no view with the name " + className;
+                throw new Error("There is no view with the name " + className);
             }
             // Create view
             //XXX: Is this ok?
@@ -886,12 +886,12 @@ OptionsAssistant.prototype = {
     },
     set: function(name,value,localToClass,localToObject) {
         if (!this.descs[name]) {
-            throw "There is no option called '" + name + "'.\n";
+            throw new Error("There is no option called '" + name + "'.\n");
         }
         // Validate
         if (!this.descs[name].validator(value)) {
-            throw "'" + value + "' is not a valid value for the option '"
-                  + name + "'.\n";
+            throw new Error("'" + value + "' is not a valid value for the option '"
+                        + name + "'.\n");
         }
         // Find out which options object to use
         var dest_o;
@@ -1230,7 +1230,7 @@ GemsePEditor.prototype = {
      */
     eliminateEquationEnv: function (equationEnv) {
         var index = this.equations.indexOf(equationEnv);
-        if (index < 0) { throw "This equationEnv is not even registered!" }
+        if (index < 0) { throw new Error("This equationEnv is not even registered!") }
 
         this.equations.splice(index,1);
         if (this.focus > index) { this.moveFocusTo(this.focus-1) }
@@ -1270,7 +1270,7 @@ GemsePEditor.prototype = {
      * @returns {EquationEnv} the new equation environment
      */
     newEquation: function (equation) {
-        if (!this.equationTemplate) { throw "No equation template defined" }
+        if (!this.equationTemplate) { throw new Error("No equation template defined") }
         // Create the equation if not given
         if (!equation) {
             equation = this.equationTemplate.cloneNode(true);
@@ -1349,7 +1349,7 @@ GemsePEditor.prototype = {
 
         for (var i=0; i<mathElements.length; i++) {
             if (mathElements[i].localName != "math" || mathElements[i].namespaceURI != "http://www.w3.org/1998/Math/MathML") {
-                throw "The element you load should be a math element in the MathML namespace";
+                throw new Error("The element you load should be a math element in the MathML namespace");
             }
 
             // Create new environment using a deep copy
@@ -1374,7 +1374,7 @@ GemsePEditor.prototype = {
      */
     loadFromOpenDocument: function(doc,element) {
         if (element.localName != "math" || element.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
-            throw "The element you load should be a math element in the MathML namespace";
+            throw new Error("The element you load should be a math element in the MathML namespace");
         }
 
         // Create new environment using a deep copy
@@ -1578,7 +1578,7 @@ CommandHandler.prototype = {
 
         /* Eat */
         if (this.pos < 1) {
-            throw "pos must be at least 1 here";
+            throw new Error("pos must be at least 1 here");
         }
         this.editor.eatInput(this.pos);
 
@@ -1593,7 +1593,7 @@ CommandHandler.prototype = {
     scanRepeating: function() {
         // Fetch digits at the beginning. The first digit must not
         // be a 0.
-        if (this.pos > 0) { throw "scanRepeating requires pos to be 0"; }
+        if (this.pos > 0) { throw new Error("scanRepeating requires pos to be 0"); }
         var matchRes = this.buffer.match(this.repeatingRegex);
         if (matchRes) {
             this.instance.repeat = parseInt(matchRes[1]);
@@ -1684,7 +1684,7 @@ CommandHandler.prototype = {
                     if (commandInfo.argument=="none") {
                         if (matchRes[5]) {
                             // Throw error since the user provided argument anyway
-                            throw "No argument expected";
+                            throw new Error("No argument expected");
                         }
                         else {
                             // move pos behind newline since no
@@ -1693,7 +1693,7 @@ CommandHandler.prototype = {
                         }
                     }
                     else if (commandInfo.argument!="newlineTerminated" && commandInfo.argument!="parameters") {
-                        throw "Error in command table"
+                        throw new Error("Error in command table")
                     }
                     this.instance.command     = command;
                     this.instance.commandInfo = commandInfo;
@@ -1706,7 +1706,7 @@ CommandHandler.prototype = {
                 }
             }
             else {
-                throw "Unsupported command table entry type: " + commandInfo.type + " (for command " + command + ")" ; //TODO
+                throw new Error("Unsupported command table entry type: " + commandInfo.type + " (for command " + command + ")" ); //TODO
             }
         }
         // Since the loop terminated, command is not yet complete
@@ -1732,7 +1732,7 @@ CommandHandler.prototype = {
             parameterStringList.forEach(function(s) {
                 var equalSignIndex = s.indexOf("="); // Counting UTF16 characters
                 if (equalSignIndex == -1) {
-                    throw "Invalid parameter syntax";
+                    throw new Error("Invalid parameter syntax");
                 }
                 parameters[s.slice(0,equalSignIndex)] = s.slice(equalSign+1);
             });
@@ -1774,17 +1774,17 @@ CommandHandler.prototype = {
         }
         else if (this.instance.commandInfo.argument=="regex") {
             // TODO
-            throw "regex not yet supported";
+            throw new Error("regex not yet supported");
         }
         else if (this.instance.commandInfo.argument=="selection") {
             // If selection is aleady set, we are done
             if (!this.selection) {
                 // TODO
-                throw "Selection by argument is not yet supported";
+                throw new Error("Selection by argument is not yet supported");
             }
         }
         else {
-            throw "Unknown argument type: " + this.instance.commandInfo.argument;
+            throw new Error("Unknown argument type: " + this.instance.commandInfo.argument);
         }
         
         this.instance.argument = argument;
@@ -1900,7 +1900,7 @@ CommandInstance.prototype = {
     execute: function() {
         var result;
         if (!this.isReadyToExecute) {
-            throw "This command instance is not ready to be executed!"
+            throw new Error("This command instance is not ready to be executed!")
         }
         for (var i = 0; i < this.externalRepeat; ++i) {
             if (this.executionHandler) {

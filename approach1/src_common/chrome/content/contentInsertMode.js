@@ -142,7 +142,7 @@ ContentInsertMode.prototype = {
                 this.putElement(newElement, false);
             }
             else {
-                throw "I don't know what to do with " + c + ", it seems not to be a digit or an identifier.";
+                throw new Error("I don't know what to do with " + c + ", it seems not to be a digit or an identifier.");
             }
 
             this.forceNewElement = false;

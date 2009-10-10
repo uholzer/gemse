@@ -79,7 +79,7 @@ VisualSelectionMode.prototype = {
                 return -1
             }
         }
-        throw "Never reached!";
+        throw new Error("Never reached!");
     },
     inputHandler: function() {
         var instance = this.commandHandler.parse();
@@ -118,7 +118,7 @@ VisualSelectionMode.prototype = {
                 this.dispatch()
             }
             else {
-                throw "Command not found";
+                throw new Error("Command not found");
                 return false;
             }*/
         }

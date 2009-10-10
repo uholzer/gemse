@@ -291,7 +291,7 @@ function editModeCommand_undo(mode,instance) {
     // The glorious undo
     mode.hideCursor();
     if (!mode.equationEnv.history.goBack(mode.equationEnv)) {
-        throw "undo failed";
+        throw new Error("undo failed");
     }
     return true;
 }
@@ -300,7 +300,7 @@ function editModeCommand_redo(mode,instance) {
     // The inverse of the glorious undo
     mode.hideCursor();
     if (!mode.equationEnv.history.goForward(mode.equationEnv)) {
-        throw "redo failed";
+        throw new Error("redo failed");
     }
     return true;
 }
@@ -324,7 +324,7 @@ function editModeCommand_delete(mode,instance) {
     var from = instance.selection.startElement; // \ Those two must be siblings, in the right order!
     var to = instance.selection.endElement;     // /
     if (!(from && to)) {
-        throw "Delete wants a startElement and an endElement in the selection!";
+        throw new Error("Delete wants a startElement and an endElement in the selection!");
     }
     var parentOfTargets = instance.selection.startElement.parentNode;
     // Copy the elements we are going to delete
@@ -348,7 +348,7 @@ function editModeCommand_change(mode,instance) {
     var from = instance.selection.startElement; // \ Those two must be siblings, in the right order!
     var to = instance.selection.endElement;     // /
     if (!(from && to)) {
-        throw "Change wants a startElement and an endElement in the selection!";
+        throw new Error("Change wants a startElement and an endElement in the selection!");
     }
     var parentOfTargets = instance.selection.startElement.parentNode;
     // Copy elements to be changed to register
@@ -463,7 +463,7 @@ function editModeCommand_export(mode, instance) {
         delete request;
     }
     else {
-        throw "Unknown exporter: " + instance.argument;
+        throw new Error("Unknown exporter: " + instance.argument);
     }
 
     // Create new document, since cleanSubtreeOfDocument requires
@@ -510,7 +510,7 @@ function editModeCommand_load(mode, instance) {
 }
 function editModeCommand_loadById(mode, instance) {
     var inf = instance.argument.match(/^(\S+)\s(.*)$/);
-    if (!inf) { throw "Wrong argument format" }
+    if (!inf) { throw new Error("Wrong argument format") }
     var uri = inf[1];
     var id = inf[2];
     mode.editor.loadURI(uri, id);
@@ -518,7 +518,7 @@ function editModeCommand_loadById(mode, instance) {
 }
 function editModeCommand_loadByXPath(mode, instance) {
     var inf = instance.argument.match(/^(\S+)\s(.*)$/);
-    if (!inf) { throw "Wrong argument format" }
+    if (!inf) { throw new Error("Wrong argument format") }
     var uri = inf[1];
     var xpathString = inf[2];
     mode.editor.loadURI(uri,null,xpathString);
@@ -592,7 +592,7 @@ function editModeCommand_help(mode, instance) {
             window.open(elementDescriptions[args[1]].help, "_blank");
         }
         else {
-            throw "No description found for element " + args[1];
+            throw new Error("No description found for element " + args[1]);
         }
     }
     else {
@@ -649,7 +649,7 @@ function editModeCommand_putIn(mode,instance) {
 
 function editModeCommand_unwrap(mode,instance) {
     if (mode.cursor==mode.equationEnv.equation) {
-        throw "Unwrap can not be used on root element."
+        throw new Error("Unwrap can not be used on root element.")
     }
     var toBeRemoved = mode.cursor;
     var parentNode = toBeRemoved.parentNode;
@@ -766,7 +766,7 @@ function editModeCommand_set(mode, instance) {
     // TODO: Use parameter parsing facility from the CommandHandler
     // instead of doing our own. Problem: set global?
     var args = instance.argument.match(/^(global )?([^=\s]+)(=(.*))?$/);
-    if (!args) { throw "I do not understand " + instance.argument; }
+    if (!args) { throw new Error("I do not understand " + instance.argument); }
     var global = args[1];
     var key = args[2];
     var value = args[4];

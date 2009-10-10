@@ -173,7 +173,7 @@ function doc_createCommandTable(sortedBy) {
             return 0;
         }
         else {
-            throw "Unknown sort key: " + sortedBy;
+            throw new Error("Unknown sort key: " + sortedBy);
         }
         if (aKey < bKey) return -1;
         else if (aKey > bKey) return 1;
