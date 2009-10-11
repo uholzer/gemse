@@ -397,6 +397,32 @@
     the register which is always one unicode character.</p>
 </div>
 
+<h3>Options</h3>
+
+<div class="commandDocumentation" id="editModeCommand_set">
+    <h4 class="commandTitle">set an option</h4>
+
+    <p>When you call this command with just the name of an option as
+    argument, it shows you the current value of the option. For
+    example
+    <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> detailedErrors&enter;</kbd>
+    shows you the value of the option <code>detailedErrors</code>.
+    If you want to set an option, put an equal sign after the name of
+    the option and then the value. For example
+    <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> detailedErrors=off&enter;</kbd>
+    sets the option <code>detailedErrors</code> to
+    <code>off</code>.</p>
+
+    <p>Do not place whitespaces before or
+    after the equal sign that are not part of the value of the option.
+    You do not need to escape special characters, since everything
+    after the equal sign up to the <kbd>&enter;</kbd> is considered
+    part of the option value. Currently, it is not possible to set
+    an option to a value that contains newline characters. For example 
+    <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> SourceView.indentation=&space;&space;&enter;</kbd>
+    causes the source view to use two spaces for indentation.</p>
+</div>
+
 </div>
 </body>
 </html>
