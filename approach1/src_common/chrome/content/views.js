@@ -154,7 +154,22 @@ SourceView.prototype = {
         var pre = document.createElementNS(NS_HTML,"pre");
         this.viewport.appendChild(pre);
         var root = this.equationEnv.equation;
-        this.writeSourceOfElement(root,pre,"",this.o.foldingDepth);
+        var startIndentation = "";
+        if (this.o.foldingStart < 1 && this.equationEnv.mode.contextNode) {
+            var root = this.equationEnv.mode.contextNode;
+            // Find the node that will become the root node in our view
+            for (var i=0; i>this.o.foldingStart && root!=this.equationEnv.equation; --i) {
+                root = root.parentNode;
+            }
+            // If we preserver indentation, find out how much the root
+            // has to be indented.
+            if (this.o.foldingKeepIndentation) {
+                for (var e=root; e!=this.equationEnv.equation; e=e.parentNode) {
+                     startIndentation += this.o.indentation
+                }
+            }
+        }
+        this.writeSourceOfElement(root,pre,startIndentation,this.o.foldingDepth);
     },
     /**
      * Writes the source for of an element to the document.
@@ -167,7 +182,7 @@ SourceView.prototype = {
      */
     writeSourceOfElement: function(src,dest,indentString,foldingLevel) {
         // Collect options
-        var indentMoreString = indentString + "  ";
+        var indentMoreString = indentString + this.o.indentation;
         var highlight = this.o.syntaxHighlighting;
         var showAttributes = this.o.showAttributes;
         const TAGTYPE_BOTH  = 0;
@@ -204,18 +219,18 @@ SourceView.prototype = {
             // Element contains children
             elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_START,src));
-            elementSpan.appendChild(document.createTextNode("\n"));
             var child = mml_firstChild(src);
             if (foldingLevel != 0) {
+                elementSpan.appendChild(document.createTextNode("\n"));
                 while (child) {
                     this.writeSourceOfElement(child,elementSpan,indentMoreString,foldingLevel-1);
                     child = mml_nextSibling(child);
                 }
+                elementSpan.appendChild(document.createTextNode(indentString));
             }
             else {
                 elementSpan.appendChild(contentPlaceholder(src));
             }
-            elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_END,src));
             elementSpan.appendChild(document.createTextNode("\n"));
         }
@@ -355,6 +370,33 @@ SourceView.gemseOptions = {
         parser: OptionsAssistant.parsers.number_integer,
         setter: function(o,value) {
             o.foldingDepth = this.parser(value);
+        }
+    },
+    "SourceView.foldingStart": {
+        localToClass: SourceView,
+        defaultValue: "1",
+        validator: OptionsAssistant.validators.number_integer,
+        parser: OptionsAssistant.parsers.number_integer,
+        setter: function(o,value) {
+            o.foldingStart = this.parser(value);
+        }
+    },
+    "SourceView.indentation": {
+        localToClass: SourceView,
+        defaultValue: "    ",
+        validator: function(value) { return true },
+        parser: function(value) { return value },
+        setter: function(o,value) {
+            o.indentation = this.parser(value);
+        }
+    },
+    "SourceView.foldingKeepIndentation": {
+        localToClass: SourceView,
+        defaultValue: "yes",
+        validator: OptionsAssistant.validators.truthVal,
+        parser: OptionsAssistant.parsers.truthVal,
+        setter: function(o,value) {
+            o.foldingKeepIndentation = this.parser(value);
         }
     },
 }
