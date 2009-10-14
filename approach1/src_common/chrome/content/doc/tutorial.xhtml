@@ -1710,6 +1710,266 @@ as well, because constructing a view can take too much time on slow
 machines and deactivating a view should be a way to speed up
 things.</p>
 
+<h2>Set your settings</h2>
+
+<p>Many aspects of the behaviour of Gemse can be configured (without messing around in
+the source code). The command <code>:set</code> is used to set
+options. Here you will see some options and their effect. We take
+<code>doc/example02.xml</code> for the equation. Again, the
+screenshots here only show the relevant views.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow internal:selected="parent">
+        <munderover internal:selected="editcursor">
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+            <mi>n</mi>
+        </munderover>
+        <msub><mi>a</mi><mi>i</mi></msub>
+    </mrow>
+    <mo>+</mo>
+    <mroot>
+        <mrow>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mi>b</mi>
+        </mrow>
+        <mi>3</mi>
+    </mroot>
+    <mo>+</mo>
+    <mfenced open="&lt;" close="&gt;" separators=",">
+        <mi>a</mi>
+        <mi>b</mi>
+    </mfenced>
+</mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element">&lt;math&gt;
+<html:span class="element">    &lt;mrow&gt;
+<html:span class="element" internal:selected="parent">        &lt;mrow&gt;
+<html:span class="element" internal:selected="editcursor">            &lt;munderover&gt;
+<html:span class="element">                &lt;mo&gt;∑&lt;/mo&gt;
+</html:span><html:span class="element">                &lt;mrow&gt;
+<html:span class="element">                    &lt;mi&gt;i&lt;/mi&gt;
+</html:span><html:span class="element">                    &lt;mo&gt;=&lt;/mo&gt;
+</html:span><html:span class="element">                    &lt;mn&gt;1&lt;/mn&gt;
+</html:span>                &lt;/mrow&gt;
+</html:span><html:span class="element">                &lt;mi&gt;n&lt;/mi&gt;
+</html:span>            &lt;/munderover&gt;
+</html:span><html:span class="element">            &lt;msub&gt;
+<html:span class="element">                &lt;mi&gt;a&lt;/mi&gt;
+</html:span><html:span class="element">                &lt;mi&gt;i&lt;/mi&gt;
+</html:span>            &lt;/msub&gt;
+</html:span>        &lt;/mrow&gt;
+</html:span><html:span class="element">        &lt;mo&gt;+&lt;/mo&gt;
+</html:span><html:span class="element">        &lt;mroot&gt;
+<html:span class="element">            &lt;mrow&gt;
+<html:span class="element">                &lt;msup&gt;
+<html:span class="element">                    &lt;mi&gt;x&lt;/mi&gt;
+</html:span><html:span class="element">                    &lt;mn&gt;2&lt;/mn&gt;
+</html:span>                &lt;/msup&gt;
+</html:span><html:span class="element">                &lt;mo&gt;+&lt;/mo&gt;
+</html:span><html:span class="element">                &lt;mi&gt;b&lt;/mi&gt;
+</html:span>            &lt;/mrow&gt;
+</html:span><html:span class="element">            &lt;mi&gt;3&lt;/mi&gt;
+</html:span>        &lt;/mroot&gt;
+</html:span><html:span class="element">        &lt;mo&gt;+&lt;/mo&gt;
+</html:span><html:span class="element">        &lt;mfenced&gt;
+<html:span class="element">            &lt;mi&gt;a&lt;/mi&gt;
+</html:span><html:span class="element">            &lt;mi&gt;b&lt;/mi&gt;
+</html:span>        &lt;/mfenced&gt;
+</html:span>    &lt;/mrow&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div></vbox>
+</vbox>
+</div>
+
+<p>Perhaps you want to see the attributes in the source view. Enter
+<kbd>:set SourceView.showAttributes=yes&enter;</kbd> and voilà, here
+they are. The source view has another useful feature: folding. When
+you have a big equation, the source view spans below the window. You
+can fix that by configuring the source view such that it only shows an
+extract of the source. Enter <kbd>:set SourceView.foldingDepth=3&enter;</kbd>. 
+Now the source view only shows
+the elements three levels deep. Does an element at the third level,
+like the <code>munderover</code> contain children, they are replaced
+by <code>...</code>.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow internal:selected="parent">
+        <munderover internal:selected="editcursor">
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+            <mi>n</mi>
+        </munderover>
+        <msub><mi>a</mi><mi>i</mi></msub>
+    </mrow>
+    <mo>+</mo>
+    <mroot>
+        <mrow>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mi>b</mi>
+        </mrow>
+        <mi>3</mi>
+    </mroot>
+    <mo>+</mo>
+    <mfenced open="&lt;" close="&gt;" separators=",">
+        <mi>a</mi>
+        <mi>b</mi>
+    </mfenced>
+</mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element"><html:span>&lt;math display="block" id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML"&gt;</html:span>
+<html:span class="element">    <html:span>&lt;mrow&gt;</html:span>
+<html:span class="element" internal:selected="parent">        <html:span>&lt;mrow&gt;</html:span>
+<html:span class="element" internal:selected="editcursor">            <html:span>&lt;munderover&gt;</html:span>...&lt;/munderover&gt;
+</html:span><html:span class="element">            <html:span>&lt;msub&gt;</html:span>...&lt;/msub&gt;
+</html:span>        &lt;/mrow&gt;
+</html:span><html:span class="element">        <html:span>&lt;mo&gt;</html:span>+&lt;/mo&gt;
+</html:span><html:span class="element">        <html:span>&lt;mroot&gt;</html:span>
+<html:span class="element">            <html:span>&lt;mrow&gt;</html:span>...&lt;/mrow&gt;
+</html:span><html:span class="element">            <html:span>&lt;mi&gt;</html:span>3&lt;/mi&gt;
+</html:span>        &lt;/mroot&gt;
+</html:span><html:span class="element">        <html:span>&lt;mo&gt;</html:span>+&lt;/mo&gt;
+</html:span><html:span class="element">        <html:span>&lt;mfenced close="&gt;" open="&lt;" separators=","&gt;</html:span>
+<html:span class="element">            <html:span>&lt;mi -moz-math-font-style="italic"&gt;</html:span>a&lt;/mi&gt;
+</html:span><html:span class="element">            <html:span>&lt;mi -moz-math-font-style="italic"&gt;</html:span>b&lt;/mi&gt;
+</html:span>        &lt;/mfenced&gt;
+</html:span>    &lt;/mrow&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div></vbox>
+</vbox>
+</div>
+
+<p>Unfortunately, there is no way to see the children of the
+<code>munderover</code> anymore, even moving the cursor to one of its
+children won't help. Here comes another option into play. Set it with 
+<kbd>:set SourceView.foldingStart=-1&enter;</kbd>. This causes the
+view to begin with the element that is the parent of the element under
+the cursor. (Using <code>-2</code> as value, the view would begin at
+the grandparent, for <code>-3</code> at the grandgrandparent and so
+on.)</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow internal:selected="parent">
+        <munderover internal:selected="editcursor">
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+            <mi>n</mi>
+        </munderover>
+        <msub><mi>a</mi><mi>i</mi></msub>
+    </mrow>
+    <mo>+</mo>
+    <mroot>
+        <mrow>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mi>b</mi>
+        </mrow>
+        <mi>3</mi>
+    </mroot>
+    <mo>+</mo>
+    <mfenced open="&lt;" close="&gt;" separators=",">
+        <mi>a</mi>
+        <mi>b</mi>
+    </mfenced>
+</mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="parent">        <html:span>&lt;mrow&gt;</html:span>
+<html:span class="element" internal:selected="editcursor">            <html:span>&lt;munderover&gt;</html:span>
+<html:span class="element">                <html:span>&lt;mo&gt;</html:span>∑&lt;/mo&gt;
+</html:span><html:span class="element">                <html:span>&lt;mrow&gt;</html:span>
+<html:span class="element">                    <html:span>&lt;mi -moz-math-font-style="italic"&gt;</html:span>i&lt;/mi&gt;
+</html:span><html:span class="element">                    <html:span>&lt;mo&gt;</html:span>=&lt;/mo&gt;
+</html:span><html:span class="element">                    <html:span>&lt;mn&gt;</html:span>1&lt;/mn&gt;
+</html:span>                &lt;/mrow&gt;
+</html:span><html:span class="element">                <html:span>&lt;mi -moz-math-font-style="italic"&gt;</html:span>n&lt;/mi&gt;
+</html:span>            &lt;/munderover&gt;
+</html:span><html:span class="element">            <html:span>&lt;msub&gt;</html:span>
+<html:span class="element">                <html:span>&lt;mi -moz-math-font-style="italic"&gt;</html:span>a&lt;/mi&gt;
+</html:span><html:span class="element">                <html:span>&lt;mi -moz-math-font-style="italic"&gt;</html:span>i&lt;/mi&gt;
+</html:span>            &lt;/msub&gt;
+</html:span>        &lt;/mrow&gt;
+</html:span></html:pre></html:div></vbox>
+</vbox>
+</div>
+
+<p>Now, move the cursor and see what happens. Perhaps you also want to
+do <kbd>:set SourceView.syntaxHighlighting=on&enter;</kbd>. Try
+it and see the effect.</p>
+
+<div class="documentationScreenshot">
+<vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow>
+    <mrow internal:selected="parent">
+        <munderover internal:selected="editcursor">
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+            <mi>n</mi>
+        </munderover>
+        <msub><mi>a</mi><mi>i</mi></msub>
+    </mrow>
+    <mo>+</mo>
+    <mroot>
+        <mrow>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mi>b</mi>
+        </mrow>
+        <mi>3</mi>
+    </mroot>
+    <mo>+</mo>
+    <mfenced open="&lt;" close="&gt;" separators=",">
+        <mi>a</mi>
+        <mi>b</mi>
+    </mfenced>
+</mrow> 
+</math></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="parent">        <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">mrow</html:span><html:span class="syntax">&gt;</html:span></html:span>
+<html:span class="element" internal:selected="editcursor">            <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">munderover</html:span><html:span class="syntax">&gt;</html:span></html:span>
+<html:span class="element">                <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">mo</html:span><html:span class="syntax">&gt;</html:span></html:span><html:span class="contentText">∑</html:span><html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">mo</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span><html:span class="element">                <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">mrow</html:span><html:span class="syntax">&gt;</html:span></html:span>
+<html:span class="element">                    <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">mi</html:span><html:span> <html:span class="attributeName">-moz-math-font-style</html:span><html:span class="syntax">=</html:span><html:span class="syntax">"</html:span><html:span class="attributeValue">italic</html:span><html:span class="syntax">"</html:span></html:span><html:span class="syntax">&gt;</html:span></html:span><html:span class="contentText">i</html:span><html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">mi</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span><html:span class="element">                    <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">mo</html:span><html:span class="syntax">&gt;</html:span></html:span><html:span class="contentText">=</html:span><html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">mo</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span><html:span class="element">                    <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">mn</html:span><html:span class="syntax">&gt;</html:span></html:span><html:span class="contentText">1</html:span><html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">mn</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span>                <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">mrow</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span><html:span class="element">                <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">mi</html:span><html:span> <html:span class="attributeName">-moz-math-font-style</html:span><html:span class="syntax">=</html:span><html:span class="syntax">"</html:span><html:span class="attributeValue">italic</html:span><html:span class="syntax">"</html:span></html:span><html:span class="syntax">&gt;</html:span></html:span><html:span class="contentText">n</html:span><html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">mi</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span>            <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">munderover</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span><html:span class="element">            <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">msub</html:span><html:span class="syntax">&gt;</html:span></html:span>
+<html:span class="element">                <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">mi</html:span><html:span> <html:span class="attributeName">-moz-math-font-style</html:span><html:span class="syntax">=</html:span><html:span class="syntax">"</html:span><html:span class="attributeValue">italic</html:span><html:span class="syntax">"</html:span></html:span><html:span class="syntax">&gt;</html:span></html:span><html:span class="contentText">a</html:span><html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">mi</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span><html:span class="element">                <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="tagName">mi</html:span><html:span> <html:span class="attributeName">-moz-math-font-style</html:span><html:span class="syntax">=</html:span><html:span class="syntax">"</html:span><html:span class="attributeValue">italic</html:span><html:span class="syntax">"</html:span></html:span><html:span class="syntax">&gt;</html:span></html:span><html:span class="contentText">i</html:span><html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">mi</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span>            <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">msub</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span>        <html:span class="tag"><html:span class="syntax">&lt;</html:span><html:span class="syntax">/</html:span><html:span class="tagName">mrow</html:span><html:span class="syntax">&gt;</html:span></html:span>
+</html:span></html:pre></html:div></vbox>
+</vbox>
+</div>
+
+<p>Note that options that can be set either to <code>true</code> or
+<code>false</code>, also allow the values <code>yes</code>,
+<code>on</code>, <code>1</code> which are handled as
+<code>true</code> and <code>no</code>, <code>off</code>,
+<code>0</code> which are handled as <code>false</code>.</p>
+
+<p>Of course, gemse has <a href="options.xhtml">many more options</a>.</p>
+
 <h2>Working with Content MathML</h2>
 
 <p>Gemse has limited support for Content MathML. You work with it the
