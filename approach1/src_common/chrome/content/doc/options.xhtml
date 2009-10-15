@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html [
+  <!ENTITY  enter  "↵">
+  <!ENTITY  tab    "TAB">
+  <!ENTITY  esc    "ESC">
+  <!ENTITY  ctrl   "CRTL+">
+  <!ENTITY  alt    "ALT+">
+  <!ENTITY  space  "␣">
+]>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    internal:function="documentation"
+    xml:lang="en"
+>
+
+<head>
+    <title>Options</title>
+    <link rel="stylesheet" href="../gemse.css" type="text/css" />
+</head>
+
+<body>
+
+<h1>Options</h1>
+
+<p>In the following table, <q>truth value</q> denotes
+<code>true</code> (<code>on</code>, <code>yes</code>, <code>1</code>
+are treated as synonyms) and <code>false</code> (<code>off</code>,
+<code>no</code>, <code>0</code> are treated as synonyms).</p>
+
+<table>
+<thead>
+<tr>
+    <th>Option name</th>
+    <th>Accepted values</th>
+    <th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td><code>currentInsertMode</code></td>
+    <td><code>trivial</code>, <code>ucd</code>, <code>content</code>, additional ones if further insert modes are present</td>
+    <td>When switching to insert mode, this insert mode will be chosen.
+    The edit mode has a command that quickly switches along insert modes
+    (usually <kbd>&tab;</kbd>). All this command does is changing this
+    option.</td>
+</tr>
+<tr>
+    <td><code>detailedErrors</code></td>
+    <td>truth value</td>
+    <td>When activated, shows a stack backtrace along with error
+    messages. This is very useful for developers to locate a bug in
+    Gemse.</td>
+</tr>
+<tr>
+    <td><code>pragmaticContent</code></td>
+    <td>truth value</td>
+    <td>When activated, pragmatic content is used where possible. This
+    affects mostly the content insert mode that is able to generate
+    both, pragmatic and strict content MathML in some cases. If set to
+    false, content MathML will be prefered.</td>
+</tr>
+<tr>
+    <td><code>selectableInsertModes</code></td>
+    <td>A comma seperated list (no whitespaces before and after
+    commas) of values <code>trivial</code>, <code>ucd</code>,
+    <code>content</code>, additional ones if further insert modes are present</td>
+    <td>In edit mode, there is a command to quickly switch the insert
+    mode (usually bound to <kbd>&tab;</kbd>). This command only switches
+    to insert modes listed in this option.</td>
+</tr>
+<tr>
+    <td><code>SourceView.foldingDepth</code></td>
+    <td><code>-1</code> or any bigger integer</td>
+    <td>The source view only shows elements to this depth, relative to
+    the element where the view starts. The special value <code>-1</code> causes
+    the source view to show all elements from the starting point to
+    the leaves.</td>
+</tr>
+<tr>
+    <td><code>SourceView.foldingStart</code></td>
+    <td><code>1</code>, <code>0</code> or any negative integer</td>
+    <td>When set to <code>0</code>, the source view starts at the
+    element under the cursor. If set to -n, it starts at the n-th
+    ancestor of the element under the cursor. If set to
+    <code>1</code>, the view starts at the root element of the
+    equation.</td>
+</tr>
+<tr>
+    <td><code>SourceView.foldingKeepIndentation</code></td>
+    <td>truth value</td>
+    <td>When activated, prevents that the indentation level of an
+    element changes when the topmost displayed element of the source
+    view changes.</td>
+</tr>
+<tr>
+    <td><code>SourceView.indentation</code></td>
+    <td>a string</td>
+    <td>The SourceView puts this string at the beginning of every line
+    as many times as the level of indentation.</td>
+</tr>
+<tr>
+    <td><code>SourceView.showAttributes</code></td>
+    <td>truth values</td>
+    <td>Controls wheter attributes are shown in the source view.</td>
+</tr>
+<tr>
+    <td><code>SourceView.syntaxHighlighting</code></td>
+    <td>truth value</td>
+    <td>Activates special styling of the syntax in the source view. The
+    styling itself is controlled in the CSS file
+    <code>gemse.css</code>.</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+
+</html>
