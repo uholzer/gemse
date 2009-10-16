@@ -123,6 +123,12 @@ html|table {
 
 /*** MessageView ***/
 
+*[internal|viewClass="MessageView"] {
+    min-height: 8ex;
+}
+*[internal|viewClass="MessageView"]:empty {
+    min-height: 0;
+}
 *[internal|viewClass="MessageView"] *.error {
     color: red;
 }
