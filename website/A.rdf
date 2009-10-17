@@ -14,7 +14,7 @@
     <agv:licenseCategory rdf:resource="http://u.andonyar.com/ageneralvoc/LicenseFree"/>
     <!-- or LicenseFree, LicensePublicDomain -->
     <dcterms:rightsHolder>Urs Holzer</dcterms:rightsHolder>
-    <dcterms:dateCopyrighted>2009-08-16</dcterms:dateCopyrighted>
+    <dcterms:dateCopyrighted>2009-10-18</dcterms:dateCopyrighted>
 
     <dc:creator>Urs Holzer</dc:creator>
 
@@ -27,7 +27,7 @@ its semantics. It is highly inspired by the text editor vi.</dc:description>
     <!--<dc:subject></dc:subject>-->
 
     <dcterms:created>2008-12-24</dcterms:created>
-    <dcterms:modified>2009-08-16</dcterms:modified>
+    <dcterms:modified>2009-10-18</dcterms:modified>
 
   </rdf:Description>
 
@@ -57,12 +57,12 @@ its semantics. It is highly inspired by the text editor vi.</doap:description>
             <doap:location rdf:resource="http://www.andonyar.com/rec/2008-12/gemse/repo/gemse_public.git"/>
         </doap:GitRepository>
     </doap:repository>
-    <progress:progress>0.8</progress:progress>
+    <progress:progress>0.9</progress:progress>
     <doap:release>
         <doap:Version>
             <doap:name>alpha</doap:name>
-            <doap:created>2009-08-02</doap:created>
-            <doap:revision>1.0.8</doap:revision>
+            <doap:created>2009-10-18</doap:created>
+            <doap:revision>1.0.9</doap:revision>
         </doap:Version>
     </doap:release>
   </doap:Project>
