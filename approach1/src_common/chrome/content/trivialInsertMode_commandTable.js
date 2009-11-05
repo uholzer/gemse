@@ -63,91 +63,91 @@ trivialInsertModeCommands = {
         implementation: function trivialInsertModeCommand_mtext (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mtext") }
     },
     " ": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_mrow (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mrow") }
     },
     "/": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_mfrac (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mfrac") }
     },
     "e": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_menclose (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"menclose") }
     },
     "r": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_msqrt (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msqrt") }
     },
     "R": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_mroot (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mroot") }
     },
     "f": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_mfenced (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mfenced") }
     },
     "^": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_msup (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msup") }
     },
     "_": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_msub (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msub") }
     },
     "=": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_msubsup (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msubsup") }
     },
     "u": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_munder (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munder") }
     },
     "v": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_mover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mover") }
     },
     "U": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_munderover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munderover") }
     },
     "m": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_mmultiscripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mmultiscripts") }
     },
     ".": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_none (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"none") }
     },
     "p": {
-        type: "instance",
+        type: "command",
         repeating: "external",
         argument: "none",
         implementation: function trivialInsertModeCommand_mprescripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mprescripts") }
