@@ -85,6 +85,11 @@ contentInsertModeCommands[KEYMOD_CONTROL + ","] = {
     argument: "none",
     implementation: contentInsertModeCommand_forceNewElement
 }
+contentInsertModeCommands[String.fromCharCode(0x08)] = { // Backspace
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_killPrevious
+}
 contentInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
     type: "command",
     argument: "none",

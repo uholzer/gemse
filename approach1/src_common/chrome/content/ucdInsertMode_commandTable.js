@@ -1,8 +1,8 @@
 
 // Are we allowed to steal methods from trivial insert mode? Hmm,
 // we do without asking. However, this asks for problems, but it
-// should work as long as our putElement is compatible with the
-// one from trivial mode.
+// should work as long as our putElement and cursor/moveCursor are 
+// compatible with the ones from trivial mode.
 
 ucdInsertModeCommandOptions = {
     repeating: false, // Must be false, since digits have to be treated as tokens!
@@ -137,6 +137,11 @@ ucdInsertModeCommands[KEYMOD_CONTROL + ","] = {
     type: "command",
     argument: "none",
     implementation: ucdInsertModeCommand_forceNewElement
+}
+ucdInsertModeCommands[String.fromCharCode(0x08)] = { // Backspace
+    type: "command",
+    argument: "none",
+    implementation: trivialInsertModeCommand_killPrevious
 }
 ucdInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
     type: "command",

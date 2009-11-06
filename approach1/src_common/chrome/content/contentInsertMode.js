@@ -311,6 +311,47 @@ function contentInsertModeCommand_cursorJump(mode,instance) {
     return true;
 }
 
+function contentInsertModeCommand_killPrevious(mode) {
+    var toRemove = [];
+    var precedingElement;
+    if (mode.cursor.beforeElement) {
+        precedingElement = mml_previousSibling(mode.cursor.beforeElement);
+    }
+    else {
+        precedingElement = mml_lastChild(mode.cursor.inElement);
+    }
+
+    if (precedingElement) {
+        if (mode.cursor.numberOfElementsToSurround > 0) {
+            // If the user has surrounded any elements, he wants to
+            // kill them all
+            var pos = precedingElement;
+            for (var i=1; i <= mode.cursor.numberOfElementsToSurround; i++) {
+                toRemove.push(pos);
+                pos = mml_previousSibling(pos); // Exists for shure
+            }
+        }
+        else {
+            toRemove.push(precedingElement);
+        }
+        mode.moveCursor({
+            beforeElement: mode.cursor.beforeElement,
+            inElement: mode.cursor.inElement,
+            numberOfElementsToSurround: 0
+        });
+    }
+    else {
+        toRemove.push(mode.cursor.inElement);
+        mode.moveCursor({
+            beforeElement: mml_nextSibling(mode.cursor.inElement),
+            inElement: mml_parent(mode.cursor.inElement),
+            numberOfElementsToSurround: 0
+        });
+    }
+    toRemove.forEach(function (e) { e.parentNode.removeChild(e) });
+    return true;
+}
+
 
 function contentInsertModeCommand_exit(mode) {
     mode.finish();

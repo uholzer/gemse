@@ -183,6 +183,12 @@ trivialInsertModeCommands = {
         implementation: trivialInsertModeCommand_oneLessToSurround
     },
 }
+trivialInsertModeCommands[String.fromCharCode(0x08)] = { // Backspace
+    type: "command",
+    repeating: "external",
+    argument: "none",
+    implementation: trivialInsertModeCommand_killPrevious
+}
 trivialInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
     type: "command",
     repeating: "prevent",
