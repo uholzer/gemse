@@ -135,10 +135,10 @@ EditMode.prototype = {
         this.hideCursor();
         this.infoAboutCalledMode = {
             change: manualChange || this.equationEnv.history.createChange(),
-            changeElement: manualChangeElement || cursorInElement
+            changeElement: manualChangeElement || this.equationEnv.equation
         };
         if (!manualChange) {
-            this.infoAboutCalledMode.change.recordBefore(this.equationEnv.equation,cursorInElement);
+            this.infoAboutCalledMode.change.recordBefore(this.equationEnv.equation,this.infoAboutCalledMode.changeElement);
         }
         var editModeClass = this.o.insertMode;
         var newMode = new editModeClass(this.editor, this.equationEnv, cursorInElement, cursorBeforeElement);
