@@ -1167,9 +1167,11 @@ GemsePEditor.prototype = {
         // if the key does not cause a character to be entered
         // into the input element (i.e. the input buffer).
 
-        if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT }
-        if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL }
+        var nondefault = false;
+        if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT; nondefault=true; }
+        if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL; nondefault=true; }
         //if (event.metaKey) { editor.inputBuffer += KEYMOD_META }
+        /*
         if (event.charCode || event.keyCode) {
             editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
                 // event.which does not seem to work, it returns 0 for the escape Key
@@ -1178,6 +1180,16 @@ GemsePEditor.prototype = {
         event.preventDefault();
         event.stopPropagation();
         editor.inputEvent();
+        */
+        if (nondefault || ((!event.charCode) && event.keyCode)) {
+            editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
+                // event.which does not seem to work, it returns 0 for the escape Key
+            event.preventDefault();
+            event.stopPropagation();
+            if (!editor.globalI) { editor.globalI = 1 }
+            editor.showMessage('called inputEvent(), ' + (editor.globalI++));
+            editor.inputEvent();
+        }
     },
     /** 
      * Content of the input buffer
