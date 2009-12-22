@@ -833,10 +833,20 @@ NTNView.prepareNTN = function() {
     ];
 
     //Get extension folder installation path...  
-    var extensionPath = Components.classes["@mozilla.org/extensions/manager;1"].  
-                getService(Components.interfaces.nsIExtensionManager).  
-                getInstallLocation("Gemse@andonyar.com"). // guid of extension  
-                getItemLocation("Gemse@andonyar.com");  
+    try {
+        var extensionPath = Components.classes["@mozilla.org/extensions/manager;1"].  
+                    getService(Components.interfaces.nsIExtensionManager).  
+                    getInstallLocation("Gemse@andonyar.com"). // guid of extension  
+                    getItemLocation("Gemse@andonyar.com");  
+    }
+    catch (e) {
+        // In a XULRunner application, Gemse is not an exstension. So
+        // if the above fails, we try to use the directory service.
+        var extensionPath = Components.classes["@mozilla.org/file/directory_service;1"].
+                         getService(Components.interfaces.nsIProperties).
+                         get("CurProcD", Components.interfaces.nsIFile);
+        //XXX: Or should we use XCurProcD?
+    }
 
     var jarBaseURI = "file:///" + extensionPath.path.replace(/\\/g,"/") + "/java/"; 
 
