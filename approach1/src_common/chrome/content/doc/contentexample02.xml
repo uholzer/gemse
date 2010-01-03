@@ -1,0 +1,15 @@
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<bind><csymbol cd="quant1">forall</csymbol>
+  <bvar><ci>A</ci></bvar>
+  <bvar><ci>B</ci></bvar>
+  <apply><csymbol cd="logic1">equivalent</csymbol>
+    <apply>
+      <csymbol cd="logic1">not</csymbol><apply>
+      <csymbol cd="logic1">and</csymbol><ci>A</ci><ci>B</ci></apply>
+    </apply>
+    <apply>
+      <csymbol cd="logic1">or</csymbol>
+    <apply><csymbol cd="logic1">not</csymbol><ci>A</ci></apply><apply><csymbol cd="logic1">not</csymbol><ci>B</ci></apply></apply>
+  </apply>
+</bind>
+</math>
