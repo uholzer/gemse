@@ -882,6 +882,8 @@ NTNView.prepareNTN = function() {
     /*NTNView.javaClasses.List_NotationSource = classLoader.loadClass('java.util.List<org.omdoc.jomdoc.ntn.coll.ntn.NotationSource>');
     NTNView.javaClasses.List_ContextSource  = classLoader.loadClass('java.util.List<org.omdoc.jomdoc.ntn.coll.ntn.ContextSource>');
     NTNView.javaClasses.List_TagSource      = classLoader.loadClass('java.util.List<org.omdoc.jomdoc.ntn.coll.ntn.TagSource>');*/
+    NTNView.javaClasses.IOUtil              = classLoader.loadClass('org.omdoc.jomdoc.util.etc.IOUtil');
+    NTNView.javaClasses.XMLUtil             = classLoader.loadClass('org.omdoc.jomdoc.util.xml.XMLUtil');
 
     NTNView.javaConstructors.Element = NTNView.javaClasses.Element.getConstructor(
         [NTNView.javaClasses.String,NTNView.javaClasses.String]
@@ -895,9 +897,26 @@ NTNView.prepareNTN = function() {
     
     // Prepair notations
     var ntnCollector = NTNView.javaClasses.NotationCollector.newInstance();
-    ntnCollector.addNotationSource(
-        NTNView.javaConstructors.B.newInstance([NTNView.javaClasses.B.getField("MATHML_NTN_DIR").get(null)])
-    );
+    var myB = NTNView.javaConstructors.B.newInstance([NTNView.javaClasses.B.getField("MATHML_NTN_DIR").get(null)])
+    // For JOMDoc versions that are unable to load the bundled
+    // notations, we try to do manually what ntnCollector should have
+    // done
+    if (myB.getNtnFiles().size() == 0) {
+        files = NTNView.javaClasses.IOUtil.getMethod("filesInDir",[NTNView.javaClasses.String]).invoke(null, [NTNView.javaClasses.B.getField("MATHML_NTN_DIR").get(null)]);
+        for (var i=0; i<files.size(); ++i) {
+            var f = NTNView.javaClasses.String.cast(files.get(i));
+            // For some idiotic reason, we can not call f.endsWith() directly, we have
+            // to use reflection.
+            endsWith = NTNView.javaClasses.String.getMethod("endsWith",[NTNView.javaClasses.String]);
+            if (endsWith.invoke(f,[NTNView.javaClasses.IOUtil.getField("EXT_NTN").get(null)]) || endsWith.invoke(f,[NTNView.javaClasses.IOUtil.getField("EXT_OMDOC").get(null)])) {
+                doc = NTNView.javaClasses.XMLUtil.
+                      getMethod("buildDocument", [NTNView.javaClasses.String,java.lang.Class.forName('java.io.InputStream')]).
+                      invoke(null, [null, classLoader.getResourceAsStream(f)]);
+                myB.add(doc);
+            }
+        }
+    }
+    ntnCollector.addNotationSource(myB);
 
     // Prepair renderer
     //The class RendererFactory defines a method "newInstance" which
