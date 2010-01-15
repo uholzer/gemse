@@ -1,0 +1,11 @@
+CTRL+i (a+b)CTRL+hCTRL+hCTRL+hCTRL+hCTRL+h^2
+
+Add option for Input substitution, so it can be deactivated without
+changing the source
+
+Jumping to guessed counterpart of a bracket with %
+
+Command to confirm (error) messages
+
+Command :lint that exposes common errors or weirdnesses in the MathML
+structure. For example use of - instead of &minus; or missin mrows.

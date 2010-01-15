@@ -1,4 +1,13 @@
 /*
+ * This file is part of Gemse.
+ *
+ * Copyright 2009, 2010 Urs Holzer
+ *
+ * Gemse is licenced under the GNU Public Licence v3 (GPL3), 
+ * or (at your option) any later version.
+ */
+
+/*
     This is an insert mode that queries the Unicode Character Database
     in order to decide whether a chracter is an identifier, an operator
     or a number. 

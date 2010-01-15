@@ -1,5 +1,12 @@
 #!/usr/bin/perl
 
+#This file is part of Gemse.
+#
+#Copyright 2009, 2010 Urs Holzer
+#
+#Gemse is licenced under the GNU Public Licence v3 (GPL3), 
+#or (at your option) any later version.
+
 # This script reads a DTD like w3centities-f.ent and writes a list of
 # all entities to entity_table.txt. Every line contains one entity,
 # first its name (not including & and ;), then seperated by tabulator, the

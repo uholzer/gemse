@@ -1,3 +1,12 @@
+/*
+ * This file is part of Gemse.
+ *
+ * Copyright 2009, 2010 Urs Holzer
+ *
+ * Gemse is licenced under the GNU Public Licence v3 (GPL3), 
+ * or (at your option) any later version.
+ */
+
 
 // Are we allowed to steal methods from trivial insert mode? Hmm,
 // we do without asking. However, this asks for problems, but it
