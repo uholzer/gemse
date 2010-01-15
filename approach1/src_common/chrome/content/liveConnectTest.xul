@@ -1,0 +1,421 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="gemse.css" type="text/css"?>
+
+<window
+    id="GemseWindow"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="Gemse LiveConnect test"
+    orient="vertical"
+    onload="init()">
+    <script><![CDATA[
+        function init() {
+            resultElement = document.getElementById("result");
+        }
+        function clear() {
+            while (resultElement.hasChildNodes()) { resultElement.removeChild(resultElement.firstChild) }
+        }
+        function test1() {
+            try {
+                var url = new java.net.URL("http://www.andonyar.com/foobar.xhtml");
+                resultElement.appendChild(document.createTextNode("File part of URL: " + url.getFile() + "\n"));
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test3() {
+            try {
+                resultElement.appendChild(document.createTextNode("maximal value of an Integer: " + java.lang.Integer.MAX_VALUE + "\n"));
+                resultElement.appendChild(document.createTextNode("succceeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test4() {
+            try {
+                resultElement.appendChild(document.createTextNode("'42' is " + java.lang.Integer.decode("42") + "\n"));
+                resultElement.appendChild(document.createTextNode("succceeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test5() {
+            try {
+                var s = java.lang.String.newInstance();
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test6() {
+            try {
+                var s = java.lang.Class.forName("java.lang.String");
+                resultElement.appendChild(document.createTextNode("class of object: " + s.getClass().getName()));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test7() {
+            try {
+                var IntegerClass = java.lang.Class.forName("java.lang.Integer");
+                var max_value = IntegerClass.MAX_VALUE;
+                resultElement.appendChild(document.createTextNode("maximal value of an Integer: " + max_value + "\n"));
+                if (max_value) {
+                    resultElement.appendChild(document.createTextNode("succeeded"));
+                }
+                else {
+                    resultElement.appendChild(document.createTextNode("no error thrown, but bad result"));
+                }
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test8() {
+            try {
+                var class = java.lang.Class.forName("java.lang.String");
+                var object = class.newInstance();
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test9() {
+            try {
+                var class = java.lang.Class.forName("java.net.URL");
+                var constructor = class.getConstructor([java.lang.Class.forName("java.lang.String")]);
+                var object = constructor.newInstance(["http://www.andonyar.com/foobar.xhtml"]);
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test10a() {
+            try {
+                var class = java.lang.Class.forName("java.net.URL");
+                var constructor = class.getConstructor([java.lang.String]);
+                var object = constructor.newInstance(["http://www.andonyar.com/foobar.xhtml"]);
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test10b() {
+            try {
+                var class = java.lang.Class.forName("java.net.URL");
+                var constructor = class.getConstructor([java.lang.String.class]);
+                var object = constructor.newInstance(["http://www.andonyar.com/foobar.xhtml"]);
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+        function test11() {
+            try {
+                var class = java.lang.Class.forName("java.net.URL");
+                var constructor = class.getConstructor([java.lang.Class.forName("java.lang.String")]);
+                var object = constructor.newInstance(["http://www.andonyar.com/foobar.xhtml"]);
+                resultElement.appendChild(document.createTextNode("File part of URL: " + object.getFile() + "\n"));
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+
+        function prepareClassLoader() {
+            var jars = [
+                "",
+                "jomdoc.jar",
+                "lib/AbsoluteLayout.jar",
+                "lib/appframework-1.0.3.jar",
+                "lib/colapi.jar",
+                "lib/collections-generic-4.01.jar",
+                "lib/commons-io-1.4.jar",
+                "lib/cssparser-0.9.5.jar",
+                "lib/isorelax.jar",
+                "lib/isorelax-jaxp-bridge-1.0.jar",
+                "lib/javacc.jar",
+                "lib/junit-4.1.jar",
+                "lib/msv.jar",
+                "lib/relaxngDatatype.jar",
+                "lib/sac.jar",
+                "lib/saxon9-dom.jar",
+                "lib/saxon9.jar",
+                "lib/saxon9-xom.jar",
+                "lib/saxon9-xpath.jar",
+                "lib/swing-layout-1.0.3.jar",
+                "lib/swing-worker-1.1.jar",
+                "lib/xmlunit-1.2.jar",
+                "lib/xom-1.2.3.jar",
+                "lib/xsdlib.jar",
+            ];
+
+            //Get extension folder installation path...  
+            var extensionPath = Components.classes["@mozilla.org/extensions/manager;1"].  
+                        getService(Components.interfaces.nsIExtensionManager).  
+                        getInstallLocation("Gemse@andonyar.com"). // guid of extension  
+                        getItemLocation("Gemse@andonyar.com");  
+
+            var jarBaseURI = "file:///" + extensionPath.path.replace(/\\/g,"/") + "/java/"; 
+            // seems you don't actually have to replace the backslashes as they work as well  
+
+            var urlArray = jars.map(function (path) { return new java.net.URL(jarBaseURI + path) });
+              
+            return java.net.URLClassLoader.newInstance(
+                urlArray,
+                java.lang.Thread.currentThread().getContextClassLoader()
+            );  
+        }
+        
+        function test12() {
+            try {
+                if (prepareClassLoader()) {
+                    resultElement.appendChild(document.createTextNode("succeeded"));
+                }
+                else {
+                    throw "Constructor returned nothing";
+                }
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+
+
+        function test13() {
+            try {
+                var classLoader = prepareClassLoader();
+                var class = classLoader.loadClass("org.omdoc.jomdoc.lang.vernacular.CMP");
+                var object = class.newInstance();
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+
+        function test14() {
+            try {
+                var classLoader = prepareClassLoader();
+                var class = classLoader.loadClass("org.omdoc.jomdoc.lang.vernacular.CMP");
+                var object = new Packages.org.omdoc.jomdoc.lang.vernacular.CMP();
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+
+        function test15() {
+            try {
+                var classLoader = prepareClassLoader();
+                var stream = classLoader.getResourceAsStream("com/andonyar/gemse/security/URLSetPolicy.java");
+                var ReaderClass = java.lang.Class.forName("java.io.InputStreamReader");
+                var reader = ReaderClass.getConstructor([java.lang.Class.forName("java.io.InputStream")]).newInstance([stream]);
+                var BufferedReaderClass = java.lang.Class.forName("java.io.BufferedReader");
+                var breader = BufferedReaderClass.getConstructor([java.lang.Class.forName("java.io.Reader")]).newInstance([reader]);
+                resultElement.appendChild(document.createTextNode("First two lines: \n" + breader.readLine() + "\n" + breader.readLine() + "\n"));
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+
+        function test16() {
+            try {
+                var classLoader = prepareClassLoader();
+                var PolicyClass = classLoader.loadClass("com.andonyar.gemse.security.URLSetPolicy");
+                var policy = PolicyClass.newInstance();
+                policy.setOuterPolicy(java.security.Policy.getPolicy());
+                java.security.Policy.setPolicy(policy);
+                resultElement.appendChild(document.createTextNode("succeeded"));
+            }
+            catch(e) {
+                resultElement.appendChild(document.createTextNode("failed: " + e));
+            }
+        }
+    ]]></script>
+
+<vbox style="overflow: auto" flex="1">
+
+<description>Note that some results depend on the browser version you use.
+In version 3.6 of Firefox certain tests fail that succeed in 3.5.
+The expected results are those produced by 3.6.</description>
+
+<box>
+<grid>
+    <columns>
+        <column/>
+        <column/>
+        <column/>
+    </columns>
+
+    <rows>
+    <row>
+        <button label="new java.*" onclick="test1()"/>
+        <description>Try to use the new operator on a java.*</description>
+        <vbox>
+            <description>expected result</description>
+<html:pre><![CDATA[File part of URL: /foobar.xhtml
+succeeded]]></html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="field of a java.*" onclick="test3()"/>
+        <description>Access a field of a java.* class directly via java.*</description>
+        <vbox>
+            <description>expected result</description>
+<html:pre><![CDATA[maximal value of an Integer: 2147483647
+succceeded]]></html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="method of java.*" onclick="test4()"/>
+        <description>Access a method of a java.* class directly via java.*</description>
+        <vbox>
+            <description>expected result</description>
+<html:pre><![CDATA['42' is 42
+succceeded]]></html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="newInstance on a java.* (default constructor)" onclick="test5()"/>
+        <description>Calls the method newInstance on a java.* in order to create a new instance</description>
+        <vbox>
+            <description>expected result</description>
+            <html:pre>failed: TypeError: java.lang.String.newInstance is not a function</html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="java.lang.Class.forName" onclick="test6()"/>
+        <description>Uses java.lang.Class.forName to get a class and check the type of the result.</description>
+        <vbox>
+            <description>expected result</description>
+            <html:pre>class of object: java.lang.Class</html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="Access method of a class via its object" onclick="test7()"/>
+        <description>Obtains a class object and calls one of its methods as if it were a method of the object.</description>
+        <vbox>
+            <description>expected result</description>
+<html:pre><![CDATA[maximal value of an Integer: undefined
+no error thrown, but bad result]]></html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="constructor of class object" onclick="test8()"/>
+        <description>Obtain and invoke default constructor of a class object</description>
+        <vbox>
+            <description>expected result</description>
+            <html:pre>succeeded</html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="constructor of class object" onclick="test9()"/>
+        <description>Obtain and invoke nondefault constructor of a class object</description>
+        <vbox>
+            <description>expected result</description>
+            <html:pre>succeeded</html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="java.* as class" onclick="test10a()"/>
+        <description>Hand over a java.* to a method that expects a java.lang.Class object</description>
+        <vbox>
+            <description>expected result</description>
+<html:pre><![CDATA[failed: Error calling method on NPObject! [plugin exception: java.lang.IllegalArgumentException: Class sun.plugin2.main.client.MessagePassingJSObject can not be converted to [Ljava.lang.Class;].]]></html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="java.*.class as class" onclick="test10b()"/>
+        <description>Hand over a java.*.class to a method that expects a java.lang.Class object</description>
+        <vbox>
+            <description>expected result</description>
+            <html:pre><![CDATA[failed: java.lang.NoSuchMethodException: java.net.URL.<init>(null)]]></html:pre>
+            <description>According to <html:a href="http://java.sun.com/docs/books/jls/second_edition/html/expressions.doc.html#251530">the 
+            java language specification</html:a> <html:code>class</html:code> is not a
+            field of every class but rather a feature of the java language.
+            Therefore <html:code>java.*.class</html:code> is null.</description>
+        </vbox>
+    </row>
+    <row>
+        <button label="method of object" onclick="test11()"/>
+        <description>Directly call a method of an object</description>
+        <vbox>
+            <description>expected result</description>
+<html:pre><![CDATA[File part of URL: /foobar.xhtml
+succeeded]]></html:pre>
+        </vbox>
+    </row>
+
+    <row>
+        <button label="class loader" onclick="test12()"/>
+        <description>Create URL class loader for JOMDoc libraries</description>
+        <vbox>
+            <description>expected result</description>
+            <html:pre>succeeded</html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="create object using class loader" onclick="test13()"/>
+        <description>Create an instance of a class of JOMDoc obtained using our class loader</description>
+        <vbox>
+            <description>expected result</description>
+            <html:pre>succeeded</html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="Packages.* after loading" onclick="test14()"/>
+        <description>Load a class with the class loader, but later create an instance using new and Packages.*</description>
+        <vbox>
+            <description>expected result</description>
+            <html:pre>failed: java.lang.ClassNotFoundException: org.omdoc.jomdoc.lang.vernacular.CMP</html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="load resource from class loader path" onclick="test15()"/>
+        <description>Read an arbitrary file from the jar of JOMDoc using the class loader</description>
+        <vbox>
+            <description>expected result</description>
+<html:pre><![CDATA[First two lines: 
+/*
+ * 
+succeeded]]></html:pre>
+        </vbox>
+    </row>
+    <row>
+        <button label="Replace policy" onclick="test16()"/>
+        <description>Replace global policy with our own</description>
+        <vbox>
+            <description>expected result</description>
+            <html:pre>succeeeded</html:pre>
+        </vbox>
+    </row>
+    </rows>
+</grid>
+</box>
+
+<groupbox>
+    <caption>Result</caption>
+    <html:pre id="result"></html:pre>
+    <button label="clear" onclick="clear()"/>
+</groupbox>
+
+</vbox>
+
+</window>
