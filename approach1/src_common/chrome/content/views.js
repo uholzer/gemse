@@ -767,3 +767,286 @@ StatusbarView.prototype = {
 }
 ViewsetManager.viewClasses["StatusbarView"] = StatusbarView;
 
+/**
+ * @class Transforms content MathML to presentation MathML using
+ * JOMDoc's notation renderer.
+ */
+function NTNView(editor,equationEnv,viewport) {
+    this.editor = editor;
+    this.equationEnv = equationEnv;
+    this.viewport = viewport;
+
+    try {
+        NTNView.prepareNTN();
+    }
+    catch(e) {
+        this.showError(e);
+    }
+
+    this.classes = NTNView.javaClasses;
+    this.objects = NTNView.javaObjects;
+    this.constructors = NTNView.javaConstructors;
+
+    this.renderer = this.objects.renderer;
+}
+/**
+ * Prepares stuff needed for rendering which is shared among all
+ * instances of this class: URIs for the java files, a class loader,
+ * notations, ntn renderer, some XOM stuff
+ */
+NTNView.prepareNTN = function() {
+    if (NTNView.broken || NTNView.ready) {
+        return;
+    }
+
+    // Be pesimistic. Will be set to false later on.
+    EquationView.broken = true;
+
+    // Compute URIs for the java files to be loaded
+    //TODO: Instead of hardcoding the libraries, we should scan the
+    //folder for *.jar, because the dependencies of JOMDoc could change.
+    var jars = [
+        "",
+        "jomdoc.jar",
+        "lib/AbsoluteLayout.jar",
+        "lib/appframework-1.0.3.jar",
+        "lib/colapi.jar",
+        "lib/collections-generic-4.01.jar",
+        "lib/commons-io-1.4.jar",
+        "lib/cssparser-0.9.5.jar",
+        "lib/isorelax.jar",
+        "lib/isorelax-jaxp-bridge-1.0.jar",
+        "lib/javacc.jar",
+        "lib/junit-4.1.jar",
+        "lib/msv.jar",
+        "lib/relaxngDatatype.jar",
+        "lib/sac.jar",
+        "lib/saxon9-dom.jar",
+        "lib/saxon9.jar",
+        "lib/saxon9-xom.jar",
+        "lib/saxon9-xpath.jar",
+        "lib/swing-layout-1.0.3.jar",
+        "lib/swing-worker-1.1.jar",
+        "lib/xmlunit-1.2.jar",
+        "lib/xom-1.2.3.jar",
+        "lib/xsdlib.jar",
+    ];
+
+    //Get extension folder installation path...  
+    var extensionPath = Components.classes["@mozilla.org/extensions/manager;1"].  
+                getService(Components.interfaces.nsIExtensionManager).  
+                getInstallLocation("Gemse@andonyar.com"). // guid of extension  
+                getItemLocation("Gemse@andonyar.com");  
+
+    var jarBaseURI = "file:///" + extensionPath.path.replace(/\\/g,"/") + "/java/"; 
+
+    var urlArray = jars.map(function (path) { 
+        return new java.net.URL(jarBaseURI + path);
+    });
+    
+    // Obtain a class loader
+    //XXX: Do we have to indicate the parental class loader or could
+    //we use the constructor that only takes the urlArray?
+    var classLoader = java.net.URLClassLoader.newInstance(
+        urlArray,
+        java.lang.Thread.currentThread().getContextClassLoader()
+    );  
+
+    // Set up permissions by using our own policy
+    var policyClass = classLoader.loadClass('com.andonyar.gemse.security.URLSetPolicy');
+    var policy = policyClass.newInstance();
+    policy.setOuterPolicy(java.security.Policy.getPolicy());
+    policy.addPermission(new java.security.AllPermission());
+    urlArray.forEach(function (u) { policy.addURL(u) });
+    java.security.Policy.setPolicy(policy);
+
+    // Get classes and constructors
+    NTNView.javaClasses.String    = java.lang.Class.forName('java.lang.String');
+    NTNView.javaClasses.Element   = classLoader.loadClass('nu.xom.Element');
+    NTNView.javaClasses.Attribute = classLoader.loadClass('nu.xom.Attribute');
+    NTNView.javaClasses.Text      = classLoader.loadClass('nu.xom.Text');
+    NTNView.javaClasses.RendererFactory     = classLoader.loadClass('org.omdoc.jomdoc.ntn.rnd.RendererFactory');
+    NTNView.javaClasses.NotationCollector   = classLoader.loadClass('org.omdoc.jomdoc.ntn.coll.ntn.NotationCollector');
+    NTNView.javaClasses.NotationSource      = classLoader.loadClass('org.omdoc.jomdoc.ntn.coll.ntn.NotationSource');
+    NTNView.javaClasses.B                   = classLoader.loadClass('org.omdoc.jomdoc.ntn.coll.ntn.B');
+    /*NTNView.javaClasses.List_NotationSource = classLoader.loadClass('java.util.List<org.omdoc.jomdoc.ntn.coll.ntn.NotationSource>');
+    NTNView.javaClasses.List_ContextSource  = classLoader.loadClass('java.util.List<org.omdoc.jomdoc.ntn.coll.ntn.ContextSource>');
+    NTNView.javaClasses.List_TagSource      = classLoader.loadClass('java.util.List<org.omdoc.jomdoc.ntn.coll.ntn.TagSource>');*/
+
+    NTNView.javaConstructors.Element = NTNView.javaClasses.Element.getConstructor(
+        [NTNView.javaClasses.String,NTNView.javaClasses.String]
+    );
+    NTNView.javaConstructors.Attribute = NTNView.javaClasses.Attribute.getConstructor(
+        [NTNView.javaClasses.String,NTNView.javaClasses.String,NTNView.javaClasses.String]
+    );
+    NTNView.javaConstructors.B = NTNView.javaClasses.B.getConstructor(
+        [NTNView.javaClasses.String]
+    );
+    
+    // Prepair notations
+    var ntnCollector = NTNView.javaClasses.NotationCollector.newInstance();
+    ntnCollector.addNotationSource(
+        NTNView.javaConstructors.B.newInstance([NTNView.javaClasses.B.getField("MATHML_NTN_DIR").get(null)])
+    );
+
+    // Prepair renderer
+    //The class RendererFactory defines a method "newInstance" which
+    //we want to use instead of calling the default constructor. This
+    //means that we first have to get the method, since
+    //RendererFactory.newInstance() calls the default constructor.
+    var factory = NTNView.javaClasses.RendererFactory.getMethod("newInstance", []).invoke(null,[]);
+    factory.setNotationCollector(ntnCollector);
+    NTNView.javaObjects.renderer = factory.newRenderer();
+
+    // Remember that we are ready
+    NTNView.ready = true;
+    NTNView.broken = false;
+};
+/**
+ * True as soon as the class is prepared
+ */
+NTNView.ready = false;
+/**
+ * True if preperation failed
+ */
+NTNView.broken = false;
+/**
+ * Objects for the java classes we need.
+ */
+NTNView.javaClasses = {};
+/**
+ * Objects for the java objects we need
+ */
+NTNView.javaObjects = {};
+/**
+ * Objects for the java constructors we need
+ */
+NTNView.javaConstructors = {};
+NTNView.prototype = {    
+    /** 
+     * Builds the view.
+     */
+    build: function() {
+        xml_flushElement(this.viewport);
+
+        if (!NTNView.ready) {
+            this.viewport.appendChild(document.createTextNode(
+                "NTNView failed to prepare."
+            ));
+            return;
+        }
+
+        try {
+            // Build representation of the equation using XOM
+            var xomRoot = this.dom2xom(this.equationEnv.equation);
+            
+            // Invoke the renderer
+            xomRoot = NTNView.javaObjects.renderer.render(xomRoot);
+
+            // Build DOM structure according to the result
+            this.viewport.appendChild(this.xom2dom(xomRoot));
+        }
+        catch(e) {
+            this.showError(e);
+        }
+    },
+    /**
+     * Transforms a javascript DOM element into a Java instance 
+     * of nu.xom.Element. The caller has to make shure that the
+     * provided node is really an element.
+     */
+    dom2xom: function(domElement) {
+        var xomElement = this.constructors.Element.newInstance([
+            domElement.localName,
+            domElement.namespaceURI || ""
+        ]);
+        var attributes = domElement.attributes;
+        for (var i=0; i<attributes.length; ++i) {
+            var domAttribute = attributes.item(i);
+            // Since XOM wants to have a prefix when the namespace is
+            // not empty, we have to do some work first. Note that
+            // attribute.prefix is not set for attributes that have
+            // been created via the DOM, even if they are in some
+            // namespace.
+            var namespaceURI = domAttribute.namespaceURI || "";
+            var value = domAttribute.nodeValue;
+            var name;
+            if (namespaceURI) {
+                if (domAttribute.prefix) {
+                    name = domAttribute.prefix + ":" + domAttribute.localName;
+                }
+                else {
+                    name = "int" + i + ":" + domAttribute.localName;
+                }
+            }
+            else {
+                name = domAttribute.localName;
+            }
+            // Create and insert the attribute
+            try {
+                //XXX: The DOM includes namespace declarations as
+                //attributes. xom doesn't like them, so we catch the
+                //error it throws.
+                var xomAttribute = this.constructors.Attribute.newInstance([
+                    name,
+                    namespaceURI,
+                    value
+                ]);
+                xomElement.addAttribute(xomAttribute);
+            }
+            catch(e) { }
+        }
+        for (var child = domElement.firstChild; child; child=child.nextSibling) {
+            if (child.nodeType==1) {
+                // child is an element, add it recursively
+                xomElement.appendChild(this.dom2xom(child));
+            }
+            else {
+                // Assume child is a text node, add it as such
+                xomElement.appendChild(child.textContent);
+            }
+        }
+        return xomElement;
+    },
+    /**
+     * Transforms a Java instance of nu.xom.Element into a javascript
+     * DOM element.
+     */
+    xom2dom: function(xomElement) {
+        var domElement = document.createElementNS(
+            xomElement.getNamespaceURI(),
+            xomElement.getLocalName()
+        );
+        var attributeCount = xomElement.getAttributeCount();
+        for (var i=0; i<attributeCount; ++i) {
+            var xomAttribute = xomElement.getAttribute(i);
+            domElement.setAttributeNS(
+                xomAttribute.getNamespaceURI(),
+                xomAttribute.getLocalName(),
+                xomAttribute.getValue()
+            );
+        }
+        var childCount = xomElement.getChildCount();
+        for (var i=0; i<childCount; ++i) {
+            var child = xomElement.getChild(i);
+            if (this.classes.Element.isInstance(child)) {
+                // child is an Element
+                domElement.appendChild(this.xom2dom(child));
+            }
+            else if (this.classes.Text.isInstance(child)) {
+                // child is a Text node
+                domElement.appendChild(document.createTextNode(child.getValue()));
+            }
+        }
+        return domElement;
+    },
+    showError: function(e) {
+        /*if (java.lang.class.forName("java.lang.reflect.InvocationTargetException").isInstance(e)) {
+            this.editor.showMessage(e.getCause().toString());
+        }
+        else {*/
+            this.editor.showMessage(e);
+        /*}*/
+    },
+}
+ViewsetManager.viewClasses["NTNView"] = NTNView;
