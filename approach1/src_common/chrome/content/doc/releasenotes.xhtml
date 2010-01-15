@@ -25,6 +25,27 @@
 
 <h1>Release Notes</h1>
 
+<h2>1.0.10</h2>
+
+<ul>
+<li>Fixed the trivial insert mode</li>
+<li>Added a the <code>killPrevious</code> command to all insert modes.
+It removes the last inserted element. It is by default bound to the
+backspace key. As a result, you no longer need to exit the insert mode
+just because you hit a wrong command.</li>
+<li>Insert modes are now allowed to change any element, not only the
+descendants of the element the cursor was contained in when the insert
+mode was called.</li>
+<li>Increased the maximal version of XULRunner to 1.9.* and of Firefox
+to 3.6.*</li>
+<li>Added the NTNView which uses JOMDoc to render Content MathML as
+Presentation MathML in real-time. It is part of viewset 5. In order to
+use it, you have to download JOMDoc and drop it somewhere in Gemse's
+installation directory. You find more information about that in the
+documentation about the views.</li>
+<li>Gemse is now licenced under the GNU GPL3 or later.</li>
+</ul>
+
 <h2>1.0.9</h2>
 
 <ul>
