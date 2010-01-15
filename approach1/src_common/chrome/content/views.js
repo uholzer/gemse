@@ -811,36 +811,6 @@ NTNView.prepareNTN = function() {
     // Be pesimistic. Will be set to false later on.
     EquationView.broken = true;
 
-    // Compute URIs for the java files to be loaded
-    //TODO: Instead of hardcoding the libraries, we should scan the
-    //folder for *.jar, because the dependencies of JOMDoc could change.
-    var jars = [
-        "",
-        "jomdoc.jar",
-        "lib/AbsoluteLayout.jar",
-        "lib/appframework-1.0.3.jar",
-        "lib/colapi.jar",
-        "lib/collections-generic-4.01.jar",
-        "lib/commons-io-1.4.jar",
-        "lib/cssparser-0.9.5.jar",
-        "lib/isorelax.jar",
-        "lib/isorelax-jaxp-bridge-1.0.jar",
-        "lib/javacc.jar",
-        "lib/junit-4.1.jar",
-        "lib/msv.jar",
-        "lib/relaxngDatatype.jar",
-        "lib/sac.jar",
-        "lib/saxon9-dom.jar",
-        "lib/saxon9.jar",
-        "lib/saxon9-xom.jar",
-        "lib/saxon9-xpath.jar",
-        "lib/swing-layout-1.0.3.jar",
-        "lib/swing-worker-1.1.jar",
-        "lib/xmlunit-1.2.jar",
-        "lib/xom-1.2.3.jar",
-        "lib/xsdlib.jar",
-    ];
-
     //Get extension folder installation path...  
     try {
         var extensionPath = Components.classes["@mozilla.org/extensions/manager;1"].  
@@ -857,10 +827,40 @@ NTNView.prepareNTN = function() {
         //XXX: Or should we use XCurProcD?
     }
 
-    var jarBaseURI = "file:///" + extensionPath.path.replace(/\\/g,"/") + "/java/"; 
+    // Get the path where the java libraries reside. It is the
+    // subdirectory called "java" of extensionPath.
+    libraryPath = extensionPath.clone();
+    libraryPath.append("java");
+   
+    // Compute the URIs of all library files we want to load
+    var jars = [];
+    //Remember the directories we want to check: The libraryPath and
+    //all its subdirectories.
+    var directoriesToProcess = [libraryPath];
+    var libraryFiles = libraryPath.directoryEntries;
+    while (libraryFiles.hasMoreElements()) {
+        var libraryFile = libraryFiles.getNext().QueryInterface(Components.interfaces.nsIFile);
+        if (libraryFile.isDirectory()) {
+            directoriesToProcess.push(libraryFile);
+        }
+    }
+    //Process the directories
+    directoriesToProcess.forEach(function(dir) {
+        //The directory itself
+        jars.push("file:///" + dir.path.replace(/\\/g,"/") + "/");
+        //All jar files the directory contains
+        var libraryFiles = dir.directoryEntries;
+        while (libraryFiles.hasMoreElements()) {
+            var libraryFile = libraryFiles.getNext().QueryInterface(Components.interfaces.nsIFile);
+            if (/\.jar$/.test(libraryFile.path)) {
+                jars.push("file:///" + libraryFile.path.replace(/\\/g,"/"));
+            }
+        }
+    });
 
+    // Make java URI objects out of the Strings
     var urlArray = jars.map(function (path) { 
-        return new java.net.URL(jarBaseURI + path);
+        return new java.net.URL(path);
     });
     
     // Obtain a class loader

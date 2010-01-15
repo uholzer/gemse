@@ -65,28 +65,34 @@ in the <code>java</code> directory.</p>
 following files:</p>
 
 <pre>jomdoc.jar
-lib/AbsoluteLayout.jar
-lib/appframework-1.0.3.jar
-lib/colapi.jar
-lib/collections-generic-4.01.jar
-lib/commons-io-1.4.jar
-lib/cssparser-0.9.5.jar
-lib/isorelax.jar
-lib/isorelax-jaxp-bridge-1.0.jar
-lib/javacc.jar
-lib/junit-4.1.jar
-lib/msv.jar
-lib/relaxngDatatype.jar
-lib/sac.jar
-lib/saxon9-dom.jar
-lib/saxon9.jar
-lib/saxon9-xom.jar
-lib/saxon9-xpath.jar
-lib/swing-layout-1.0.3.jar
-lib/swing-worker-1.1.jar
-lib/xmlunit-1.2.jar
-lib/xom-1.2.3.jar
-lib/xsdlib.jar</pre>
+AbsoluteLayout.jar
+appframework-1.0.3.jar
+colapi.jar
+collections-generic-4.01.jar
+commons-io-1.4.jar
+cssparser-0.9.5.jar
+isorelax.jar
+isorelax-jaxp-bridge-1.0.jar
+javacc.jar
+junit-4.1.jar
+msv.jar
+relaxngDatatype.jar
+sac.jar
+saxon9-dom.jar
+saxon9.jar
+saxon9-xom.jar
+saxon9-xpath.jar
+swing-layout-1.0.3.jar
+swing-worker-1.1.jar
+xmlunit-1.2.jar
+xom-1.2.3.jar
+xsdlib.jar</pre>
+
+<p>The filenames do not need to match exactly, since every jar file is
+loaded anyway. (For convenience, every subdirectory is scanned for jar
+files as well. This should make your life easier if you want to use
+symbolic links to point to the libraries. Deeper directories are not
+searched.)</p>
 
 <p>That should do the trick. The features using Java should now be
 available.</p>
