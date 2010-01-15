@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    internal:function="documentation"
+    xml:lang="en"
+>
+
+<head>
+    <title>Gemse 1 Documentation: Activating Java based features</title>
+    <link rel="stylesheet" href="../gemse.css" type="text/css" />
+</head>
+
+<body>
+
+<h1>Activating Java based features</h1>
+
+<p>Some features of Gemse are implemented using Java. If you do not
+need these features, you do not have to worry. However, if you want to
+use such a feature, you first have to do some preparations. The
+technology Gemse uses to call Java is called LiveConnect.</p>
+
+<h2>Permissions</h2>
+
+<p>Since Gemse has to run the Java code with elevated permissions,
+Gemse itself must have full permissions. That means Gemse must run in
+the chrome, i.e. you have to install it as Firefox extension or XULRunner 
+application.</p>
+
+<h2>Firefox and Java plugin</h2>
+
+<p>You should use at least Firefox 3.6 or XULRunner 1.9.2 respectively.</p>
+
+<p>You should install at least Java 6u17 from Sun and the Java plugin for
+Firefox that comes along with it. (If you use XULRunner you have to
+make it aware of the plugin. I do not know how one does that.)</p>
+
+<p>Older versions probably work as well. Therefore, if you don't like
+to update to the above versions, you should try with your older ones
+first. Be aware that you might run into weird bugs.</p>
+
+<p>I am not aware of any other Java plugin that implements LiveConnect
+than the one from Sun.</p>
+
+<h2>Java libraries</h2>
+
+<p>You have to manually place a bunch of libraries in the installation
+directory of Gemse. (If you use Gemse as Firefox extension, the
+installation directory is located at <code>extensions/Gemse@andonyar.com</code>
+in you profile directory.) There you find a folder called
+<code>java</code>. It already contains some libraries but you have to
+add some additional ones.</p>
+
+<p>The NTNView makes use of the rendering architecture of 
+<a href="https://trac.omdoc.org/jomdoc/">JOMDoc</a>. 
+JOMDoc can be obtained from the 
+<a href="https://trac.omdoc.org/jomdoc/wiki/Download">JOMDoc download page</a>.
+You need <code>jomdoc.jar</code> which you have to place directly in
+the <code>java</code> directory. You also need the 3rd party libraries
+it requires. Put their jar files in a folder called <code>lib</code>
+in the <code>java</code> directory.</p>
+
+<p>Now you should have in your <code>java</code> directory at least the
+following files:</p>
+
+<pre>jomdoc.jar
+lib/AbsoluteLayout.jar
+lib/appframework-1.0.3.jar
+lib/colapi.jar
+lib/collections-generic-4.01.jar
+lib/commons-io-1.4.jar
+lib/cssparser-0.9.5.jar
+lib/isorelax.jar
+lib/isorelax-jaxp-bridge-1.0.jar
+lib/javacc.jar
+lib/junit-4.1.jar
+lib/msv.jar
+lib/relaxngDatatype.jar
+lib/sac.jar
+lib/saxon9-dom.jar
+lib/saxon9.jar
+lib/saxon9-xom.jar
+lib/saxon9-xpath.jar
+lib/swing-layout-1.0.3.jar
+lib/swing-worker-1.1.jar
+lib/xmlunit-1.2.jar
+lib/xom-1.2.3.jar
+lib/xsdlib.jar</pre>
+
+<p>That should do the trick. The features using Java should now be
+available.</p>
+
+</body>
+
+</html>

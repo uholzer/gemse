@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    internal:function="documentation"
+    xml:lang="en"
+>
+
+<head>
+    <title>Calling Java from JavaScript</title>
+    <link rel="stylesheet" href="../../gemse.css" type="text/css" />
+</head>
+
+<body>
+
+<h1>Calling Java from JavaScript</h1>
+
+<h2>Prerequisites</h2>
+
+<p>Since Sun's Java 6u12 and Firefox 3.6, the old buggy LiveConnect
+implementation has been replaced by a more reliable one. So if you do
+not want to run into weird bugs, you should use at least Firefox 3.6b5
+and java 6u17 together with its java plugin2 for Firefox. It can be
+that older versions work as well, but Gemse has not been tested with
+them.</p>
+
+<p>If you use Debian Lenny (which is the stable version at the time of
+writing), you can just install the sun-java6-bin, sun-java6-jre,
+sun-java6-jdk, sun-java6-plugin from Debian unstable or Debian
+testing, since Debian Lenny already meets all dependencies. Also, it
+is easy to compile Firefox 3.6, since all required libraries can be
+found in some Debian package for Debian Lenny.</p>
+
+<h2>LiveConnect in general</h2>
+
+<p>LiveConnect is a technology that allows you to call Java code from
+JavaScript and vice versa. It is available in Firefox and Sun's Java
+plugin since a long time. However it had some critical bugs, like
+JavaScript not being able to catch exceptions thrown in Java. In
+Firefox 3.6 and Java 6u12 a new implementation of LiveConnect has been
+introduced that should fix most of the long standing bugs. This new
+implementation handles most of the LiveConnect functionality on the
+Java side.</p>
+
+<p>LiveConnect is supposed to work across many browsers, although most
+of them probably don't implement it. Roughly it works like this: You
+include in your XHTML page an applet. Let's say, its <code>id</code>
+attribute is set to <code>app</code>. Now you can access the instance
+of you applet from JavaScript using the global object
+<code>app</code>. This object also allows you to access any class, not
+only the ones related with your applet. As an effect, you can also use
+a dummy applet which is just a subclass of the applet class an
+doesn't do anything.</p>
+
+<p>Note that before the new implementation, it was possible to access
+Java classes in <code>java.*</code> via the global JavaScript object
+<code>java</code> and any Java class vio the global
+<code>Packages</code>. This is no longer posible for various reasons,
+you have to use an applet in any case. As an exception, it is still
+possible in JavaScript code in or linked from XUL code inside a
+Firefox extension (or XULRunner application). Indeed, Gemse makes use
+of the global <code>java</code>.</p>
+
+<p>Sun provides a short 
+<a href="https://jdk6.dev.java.net/plugin2/liveconnect/">specification
+of LiveConnect</a>.</p>
+
+<h2>Locating the java libraries</h2>
+
+<p>Unfortunately, it is not enough to know the chrome URL of the java
+library files we want to load in addition to the default ones, because
+the Java VM does not know about the chrome. As for now, they are not
+even in the chrome, but in the folder <code>java</code> in the
+installation directory of the extension or XULRunner application. We
+have to find out the absolute path of the folder.  
+How one is supposed to do that, I don't know. How it is done in
+Gemse at the moment you can look up in the source.</p>
+
+<h2>Loading libraries using a class loader</h2>
+
+<p>The class loader used by Firefox is of course unaware of our own
+Java libraries we want to load. (Note that when using LiveConnect via
+an applet this should be less a problem, since you can indicate the
+sources in the XHTML code for the applet directly.) We have to create
+our own class loader. Unfortunately, I don't know of a file
+class loader which can be given filenames. There is only a
+<code><a href="http://java.sun.com/javase/6/docs/api/java/net/URLClassLoader.html">URLClassLoader</a></code>
+which works with URLs. Since we do not really want to
+write our own class loader, we use an instance of
+<code>URLClassLoader</code>. We
+have to give its constructor all URLs to load classes from.</p>
+
+<p>First we turn the JavaScript array of strings into a JavaScript
+array of Java URLs (<code>extensionPath</code> is the installation directory of
+Gemse as nsIFile):</p>
+
+<pre><![CDATA[var jarBaseURI = "file:///" + extensionPath.path.replace(/\\/g,"/") + "/java/"; 
+
+var urlArray = jars.map(function (path) { 
+    return new java.net.URL(jarBaseURI + path);
+}); ]]></pre>
+
+<p>Create a new instance of <code>URLClassLoader</code>.</p>
+
+<pre><![CDATA[var classLoader = java.net.URLClassLoader.newInstance(urlArray);  ]]></pre>
+
+<p>Now, if we want to obtain a class, we have to choose one of the
+following strategies:</p>
+
+<ul>
+
+<li>Use <code>java.*</code>, <code>Packages.*</code>: 
+It is possible to use JavaScript's <code>new</code>
+operator to create an instance of such a class. It is also possible to
+access fields and methods of the class directly. For overloaded
+methods and contructors, the right one is chosen automatically.
+One can not hand over a <code>java.*</code> of <code>Packages.*</code> as classes to methods
+expecting a class as an argument, since LiveConnect treats them as Java
+namespaces and does not convert them to <code>java.lang.Class</code>. Using
+something like <code>java.lang.String.class</code> in order to obtain
+a class object is not possible, since this 
+<a href="http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.8.2">is a feature of the Java
+language itself</a>, <code>class</code> is not a field of the class.</li>
+
+<li><code>java.lang.Class.forName("name.of.class")</code>: Uses the system class
+loader to load the class if not already done so. This method returns
+an object of type <code>java.lang.Class</code>. Therefore it can be handed to methods expecting a
+class and it is not possible to access fields, methods and constructors
+(new operator) of the class directly.</li>
+
+<li><code>java.lang.Class.forName("name.of.class", true, classLoader)</code> loads
+the class using the given classLoader. It returns an instance
+<code>java.lang.Class</code> as well.</li>
+
+<li>Use the system class loader obtained by
+<code>ClassLoader.getSystemClassLoader()</code>. Using the method
+<code>loadClass</code> of this class loader has the same effect as using
+<code>java.lang.class.forName("name.of.class")</code>. It is unlikely that one wants to
+do it that way, but the class ClassLoader has some other static
+methods which can be used to retrieve arbitrary files from the class
+paths. So, if you want to open a file located in the jar file of your
+class, do not use the system class loader as it may be that it does
+not know about your jar file.</li>
+
+<li>Use the class loader a class has been loaded with, which you can
+obtain by the method <code>getClassLoader()</code> of the class. In
+order to get the class of an object <code>obj</code>, you can use the
+method <code>getClass</code>, so in a non-static method, you
+can do something like <code>obj.getClass().getClassLoader()</code>.
+But probably you want to name the class explicitely (like
+<code>MyClass.class.getClassLoader()</code>) because <code>getClass</code> could return
+a subclass instead of the class in which you implement your
+method.</li>
+
+<li>Use our own class loader
+<code>classLoader.loadClass("name.of.class")</code>, which returns an
+instance of <code>java.lang.Class</code>.</li>
+
+</ul>
+
+<p>It is important to understand that a class loader gives you an
+instance of <code><a href="http://java.sun.com/javase/6/docs/api/java/lang/Class.html">java.lang.Class</a></code>. 
+Therefore it is a Java
+object, not a class! Its methods and fields are <em>not</em> the ones
+of the class, but the ones defined by 
+<code><a href="http://java.sun.com/javase/6/docs/api/java/lang/Class.html">java.lang.Class</a></code>.
+One example is obtaining a RendererFactory of the JOMDoc rendering
+architecture:</p>
+
+<pre><![CDATA[var RendererFactory = classLoader.loadClass('org.omdoc.jomdoc.ntn.rnd.RendererFactory');
+var factory = RendererFactory.getMethod("newInstance", []).invoke(null,[]);]]></pre>
+
+<p>The above code indeed calls the method <code>newInstance</code>
+from the class represented by the object RendererFactory. On the other
+hand, <code>RendererFactory.newInstance()</code> does something else,
+it uses the default constructor of the represented class and returns
+the new object.</p>
+
+<p>There is one more problem you have to be aware of: When you load a
+class with a custom class loader, the system class loader probably has
+no clue about the class path of the class you load. If this class
+loads a resource from its class path (for example a file from the jar
+package it is contained in) using the system class loader, it will
+fail. For example <code>org.omdoc.jomdoc.ntn.coll.ntn.B</code> loads
+the notations bundled with JOMDoc. At the time of writing, it does
+that via the system class loader and therefore fails
+(JOMDoc Bug <a href="https://trac.omdoc.org/jomdoc/ticket/603">#603</a>). If it used the
+class loader it has been loaded with, it would work. In java, the
+class loader that has been used to load a class <code>MyClass</code> can be obtained by
+<code>MyClass.class.getClassLoader()</code>.</p>
+
+<h2>Elevating the privileges of the Java code</h2>
+
+<p>According to my experiments, files in the path of the URL class
+loader can be accessed. In theory, this means JOMDoc should be able to
+load the notations bundled with it right away. But it seems that some
+of the libraries used by JOMDoc (namely Saxon) need additonal rights.
+Also, if JOMDoc can access all files, then it can be used to load
+additional notations using all its collection strategies.
+So, as a temporary solution, we give the loaded Java libraries full privileges. This could
+be done by writing our own class loader or our own policy. I chose to
+write my own policy.</p>
+
+<p>There is already an implementation of such a policy by 
+<a href="http://simile.mit.edu/">SIMILE</a>
+(<a href="http://simile.mit.edu/repository/java-firefox-extension/tools/javaFirefoxExtensionUtils.jar">jar without source</a>,
+<a href="http://simile.mit.edu/repository/java-firefox-extension/tools/java-firefox-extension-utils/edu/mit/simile/javaFirefoxExtensionUtils/">source</a>).
+Unfortunately, there server does not respond.
+Many projects contain it
+as library, but without source. I was able to locate a copy via Google
+code search. The policy used in Gemse is based on SIMILE's
+policy.</p>
+
+<p>We have to implement a class extending 
+<code><a href="http://java.sun.com/javase/6/docs/api/java/security/Policy.html">java.security.Policy</a></code>.
+For a <code><a href="http://java.sun.com/javase/6/docs/api/java/security/CodeSource.html">CodeSource</a></code> 
+(which mainly contains the URL the code originates from) it
+has to return a list of permissions. Before a piece of code is run,
+the security management first asks the policy which permissions should
+be granted to this code. At any time, there is only one policy in
+effect. If we want to change it, we have to register our new Policy.
+Our policy works like this: It has a list of
+URLs and a set of permissions. If the code in questions comes from an
+URL in the list, then it receives all permissions of the set. If it is
+not, then we ask the policy that was used before we registered our own
+one and return its answer. The implementation of our policy
+(inspired by SIMILE's implementation) roughly
+looks like this:</p>
+
+<pre><![CDATA[package com.andonyar.gemse.security;
+
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.Permission;
+import java.security.PermissionCollection;
+import java.security.Permissions;
+import java.security.Policy;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+
+public class URLSetPolicy extends Policy {
+    private Permissions   permissions = new Permissions();
+    private Policy        outerPolicy;
+    private Set<String>   urls = new HashSet<String>(); // Or should we use HashSet<URL>?
+
+    public PermissionCollection getPermissions(CodeSource codesource) {
+        PermissionCollection pc = outerPolicy != null ?
+                outerPolicy.getPermissions(codesource) :
+                new Permissions();
+        
+        URL url = codesource.getLocation();
+        if (url != null) {
+            String s = url.toExternalForm();
+            if (urls.contains(s) || "file:".equals(s)) {
+                Enumeration<Permission> e = permissions.elements();
+                while (e.hasMoreElements()) {
+                    pc.add(e.nextElement());
+                }
+            }
+        }
+        
+        return pc;
+    }
+    
+    public void setOuterPolicy(Policy policy) {
+        outerPolicy = policy;
+    }
+    
+    public void addPermission(Permission permission) {
+        permissions.add(permission);
+    }
+    
+    public void addURL(URL url) {
+        urls.add(url.toExternalForm());
+    }
+}]]></pre>
+
+<h2>Accessing methods, fields and constructors of classes</h2>
+
+<p>When you have an instance of 
+<code><a href="http://java.sun.com/javase/6/docs/api/java/lang/Class.html">java.lang.Class</a></code>,
+using the static methods, fields and constructors of the class is a little
+cumbersome. Let <code>c</code> be such an instance.</p>
+
+<p>Calling the default constructor, which has no arguments, is done by
+calling <code>newInstance()</code>. If you want to use another
+constructor, use the method <code>getConstructor</code>, it expects an
+array of classes, indicating the types of the values you want to pass.
+An object of type <code><a href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Constructor.html">java.lang.reflect.Constructor</a></code> 
+is returned. The constructor can then be called by invoking its
+<code>newInstance</code> method:</p>
+
+<code><![CDATA[
+javaClasses = {};
+javaClasses.Attribute = classLoader.loadClass('nu.xom.Attribute');
+javaClasses.String = java.lang.Class.forName("java.lang.String");
+
+javaConstructors = {};
+javaConstructors.Attribute = NTNView.javaClasses.Attribute.getConstructor(
+    [javaClasses.String,javaClasses.String,javaClasses.String]
+);
+
+var xomAttribute = javaConstructors.Attribute.newInstance([
+    name,
+    namespaceURI,
+    value
+]);
+]]></code>
+
+<p>For methods it is similar. Use <code>getMethod</code> to obtain an
+instance of <code><a href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Method.html">java.lang.reflect.Method</a></code>
+and then call its
+<code>invoke</code>. Note that <code>invoke</code> expects the object
+you want to call the method on as first argument. Since you want to
+call the method on the class, not on a perticular object, pass
+<code>null</code> as first argument.</p>
+
+<pre>
+javaClasses.someClass.getMethod("foo", [javaClasses.BarClass]).invoke(null,[instanceOfBarClass]);
+</pre>
+
+<p>Finally, getting or setting fields is done using
+<code>getField</code>, whose only argument is the name of the field as
+string. It returns an instance of
+<code><a href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Method.html">java.lang.reflect.Field</a></code>.</p>
+
+
+<h2>Working with objects</h2>
+
+<p>Working with Java objects is as easy as it can be. You can use
+fields and call methods just as they were JavaScript objects.
+LiveConnect even does conversion of datatypes, which allows you to
+pass JavaScript Strings or even Arrays to Java methods. Furthermore,
+LiveConnect handles overloaded Java methods transparently. However,
+you still have to keep in mind that JavaScript is a loosely typed
+language and Java is heavily typed.</p>
+
+<p>In the NTNView we have to recreate the equation using XOM, since
+the renderer of JOMDoc expects a XOM node. An example:</p>
+
+<pre><![CDATA[// Recreate the Mozilla DOM element as XOM Element
+var xomElement = this.constructors.Element.newInstance([
+    domElement.localName,
+    domElement.namespaceURI || ""
+]);
+
+// Create an attribute and add it to the element
+var xomAttribute = this.constructors.Attribute.newInstance([
+    name,
+    namespaceURI,
+    value
+]);
+xomElement.addAttribute(xomAttribute);]]></pre>
+
+<h2>Further documentation</h2>
+
+<ul>
+<li><a href="http://java.sun.com/javase/6/docs/api/index.html">Java API documentation</a>
+and the relevant classes
+    <ul>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/net/URL.html">java.net.URL</a></li>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/net/URLClassLoader.html">java.net.URLClassLoader</a></li>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/lang/Class.html">java.lang.Class</a></li>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Constructor.html">java.lang.reflect.Constructor</a></li>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Method.html">java.lang.reflect.Method</a></li>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Field.html">java.lang.reflect.Field</a></li>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/security/Policy.html">java.security.Policy</a></li>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/security/CodeSource.html">java.security.CodeSource</a></li>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/security/Permission.html">java.security.Permission</a></li>
+    <li><a href="http://java.sun.com/javase/6/docs/api/java/security/Permissions.html">java.security.Permissions</a></li>
+    </ul>
+</li>
+<li><a href="https://jdk6.dev.java.net/plugin2/liveconnect/">Specicification of LiveConnect</a></li>
+<li><a href="http://java.sun.com/docs/books/jls/">Java language specifications</a></li>
+<li><a href="http://simile.mit.edu/">SIMILE</a> and its 
+    <a href="http://simile.mit.edu/repository/java-firefox-extension/tools/">Java Firefox extension</a> 
+    (Server can not be reached at the time of writing)</li>
+<li><a href="http://www.google.ch/codesearch?q=package+edu.mit.simile.firefoxClassLoader%3B">Google
+code search for SIMILE's class loader</a> and a <a href="">copy of it</a> on Gemse's website</li>
+<li><a href="http://docstore.mik.ua/orelly/java-ent/security/">Java Security</a> by Scott Oaks</li>
+<li><a href="http://bugs.sun.com/view_bug.do?bug_id=6826531">http://bugs.sun.com/view_bug.do?bug_id=6826531</a></li>
+</ul>
+
+</body>
+
+</html>
