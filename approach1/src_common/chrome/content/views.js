@@ -934,6 +934,8 @@ NTNView.prepareNTN = function() {
     //RendererFactory.newInstance() calls the default constructor.
     var factory = NTNView.javaClasses.RendererFactory.getMethod("newInstance", []).invoke(null,[]);
     factory.setNotationCollector(ntnCollector);
+    factory.setParallel(true);
+    factory.setContentLinks(true);
     NTNView.javaObjects.renderer = factory.newRenderer();
 
     // Remember that we are ready
@@ -982,7 +984,31 @@ NTNView.prototype = {
             xomRoot = NTNView.javaObjects.renderer.render(xomRoot);
 
             // Build DOM structure according to the result
-            this.viewport.appendChild(this.xom2dom(xomRoot));
+            var domRoot = this.xom2dom(xomRoot); 
+            this.viewport.appendChild(domRoot);
+
+            // Try to map internal attributes from the content to the
+            // presentation
+            // XXX: Is there a way to preparse the XPath expression so
+            // it does not have to be reparsed here every time?
+            var xpathResult = document.evaluate(
+                ".//*[@internal:selected]", 
+                domRoot, 
+                standardNSResolver, 
+                XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+                null
+            );
+            for (var i = 0; i<xpathResult.snapshotLength; ++i) { 
+                var selectedNode = xpathResult.snapshotItem(i);
+                var xref = selectedNode.getAttribute("xref");
+                if (xref && xref.charAt(0) == "#") {
+                    var target = document.getElementById(xref.substring(1));
+                    if (target) {
+                        target.setAttributeNS(NS_internal, "selected", selectedNode.getAttributeNS(NS_internal, "selected"));
+                    }
+                }
+            }
+                
         }
         catch(e) {
             this.showError(e);
