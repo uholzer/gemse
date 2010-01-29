@@ -822,15 +822,23 @@ ViewsetManager.prototype = {
      * Selects the viewset to be used from now on. This is normally
      * called from a command executed by teh user.
      * @param viewsetName Name or number of the viewset to be used.
-     *                    Up to now, only a number is allowed, names
-     *                    are not yet implemented! TODO!
      * @param scope       Tells whether the viewset should be used for
      *                    all equations, just for the equation on
      *                    focus or for a given mode. (Not yet
      *                    implemented!) TODO!
      */
     chooseViewset: function(viewsetName,scope) {
-        this.globalViewsetNumber = viewsetName;
+        var candidates = this.viewsets.filter(function(viewset) { return viewset.getAttribute("name") == viewsetName });
+        var chosenViewset = null;
+        if (candidates.length==0) { 
+            var num = parseInt(viewsetName);
+            if (!isNaN(num)) { chosenViewset = this.viewsets[num] }
+        }
+        else {
+            chosenViewset = candidates[0];
+        }
+        if (!chosenViewset) { throw new Error("No viewset with name " + viewsetName + " found"); }
+        this.globalViewsetNumber = this.viewsets.indexOf(chosenViewset);
         // XXX: Is the following a good idea or does it break something?
         this.create();
         this.build(); // XXX: necessary?

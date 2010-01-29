@@ -90,10 +90,9 @@ or (at your option) any later version.
 
 <internal:viewsets>
     <!-- 0 -->
-    <internal:viewset>
-        <!-- Shows everything. The eqution is shown using DirectView
-             This view is the best for day-to-day use. It might be a
-             bit slow. -->
+    <internal:viewset 
+        name="presentation"
+        description="all views for presentation markup">
         <vbox flex="1">
             <hbox>
                 <vbox flex="1">
@@ -113,7 +112,9 @@ or (at your option) any later version.
         </vbox>
     </internal:viewset>
     <!-- 1 -->
-    <internal:viewset>
+    <internal:viewset
+        name="light"
+        description="lightweight viewset for presentation markup">
         <vbox flex="1">
             <html:div internal:function="viewport" internal:viewClass="DirectView"/>
             <html:div internal:function="viewport" internal:viewClass="TreeView"/>
@@ -127,16 +128,18 @@ or (at your option) any later version.
         </vbox>
     </internal:viewset>
     <!-- 2 -->
-    <internal:viewset>
-        <!-- Viewset for screenshots in tutorial -->
+    <internal:viewset
+        name="screenshot"
+        description="used to create the screenshots for the tutorial">
         <vbox flex="1">
             <html:div internal:function="viewport" internal:viewClass="DirectView"/>
             <html:div internal:function="viewport" internal:viewClass="TreeView"/>
         </vbox>
     </internal:viewset>
     <!-- 3 -->
-    <internal:viewset>
-        <!-- Bigger viewset for screenshots in tutorial -->
+    <internal:viewset
+        name="screenshot+"
+        description="used to create screenshots showing some additional views">
         <vbox flex="1">
             <html:div internal:function="viewport" internal:viewClass="DirectView"/>
             <html:div internal:function="viewport" internal:viewClass="TreeView"/>
@@ -148,10 +151,9 @@ or (at your option) any later version.
         </vbox>
     </internal:viewset>
     <!-- 4 -->
-    <internal:viewset>
-        <!-- Shows everything. Uses EquationView to show the equation.
-             This might be useful when dealing with Content MathML. It
-             might be slow. -->
+    <internal:viewset
+        name="use_EquationView"
+        description="uses EquationView instead of DirectView">
         <vbox flex="1">
             <hbox>
                 <vbox flex="1">
@@ -171,10 +173,9 @@ or (at your option) any later version.
         </vbox>
     </internal:viewset>
     <!-- 5 -->
-    <internal:viewset>
-        <!-- Shows everything. Uses NTNView to show the equation.
-             This might be useful when dealing with Content MathML. It
-             is slow. -->
+    <internal:viewset
+        name="content"
+        description="for editing Content MathML, includes a live rendering provided by JOMDoc">
         <vbox flex="1">
             <hbox>
                 <vbox flex="1">

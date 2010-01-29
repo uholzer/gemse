@@ -767,7 +767,37 @@ function editModeCommand_hideView(mode, instance) {
 }
 
 function editModeCommand_chooseViewset(mode, instance) {
-    mode.editor.viewsetManager.chooseViewset(instance.argument);
+    if (instance.argument) {
+        mode.editor.viewsetManager.chooseViewset(instance.argument);
+    }
+    else {
+        // Present an overview of the available viewsets
+        var table = document.createElementNS(NS_HTML, "table");
+        var caption = document.createElementNS(NS_HTML, "caption");
+        caption.appendChild(document.createTextNode("available viewsets"));
+        table.appendChild(caption);
+        var head = document.createElementNS(NS_HTML, "tr");
+        var th = document.createElementNS(NS_HTML, "th");
+        th.appendChild(document.createTextNode("name"));
+        head.appendChild(th);
+        var th = document.createElementNS(NS_HTML, "th");
+        th.appendChild(document.createTextNode("description"));
+        head.appendChild(th);
+        table.appendChild(head);
+        
+        mode.editor.viewsetManager.viewsets.forEach(function (viewset) {
+            var tr = document.createElementNS(NS_HTML, "tr");
+            var td = document.createElementNS(NS_HTML, "td");
+            td.appendChild(document.createTextNode(viewset.getAttribute("name")));
+            tr.appendChild(td);
+            var td = document.createElementNS(NS_HTML, "td");
+            td.appendChild(document.createTextNode(viewset.getAttribute("description")));
+            tr.appendChild(td);
+            table.appendChild(tr);
+        });
+
+        mode.editor.showMessage(table);
+    }
     return true;
 }
 
