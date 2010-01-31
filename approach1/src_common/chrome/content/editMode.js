@@ -604,6 +604,35 @@ function editModeCommand_help(mode, instance) {
             throw new Error("No description found for element " + args[1]);
         }
     }
+    else if (args[0] == "installation-directory") {
+        //Get extension folder installation path...  
+        try {
+            var extensionPath = Components.classes["@mozilla.org/extensions/manager;1"].  
+                        getService(Components.interfaces.nsIExtensionManager).  
+                        getInstallLocation("Gemse@andonyar.com"). // guid of extension  
+                        getItemLocation("Gemse@andonyar.com");  
+        }
+        catch (e) {
+            // In a XULRunner application, Gemse is not an exstension. So
+            // if the above fails, we try to use the directory service.
+            var extensionPath = Components.classes["@mozilla.org/file/directory_service;1"].
+                             getService(Components.interfaces.nsIProperties).
+                             get("CurProcD", Components.interfaces.nsIFile);
+            //XXX: Or should we use XCurProcD?
+        }
+        var p = document.createElementNS(NS_HTML, "p");
+        p.appendChild(document.createTextNode("Installation directory of Gemse: "));
+        var a = document.createElementNS(NS_HTML, "a");
+        a.setAttribute("href", "file:///" + extensionPath.path);
+        a.appendChild(document.createTextNode(extensionPath.path));
+        p.appendChild(a);
+        mode.editor.showMessage(p);
+    }
+    else if (args[0]) {
+        mode.editor.showMessage("'" + args[0] + "' is no legal argument for :help. " +
+                                "Available arguments: tutorial, element, installation-directory. " +
+                                "Use ':help' without argument to open the main help page.");
+    }
     else {
         window.open("doc/index.xhtml", "_blank");
     }
