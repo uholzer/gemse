@@ -151,6 +151,21 @@
     <p>Saves and closes all equations.</p>
 </div>
 
+<div class="commandDocumentation" id="editModeCommand_example">
+    <h4 class="commandTitle">Load an example</h4>
+
+    <p>If you want to load an example from the Gemse documentation,
+    you can use this command. So, instead of doing something like
+    <kbd><internal:cmdph ref="editModeCommand_load" select="b.argument=='newlineTerminated'"/> chrome://gemse/content/doc/examples/pres01.xml&enter;</kbd>,
+    you can use
+    <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> pres01.xml&enter;</kbd>.
+    (Note that depending on whether you run Gemse from the chrome or
+    not, you have to use a different URI with 
+    <kbd><internal:cmdph ref="editModeCommand_load" select="b.argument=='newlineTerminated'"/></kbd>. When using
+    <kbd><internal:cmdph ref="editModeCommand_example" select="b.argument=='newlineTerminated'"/></kbd>,
+    this distinction is done by Gemse itself.)</p>
+</div>
+
 <div class="commandDocumentation" id="editModeCommand_export">
     <h4 class="commandTitle">Export</h4>
 

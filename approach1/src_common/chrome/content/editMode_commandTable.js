@@ -394,6 +394,13 @@ editModeCommands = {
         argument: "newlineTerminated",
         implementation: editModeCommand_help
     },
+    ":example": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_example
+    },
 };
 editModeCommands[KEYMOD_CONTROL] = {
         type: "disamb",

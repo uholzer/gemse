@@ -639,6 +639,12 @@ function editModeCommand_help(mode, instance) {
     return true;
 }
 
+function editModeCommand_example(mode, instance) {
+    var base = document.documentURI.substring(0, document.documentURI.lastIndexOf("/")) + "/";
+    var exampleBase = base + "doc/examples/";
+    mode.editor.loadURI(exampleBase + instance.argument);
+}
+
 function editModeCommand_putAfter(mode,instance) {
     var registerName = instance.singleCharacterPreArguments[0] || '"';
     var position = mml_nextSibling(mode.cursor);
