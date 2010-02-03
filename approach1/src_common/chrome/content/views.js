@@ -740,6 +740,17 @@ function OthersView(editor,equationEnv,viewport) {
         if (this.equationEnv == editor.equations[i]) {
             containment.setAttributeNS(NS_internal,"selected","editcursor"); //XXX: Good?
         }
+        // Event handling
+        // We are careful not to create cyclic references (DOM Node -> Listener -> DOM Node) 
+        // since this could cause a memory leak, depending on how
+        // intelligent the garbage collector is. That's why we use the
+        // createEventHandler method. We must not use an anonymous
+        // function directly, since it has this.viewport in its environment,
+        // wich in turn has containment as DOM node, which finally has
+        // the anonymous function as event listener. The function
+        // returned by createEventHandler however has only the
+        // variables of createEventHandler in its envireonment.
+        containment.addEventListener("click",this.createEventHandler(editor,i),true);
     }
 }
 OthersView.prototype = {    
@@ -749,7 +760,24 @@ OthersView.prototype = {
     build: function () {
         // This view does only change when created, so do nothing!
     },
-}
+    createEventHandler: function(editor, index) {
+        return function() {
+            // Only do something if the current mode is the editMode and
+            // the input buffer is empty!
+            if (editor.equations[editor.focus].mode instanceof EditMode && editor.inputBuffer.length == 0) {
+                editor.moveFocusTo(index);
+            }
+            else {
+                editor.showMessage("Switching to another equation by " +
+                                   "clicking is only possible when you are " + 
+                                   "in the editMode and the input " +
+                                   "buffer is empty!");
+                // Rebuild views, they may have changed.
+                editor.viewsetManager.build(); //XXX: Is that OK?
+            }
+        };
+    },
+};
 ViewsetManager.viewClasses["OthersView"] = OthersView;
 
 /**
