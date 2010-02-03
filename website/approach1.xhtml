@@ -10,13 +10,13 @@
 
 <body>
 
-<h1>Gemse Approach 1: An editor for Presentation MathML</h1>
+<h1>Gemse Approach 1: An editor for Presentation and Content MathML</h1>
 
 <p>Gemse Approach 1 is an editor for mathematical formulas using
-Presentation MathML and to some extent also Content MathML.
+Presentation or Content MathML.
 Unlike other editors, this one is neither intuitive
 nor easy to learn and you must have a basic understanding of
-Presentation MathML. It is controlled with the keyboard only, its user
+MathML. It is controlled with the keyboard only, its user
 interface is highly inspired by the text editor vi. The goal is to be
 able to edit equations as fast as possible.</p>
 
@@ -77,19 +77,30 @@ steered by keyboard. But let us look at that a bit more detailed:</p>
 <li>is by far not as powerful as LaTeX, since it is not a typesetting
 laguage</li>
 <li>does not encode the meaning of a formula, just its
-appeareance</li>
+appearance</li>
 <li>uses Unicode (so, no need to include
 some stupid package just to get that character)</li>
 </ul>
 
-<p>Gemse is</p>
+<p>Content MathML</p>
 
 <ul>
-<li>completely controlled by keyboard, a mouse is useless</li>
-<li>similar to Vim</li>
+<li>represents the meaning of a formula, not its appearance</li>
+<li>can be automatically converted to Presentation MathML in most
+situations, given there are useful notation definitions</li>
+<li>can be cumbersome to edit by hand, since you easily loose the
+overview. Gemse helps here a little.</li>
+<li>is very similar to OpenMath</li>
+</ul>
+
+<p>Gemse</p>
+
+<ul>
+<li>is completely controlled by keyboard, a mouse is useless</li>
+<li>is similar to Vim</li>
 <li>uses Mozilla (only runs in Firefox 3 or higher at the moment)</li>
-<li>not mature, as it is a young project</li>
-<li>fun</li>
+<li>is not mature, as it is a young project</li>
+<li>is fun</li>
 </ul>
 
 <h2>Roadmap</h2>
@@ -132,7 +143,7 @@ is shipped together with Gemse.</p>
 <p>If you like to have different license terms, please contact the
 author. Gemse depends on libraries licenced under the GPL, so these
 dependencies have to be removed if you want to distribute Gemse under
-antother licence.</p>
+another licence.</p>
 
 <h2>Relevant Literature</h2>
 
