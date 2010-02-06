@@ -36,17 +36,38 @@ hopefully will be a powerful tool once it is finished. However, I am
 sure you will master it, if you want to.</p>
 
 <p>You wont need any knowledge about vim for this tutorial. But you
-will need knowledge about presentation MathML. Gemse's documentation
+will need knowledge about Presentation MathML.
+How you can edit Content MathML is discussed as well in this tutorial,
+but you may skip the corresponding section if your are unfamiliar with
+it. Gemse's documentation
 contains a short <a href="introPMathML.xhtml">introduction to
 presentation MathML</a>. Additionally, you can find tutorials
 and the specification of MathML on the 
-<a href="http://www.w3.org/Math/">MathML page of the w3c</a>. Note
-that you do not need to care about content MathML, you only need basic
-knowledge about the presentation markup of MathML. Of course learning
+<a href="http://www.w3.org/Math/">MathML page of the w3c</a>. Of course learning
 presentation MathML requires learning the fundamentals of XML. Gemse
 directly edits the XML structure of presentation MathML.</p>
 
-<h2>Introduction</h2>
+<h2 id="toc">Table of Contents</h2>
+
+<ul>
+<li><a href="#intro">Introduction</a></li>
+<li><a href="#moving">Moving around</a></li>
+<li><a href="#deleting">Deleting</a></li>
+<li><a href="#undo">Undo and redo</a></li>
+<li><a href="#inserting">Inserting</a></li>
+<li><a href="#saving">Saving your work</a></li>
+<li><a href="#more_insertmode">More fun with the insert mode</a></li>
+<li><a href="#visual">The visual mode</a></li>
+<li><a href="#copypaste">Copying and Pasting</a></li>
+<li><a href="#attributemode">The attribute mode</a></li>
+<li><a href="#views">Views and Viewsets</a></li>
+<li><a href="#settings">Set your settings</a></li>
+<li><a href="#contentmathml">Working with Content MathML</a></li>
+<li><a href="#customizing">Customizing</a></li>
+<li><a href="#how_to_go_on">How to go on?</a></li>
+</ul>
+
+<h2 id="intro">Introduction</h2>
 
 <p>Gemse 1 is an application written in Javascript using Mozilla. So,
 if you have installed Firefox 3, you are already lucky. If you do not
@@ -216,7 +237,7 @@ sections you will learn what all this means.</p>
 important. Actually, these boxes are called views as you will learn in
 a later section of this tutorial.</p>
 
-<h2>Moving around</h2>
+<h2 id="moving">Moving around</h2>
 
 <p>The most important thing is the cursor. It highlights an element of
 the equation. If you issue a command, it gets applied on the
@@ -383,7 +404,7 @@ something appears in the rendered equation. There are and will be many
 more commands to move around faster, but what you have seen should
 suffice for now.</p>
 
-<h2>Deleting</h2>
+<h2 id="deleting">Deleting</h2>
 
 <p>We start with the easy thing. Its deleting. (Who would have thought
 that it is something destructive?) If you hit <kbd>x</kbd> the
@@ -490,7 +511,7 @@ tree view in order to fix the problem, since the rendering of the
 equation is incomplete. You can also fix it by undoing your mistake,
 as you will learn in the next section.</p>
 
-<h2>Undo and redo</h2>
+<h2 id="undo">Undo and redo</h2>
 
 <p>Of course, Gemse has also undo and redo commands. <kbd>u</kbd>
 undoes your last change. <kbd>&ctrl;r</kbd> undoes your last undo.
@@ -596,7 +617,7 @@ Gemse only stores changes in a linear fashion. In vim, if you make
 changes after an undo, the undone change gets remembered. Gemse
 forgets all undone changes if you make new changes.</p>
 
-<h2>Inserting</h2>
+<h2 id="inserting">Inserting</h2>
 
 <p>Being destructive is fun, but being constructive is even more
 fun.</p>
@@ -948,7 +969,7 @@ and finally <kbd>∞</kbd> for the infinity sign.</p>
 
 <p>Now hit <kbd>&esc;</kbd> and we are done.</p>
 
-<h2>Saving your work</h2>
+<h2 id="saving">Saving your work</h2>
 
 <p>I think we have done enough to get a break. You do not need to save
 the equation for this tutorial, since later, you can just load the
@@ -986,7 +1007,7 @@ into this file.</p>
 command <kbd>:serialize&enter;</kbd> which displays the XML source
 code on the screen.</p>
 
-<h2>More fun with the insert mode</h2>
+<h2 id="more_insertmode">More fun with the insert mode</h2>
 
 <p>Let us construct the following formula:</p>
 
@@ -1111,7 +1132,7 @@ changes, <kbd>:close&enter;</kbd> will not work. Instead, use
 <kbd>:close!&enter;</kbd>, which will throw away all unsaved
 changes.</p>
 
-<h2>The visual mode</h2>
+<h2 id="visual">The visual mode</h2>
 
 <p>In this section we are going to use the equation from the file
 <code>examples/pres01a.xml</code>. If you started from the beginning of
@@ -1224,7 +1245,7 @@ elements.</p>
 <p>You are back in the edit mode. In the tree view you can see the
 new <code>mrow</code> element. The cursor is currently on it.</p>
 
-<h2>Copying and Pasting</h2>
+<h2 id="copypaste">Copying and Pasting</h2>
 
 <p>Since you now know how the visual mode works, copying is no more
 difficult. Gemse uses the command <kbd>y</kbd> for copying the
@@ -1551,7 +1572,7 @@ use another register. The main reason for this is that it is done like
 that in Vim.</p>
 
 
-<h2>The attribute mode</h2>
+<h2 id="attributemode">The attribute mode</h2>
 
 <p>If you start here, load <code>examples/pres01a.xml</code>. It is
 what you should have now if you went through the last section.</p>
@@ -1678,7 +1699,7 @@ remove an attribute by moving the cursor to it and hitting
 <p>Don't forget to hit <kbd>&esc;</kbd> after you are done with the
 attributes in order to get back to the edit mode.</p>
 
-<h2>Views and Viewsets</h2>
+<h2 id="views">Views and Viewsets</h2>
 
 <p>Gemse provides different ways to look at an equation: Its
 rendering, its tree structure shown by using nested boxes, its XML source
@@ -1716,7 +1737,7 @@ as well, because constructing a view can take too much time on slow
 machines and deactivating a view should be a way to speed up
 things.</p>
 
-<h2>Set your settings</h2>
+<h2 id="settings">Set your settings</h2>
 
 <p>Many aspects of the behaviour of Gemse can be configured (without messing around in
 the source code). The command <code>:set</code> is used to set
@@ -1976,62 +1997,76 @@ it and see the effect.</p>
 
 <p>Of course, gemse has <a href="options.xhtml">many more options</a>.</p>
 
-<h2>Working with Content MathML</h2>
+<h2 id="contentmathml">Working with Content MathML</h2>
 
-<p>Gemse has limited support for Content MathML. You work with it the
-same way as you work with Presentation MathML. However, the insert
-modes for Presentation MathML are useless in this case. There is a
-special insert mode called content insert mode. Recall that you can
-switch the insert mode by hitting <kbd>&tab;</kbd> while you are in
-the edit mode.</p>
+<p>What you learned up to now extends to Content MathML in a natural
+way. All you have to do is to choose the content insert mode. Hit
+<kbd>&tab;</kbd> until the content insert mode is selected.</p>
 
-<p>Load the file <code>examples/parallel01.xml</code>. It contains
-a formula represented as Presentation MathML and as Content MathML.
-This is called parallel markup. The <code>semantics</code> element
-contains the Presentation MathML part as its first child and the
-Content MathML part as the second child. If you place your cursor on
-an element of the Content MathML part, you observe that it has the
-attribute <code>xref</code>. This attribute links to an element of the
-Presentation MathML part. You can jump there using the command
-<kbd>f</kbd>. You even can jump back using <kbd>f</kbd> again.</p>
+<p>Load the file <code>examples/content01.xml</code>.</p>
+
+<p>As you can see, the equation view is now little helpful, it does
+not show the equation in a rendered form. Instead, it seems it just
+shows garbage. The reason for this is that Mozilla's MathML rendering
+engine does not handle Content MathML. Indeed, it is not trivial to
+render Content MathML, i.e. to transform it to Presentation MathML.
+However, there is a view that can do that, called the NTNView. It uses
+the java library JOMDoc. Unfortunately, Gemse can only load java
+libraries if it is running with full permissions, that is, you have to
+run it as Firefox extension of XULRunner appilcation. Additionally,
+you must have installed a Java plugin which supports LiveConnect.
+Please read the <a href="java.xhtml">instructions</a>. If you get it
+working, you can enter <kbd>:viewset content&enter;</kbd> and you can
+see the rendered equation, as in the screenshots of this section. In
+any way, you should not forget that Gemse always acts on the XML
+structure of the equation and that the rendered equation can differ
+significantly in its structure. Therefore, you will have your eyes on
+the source view or on the nested boxes most of the time. Whether you
+get the NTNView working or not, you can go through this section
+anyway.</p>
+
+<!-- Screenshot -->
 
 <p>When your cursor is on a Content MathML element, or the first
 element of the selection is a Content MathML element, then the command
 <kbd>&space;</kbd> creates an <code>appply</code> element instead of
-an <code>mrow</code> element.</p>
+an <code>mrow</code> element. Move the cursor to the identifier
+element for <code>b</code>. Hit <kbd>&space;</kbd> once.</p>
 
-<p>Hit <kbd>&tab;</kbd> until the content insert mode is the current
-insert mode. Place the cursor on the <code>and</code> element, which
-is the first child of the <code>apply</code> element contained in the
-<code>annotation-xml</code> element. Hit <kbd>c</kbd> in order to
-replace it with something else. You are now in the content insert
-mode. Hit <kbd>*</kbd>, which inserts a <code>times</code> element.
-The commands <kbd>+</kbd>, <kbd>-</kbd>, <kbd>/</kbd> and others do
-the analog thing. You can also insert a <code>csymbol</code> element
-manually: Hit <kbd>&esc;</kbd>. Move the cursor to the first
-<code>xor</code> element and hit <kbd>c</kbd>. Type
-<kbd>$arith1&enter;plus&enter;</kbd> in order to insert the symbol
-<code>plus</code> from the content dictionary <code>arith1</code>.</p>
+<p>Not enter <kbd>ji*</kbd>. As you see, <kbd>*</kbd> places a times
+symbol, <kbd>+</kbd>, <kbd>-</kbd>, <kbd>/</kbd> do the analogue.
+(Note: If you got an <code>mo</code> element instead of a
+<code>csymbol</code>, you haven't selected the content insert mode. In
+this ase, hit escape, undo your wrong change, select the content
+insert mode and try again.)</p>
 
-<p>Inserting identifiers or numbers works as in the UCD insert mode.
-Hit <kbd>2k</kbd> to insert the number <code>2</code> and
-the identifier <code>k</code>.</p>
+<p>Do <kbd>&esc;Abcde</kbd>. Assume, instead of multiplying
+<code>d</code> and <code>e</code> with the rest, we want to multiply
+their sum with the rest. We are still in insert mode. hit
+<kbd>&ctrl;h&ctrl;h</kbd>. At this point, we could use
+<kbd>&space;</kbd> in order to put an <code>apply</code> around them
+and the insert a csymbol manually later on. But it is even easier:
+Just hit <kbd>+</kbd> and watch the magic happen. Terminate the insert
+mode with <kbd>&esc;</kbd>.</p>
 
-<p>Now assume, you wanted to multiply <code>2</code> and
-<code>k</code>. Simply hit <kbd>&ctrl;h</kbd> two times to select
-them. Now hit <kbd>*</kbd>. Observe what happened.</p>
+<p>Of course you want to be able to insert an arbitrary symbol from a
+content dictionary of your choice. Hit <kbd>ggjj</kbd> and then
+<kbd>c</kbd>. Finally, do <kbd>$relation1&enter;eq&enter;</kbd>.</p>
 
-<p>Of course you also could have hit <kbd>&space;*2k</kbd> in the
-first place.
-Try it. The <kbd>&space;</kbd> creates an empty <code>apply</code>
-element and the cursor is placed inside it.</p>
+<p>The content insert mode has more features: 
+Numbers can be inserted like in the UCD insert mode. That is, just
+type them. Should it ever happen that you want to insert a number
+right after a number, hit first <kbd>&ctrl;,</kbd> so that the
+digits you type are not appended to the preceding number.
+Cotent MathML has many elements (especially a lot of pragmatic
+elements). Therefore, Gemse has the commands <kbd>#</kbd> and
+<kbd>&lt;</kbd> which allow you to insert arbitrary MathML elements.
+Please look up their meaning in the documentation of the content
+insert mode.</p>
 
-<p>The content insert mode has some more features. For example, look
-up the meaning of the commands <kbd>#</kbd> and <kbd>&lt;</kbd> in
-the documentation of the content insert mode. These commands allow you
-to insert arbitrary elements.</p>
+<p>Now we are done with Content MathML, at least for this tutorial.</p>
 
-<h2>Customizing</h2>
+<h2 id="customizing">Customizing</h2>
 
 <p>If you want to change the appearance of Gemse, you have to lay hands on
 the file <code>gemse.css</code>. Note that the documentation also uses this
@@ -2054,7 +2089,7 @@ change the commands of the attribute mode, open the file
 <code>attributeMode_commandTable.js</code>. Those files are not
 exactly self-explaining, but you can try to change them.</p>
 
-<h2>How to go on?</h2>
+<h2 id="how_to_go_on">How to go on?</h2>
 
 <p>We reached the end of the tutorial. Now you perhaps want to read in
 the rest of the documentation.</p>
