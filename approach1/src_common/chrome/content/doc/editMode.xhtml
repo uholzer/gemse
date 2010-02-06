@@ -29,6 +29,26 @@
 
 <h1>Edit Mode</h1>
 
+<div id="toc">
+<h2>Table of contents</h2>
+
+<ul>
+<li><a href="#help">Help</a></li>
+<li><a href="#movements">Movements</a></li>
+<li><a href="#loadsave">Loading, saving and exporting</a></li>
+<li><a href="#multipleeq">Working with multiple equations</a></li>
+<li><a href="#views">Views and viewsets</a></li>
+<li><a href="#callinginsertmode">Calling insert mode</a></li>
+<li><a href="#othermodes">Other modes</a></li>
+<li><a href="#delete">Delete and change</a></li>
+<li><a href="#undo">Undo and redo</a></li>
+<li><a href="#struct">Structural changes</a></li>
+<li><a href="#copy">Copy and paste</a></li>
+<li><a href="#options">Options</a></li>
+</ul>
+
+</div>
+
 <div id="commands">
 <h2>Commands</h2>
 
@@ -39,6 +59,26 @@
 </tbody>
 </table>
 
+<div id="help">
+<h3>Help</h3>
+
+<div class="commandDocumentation" id="editModeCommand_help">
+    <h4 class="commandTitle">Help</h4>
+
+    <p>Without any arguments, this command opens the index of the
+    documentaion. If you use <q>tutorial</q> as argument, the tutorial
+    gets opened directly. You can use <q>element</q> as argument to open
+    the section about the element the cursor is on from the MathML 3
+    specification. If you want to open the section of another element, you
+    can write the name of it behind the <q>element</q> argument, for
+    example <q>element mfrac</q>.</p>
+
+    <p>The argument <q>installation-directory</q> reveales the
+    location of the installation directory of Gemse.</p>
+</div>
+</div>
+
+<div id="movements">
 <h3>Movements</h3>
 
 <div class="commandDocumentation" id="editModeCommand_moveLeft">
@@ -109,7 +149,9 @@
 
     <p>Moves the cursor to the previous leaf.</p>
 </div>
+</div>
 
+<div id="loadsave">
 <h3>Loading, saving and exporting</h3>
 
 <div class="commandDocumentation" id="editModeCommand_save">
@@ -181,7 +223,9 @@
     also note, that this means, that you can not use this command in
     the online demo of Gemse.</p>
 </div>
+</div>
 
+<div id="multipleeq">
 <h3>Working with multiple equations</h3>
 
 <div class="commandDocumentation" id="editModeCommand_nextEquation">
@@ -203,7 +247,9 @@
 
     <p>Creates a new empty equation.</p>
 </div>
+</div>
 
+<div id="views">
 <h3>Views and viewsets</h3>
 
 <div class="commandDocumentation" id="editModeCommand_hideView">
@@ -234,8 +280,6 @@
     them.</p>
 </div>
 
-<h3>Various</h3>
-
 <div class="commandDocumentation" id="editModeCommand_redisplay">
     <h4 class="commandTitle">Update display</h4>
 
@@ -243,7 +287,9 @@
     display does not get updated. In such a case you can use this command
     to force an update of the display.</p>
 </div>
+</div>
 
+<div id="callinginsertmode">
 <h3>Calling insert mode</h3>
 
 <div class="commandDocumentation" id="editModeCommand_insertBefore">
@@ -287,7 +333,9 @@
     <p>Selects the insert mode that will be used for the next
     insert.</p>
 </div>
+</div>
 
+<div id="othermodes">
 <h3>Other modes</h3>
 
 <div class="commandDocumentation" id="editModeCommand_visualMode">
@@ -303,7 +351,9 @@
     <p>Opens the attribute mode so you can change the attributes of
     the current element</p>
 </div>
+</div>
 
+<div id="delete">
 <h3>Delete and change</h3>
 
 <div class="commandDocumentation" id="editModeCommand_kill">
@@ -324,7 +374,9 @@
     <p>Deletes all (by visual mode) selected elements and opens the
     insert mode.</p>
 </div>
+</div>
 
+<div id="undo">
 <h3>Undo and redo</h3>
 
 <div class="commandDocumentation" id="editModeCommand_undo">
@@ -341,7 +393,9 @@
     <p>Reapplies the last undone change. This is only possible if you
     have made no changes since the undo. A redo can be undone again.</p>
 </div>
+</div>
 
+<div id="struct">
 <h3>Structural changes</h3>
 
 <div class="commandDocumentation" id="editModeCommand_mrowEnvelop">
@@ -356,24 +410,9 @@
     <p>Removes the element and places its children at its former
     location.</p>
 </div>
-
-<h3>Help</h3>
-
-<div class="commandDocumentation" id="editModeCommand_help">
-    <h4 class="commandTitle">Help</h4>
-
-    <p>Without any arguments, this command opens the index of the
-    documentaion. If you use <q>tutorial</q> as argument, the tutorial
-    gets opened directly. You can use <q>element</q> as argument to open
-    the section about the element the cursor is on from the MathML 3
-    specification. If you want to open the section of another element, you
-    can write the name of it behind the <q>element</q> argument, for
-    example <q>element mfrac</q>.</p>
-
-    <p>The argument <q>installation-directory</q> reveales the
-    location of the installation directory of Gemse.</p>
 </div>
 
+<div id="copy">
 <h3>Copy and paste</h3>
 
 <div class="commandDocumentation" id="editModeCommand_copyToRegister">
@@ -416,7 +455,9 @@
     the command with <kbd>"x</kbd> where <code>x</code> is the name of
     the register which is always one unicode character.</p>
 </div>
+</div>
 
+<div id="options">
 <h3>Options</h3>
 
 <div class="commandDocumentation" id="editModeCommand_set">
@@ -441,6 +482,7 @@
     an option to a value that contains newline characters. For example 
     <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> SourceView.indentation=&space;&space;&enter;</kbd>
     causes the source view to use two spaces for indentation.</p>
+</div>
 </div>
 
 </div>
