@@ -194,6 +194,16 @@ or (at your option) any later version.
             <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
         </vbox>
     </internal:viewset>
+    <!-- 6 -->
+    <internal:viewset
+        name="screenshot-content"
+        description="used to create the screenshots for the tutorial">
+        <vbox flex="1">
+            <html:div internal:function="viewport" internal:viewClass="NTNView"/>
+            <html:div internal:function="viewport" internal:viewClass="TreeView"/>
+            <html:div internal:function="viewport" internal:viewClass="SourceView"/>
+        </vbox>
+    </internal:viewset>
 </internal:viewsets>
 
 <math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block">
