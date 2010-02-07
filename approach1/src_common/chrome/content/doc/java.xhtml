@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!DOCTYPE html [
+  <!ENTITY  enter  "↵">
+  <!ENTITY  esc    "ESC">
+  <!ENTITY  ctrl   "CRTL+">
+  <!ENTITY  alt    "ALT+">
+  <!ENTITY  space  "␣">
+]>
+
 <html
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
@@ -34,7 +42,8 @@ application.</p>
 
 <p>You should install at least Java 6u17 from Sun and the Java plugin for
 Firefox that comes along with it. (If you use XULRunner you have to
-make it aware of the plugin. I do not know how one does that.)</p>
+make it aware of the plugin. I do not know how one does that. Though, on my
+system it works out of the box.)</p>
 
 <p>Older versions probably work as well. Therefore, if you don't like
 to update to the above versions, you should try with your older ones
@@ -45,57 +54,34 @@ than the one from Sun.</p>
 
 <h2>Java libraries</h2>
 
-<p>You have to manually place a bunch of libraries in the installation
-directory of Gemse. (If you use Gemse as Firefox extension, the
+<p>Usually, the required libraries are shipped along with Gemse. If
+you want to update them, modify them, or if you checked out the git
+repository (which does not yet contain these libraries), you can read
+here where they are located.</p>
+
+<p>If you use Gemse as Firefox extension, the
 installation directory is located at <code>extensions/Gemse@andonyar.com</code>
-in you profile directory.) There you find a folder called
-<code>java</code>. It already contains some libraries but you have to
-add some additional ones.</p>
+in you profile directory. You can also start Gemse and enter the
+command <kbd>:help installation-directory&enter;</kbd>. It prints the
+location of the directory where Gemse is installed. (It fails with an
+error, if Gemse does not run with full privileges.)</p>
+
+<p>In Gemse's installation directory, you find a folder called
+<code>java</code>. Gemse automatically loads all jar files of this
+directory. Because it is sometimes easier to place a symbolic link to
+a directory somewhere else, all subdirectories are scanned for jar
+files as well. But jar files located in deeper folders are not
+detected. Instead of jar files, class files can be placed there as
+well, using the usual directory structure.</p>
 
 <p>The NTNView makes use of the rendering architecture of 
 <a href="https://trac.omdoc.org/jomdoc/">JOMDoc</a>. 
 JOMDoc can be obtained from the 
 <a href="https://trac.omdoc.org/jomdoc/wiki/Download">JOMDoc download page</a>.
-You need <code>jomdoc.jar</code> which you have to place directly in
-the <code>java</code> directory. You also need the 3rd party libraries
-it requires. Put their jar files in a folder called <code>lib</code>
-in the <code>java</code> directory.</p>
+JOMDoc itself depends on a couple of additional libraries. Only those
+that are essential for Gemse are shipped along with it. Gemse's
+documentation contains <a href="libs.xhtml">a list</a> of those libraries.</p>
 
-<p>Now you should have in your <code>java</code> directory at least the
-following files:</p>
-
-<pre>jomdoc.jar
-AbsoluteLayout.jar
-appframework-1.0.3.jar
-colapi.jar
-collections-generic-4.01.jar
-commons-io-1.4.jar
-cssparser-0.9.5.jar
-isorelax.jar
-isorelax-jaxp-bridge-1.0.jar
-javacc.jar
-junit-4.1.jar
-msv.jar
-relaxngDatatype.jar
-sac.jar
-saxon9-dom.jar
-saxon9.jar
-saxon9-xom.jar
-saxon9-xpath.jar
-swing-layout-1.0.3.jar
-swing-worker-1.1.jar
-xmlunit-1.2.jar
-xom-1.2.3.jar
-xsdlib.jar</pre>
-
-<p>The filenames do not need to match exactly, since every jar file is
-loaded anyway. (For convenience, every subdirectory is scanned for jar
-files as well. This should make your life easier if you want to use
-symbolic links to point to the libraries. Deeper directories are not
-searched.)</p>
-
-<p>That should do the trick. The features using Java should now be
-available.</p>
 
 </body>
 
