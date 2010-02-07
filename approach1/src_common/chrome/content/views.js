@@ -913,14 +913,12 @@ NTNView.prepareNTN = function() {
     NTNView.javaClasses.Attribute = classLoader.loadClass('nu.xom.Attribute');
     NTNView.javaClasses.Text      = classLoader.loadClass('nu.xom.Text');
     NTNView.javaClasses.RendererFactory     = classLoader.loadClass('org.omdoc.jomdoc.ntn.rnd.RendererFactory');
-    NTNView.javaClasses.NotationCollector   = classLoader.loadClass('org.omdoc.jomdoc.ntn.coll.ntn.NotationCollector');
-    NTNView.javaClasses.NotationSource      = classLoader.loadClass('org.omdoc.jomdoc.ntn.coll.ntn.NotationSource');
-    NTNView.javaClasses.B                   = classLoader.loadClass('org.omdoc.jomdoc.ntn.coll.ntn.B');
-    /*NTNView.javaClasses.List_NotationSource = classLoader.loadClass('java.util.List<org.omdoc.jomdoc.ntn.coll.ntn.NotationSource>');
-    NTNView.javaClasses.List_ContextSource  = classLoader.loadClass('java.util.List<org.omdoc.jomdoc.ntn.coll.ntn.ContextSource>');
-    NTNView.javaClasses.List_TagSource      = classLoader.loadClass('java.util.List<org.omdoc.jomdoc.ntn.coll.ntn.TagSource>');*/
+    NTNView.javaClasses.NotationCollector   = classLoader.loadClass('org.omdoc.jomdoc.coll.ntn.NotationCollector');
+    NTNView.javaClasses.NotationSource      = classLoader.loadClass('org.omdoc.jomdoc.coll.ntn.NotationSource');
+    NTNView.javaClasses.BundledFiles        = classLoader.loadClass('org.omdoc.jomdoc.coll.ntn.BundledFiles');
     NTNView.javaClasses.IOUtil              = classLoader.loadClass('org.omdoc.jomdoc.util.etc.IOUtil');
     NTNView.javaClasses.XMLUtil             = classLoader.loadClass('org.omdoc.jomdoc.util.xml.XMLUtil');
+    NTNView.javaClasses.OptionValueDynamic  = classLoader.loadClass('org.omdoc.jomdoc.cli.JOMDocOptionValue$Dynamic');
 
     NTNView.javaConstructors.Element = NTNView.javaClasses.Element.getConstructor(
         [NTNView.javaClasses.String,NTNView.javaClasses.String]
@@ -928,12 +926,13 @@ NTNView.prepareNTN = function() {
     NTNView.javaConstructors.Attribute = NTNView.javaClasses.Attribute.getConstructor(
         [NTNView.javaClasses.String,NTNView.javaClasses.String,NTNView.javaClasses.String]
     );
-    NTNView.javaConstructors.B = NTNView.javaClasses.B.getConstructor(
+    NTNView.javaConstructors.BundledFiles = NTNView.javaClasses.BundledFiles.getConstructor(
         [NTNView.javaClasses.String]
     );
     
     // Prepair notations
     var ntnCollector = NTNView.javaClasses.NotationCollector.newInstance();
+    /*
     var myB = NTNView.javaConstructors.B.newInstance([NTNView.javaClasses.B.getField("MATHML_NTN_DIR").get(null)])
     // For JOMDoc versions that are unable to load the bundled
     // notations, we try to do manually what ntnCollector should have
@@ -953,7 +952,8 @@ NTNView.prepareNTN = function() {
             }
         }
     }
-    ntnCollector.addNotationSource(myB);
+    ntnCollector.add(myB);
+    */
 
     // Prepair renderer
     //The class RendererFactory defines a method "newInstance" which
@@ -964,6 +964,7 @@ NTNView.prepareNTN = function() {
     factory.setNotationCollector(ntnCollector);
     factory.setParallel(true);
     factory.setContentLinks(true);
+    //factory.setDynamic(NTNView.javaClasses.OptionValueDynamic.getField("SHOW_ALL").get(null));
     NTNView.javaObjects.renderer = factory.newRenderer();
 
     // Remember that we are ready
@@ -999,7 +1000,7 @@ NTNView.prototype = {
 
         if (!NTNView.ready) {
             this.viewport.appendChild(document.createTextNode(
-                "NTNView failed to prepare."
+                "NTNView failed to initialize."
             ));
             return;
         }
@@ -1009,7 +1010,7 @@ NTNView.prototype = {
             var xomRoot = this.dom2xom(this.equationEnv.equation);
             
             // Invoke the renderer
-            xomRoot = NTNView.javaObjects.renderer.render(xomRoot);
+            xomRoot = NTNView.javaObjects.renderer.renderElement(xomRoot);
 
             // Build DOM structure according to the result
             var domRoot = this.xom2dom(xomRoot); 
