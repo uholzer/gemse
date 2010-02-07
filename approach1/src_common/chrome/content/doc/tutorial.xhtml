@@ -2006,14 +2006,14 @@ way. All you have to do is to choose the content insert mode. Hit
 <p>Load the file <code>examples/content01.xml</code>.</p>
 
 <p>As you can see, the equation view is now little helpful, it does
-not show the equation in a rendered form. Instead, it seems it just
+not show the equation in a rendered form. Instead, it seems to just
 shows garbage. The reason for this is that Mozilla's MathML rendering
 engine does not handle Content MathML. Indeed, it is not trivial to
 render Content MathML, i.e. to transform it to Presentation MathML.
 However, there is a view that can do that, called the NTNView. It uses
 the java library JOMDoc. Unfortunately, Gemse can only load java
 libraries if it is running with full permissions, that is, you have to
-run it as Firefox extension of XULRunner appilcation. Additionally,
+run it as Firefox extension or XULRunner appilcation. Additionally,
 you must have installed a Java plugin which supports LiveConnect.
 Please read the <a href="java.xhtml">instructions</a>. If you get it
 working, you can enter <kbd>:viewset content&enter;</kbd> and you can
@@ -2025,7 +2025,50 @@ the source view or on the nested boxes most of the time. Whether you
 get the NTNView working or not, you can go through this section
 anyway.</p>
 
-<!-- Screenshot -->
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a9fce4764-d81d-4d66-adb5-13634c526426"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a9fce4764-d81d-4d66-adb5-13634c526426-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a9fce4764-d81d-4d66-adb5-13634c526426-args-arg1-args1-arg1">a</mi><mo id="a9fce4764-d81d-4d66-adb5-13634c526426-args-arg1-args1-fun1">⁢</mo><mi id="a9fce4764-d81d-4d66-adb5-13634c526426-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a9fce4764-d81d-4d66-adb5-13634c526426-args-fun1">+</mo><mi id="a9fce4764-d81d-4d66-adb5-13634c526426-args-arg2">b</mi><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><apply xref="#a9fce4764-d81d-4d66-adb5-13634c526426"><csymbol cd="arith1" xref="#a9fce4764-d81d-4d66-adb5-13634c526426-args-fun1">plus</csymbol>
+  <apply xref="#a9fce4764-d81d-4d66-adb5-13634c526426-args-arg1"><csymbol cd="arith1">times</csymbol>
+    <ci xref="#a9fce4764-d81d-4d66-adb5-13634c526426-args-arg1-args1-arg1">a</ci>
+    <ci xref="#a9fce4764-d81d-4d66-adb5-13634c526426-args-arg1-args1-arg2">x</ci>
+  </apply>
+  <ci xref="#a9fce4764-d81d-4d66-adb5-13634c526426-args-arg2">b</ci>
+</apply></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">math<html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">plus</html:div></html:div><html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">a</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">ci<html:div class="nodeValue">b</html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="editcursor">&lt;math&gt;
+<html:span class="element">    &lt;apply&gt;
+<html:span class="element">        &lt;csymbol&gt;plus&lt;/csymbol&gt;
+</html:span><html:span class="element">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element">            &lt;ci&gt;a&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;x&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span><html:span class="element">        &lt;ci&gt;b&lt;/ci&gt;
+</html:span>    &lt;/apply&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
+<p>Move around the cursor and watch how the NTNView shows the cursor
+in the rendered equation as well.</p>
+
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="aa611addf-0745-4b9b-ba2a-3c792c697133"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="aa611addf-0745-4b9b-ba2a-3c792c697133-args-arg1" internal:selected="parent"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="aa611addf-0745-4b9b-ba2a-3c792c697133-args-arg1-args1-arg1" internal:selected="editcursor">a</mi><mo id="aa611addf-0745-4b9b-ba2a-3c792c697133-args-arg1-args1-fun1">⁢</mo><mi id="aa611addf-0745-4b9b-ba2a-3c792c697133-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="aa611addf-0745-4b9b-ba2a-3c792c697133-args-fun1">+</mo><mi id="aa611addf-0745-4b9b-ba2a-3c792c697133-args-arg2">b</mi><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><apply xref="#aa611addf-0745-4b9b-ba2a-3c792c697133"><csymbol cd="arith1" xref="#aa611addf-0745-4b9b-ba2a-3c792c697133-args-fun1">plus</csymbol>
+  <apply internal:selected="parent" xref="#aa611addf-0745-4b9b-ba2a-3c792c697133-args-arg1"><csymbol cd="arith1">times</csymbol>
+    <ci internal:selected="editcursor" xref="#aa611addf-0745-4b9b-ba2a-3c792c697133-args-arg1-args1-arg1">a</ci>
+    <ci xref="#aa611addf-0745-4b9b-ba2a-3c792c697133-args-arg1-args1-arg2">x</ci>
+  </apply>
+  <ci xref="#aa611addf-0745-4b9b-ba2a-3c792c697133-args-arg2">b</ci>
+</apply></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">plus</html:div></html:div><html:div class="element" internal:selected="parent">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element" internal:selected="editcursor">ci<html:div class="nodeValue">a</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">ci<html:div class="nodeValue">b</html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element">&lt;math&gt;
+<html:span class="element">    &lt;apply&gt;
+<html:span class="element">        &lt;csymbol&gt;plus&lt;/csymbol&gt;
+</html:span><html:span class="element" internal:selected="parent">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element" internal:selected="editcursor">            &lt;ci&gt;a&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;x&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span><html:span class="element">        &lt;ci&gt;b&lt;/ci&gt;
+</html:span>    &lt;/apply&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
 
 <p>When your cursor is on a Content MathML element, or the first
 element of the selection is a Content MathML element, then the command
@@ -2033,14 +2076,90 @@ element of the selection is a Content MathML element, then the command
 an <code>mrow</code> element. Move the cursor to the identifier
 element for <code>b</code>. Hit <kbd>&space;</kbd> once.</p>
 
-<p>Not enter <kbd>ji*</kbd>. As you see, <kbd>*</kbd> places a times
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a47733b9b-2829-48d6-b921-97f0bbe931a8" internal:selected="parent"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a47733b9b-2829-48d6-b921-97f0bbe931a8-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a47733b9b-2829-48d6-b921-97f0bbe931a8-args-arg1-args1-arg1">a</mi><mo id="a47733b9b-2829-48d6-b921-97f0bbe931a8-args-arg1-args1-fun1">⁢</mo><mi id="a47733b9b-2829-48d6-b921-97f0bbe931a8-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a47733b9b-2829-48d6-b921-97f0bbe931a8-args-fun1">+</mo><apply internal:selected="editcursor"><ci>b</ci></apply><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><apply internal:selected="parent" xref="#a47733b9b-2829-48d6-b921-97f0bbe931a8"><csymbol cd="arith1" xref="#a47733b9b-2829-48d6-b921-97f0bbe931a8-args-fun1">plus</csymbol>
+  <apply xref="#a47733b9b-2829-48d6-b921-97f0bbe931a8-args-arg1"><csymbol cd="arith1">times</csymbol>
+    <ci xref="#a47733b9b-2829-48d6-b921-97f0bbe931a8-args-arg1-args1-arg1">a</ci>
+    <ci xref="#a47733b9b-2829-48d6-b921-97f0bbe931a8-args-arg1-args1-arg2">x</ci>
+  </apply>
+  <apply internal:selected="editcursor"><ci>b</ci></apply>
+</apply></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="parent">apply<html:div class="element">csymbol<html:div class="nodeValue">plus</html:div></html:div><html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">a</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">apply<html:div class="element">ci<html:div class="nodeValue">b</html:div></html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element">&lt;math&gt;
+<html:span class="element" internal:selected="parent">    &lt;apply&gt;
+<html:span class="element">        &lt;csymbol&gt;plus&lt;/csymbol&gt;
+</html:span><html:span class="element">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element">            &lt;ci&gt;a&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;x&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span><html:span class="element" internal:selected="editcursor">        &lt;apply&gt;
+<html:span class="element">            &lt;ci&gt;b&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span>    &lt;/apply&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
+<p>Now enter <kbd>ji*</kbd>. As you see, <kbd>*</kbd> places a times
 symbol, <kbd>+</kbd>, <kbd>-</kbd>, <kbd>/</kbd> do the analogue.
 (Note: If you got an <code>mo</code> element instead of a
 <code>csymbol</code>, you haven't selected the content insert mode. In
 this ase, hit escape, undo your wrong change, select the content
 insert mode and try again.)</p>
 
-<p>Do <kbd>&esc;Abcde</kbd>. Assume, instead of multiplying
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="af6e68ddc-9a11-433a-9fb3-ce925855b251"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg1-args1-arg1">a</mi><mo id="af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg1-args1-fun1">⁢</mo><mi id="af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="af6e68ddc-9a11-433a-9fb3-ce925855b251-args-fun1">+</mo><mrow id="af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg2" internal:selected="insertCursorIn"><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg2-args2-arg1" internal:selected="insertCursorBefore">b</mi><mo a4:egroup="fence" xmlns:a4="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo a5:egroup="fence" xmlns:a5="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><apply xref="#af6e68ddc-9a11-433a-9fb3-ce925855b251"><csymbol cd="arith1" xref="#af6e68ddc-9a11-433a-9fb3-ce925855b251-args-fun1">plus</csymbol>
+  <apply xref="#af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg1"><csymbol cd="arith1">times</csymbol>
+    <ci xref="#af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg1-args1-arg1">a</ci>
+    <ci xref="#af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg1-args1-arg2">x</ci>
+  </apply>
+  <apply internal:selected="insertCursorIn" xref="#af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg2"><csymbol cd="arith1" internal:selected="insertCursorAfter">times</csymbol><ci internal:selected="insertCursorBefore" xref="#af6e68ddc-9a11-433a-9fb3-ce925855b251-args-arg2-args2-arg1">b</ci></apply>
+</apply></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">plus</html:div></html:div><html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">a</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element" internal:selected="insertCursorIn">apply<html:div class="element" internal:selected="insertCursorAfter">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element" internal:selected="insertCursorBefore">ci<html:div class="nodeValue">b</html:div></html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element">&lt;math&gt;
+<html:span class="element">    &lt;apply&gt;
+<html:span class="element">        &lt;csymbol&gt;plus&lt;/csymbol&gt;
+</html:span><html:span class="element">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element">            &lt;ci&gt;a&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;x&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span><html:span class="element" internal:selected="insertCursorIn">        &lt;apply&gt;
+<html:span class="element" internal:selected="insertCursorAfter">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element" internal:selected="insertCursorBefore">            &lt;ci&gt;b&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span>    &lt;/apply&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
+<p>Do <kbd>&esc;Acde</kbd>.</p>
+
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1-args1-arg1">a</mi><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1-args1-fun1">⁢</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-fun1">+</mo><mrow id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2" internal:selected="insertCursorIn"><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg1">b</mi><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-fun1">⁢</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg2">c</mi><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-fun2">⁢</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg3">d</mi><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-fun3">⁢</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg4" internal:selected="insertCursorAfter">e</mi><mo a4:egroup="fence" xmlns:a4="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo a5:egroup="fence" xmlns:a5="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><apply xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e"><csymbol cd="arith1" xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-fun1">plus</csymbol>
+  <apply xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1"><csymbol cd="arith1">times</csymbol>
+    <ci xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1-args1-arg1">a</ci>
+    <ci xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1-args1-arg2">x</ci>
+  </apply>
+  <apply internal:selected="insertCursorIn" xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2"><csymbol cd="arith1">times</csymbol><ci xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg1">b</ci><ci xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg2">c</ci><ci xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg3">d</ci><ci internal:selected="insertCursorAfter" xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg4">e</ci></apply>
+</apply></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">plus</html:div></html:div><html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">a</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element" internal:selected="insertCursorIn">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">b</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">c</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">d</html:div></html:div><html:div class="element" internal:selected="insertCursorAfter">ci<html:div class="nodeValue">e</html:div></html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element">&lt;math&gt;
+<html:span class="element">    &lt;apply&gt;
+<html:span class="element">        &lt;csymbol&gt;plus&lt;/csymbol&gt;
+</html:span><html:span class="element">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element">            &lt;ci&gt;a&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;x&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span><html:span class="element" internal:selected="insertCursorIn">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element">            &lt;ci&gt;b&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;c&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;d&lt;/ci&gt;
+</html:span><html:span class="element" internal:selected="insertCursorAfter">            &lt;ci&gt;e&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span>    &lt;/apply&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
+<p>Assume, instead of multiplying
 <code>d</code> and <code>e</code> with the rest, we want to multiply
 their sum with the rest. We are still in insert mode. hit
 <kbd>&ctrl;h&ctrl;h</kbd>. At this point, we could use
@@ -2049,9 +2168,69 @@ and the insert a csymbol manually later on. But it is even easier:
 Just hit <kbd>+</kbd> and watch the magic happen. Terminate the insert
 mode with <kbd>&esc;</kbd>.</p>
 
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a7684a6f7-6750-42ea-b36e-2ca0165acc26"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg1-args1-arg1">a</mi><mo id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg1-args1-fun1">⁢</mo><mi id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-fun1">+</mo><mrow id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2" internal:selected="parent"><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg1">b</mi><mo id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-fun1">⁢</mo><mi id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg2">c</mi><mo id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-fun2">⁢</mo><mrow id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg3" internal:selected="editcursor"><mo a4:egroup="fence" xmlns:a4="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg3-args3-arg1">d</mi><mo id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg3-args3-fun1">+</mo><mi id="a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg3-args3-arg2">e</mi><mo a5:egroup="fence" xmlns:a5="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo a6:egroup="fence" xmlns:a6="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo a7:egroup="fence" xmlns:a7="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><apply xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26"><csymbol cd="arith1" xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-fun1">plus</csymbol>
+  <apply xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg1"><csymbol cd="arith1">times</csymbol>
+    <ci xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg1-args1-arg1">a</ci>
+    <ci xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg1-args1-arg2">x</ci>
+  </apply>
+  <apply internal:selected="parent" xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2"><csymbol cd="arith1">times</csymbol><ci xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg1">b</ci><ci xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg2">c</ci><apply internal:selected="editcursor" xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg3"><csymbol cd="arith1">plus</csymbol><ci xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg3-args3-arg1">d</ci><ci xref="#a7684a6f7-6750-42ea-b36e-2ca0165acc26-args-arg2-args2-arg3-args3-arg2">e</ci></apply></apply>
+</apply></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">plus</html:div></html:div><html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">a</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element" internal:selected="parent">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">b</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">c</html:div></html:div><html:div class="element" internal:selected="editcursor">apply<html:div class="element">csymbol<html:div class="nodeValue">plus</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">d</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">e</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element">&lt;math&gt;
+<html:span class="element">    &lt;apply&gt;
+<html:span class="element">        &lt;csymbol&gt;plus&lt;/csymbol&gt;
+</html:span><html:span class="element">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element">            &lt;ci&gt;a&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;x&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span><html:span class="element" internal:selected="parent">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element">            &lt;ci&gt;b&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;c&lt;/ci&gt;
+</html:span><html:span class="element" internal:selected="editcursor">            &lt;apply&gt;
+<html:span class="element">                &lt;csymbol&gt;plus&lt;/csymbol&gt;
+</html:span><html:span class="element">                &lt;ci&gt;d&lt;/ci&gt;
+</html:span><html:span class="element">                &lt;ci&gt;e&lt;/ci&gt;
+</html:span>            &lt;/apply&gt;
+</html:span>        &lt;/apply&gt;
+</html:span>    &lt;/apply&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
 <p>Of course you want to be able to insert an arbitrary symbol from a
 content dictionary of your choice. Hit <kbd>ggjj</kbd> and then
 <kbd>c</kbd>. Finally, do <kbd>$relation1&enter;eq&enter;</kbd>.</p>
+
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3" internal:selected="insertCursorIn"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg1" internal:selected="insertCursorBefore"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg1-args-arg1">a</mi><mo id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg1-args-fun1">⁢</mo><mi id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg1-args-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-fun" internal:selected="insertCursorAfter">=</mo><mrow id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2"><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg1">b</mi><mo id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-fun1">⁢</mo><mi id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg2">c</mi><mo id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-fun2">⁢</mo><mrow id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg3"><mo a4:egroup="fence" xmlns:a4="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg3-args3-arg1">d</mi><mo id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg3-args3-fun1">+</mo><mi id="a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg3-args3-arg2">e</mi><mo a5:egroup="fence" xmlns:a5="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo a6:egroup="fence" xmlns:a6="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo a7:egroup="fence" xmlns:a7="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><apply internal:selected="insertCursorIn" xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3">
+  <csymbol cd="relation1" internal:selected="insertCursorAfter" xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-fun">eq</csymbol><apply internal:selected="insertCursorBefore" xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg1"><csymbol cd="arith1" xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg1-args-fun1">times</csymbol>
+    <ci xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg1-args-arg1">a</ci>
+    <ci xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg1-args-arg2">x</ci>
+  </apply>
+  <apply xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2"><csymbol cd="arith1" xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-fun2">times</csymbol><ci xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg1">b</ci><ci xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg2">c</ci><apply xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg3"><csymbol cd="arith1">plus</csymbol><ci xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg3-args3-arg1">d</ci><ci xref="#a15c8a4b3-06ad-4a69-aea3-b30474c6abb3-arg2-args-arg3-args3-arg2">e</ci></apply></apply>
+</apply></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">math<html:div class="element" internal:selected="insertCursorIn">apply<html:div class="element" internal:selected="insertCursorAfter">csymbol<html:div class="nodeValue">eq</html:div></html:div><html:div class="element" internal:selected="insertCursorBefore">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">a</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">x</html:div></html:div></html:div><html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">times</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">b</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">c</html:div></html:div><html:div class="element">apply<html:div class="element">csymbol<html:div class="nodeValue">plus</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">d</html:div></html:div><html:div class="element">ci<html:div class="nodeValue">e</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element">&lt;math&gt;
+<html:span class="element" internal:selected="insertCursorIn">    &lt;apply&gt;
+<html:span class="element" internal:selected="insertCursorAfter">        &lt;csymbol&gt;eq&lt;/csymbol&gt;
+</html:span><html:span class="element" internal:selected="insertCursorBefore">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element">            &lt;ci&gt;a&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;x&lt;/ci&gt;
+</html:span>        &lt;/apply&gt;
+</html:span><html:span class="element">        &lt;apply&gt;
+<html:span class="element">            &lt;csymbol&gt;times&lt;/csymbol&gt;
+</html:span><html:span class="element">            &lt;ci&gt;b&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;ci&gt;c&lt;/ci&gt;
+</html:span><html:span class="element">            &lt;apply&gt;
+<html:span class="element">                &lt;csymbol&gt;plus&lt;/csymbol&gt;
+</html:span><html:span class="element">                &lt;ci&gt;d&lt;/ci&gt;
+</html:span><html:span class="element">                &lt;ci&gt;e&lt;/ci&gt;
+</html:span>            &lt;/apply&gt;
+</html:span>        &lt;/apply&gt;
+</html:span>    &lt;/apply&gt;
+</html:span>&lt;/math&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
 
 <p>The content insert mode has more features: 
 Numbers can be inserted like in the UCD insert mode. That is, just
