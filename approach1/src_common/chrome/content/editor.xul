@@ -107,7 +107,7 @@ or (at your option) any later version.
                 <vbox internal:function="viewport" internal:viewClass="OthersView"/>
             </hbox>
             <!--<spacer flex="1"/>-->
-            <box flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
+            <vbox flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
             <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
         </vbox>
     </internal:viewset>
@@ -123,7 +123,7 @@ or (at your option) any later version.
                 <html:div internal:function="viewport" internal:viewClass="DictionaryView"/>
             </hbox>
             <!--<spacer flex="1"/>-->
-            <box flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
+            <vbox flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
             <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
         </vbox>
     </internal:viewset>
@@ -168,7 +168,7 @@ or (at your option) any later version.
                 <vbox internal:function="viewport" internal:viewClass="OthersView"/>
             </hbox>
             <!--<spacer flex="1"/>-->
-            <box flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
+            <vbox flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
             <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
         </vbox>
     </internal:viewset>
@@ -190,7 +190,7 @@ or (at your option) any later version.
                 <vbox internal:function="viewport" internal:viewClass="OthersView"/>
             </hbox>
             <!--<spacer flex="1"/>-->
-            <box flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
+            <vbox flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
             <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
         </vbox>
     </internal:viewset>

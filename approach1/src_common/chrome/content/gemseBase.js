@@ -1047,11 +1047,10 @@ function GemsePEditor() {
      */
     this.inputRecordings = { };
     /**
-     * The last message for the user stored as DOM node.
-     * If there is no last message or the user does not want to see it
-     * any more, this is set to null.
+     * The last messages for the user stored as DOM nodes.
+     * Messages the user doesn't want to see anymore are deleted.
      */
-    this.lastMessage = null;
+    this.messages = [];
     /**
      * Manages the view sets.
      * (The constructor of the editor does use the element with id
@@ -1097,6 +1096,7 @@ GemsePEditor.prototype = {
      */
     inputEvent: function () {
         // Is called when the input buffer supposedly changed
+        this.messages = [];
         var updateOfViewsNeeded = false;
         if (inputSubstitutionActive) { 
             var allowPropagation = this.inputSubstitution();
@@ -1445,17 +1445,18 @@ GemsePEditor.prototype = {
                 stackBacktrace.appendChild(document.createTextNode(message.stack));
                 errorElement.appendChild(stackBacktrace);
             }
-            this.lastMessage = errorElement;
+            this.messages.push(errorElement);
         }
         else if (message.nodeType) { //XXX: Is there a better way to test this?
             // message is a DOM node
-            this.lastMessage = message;
+            this.messages.push(message);
         }
         else {
             // message is a String or something that should be
             // presented as such, using its toString method
-            this.lastMessage = document.createElementNS(NS_HTML,"div")
-            this.lastMessage.appendChild(document.createTextNode(message.toString()));
+            var newMessage = document.createElementNS(NS_HTML,"div");
+            newMessage.appendChild(document.createTextNode(message.toString()));
+            this.messages.push(newMessage);
         }
     }
 }

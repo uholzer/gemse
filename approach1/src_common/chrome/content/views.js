@@ -58,12 +58,10 @@ MessageView.prototype = {
      */
     build: function() {
         // Put the editor.lastMessage as only child into the viewport.
-        if (mml_firstChild(this.viewport)!=this.editor.lastMessage) {
-            xml_flushElement(this.viewport);
-            if (this.editor.lastMessage) {
-                this.viewport.appendChild(this.editor.lastMessage);
-            }
-        }
+        xml_flushElement(this.viewport);
+        this.editor.messages.forEach(function(m) {
+            this.viewport.appendChild(m);
+        }, this);
     }
 }
 ViewsetManager.viewClasses["MessageView"] = MessageView;
