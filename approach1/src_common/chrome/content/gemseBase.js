@@ -40,6 +40,11 @@ function EquationEnv(editor, equation) {
     this.origin = null;
 
     /**
+     * True when the user has opened the equation read only.
+     */
+    this.readOnly = false;
+
+    /**
      * Local options.
      * Options that are locally set for this equationEnv. A mode
      * should not read or write this array directly, it should use
@@ -117,16 +122,6 @@ EquationEnv.prototype = {
      */
     get mode() { return this.modeStack[this.modeStack.length-1]; },
 
-    /** 
-     * Current woriking directory for this equation.
-     * The woring directory is used if the user provides a relative
-     * URI for load or save or whatever.
-     * XXX: Load does not yet know about this.
-     * XXX: Does always use the working directory given by the editor
-     * object.
-     */
-    get workingDirectory() { return this.editor.workingDirectory; },
-
     /**
      * Turns an URI given as string into an URI object of the
      * nsIIOService. Relative URIs are considered to be relative to
@@ -136,7 +131,7 @@ EquationEnv.prototype = {
     stringToURI: function(s) {
         var ios = Components.classes["@mozilla.org/network/io-service;1"]
                 .getService(Components.interfaces.nsIIOService);
-        return ios.newURI(s,null,ios.newURI(this.workingDirectory,null,null));
+        return ios.newURI(s,null,ios.newURI(this.editor.workingDirectory,null,null));
     },
     /**
      * Removes all attributes in the internal namespace. This method
@@ -179,93 +174,59 @@ EquationEnv.prototype = {
      *                             This is usually where the equation
      *                             has been saved to the last time or
      *                             where it was loaded from.
+     * @param force Causes the equation to be saved, even if the user
+     *              has opened it or the destination file has changed
+     *              by another application.
      */
-    save: function(destinationURIString) {
+    save: function(destinationURIString, force) {
         // Saves the equation to its origin if destination is empty.
         // Otherwise it will save it to destinationURI, creating a new
         // XML file with the math element as a root node. 
 
-        // We have to distinguish between several cases
+        var root = this.equation.cloneNode(true);
+        this.cleanSubtreeOfDocument(document, root);
 
-        if (!destinationURIString) {
-            var uri = this.stringToURI(this.origin.uri);
-            if (this.origin.doc && this.origin.element && uri.scheme == "file") { // Element in a local file
-                // Modify the element (which has to be part of the
-                // document), serialize the document and save it to the
-                // file (which must be a file object)
-                var newElement = this.origin.doc.importNode(this.equation, true);
-                this.origin.element.parentNode.replaceChild(
-                    newElement,
-                    this.origin.element
-                );
-                this.origin.element = newElement;
-                this.cleanSubtreeOfDocument(this.origin.doc, newElement);
-                var serializer = new XMLSerializer();
-                var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                   .createInstance(Components.interfaces.nsIFileOutputStream);
-                var file = uri.QueryInterface(Components.interfaces.nsIFileURL).file;
-                foStream.init(file, 0x02 | 0x08 | 0x20, 0664, 0);
-                serializer.serializeToStream(this.origin.doc, foStream, "")
-            }
-            else if (this.origin.doc && this.origin.element && this.origin.uri) { // Element in a remote file
-                // Modify the element, serialize the document and PUT it
-                // to uri
-                var newElement = this.origin.doc.importNode(this.equation, true);
-                this.origin.element.parentNode.replaceChild(
-                    newElement,
-                    this.origin.element
-                );
-                this.cleanSubtreeOfDocument(this.origin.doc, newElement);
-                var serializer = new XMLSerializer();
-                var xmlString = serializer.serializeToString(doc);
-                //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
-                var request = new XMLHttpRequest();
-                request.open("PUT", this.origin.uri, false);
-                request.setRequestHeader("Content-type", "application/xml"); //XXX: What is the correct Content-type?
-                request.send(xmlString);
-            }
-            else if (this.origin.uri) { // Local or remote file containing only the equation
-                destinationURIString = this.origin.uri;
-            }
-            else {
-                throw new Error("Can not save to origin");
-            }
+        if (this.readOnly && !force) {
+            throw new Error("Refused to save the equation, because it is opened read only.");
         }
-        
-        // destinationURIString may have been provided by the user or by one
-        // of the cases above. If it is set, the target document
-        // must contain only the equation. 
-        if (destinationURIString) {
-            // Create a new document and copy the math element into it
-            var doc = document.implementation.createDocument(null, null, null);
-            doc.appendChild(doc.importNode(this.equation, true));
-            // Kill all attributes in the internal namespace
-            this.cleanSubtreeOfDocument(doc,doc);
+        else if (this.readOnly && force) {
+            this.readOnly = false;
+        }
 
-            var destinationURI = this.stringToURI(destinationURIString);
-            
-            if (destinationURI.scheme == "file") { // Write to a file
-                var serializer = new XMLSerializer();
-                var file = destinationURI.QueryInterface(Components.interfaces.nsIFileURL).file;
-                var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                   .createInstance(Components.interfaces.nsIFileOutputStream);
-                foStream.init(file, 0x02 | 0x08 | 0x20, 0664, 0);
-                serializer.serializeToStream(doc, foStream, "")
+        if (destinationURIString) {
+            destinationURIString = this.editor.makeURIAbsolute(destinationURIString);
+
+            var storage = this.editor.newDocStorageByURI(destinationURIString);
+            if (storage.exists()==1 && !force) {
+                throw new Error("The location you want to save to already exists.");
             }
-            else { // Try PUT
-                var serializer = new XMLSerializer();
-                var xmlString = serializer.serializeToString(doc);
-                //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
-                var request = new XMLHttpRequest();
-                request.open("PUT", destinationURI, false);
-                request.setRequestHeader("Content-type", "application/mathml+xml");
-                request.send(xmlString);
+            root = storage.document.adoptNode(root);
+            storage.document.appendChild(root);
+            this.origin = new StorageLink(storage, root);
+            this.editor.storages.push(storage);
+            this.editor.freeUnusedDocStorage();
+            storage.write();
+        }
+        else {
+            if (!this.origin) {
+                throw new Error("This is a new equation and the location where it has to be saved is unknown.");
             }
-            this.origin = { uri: destinationURIString };
+            if (this.origin.storage.readOnly()==1) {
+                throw new Error("This resource can not be written, maybe because of missing write privileges.");
+            }
+            if (this.origin.storage.hasChanged()==1 && !force) {
+                throw new Error("The destination resource has changed since you loaded/wrote this equation the last time. Use force to write anyway.");
+            }
+            root = this.origin.storage.document.adoptNode(root);
+            this.origin.node.parentNode.replaceChild(root, this.origin.node);
+            this.origin.node = root;
+            this.origin.storage.write();
         }
 
         // Tell the history object that we saved the current state
         this.history.reportSaving();
+
+        this.editor.showMessage("Successfully saved in " + this.origin.storage.toString());
     },
     /**
      * Closes this equation if there are no unsaved changes or if
@@ -280,7 +241,7 @@ EquationEnv.prototype = {
         // Check whether there are unsaved changes
         if (this.history.hasChanges() && !force) {
             return false;
-            // TODO: Inform user
+            this.editor.showMessage("Neglected to close equation, since it has unsaved changes.");
         }
 
         // close
@@ -1012,12 +973,33 @@ function GemsePEditor() {
      */
     this.focus = -1;
     /**
+     * List of open documents
+     * @private
+     */
+    this.storages = [];
+    /**
      * The input box where the user enters commands
      * (The constructor of the editor looks for the element with id
      * "input".)
      * @private
      */
     this.inputElement = document.getElementById("input");
+    /**
+     * The current working directory for internal use. If you want to
+     * get or set the working directory, use editor.workingDirectory.
+     * This value has nothing to do with the real current working
+     * directory of the application.
+     * The value is an URI as string.
+     * @private
+     */
+    this.internalWorkingDirectory = this.processWorkingDirectory;
+    if (!this.internalWorkingDirectory) {
+        // For some reason we are not able to find out the current
+        // working directory of the process, so we try the base URI of
+        // the editor.xul, which should always be available (DOM3,
+        // Node interface)
+        this.internalWorkingDirectory = document.baseURI;
+    }
     /**
      * A template as a DOM element of a new equation.
      * (The constructor of this class does set this property by
@@ -1073,17 +1055,57 @@ function GemsePEditor() {
 }
 GemsePEditor.prototype = {
     /**
-     * The global working directory of the editor. An equation may have its own
-     * working directory.
+     * The working directory of the editor.
      */
     get workingDirectory() {
-        var ios = Components.classes["@mozilla.org/network/io-service;1"].
-                         getService(Components.interfaces.nsIIOService);
-        var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
-                         getService(Components.interfaces.nsIProperties).
-                         get("CurWorkD", Components.interfaces.nsIFile);
-        var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
-        return workingDirectory;
+        return this.internalWorkingDirectory;
+    },
+    set workingDirectory(dir) {
+        if (dir) {
+            this.internalWorkingDirectory = dir;
+        }
+        else {
+            // If dir is empty, we should change to the user's home
+            // directory
+            try {
+                var ios = Components.classes["@mozilla.org/network/io-service;1"].
+                                 getService(Components.interfaces.nsIIOService);
+                var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
+                                 getService(Components.interfaces.nsIProperties).
+                                 get("Home", Components.interfaces.nsIFile);
+                var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
+                this.internalWorkingDirectory = workingDirectory;
+            }
+            catch(e) {
+                // If we fail, we should not change anything
+                this.showMessage("Unable to change working directory")
+                return;
+            }
+        }
+        this.showMessage("Changed working directory to " + this.internalWorkingDirectory);
+    },
+
+    /**
+     * Get the real current working directory of the application as
+     * indicated by the io-service.
+     * @private
+     * @returns The current working directory as URI as string. If
+     *          it is not possible to find out, null is returned (for
+     *          example when Gemse runs outside the chrome).
+     */
+    get processWorkingDirectory() {
+        try {
+            var ios = Components.classes["@mozilla.org/network/io-service;1"].
+                             getService(Components.interfaces.nsIIOService);
+            var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
+                             getService(Components.interfaces.nsIProperties).
+                             get("CurWorkD", Components.interfaces.nsIFile);
+            var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
+            return workingDirectory;
+        }
+        catch(e) {
+            return null;
+        }
     },
 
     /**
@@ -1254,6 +1276,8 @@ GemsePEditor.prototype = {
         if (this.focus == index && index > 0) { --this.focus; this.moveFocusTo(this.focus) }
         else { this.moveFocusTo(this.focus) }
 
+        if (equationEnv.origin) { this.freeUnusedDocStorage(equationEnv.origin.storage) }
+
         // XXX: What to do if all equations are gone? Here, we just
         // close the window. (Perhaps this should be configurable?)
         if (this.equations.length==0) {
@@ -1261,21 +1285,78 @@ GemsePEditor.prototype = {
         }
     },
     /**
-     * Attaches a new EquationEnv to an already present element in
-     * memory. If one has created an math element, this method can be
-     * used to create an equation environment object that is attached
-     * to the math element and added to the list of equations.
-     * This method is mainly used internally but is also used from the
-     * outside sometimes.
-     * @param element the math element
-     * @returns {EquationEnv} the new equation environment
+     * Creates a new doc storage for the given URI. The document
+     * storage class is chosen according to the protocol.
+     * @param uriString The URI as string. Must be absolute (except
+     *                  if we do not have chrome privileges).
+     * @Returns document storage
      */
-    attachNewEquationEnvToElement: function (element) {
-        var newEquationEnv = new EquationEnv(this, element);
-        newEquationEnv.init();
-        this.equations.push(newEquationEnv);
-        this.moveFocusTo(this.equations.length-1);
-        return newEquationEnv;
+    newDocStorageByURI: function(uriString) {
+        var ios;
+        try {
+            ios = Components.classes["@mozilla.org/network/io-service;1"].
+                            getService(Components.interfaces.nsIIOService);
+        }
+        catch(e) {
+            // If we do not have chrome privileges, we just do
+            return new XMLHttpRequestDocStorage(uri);
+        }
+
+        var uri = ios.newURI(uriString,null,null);
+        var protocol = uri.scheme;
+        
+        if (protocol == "http") {
+            return new XMLHttpRequestDocStorage(uriString);
+        }
+        else if (protocol == "file") {
+            // Create an nsIFile from the uri
+            var file = uri.QueryInterface(Components.interfaces.nsIFileURL).file;
+            return new FileDocStorage(file);
+        }
+        else {
+            // Use XMLHttpRequest for loading and do not allow saving
+            return new ReadOnlyXMLHttpRequestDocStorage(uriString);
+        }
+    },
+    /**
+     * Removes document storages that are not used by any equation.
+     * @param storage If given, only this storage is checked. If
+     *                missing, all storages are checked.
+     */
+    freeUnusedDocStorage: function(storage) {
+        var storagesToCheck;
+        if (storage) {
+            storagesToCheck = [storage];
+        }
+        else {
+            storagesToCheck = this.storages;
+        }
+
+        var unusedStorages = storagesToCheck.filter(function(s) {
+            for (var i=0; i<this.equations.length; ++i) {
+                if (this.equations[i].origin && s === this.equations[i].origin.storage) {
+                    return false;
+                }
+            }
+            return true;
+        }, this);
+
+        unusedStorages.forEach(function(s) {
+            var index = this.storages.indexOf(s);
+            this.showMessage("Remove unused storage " + s.toString());
+            this.storages.splice(index,1);
+        }, this);
+    },
+    /**
+     * Checks whether an equivalent document storage already exists
+     * and returns it
+     * @param {DocStorage} forStorage
+     * @returns The already existing storage or null
+     */
+    getEquivalentStorage: function(forStorage) {
+        var filtered = this.storages.filter(function(s) { return forStorage.equals(s) });
+        if (filtered.length > 0) { return filtered[0] }
+        else { return null }
     },
     /**
      * Creates a new equation along with a new EquationEnv. 
@@ -1299,6 +1380,28 @@ GemsePEditor.prototype = {
         this.moveFocusTo(this.equations.length-1);
         return newEquationEnv;
     },
+    /**
+     * Makes an URI absolute if we have chrome privileges. If not,
+     * return the input
+     * @param {String} uri 
+     * @param {String}
+     */
+    makeURIAbsolute: function(uri) {
+        // Check whether uri is relative. Make an absolute one out of it.
+        try {
+            // Fails, if the preivileges for accessing Components.classes
+            // are missing. In such a case, do not make the uri absolute
+            // and let that handle by the XMLHttpRequest. I think this
+            // means that then the location of the editor.xul is taken
+            // as base by XMLHttpRequest.
+            // XXX: What happens if this fails for another reason?
+            var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService);
+            uri = ios.newURI(uri,null,ios.newURI(this.workingDirectory,null,null)).spec;
+        }
+        catch (e) { }
+        return uri;
+    },
     /** 
      * Loads the document at the given URI and loads its equations. 
      * If elementId and xpathString are empty, it
@@ -1308,76 +1411,121 @@ GemsePEditor.prototype = {
      * this xpath expression and uses the first result.
      * This is done using an XMLHttpRequest. This also works for
      * local files.
-     * @param {String} uri
+     * @param {String} uri Absolute or relative URL including a
+     *                     fragment identifier or XPointer (only the
+     *                     scheme xpath1 is supported)
      * @param {String} elementId
      * @param {String} xpathString
      */
-    loadURI: function (uri, elementId, xpathString) {
-        // Check whether uri is relative. Make an absolute one out of it.
-        // XXX: Stupid hack:
-        // (Fails, if the preivileges for accessing Components.classes
-        // are missing. In such a case, do not make the uri absolute
-        // and let that handle by the XMLHttpRequest. I think this
-        // means that then the location of the editor.xhtml is taken
-        // as base by XMLHttpRequest.)
-        try {
-            var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                    .getService(Components.interfaces.nsIIOService);
-            uri = ios.newURI(uri,null,ios.newURI(this.workingDirectory,null,null)).spec;
-        }
-        catch (e) { }
+    loadURI: function (uri, fragmentId, xpath) {
+        var protocol = null;
 
-        // Create request
-        var request = new XMLHttpRequest();
-        request.open("GET", uri, false);
-        request.send(null);
-        var doc = request.responseXML;
-        
-        var mathElements = [];
-        var origins = [];
-        if (elementId) {
-            mathElements[0] = doc.getElementById(elementId);
-            origins[0] = {
-                uri: uri,
-                doc: doc,
-                element: mathElements[0]
+        uri = this.makeURIAbsolute(uri);
+
+        // Take URI apart
+        // XXX: Most probably broken. We should really use nsIURI!
+        var uriParts = /^((([^:]*):)?[^#]*)(#(.*))?$/.exec(uri);
+        if (!uriParts) { throw new Error("Failed to parse URI") }
+        protocol = uriParts[3];
+        var fragmentPart = uriParts[5];
+        if (!fragmentId && !xpath && fragmentPart && fragmentPart.indexOf('(')!=-1) {
+            // Parse fragmentPart as XPointer
+            var fragmentPartInfo = /^xpath1\((.*)\)$/.exec(fragmentPart);
+            if (fragmentPartInfo) {
+                xpath = fragmentPartInfo[1];
+            }
+            else {
+                throw new Error("Couldn't parse XPointer " + fragmentPart);
             }
         }
-        else if (xpathString) {
-            var xpathResult = doc.evaluate(xpathString, doc, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+        else if (!fragmentId && !xpath) {
+            fragmentId = fragmentPart;
+        }
+        var documentURI = uriParts[1];
+
+        // Create a storage with this URI
+        var newStorage = this.newDocStorageByURI(documentURI);
+        this.showMessage("Created for URI " + documentURI + " a new storage " + newStorage.toString());
+
+        // Check whether an equivalent storage already exists
+        var eqStorage = this.getEquivalentStorage(newStorage);
+        if (eqStorage) { newStorage = eqStorage }
+
+        // If its a new storage, try to load the file
+        this.showMessage("Using storage " + newStorage.toString());
+        if (!eqStorage) {
+            this.showMessage("Read storage " + newStorage.toString());
+            newStorage.read();
+        }
+
+        // Find the math elements
+        var mathElements = [];
+        if (fragmentId) {
+            mathElements[0] = newStorage.document.getElementById(fragmentId);
+            if (!mathElements[0]) {
+                mathElements.pop();
+            }
+        }
+        else if (xpath) {
+            var xpathResult = newStorage.document.evaluate(xpath, newStorage.document, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
             var resultNode;
             var i=0;
-            while (resultNode = xpathResult.iterateNext()) { 
+            while ((resultNode = xpathResult.iterateNext())) { 
                 mathElements.push(resultNode);
-                origins.push({
-                    uri: uri,
-                    doc: doc,
-                    element: resultNode
-                });
                 ++i;
             }
         }
         else {
-            mathElements[0] = doc.documentElement;
-            origins[0] = {
-                uri: uri
+            mathElements[0] = newStorage.document.documentElement;
+            if (!mathElements[0]) {
+                throw new Error("Can not open an empty document");
             }
         }
 
-        for (var i=0; i<mathElements.length; i++) {
-            if (mathElements[i].localName != "math" || mathElements[i].namespaceURI != "http://www.w3.org/1998/Math/MathML") {
-                throw new Error("The element you load should be a math element in the MathML namespace");
+        if (!eqStorage) { this.storages.push(newStorage) }
+
+        try {
+            //loop over all significant math elements
+            mathElements.forEach(function(m) {
+                // Check whether this equation is already open
+                if (this.equations.some(function (e) { return (e.origin && m === e.origin.node) })) {
+                    //XXX: Maybe we should not throw here, but just skip this equation
+                    throw new Error("Refused to load the same equation twice!");
+                }
+
+                // Only allow math elements
+                if (m.localName != "math" || m.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
+                    //XXX: Maybe we should not throw here, but just skip this equation
+                    throw new Error("The element you load must be a math element in the MathML namespace");
+                }
+
+                // Create new environment using a deep copy
+                var newEquationEnv = this.newEquation(document.importNode(m, true));
+
+                // Create Origin object
+                newEquationEnv.origin = new StorageLink(newStorage, m);
+
+                // Tell the history object that this new equation is already
+                // saved.
+                newEquationEnv.history.reportSaving();
+
+                // Set the equationEnv to be read only if the storage is
+                if (newStorage.readOnly()==1) {
+                    newEquationEnv.readOnly = true;
+                }
+
+                this.showMessage("Succesfully loaded an equation from " + newStorage.toString());
+            }, this);
+
+            // If no equation has been opened
+            if (mathElements.length == 0) {
+                this.showMessage("No equation(s) found");
+                this.freeUnusedDocStorage(newStorage);
             }
-
-            // Create new environment using a deep copy
-            var newEquationEnv = this.newEquation(document.importNode(mathElements[i], true));
-
-            // Create Origin object
-            newEquationEnv.origin = origins[i];
-
-            // Tell the history object that this new equation is already
-            // saved.
-            newEquationEnv.history.reportSaving();
+        }
+        catch (e) {
+            this.freeUnusedDocStorage(newStorage)
+            throw e;
         }
     },
     /**
@@ -1386,19 +1534,52 @@ GemsePEditor.prototype = {
      * is loaded in this instance of Mozilla, one uses this method to
      * open it in Gemse. A deep copy of the equation is made and it
      * gets written back only when the user saves his changes.
-     * @param doc DOM document containing the equation
-     * @param element the root element of the equation
+     * It is important to know that, by default, the document itself 
+     * is saved as well, when the user saves the equation.
+     * @param doc      DOM document containing the equation
+     * @param element  the root element of the equation
+     * @param inMemory If set to true, the document itself is not saved,
+     *                 only the DOM document is updated. If set to false
+     *                 (the default), the document is saved as well.
      */
-    loadFromOpenDocument: function(doc,element) {
+    loadFromOpenDocument: function(doc, element, inMemory) {
         if (element.localName != "math" || element.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
-            throw new Error("The element you load should be a math element in the MathML namespace");
+            throw new Error("The element you load must be a math element in the MathML namespace");
+        }
+
+        // Create a storage with this URI
+        var newStorage;
+        if (inMemory) {
+            newStorage = new InMemoryDocStorage(doc);
+        }
+        else if (doc.URL) {
+            newStorage = this.newDocStorageByURI(doc.URL);
+            newStorage.adoptDocument(doc);
+        }
+        else {
+            throw "The document provides no URI";
+        }
+
+        // Check whether an equivalent storage already exists
+        var eqStorage = this.getEquivalentStorage(newStorage);
+        if (eqStorage) { 
+            if (eqStorage.document !== doc) {
+                throw "You have opened the same document twice " +
+                      "and you want to edit equations from both " +
+                      "instances. This is not possible.";
+            }
+            newStorage = eqStorage;
+        }
+        else {
+            // Remember the storage
+            this.storages.push(newStorage);
         }
 
         // Create new environment using a deep copy
         var newEquationEnv = this.newEquation(document.importNode(element, true));
 
         // Create Origin object
-        newEquationEnv.origin = { uri: doc.URL, doc: doc, element: element }
+        newEquationEnv.origin = new StorageLink(newStorage, element);
 
         // Tell the history object that this new equation is already
         // saved.

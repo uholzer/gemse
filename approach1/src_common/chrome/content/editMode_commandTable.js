@@ -260,6 +260,13 @@ editModeCommands = {
         argument: "newlineTerminated",
         implementation: editModeCommand_set
     },
+    ":pwd": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_printWorkingDirectory
+    },
     ":hideview": {
         category: "action",
         type: "long",

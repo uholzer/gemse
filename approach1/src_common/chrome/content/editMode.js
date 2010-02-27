@@ -836,6 +836,11 @@ function editModeCommand_chooseViewset(mode, instance) {
     return true;
 }
 
+function editModeCommand_printWorkingDirectory(mode, instance) {
+    mode.editor.showMessage(mode.editor.workingDirectory);
+    return true;
+}
+
 function editModeCommand_set(mode, instance) {
     // TODO: Use parameter parsing facility from the CommandHandler
     // instead of doing our own. Problem: set global?

@@ -24,6 +24,7 @@ or (at your option) any later version.
     <script src="UString.js"/>
     <script src="gemseBase.js"/>
     <script src="views.js"/>
+    <script src="storage.js"/>
     <script src="elementDescriptors.js"/>
     <script src="ucd.js"/>
     <script src="editMode.js"/>
