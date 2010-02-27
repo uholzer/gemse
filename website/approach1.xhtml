@@ -28,7 +28,7 @@ have been implemented. However,
 the newest version still is not a production release,
 its intention is only to get feedback from interested users.</p>
 
-<p>The current release is 1.0.10. Read the
+<p>The current release is 1.0.11. Read the
 <a href="demo/doc/releasenotes.xhtml">release notes</a> or the 
 <a href="demo/doc/index.xhtml">documentation</a>.</p>
 
@@ -39,29 +39,30 @@ its intention is only to get feedback from interested users.</p>
 <ul>
 <li>If you are using Firefox 3, <a href="demo/editor.xul">try the
 online demo</a>.</li>
-<li><a href="releases/gemseFirefoxExtension-1-0-10.xpi">Install Gemse as
+<li><a href="releases/gemseFirefoxExtension-1-0-11.xpi">Install Gemse as
 Firefox extension</a>. Then you can open it by
 visiting <code>chrome://gemse/content/editor.xul</code> and read its
 documentation at <code>chrome://gemse/content/doc/index.xhtml</code>.</li>
-<li>Get <a href="releases/gemseXULRunnerApplication-1-0-10.zip">Gemse
+<li>Get <a href="releases/gemseXULRunnerApplication-1-0-11.zip">Gemse
 as XULRunner application</a> and run it with XULRunner 1.9.</li>
-<li>Use the <a href="releases/gemseMinimal-1-0-10.zip">minimal version</a> with 
+<li>Use the <a href="releases/gemseMinimal-1-0-11.zip">minimal version</a> with 
 less weird directory structure, intended to be
 run outside of Firefox chrome, like the demo. Just unzip it and open
 <code>editor.xul</code> in Firefox. (If you do that, not
 all commands will work since Firefox prevents access to your system.)</li>
-<li>Get the <a href="releases/gemse_src-1-0-10.tar.gz">whole source</a>. (As
+<li>Get the <a href="releases/gemse_src-1-0-11.tar.gz">whole source</a>. (As
 tar ball, since the directory structure I use for development makes
 use of symbolic links.)</li>
 <li>Clone the <a href="http://git-scm.com/">git</a> repository from 
 <code>http://www.andonyar.com/rec/2008-12/gemse/repo/gemse_public.git</code></li>
 </ul>
 
-<p>Please be aware that Gemse is not yet mature, so it could cause
-damage if not used with care. For example it does overwrite existing
-files without asking when you save an equation. However, if you use
-the demo or the minimal version, you are save, since Firefox prevents access to your
-system.</p>
+<p><em>Important:</em> Loading and saving of equations has been
+reimplemented in the latest release, so it may be buggy. Please be
+careful and make a backup of your document before you edit it with
+Gemse. Also, please report any misfeatures back to me.
+However, if you use the demo or the minimal version, you are on the
+save side, since Firefox prevents access to your system.</p>
 
 <h2>Bugs and more Help: <a href="https://trac.mathweb.org/gemse/">Trac site</a></h2>
 
