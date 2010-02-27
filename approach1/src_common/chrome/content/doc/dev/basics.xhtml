@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    internal:function="documentation"
+    xml:lang="en"
+>
+
+<head>
+    <title>Gemse 1 Documentation for Developers</title>
+    <link rel="stylesheet" href="../../gemse.css" type="text/css" />
+</head>
+
+<body>
+
+<h1>Basics</h1>
+
+<h2>Loading and saving</h2>
+
+<p>In order to keep loading and saving mechanisms reliable, the
+following rules apply:</p>
+
+<ul>
+<li>Only the following functions are allowed to call the
+<code>read</code>, <code>write</code> and <code>adoptDocument</code>
+methods of the <code>*DocStorage</code> classes or to create an
+instance of such a class.
+    <ul>
+        <li><code>EquationEnv.prototype.save</code></li>
+        <li><code>GemsePEditor.prototype.newDocStorageByURI</code></li>
+        <li><code>GemsePEditor.prototype.freeUnusedDocStorage</code></li>
+        <li><code>GemsePEditor.prototype.loadURI</code></li>
+        <li><code>GemsePEditor.prototype.loadFromOpenDocument</code></li>
+    </ul>
+</li>
+<li>The other methods defined in the <code>DocStoragePrototype</code>
+can be called from everywhere. Additional methods or variables of an
+instance of a <code>*DocStorage</code> must not be touched.</li>
+<li>All open documents are tracked in the <code>storages</code> array
+of the <code>GemsePEditor</code> instance.</li>
+<li>Closing an equation must be done by calling the method
+<code>eliminateEquationEnv</code> of the <code>GemsePEditor</code>
+instance, or <code>close</code> of the <code>EquationEnv</code>
+instance (which in turn calls <code>eliminateEquationEnv</code>).</li>
+</ul>
+
+<p>The <code>*DocStorage</code> classes are defined in
+<code>storage.js</code>.</p>
+
+</body>
+
+</html>

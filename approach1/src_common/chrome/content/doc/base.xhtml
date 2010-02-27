@@ -25,6 +25,9 @@
 
 <h1>Gemse Basics</h1>
 
+<p>Some information here is quite important, so you should read it
+before you start using Gemse for serious tasks.</p>
+
 <h2>User interface</h2>
 
 <p>Basically, it works like this: You enter a command into the input
@@ -66,6 +69,98 @@ that the user can insert unicode characters in some way. However,
 Gemse can not be used with a pointing device. (Except if you use the
 pointing device to stear an on-screen keyboard which generates unicode
 input for Gemse.)</p>
+
+<h2>Loading and saving</h2>
+
+<p>Here some important notes on how Gemse loads and saves equations,
+so you do not destroy your data.</p>
+
+<p>Loading and saving has just been reimplemented and has to be
+tested. Please be careful, make a copy of the document which contains
+the equation you want to edit before you open it in Gemse. If you
+encounter problems, please report them, so bugs can be fixed.</p>
+
+<p>You can open equations from any XML document that can be loaded
+by Firefox. You have to reference them by URL. Depending on the
+protocol, you can also save the document or Gemse can even check
+whether a document has changed while you were editing one of its
+equations.</p>
+
+<h3>Documents and Equations</h3>
+
+<p>Gemse loads equations. But they are not documents (or files) on their own,
+they are contained in a document. One document can contain more than
+one equation. To make things more complex, Gemse has to parse the
+entire document and keep it in memory while you edit the equation.
+When you save the equation, the document is written back entirely.
+The problem arises when you open more than one equation from the same
+file. In this case, Gemse must load the document into memory only
+once. Normally, you do not need to care about that, since it
+works as you would expect it. However, you should know how it
+works anyway.</p>
+
+<object data="documents.svg" type="image/svg+xml"/>
+
+<p>When you load an equation from a document, Gemse first checks
+whether the document has already been loaded into memory. If not, Gemse opens
+(by reading the file or retrieving it via HTTP) and parses the
+document. Then it locates the equation in the document and creates a
+copy of it which the user the can edit. Gemse remembers for every open
+equation where it came from within the document.</p>
+
+<p>When you close an equation, Gemse checks whether any other open equation
+originates from the same document. If not, the document is closed,
+i.e. removed from memory.</p>
+
+<p>When you save an equation, Gemse first makes a copy of it. The old
+equation in the document is then replaced by this copy. Finally, Gemse
+serializes the document and writes it to disk or PUTs it via HTTP.</p>
+
+<p>To sum up, we can say that a document is in Gemse's memory if and
+only if there is an open equation from this document. If this state
+changes, Gemse parses the document into or drops it from Gemse's
+memory. When you save an equation, the document is written.</p>
+
+<h3>Pitfalls</h3>
+
+<p>You must be aware that Gemse only reads a document from the
+filesystem or from the network if it is not already present in memory.
+Say you load an equation from a document and then you change the
+document with another application. If you now load more equations 
+from this document, the old
+version will be used, since it is already represented in the
+memory. If you want to work with the new version of your document, you
+have to close all equations of this document, so that it is removed
+from Gemse's memory.</p>
+
+<p>Be aware that it is never a good idea to change a document outside
+of Gemse while you still have open equations belonging to this
+document. Do not open equations from the same document with different
+instances of Gemse, since they have no idea from each other.</p>
+
+<h3>Protocols</h3>
+
+<h4>Local files</h4>
+
+<p>URLs that begin with <code>http://</code> are treated as local
+files. Equation from such files can be saved. When you give an URL
+of a local file when saving, Gemse checks whether the file already
+exists and prevents you from overwriting it. If the file has changed
+since you loaded, Gemse refuses to save.</p>
+
+<h4>HTPP</h4>
+
+<p>Documents with URLs that begin with <code>http://</code> are loaded
+via a HTTP GET request. They are saved by sending a HTTP PUT request.
+<em>If saving fails, this is not reported, Gemse claims that saving
+was succcessful!</em> You are not warned when you save such a document
+that already exist or when the document has changed since you loaded
+it.</p>
+
+<h4>Others</h4>
+
+<p>You can load all other documents that can be loaded by Firefox. It
+is not possible to save them.</p>
 
 <div id="doc.base.input">
 <h2>Input</h2>

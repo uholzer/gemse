@@ -154,6 +154,43 @@
 <div id="loadsave">
 <h3>Loading, saving and exporting</h3>
 
+<div class="commandDocumentation" id="editModeCommand_load">
+    <h4 class="commandTitle">Load</h4>
+
+    <p>Load the document at the given URL. It must contain a MathML
+    formula as root element.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_loadById">
+    <h4 class="commandTitle">Load by Id</h4>
+
+    <p>Two arguments must be given, seperated by a space: An URL and
+    an id. The formula in the document at the given URL having the
+    given XML id is loaded.</p>
+
+    <p>It is possible to do the same by using the normal load command
+    and including the fragment identifier directly in the URL.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_loadByXPath">
+    <h4 class="commandTitle">Load</h4>
+
+    <p>Two arguments must be provided: An URL and an XPath 1.0
+    expression. The expression is evaluated on the document at the
+    given URL and all resulting nodes are loaded as equations.</p>
+
+    <p>It is possible to achieve the same using the normal load
+    command, including the xpath expression as XPointer in the
+    URI.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_loadAll">
+    <h4 class="commandTitle">Load</h4>
+
+    <p>Loads all MathML formulas found in the document at the given
+    URL.</p>
+</div>
+
 <div class="commandDocumentation" id="editModeCommand_save">
     <h4 class="commandTitle">Save all</h4>
 
