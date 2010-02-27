@@ -1299,7 +1299,7 @@ GemsePEditor.prototype = {
         }
         catch(e) {
             // If we do not have chrome privileges, we just do
-            return new XMLHttpRequestDocStorage(uri);
+            return new XMLHttpRequestDocStorage(uriString);
         }
 
         var uri = ios.newURI(uriString,null,null);
