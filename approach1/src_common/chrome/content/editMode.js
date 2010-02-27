@@ -539,13 +539,13 @@ function editModeCommand_loadAll(mode, instance) {
 }
 
 function editModeCommand_save(mode, instance) {
-    mode.equationEnv.save(instance.argument); // instance.argument may be null
+    mode.equationEnv.save(instance.argument, instance.forceFlag); // instance.argument may be null
     return true;
 }
 
-function editModeCommand_saveAll(mode) {
+function editModeCommand_saveAll(mode, instance) {
     mode.editor.equations.forEach(function (e) {
-        e.save();
+        e.save(null,instance.forceFlag);
     });
     return true;
 }
@@ -858,6 +858,93 @@ function editModeCommand_set(mode, instance) {
         value = mode.editor.o["_" + key];
         mode.editor.showMessage(key + "=" + value);
     }
+    return true;
+}
+
+function editModeCommand_printDocumentInformation(mode, instance) {
+    mode.editor.showMessage("This equation is stored in: " + mode.equationEnv.origin.storage.toString());
+    return true;
+}
+
+function editModeCommand_printAllDocumentInformation(mode, instance) {
+    var mainDiv = document.createElementNS(NS_HTML, "div");
+    var equationTable = document.createElementNS(NS_HTML, "table");
+    var equationTableCaption = document.createElementNS(NS_HTML, "caption");
+    equationTableCaption.appendChild(document.createTextNode("Equations"));
+    equationTable.appendChild(equationTableCaption);
+    var storageTable = document.createElementNS(NS_HTML, "table");
+    var storageTableCaption = document.createElementNS(NS_HTML, "caption");
+    storageTableCaption.appendChild(document.createTextNode("Documents"));
+    storageTable.appendChild(storageTableCaption);
+    mainDiv.appendChild(equationTable);
+    mainDiv.appendChild(storageTable);
+
+    var tr;
+    var th;
+    var td;
+
+    tr = document.createElementNS(NS_HTML, "tr");
+    th = document.createElementNS(NS_HTML, "th");
+    th.appendChild(document.createTextNode("number"));
+    tr.appendChild(th);
+    th = document.createElementNS(NS_HTML, "th");
+    th.appendChild(document.createTextNode("unsaved changes"));
+    tr.appendChild(th);
+    th = document.createElementNS(NS_HTML, "th");
+    th.appendChild(document.createTextNode("read only"));
+    tr.appendChild(th);
+    th = document.createElementNS(NS_HTML, "th");
+    th.appendChild(document.createTextNode("document"));
+    tr.appendChild(th);
+    equationTable.appendChild(tr);
+
+    for (var i=0; i<mode.editor.equations.length; ++i) {
+        var eq = mode.editor.equations[i];
+        tr = document.createElementNS(NS_HTML, "tr");
+        td = document.createElementNS(NS_HTML, "td");
+        td.appendChild(document.createTextNode(i));
+        tr.appendChild(td);
+        td = document.createElementNS(NS_HTML, "td");
+        td.appendChild(document.createTextNode(eq.history.hasChanges() ? "yes" : ""));
+        tr.appendChild(td);
+        td = document.createElementNS(NS_HTML, "td");
+        td.appendChild(document.createTextNode(eq.readOnly ? "yes" : ""));
+        tr.appendChild(td);
+        td = document.createElementNS(NS_HTML, "td");
+        td.appendChild(document.createTextNode(eq.origin ?  eq.origin.storage.toString() : ""));
+        tr.appendChild(td);
+        equationTable.appendChild(tr);
+    }
+
+    tr = document.createElementNS(NS_HTML, "tr");
+    th = document.createElementNS(NS_HTML, "th");
+    th.appendChild(document.createTextNode("document"));
+    tr.appendChild(th);
+    th = document.createElementNS(NS_HTML, "th");
+    th.appendChild(document.createTextNode("used by equations"));
+    tr.appendChild(th);
+    storageTable.appendChild(tr);
+
+    for (var i=0; i<mode.editor.storages.length; ++i) {
+        var storage = mode.editor.storages[i];
+        var usedBy = [];
+        for (var eqn = 0; eqn < mode.editor.equations.length; ++eqn) {
+            var eq = mode.editor.equations[eqn]
+            if (eq.origin && eq.origin.storage === storage) {
+                usedBy.push(eqn);
+            }
+        }
+        tr = document.createElementNS(NS_HTML, "tr");
+        td = document.createElementNS(NS_HTML, "td");
+        td.appendChild(document.createTextNode(storage.toString()));
+        tr.appendChild(td);
+        td = document.createElementNS(NS_HTML, "td");
+        td.appendChild(document.createTextNode(usedBy.join(", ")));
+        tr.appendChild(td);
+        storageTable.appendChild(tr);
+    }
+
+    mode.editor.showMessage(mainDiv);
     return true;
 }
 

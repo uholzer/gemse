@@ -394,6 +394,20 @@ editModeCommands = {
         argument: "none",
         implementation: editModeCommand_closeAll
     },
+    ":document": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_printDocumentInformation
+    },
+    ":documents": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_printAllDocumentInformation
+    },
     ":help": {
         category: "action",
         type: "long",
