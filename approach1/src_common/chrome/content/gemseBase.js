@@ -1138,6 +1138,10 @@ GemsePEditor.prototype = {
         catch (e) {
             this.showMessage(e);
             updateOfViewsNeeded = true;
+            // Since we stopped processing of input, we must remove
+            // all remaining input. (This is problably no good
+            // solution, see #13.)
+            this.inputBuffer = "";
         }
         finally {
             // Now, if there is still something in the buffer, it is
