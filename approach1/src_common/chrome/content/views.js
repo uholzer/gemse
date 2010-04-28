@@ -811,6 +811,8 @@ function NTNView(editor,equationEnv,viewport) {
     this.equationEnv = equationEnv;
     this.viewport = viewport;
 
+    this.o = editor.optionsAssistant.obtainOptionsObject(NTNView,this);
+
     try {
         NTNView.prepareNTN();
     }
@@ -975,7 +977,6 @@ NTNView.prototype = {
      * Builds the view.
      */
     build: function() {
-        xml_flushElement(this.viewport);
 
         if (!NTNView.ready) {
             this.viewport.appendChild(document.createTextNode(
@@ -985,15 +986,30 @@ NTNView.prototype = {
         }
 
         try {
-            // Build representation of the equation using XOM
-            var xomRoot = this.dom2xom(this.equationEnv.equation);
+            // Check if we need to rerender or if changing internal
+            // attributes is enough.
+            var rerenderRequired = true;
+            if (this.o.shortcut) {
+                rerenderRequired = !this.updateInternals(this.viewport.firstChild, this.equationEnv.equation);
+            }
             
-            // Invoke the renderer
-            xomRoot = NTNView.javaObjects.renderer.renderElement(xomRoot);
+            var domRoot;
+            if (rerenderRequired) {
+                xml_flushElement(this.viewport);
 
-            // Build DOM structure according to the result
-            var domRoot = this.xom2dom(xomRoot); 
-            this.viewport.appendChild(domRoot);
+                // Build representation of the equation using XOM
+                var xomRoot = this.dom2xom(this.equationEnv.equation);
+                
+                // Invoke the renderer
+                xomRoot = NTNView.javaObjects.renderer.renderElement(xomRoot);
+
+                // Build DOM structure according to the result
+                domRoot = this.xom2dom(xomRoot); 
+                this.viewport.appendChild(domRoot);
+            }
+            else {
+                domRoot = this.viewport.firstChild;
+            }
 
             // Try to map internal attributes from the content to the
             // presentation
@@ -1120,5 +1136,154 @@ NTNView.prototype = {
             this.editor.showMessage(e);
         /*}*/
     },
+    /**
+     * Updates the internal attributes of a result from a past
+     * rendering by comparing it with the new equation. If this is not
+     * possible, that is, if a new rendering is necessary, false is
+     * returned, otherwise true.
+     * @private
+     * @param oldResult   Root node of the subtree that has to be
+     *                    updated. It is the result from the last build.
+     * @param newEquation The new equation that contains the root
+     * @returns {Boolean} true on success, false if the update is not
+     *                    possible
+     */
+    updateInternals: function(oldResult, newEquation) {
+        if (!oldResult) { return false; }
+        var semanticsEl = mml_firstChild(oldResult);
+        if (!semanticsEl) { return false; }
+        var annotationxmlEl = mml_lastChild(semanticsEl);
+        if (!annotationxmlEl) { return false; }
+        
+        // We do not compare the math element and the annotationxmlEl
+        // element, nor do we compare their attributes. We only look
+        // at the children
+        
+        // Compare children using updateInternalsOfElement
+        // (We only look at elements, not at text nodes)
+        var oldChild = mml_firstChild(annotationxmlEl);
+        var newChild = mml_firstChild(newEquation);
+        while (oldChild || newChild) {
+            if (!this.updateInternalsOfElement(oldChild, newChild)) {
+                return false;
+            }
+            oldChild = mml_nextSibling(oldChild);
+            newChild = mml_nextSibling(newChild);
+        }
+        
+        return true;
+    },
+    /**
+     * Recursively updates the internal attributes comparing the
+     * subtrees at the given roots. The given roots may be any nodes,
+     * not necessairily elements.
+     * @private
+     * @param oldEl root of old subtree
+     * @param newEl root of new subtree
+     * @returns {Boolean} true on success, false if the update is not
+     *                    possible
+     */
+    updateInternalsOfElement: function(oldEl, newEl) {
+        if (!oldEl || !newEl) { return false }
+
+        // Compare nodes
+        if (!this.compareNodes(oldEl, newEl)) { return false }
+
+        // Return if they are not elements
+        if (oldEl.nodeType != Node.ELEMENT_NODE) { return true }
+
+        // Compare and set attributes
+        if (!this.updateAttributes(oldEl, newEl)) { return false }
+        
+        // Recursively compare children
+        // (including text nodes)
+        var oldChild = oldEl.firstChild;
+        var newChild = newEl.firstChild;
+        while (oldChild || newChild) {
+            if (!this.updateInternalsOfElement(oldChild, newChild)) {
+                return false;
+            }
+            oldChild = oldChild.nextSibling;
+            newChild = newChild.nextSibling;
+        }
+        
+        return true;
+    },
+    /**
+     * Compares the attributes of oldEl with the ones of newEl and
+     * makes changes to those of oldEl as required by
+     * updateInternalsOfElement
+     * @private
+     * @returns {Boolean}
+     */
+    updateAttributes: function(oldEl, newEl) {
+        // Is not really correct since namespaces are ignored at some
+        // points. This hopefully causes no big truble.
+        var fixed = {};
+        fixed["xref"] = true; // We ignore xref attributes
+        // First go through all attributes of newEl, keeping track in
+        // fixed which attributes we process.
+        var newAtts = newEl.attributes;
+        for (var i=0; i<newAtts.length; i++) {
+            var newAtt = newAtts[i];
+            if (newAtt.namespaceURI == NS_internal) {
+                oldEl.setAttributeNodeNS(newAtt.cloneNode(true));
+            }
+            else if (newAtt.nodeValue !== oldEl.getAttributeNS(newAtt.namespaceURI, newAtt.localName)) {
+                return false;
+            }
+            fixed[newAtt.localName] = true;
+        }
+        // Go through all attributes of oldEl which we have not yet
+        // processed (according to fixed). The attributes we have to
+        // delete will be removed later on, since we must not modify
+        // the live oldAtts while we loop over it
+        var oldAtts = oldEl.attributes;
+        var toDelete = [];
+        for (var i=0; i<oldAtts.length; i++) {
+            var oldAtt = oldAtts[i];
+            if (!fixed[oldAtt.localName]) {
+                if (oldAtt.namespaceURI == NS_internal) {
+                    toDelete.push(oldAtt);
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        // Now delete
+        toDelete.forEach(function(att) { 
+            // We do not really delete but set to an empty string.
+            // This is good enough for now and is necessairy, since
+            // the code that sets the attributes on the presentation
+            // part of the rendered formula does only set attributes,
+            // not delete them.
+            oldEl.setAttributeNS(att.namespaceURI, att.localName, "") 
+        });
+        return true;
+    },
+    /**
+     * Compares two nodes (element, attribute, text node, ...), not looking 
+     * at their attributes nor at their children.
+     */
+    compareNodes: function(n1, n2) {
+        return (n1.nodeName     === n2.nodeName &&
+                n1.localName    === n2.localName &&
+                n1.namespaceURI === n2.namespaceURI &&
+                n1.prefix       === n2.prefix &&
+                n1.nodeValue    === n2.nodeValue);
+    },
+}
+NTNView.gemseOptions = {
+    "NTNView.shortcut": {
+        localToClass: NTNView,
+        defaultValue: "on",
+        validator: OptionsAssistant.validators.truthVal,
+        parser: OptionsAssistant.parsers.truthVal,
+        setter: function(o,value) {
+            o.shortcut = this.parser(value);
+        }
+    },
 }
 ViewsetManager.viewClasses["NTNView"] = NTNView;
+GemsePEditor.knownClasses.push(NTNView);
