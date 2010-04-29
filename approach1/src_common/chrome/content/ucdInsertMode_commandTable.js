@@ -122,6 +122,11 @@ ucdInsertModeCommands[KEYMOD_CONTROL + "p"] = {
     argument: "none",
     implementation: function ucdInsertModeCommand_mprescripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mprescripts") }
 }
+ucdInsertModeCommands[KEYMOD_CONTROL + "P"] = {
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_mphantom (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mphantom") }
+}
 ucdInsertModeCommands[KEYMOD_CONTROL + "t"] = {
     type: "command",
     argument: "none",

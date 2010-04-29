@@ -162,6 +162,12 @@ trivialInsertModeCommands = {
         argument: "none",
         implementation: function trivialInsertModeCommand_mprescripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mprescripts") }
     },
+    "P": {
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_mphantom (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mphantom") }
+    },
     "t": {
         type: "command",
         repeating: "external",
