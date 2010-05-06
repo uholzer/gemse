@@ -87,7 +87,7 @@ or (at your option) any later version.
 
 </vbox>
 
-<textbox id="input" multiline="true" onkeypress="processKey(event)" oninput="processInput()"/>
+<textbox type="gemse" id="input" onkeypress="processKey(event)" oncommand="processInput()"/>
 
 <internal:viewsets>
     <!-- 0 -->

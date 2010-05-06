@@ -20,6 +20,11 @@ xul|window {
     height: 900px;
 }
 
+/*** The input box ***/
+xul|textbox[type="gemse"] {
+    -moz-binding: url("chrome://gemse/content/ui.xml#inputbox");
+}
+
 /*** Boxes and tables ***/
 
 html|div {
