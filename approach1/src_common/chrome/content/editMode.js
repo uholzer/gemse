@@ -590,6 +590,17 @@ function editModeCommand_previousEquation(mode) {
     return true;
 }
 
+function editModeCommand_gotoEquation(mode, instance) {
+    var num = parseInt(instance.argument);
+    if (num < mode.editor.equations.length && num >= 0) { 
+        mode.editor.moveFocusTo(num);
+    }
+    else {
+        throw "No such equation";
+    }
+    return true;
+}
+
 function editModeCommand_help(mode, instance) {
     var args = instance.argument.split(/\s+/);
     if (args[0] == "tutorial") {

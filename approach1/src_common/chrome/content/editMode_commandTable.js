@@ -324,6 +324,13 @@ editModeCommands = {
         repeating: "external",
         implementation: editModeCommand_previousEquation
     },
+    ":goto": {
+        category: "action",
+        type: "long",
+        argument: "newlineTerminated",
+        repeating: "prevent",
+        implementation: editModeCommand_gotoEquation
+    },
     ":load": {
         category: "action",
         type: "long",
