@@ -731,9 +731,11 @@ function OthersView(editor,equationEnv,viewport) {
     // XXX: Is this save?
     for (var i=0;i<editor.equations.length;++i) {
         var copy = editor.equations[i].equation.cloneNode(true);
-        var containment = document.createElementNS(NS_HTML,"div")
+        var containment = document.createElementNS(NS_HTML,"div");
+        containment.appendChild(document.createTextNode(i + ": "));
         containment.appendChild(copy);
         this.viewport.appendChild(containment);
+        copy.removeAttribute("display");
         this.equationEnv.cleanSubtreeOfDocument(document,copy);
         if (this.equationEnv == editor.equations[i]) {
             containment.setAttributeNS(NS_internal,"selected","editcursor"); //XXX: Good?
