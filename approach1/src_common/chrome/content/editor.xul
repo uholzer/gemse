@@ -52,20 +52,33 @@ or (at your option) any later version.
             // Give the window a name:
             window.name = "globalGemseInstance";
 
-            // Load MathML elements provided by arguments
+            // Locate callback function provided by the first argument
             // (But check first the type of the argument, since it
             // seems that windows for XUL documents receive some
             // arguments ...)
-            if (window.arguments && window.arguments.length > 0 && window.arguments[0] && window.arguments[0].forEach) {
-                window.arguments[0].forEach(function (m) {
-                    editor.loadFromOpenDocument(m.doc, m.element);
-                });
+            var onready;
+            if (window.arguments && window.arguments.length > 0 && window.arguments[0]) {
+                var arg = window.arguments[0];
+                // If the argument has been passed by using the
+                // wrappedJSObject-trick, unwrap it
+                if (arg.wrappedJSObject) {
+                    arg = arg.wrappedJSObject;
+                }
+                onready = arg.onready;
             }
+
+            // Execute onReady callback
+            if (onready) { onready(editor) }
 
             // If there are no equations up to now, create a new one
             if (editor.equations.length==0) {
                 editor.newEquation();
             }
+
+            // If there is already stuff in the input buffer (for
+            // example placed by one of the above callback functions),
+            // run it.
+            if (editor.inputBuffer) { editor.inputEvent() }
         }
 
         /* Event processing */

@@ -898,14 +898,14 @@ OptionsAssistant.prototype = {
      */
     loadDescriptions: function(newDescs) {
         // First load all options
-        for (name in newDescs) {
+        for (var name in newDescs) {
             this.descs[name] = newDescs[name];
         }
         // Set defaults for the loaded options
         // TODO: An option may depend on another one, so setting it
         // may require having set the other before. May there arise
         // problems out of this, is there an easy solution?
-        for (name in newDescs) {
+        for (var name in newDescs) {
             this.setDefault(name);
         }
     }

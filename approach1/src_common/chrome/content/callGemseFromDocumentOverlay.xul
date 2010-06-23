@@ -88,10 +88,32 @@ or (at your option) any later version.
         }
     }
 
-    // Now open a new Gemse editor. Inform it about the elements to load
-    window.openDialog("chrome://gemse/content/editor.xul",
-                      "_blank", "scrollbars,resizable,chrome,dialog=no",
-                      mathElements);
+    function callback(editor) {
+        mathElements.forEach(function(e) {
+            editor.loadFromOpenDocument(e.doc, e.element);
+        });
+    }
+
+    var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
+             getService(Components.interfaces.nsIWindowWatcher);
+
+    // Locate the Gemse window
+    var gemseWindow = ww.getWindowByName("globalGemseInstance",null);
+    if (gemseWindow && gemseWindow.location != "chrome://gemse/content/editor.xul") { gemseWindow = null }
+
+    if (gemseWindow) {
+        callback(gemseWindow.editor);
+    }
+    else {
+        // Use the wrappedJSObject trick as described in
+        // https://developer.mozilla.org/en/Working_with_windows_in_chrome_code
+        // in order to be able to pass arbitrary JavaScript objects.
+        var arg = { onready: callback };
+        arg.wrappedJSObject = arg;
+        ww.openWindow(null, "chrome://gemse/content/editor.xul", "_blank",
+                      "chrome,menubar,toolbar,status,resizable,dialog=no",
+                      arg);
+    }
   }
 ]]></script>
 
