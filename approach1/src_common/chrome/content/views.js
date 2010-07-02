@@ -363,7 +363,7 @@ SourceView.gemseOptions = {
     },
     "SourceView.showAttributes": {
         localToClass: SourceView,
-        defaultValue: "off",
+        defaultValue: "on",
         validator: OptionsAssistant.validators.truthVal,
         parser: OptionsAssistant.parsers.truthVal,
         setter: function(o,value) {
