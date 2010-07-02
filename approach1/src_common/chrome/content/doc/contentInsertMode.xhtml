@@ -75,6 +75,50 @@ the cursor will jump there.</p>
     <p>Creates a number with given content.</p>
 </div>
 
+<div class="commandDocumentation" id="contentInsertModeCommand_bind">
+    <h3 class="commandTitle">Bind</h3>
+
+    <p>Inserts a <code>bind</code> elements and places the cursor
+    inside it.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_bvar">
+    <h3 class="commandTitle">Bvar</h3>
+
+    <p>Creates a <code>bvar</code> element and places the cursor
+    inside it.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_lambda">
+    <h3 class="commandTitle">Lambda</h3>
+
+    <p>Shoarthand for creating a lambda expression. It inserts a bind
+    element at the cursor which contains the csymbol
+    <code>fns1#lambda</code>, a <code>bvar</code> element and an
+    <code>apply</code> element. The cursor is placed in the
+    <code>bvar</code> element. 
+    The <code>apply</code> is remembered as a cursor location. This
+    means that
+    when you are done with the content of
+    the <code>bvar</code>, do 
+    <kbd><internal:cmdph ref="contentInsertModeCommand_cursorJump"/></kbd> 
+    (<a href="#contentInsertModeCommand_cursorJump">cursor jump</a>)
+    and the cursor jumps into the <code>apply</code> element.</p>
+
+    <pre><![CDATA[<bind>
+    <csymbol cd="fns1">lambda</csymbol>
+    <bvar>
+        <!-- Cursor is placed here -->
+        <!-- When you are done here, let the
+             cursor jump. -->
+    </bvar>
+    <apply>
+        <!-- Cursor jumps to this place -->
+    </apply>
+</bind>]]></pre>
+
+</div>
+
 <div class="commandDocumentation" id="contentInsertModeCommand_oneMoreToSurround">
     <h3 class="commandTitle">one more to surround</h3>
 

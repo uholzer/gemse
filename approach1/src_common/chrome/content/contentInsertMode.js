@@ -286,6 +286,56 @@ function contentInsertModeCommand_arbitraryElement(mode, instance) {
     return true;
 }
 
+function contentInsertModeCommand_bind(mode, instance) {
+    var newElement = document.createElementNS(NS_MathML, "bind");
+    mode.putElement(newElement, true);
+    return true;
+}
+
+function contentInsertModeCommand_bvar(mode, instance) {
+    var newElement = document.createElementNS(NS_MathML, "bvar");
+    mode.putElement(newElement, true);
+    return true;
+}
+
+function contentInsertModeCommand_lambda(mode, instance) {
+    // Build our lambda construct
+    var lambdaConstruct = document.createElementNS(NS_MathML, "bind");
+    var csymbol = document.createElementNS(NS_MathML, "csymbol");
+    csymbol.setAttribute("cd", "fns1");
+    csymbol.appendChild(document.createTextNode("lambda"));
+    lambdaConstruct.appendChild(csymbol);
+    var bvar = document.createElementNS(NS_MathML, "bvar");
+    lambdaConstruct.appendChild(bvar);
+    var apply = document.createElementNS(NS_MathML, "apply");
+    lambdaConstruct.appendChild(apply);
+
+    // Insert the construct
+    mode.cursor.inElement.insertBefore(lambdaConstruct, mode.cursor.beforeElement);
+
+    // Put the usual cursor after the whole construct on the stack
+    mode.cursorStack.push({
+        beforeElement: mode.cursor.beforeElement,
+        inElement: mode.cursor.inElement
+    });
+
+    // We put a cursor placed inside the apply on the stack, so the
+    // user can work on there by hitting enter after having finished
+    // with the content of the bvar.
+    mode.cursorStack.push({
+        beforeElement: null,
+        inElement: apply
+    });
+
+    // The cursor is placed inside the bvar element
+    mode.moveCursor({
+        beforeElement: null,
+        inElement: bvar
+    });
+
+    return true;
+}
+
 function contentInsertModeCommand_forceNewElement(mode) {
     mode.forceNewElement = true;
     return true;

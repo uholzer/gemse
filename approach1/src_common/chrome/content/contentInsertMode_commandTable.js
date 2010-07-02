@@ -38,6 +38,11 @@ contentInsertModeCommands = {
         argument: "none",
         implementation: function contentInsertModeCommand_divide (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","divide","divide") }
     },
+    "(": {
+        type: "command",
+        argument: "none",
+        implementation: contentInsertModeCommand_lambda
+    },
     "$": { // Inserts an arbitrary csymbol
         type: "command",
         argument: "newlineTerminated",
@@ -78,6 +83,16 @@ contentInsertModeCommands[KEYMOD_CONTROL + "n"] = {
     type: "command",
     argument: "newlineTerminated",
     implementation: contentInsertModeCommand_cn
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "b"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_bind
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "v"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_bvar
 }
 contentInsertModeCommands[KEYMOD_CONTROL + "h"] = {
     type: "command",
