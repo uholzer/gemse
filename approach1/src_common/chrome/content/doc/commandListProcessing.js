@@ -280,6 +280,7 @@ function doc_commandDetailTableRow(s, b) {
 function doc_formattedCommandString(cs) {
     cs = cs.replace(/ /gm,  "␣");
     cs = cs.replace(/\n/gm, "↵");
+    cs = cs.replace(/\u0008/gm, "⌫");
     cs = cs.replace((new RegExp("\\" + KEYMOD_CONTROL, "gm")), "CTRL+");
     cs = cs.replace((new RegExp("\\" + KEYMOD_ALT, "gm")), "ALT+");
     cs = cs.replace(/\u0009/gm, "TAB");
