@@ -162,6 +162,65 @@ it.</p>
 <p>You can load all other documents that can be loaded by Firefox. It
 is not possible to save them.</p>
 
+<div id="doc.base.invoking">
+<h2>Invoking Gemse</h2>
+
+<h3>In the browser using the chrome URI</h3>
+
+<p>If you have installed Gemse as Firefox extension, you can type
+<code>chrome://gemse/content/editor.xul</code> in the address bar in
+order to start Gemse. Like this, the Gemse window is embedded in the
+browser window. This also allows you to run Gemse in a tab.</p>
+
+<h3>From the browser using the context menu</h3>
+
+<p>If you have installed Gemse as Firefox extension, the contextmenu
+has an additional entry called <q>Open in Gemse</q>. Open a
+document which contains equations in Firefox. Then you can open the
+context menu on an equation and hit <q>Open in Gemse</q>. This loads
+the equation in Gemse. If an instance of Gemse is alerady running,
+the equation is loaded in it, otherwise Gemse is started.</p>
+
+<p>You can do the same on any element of the document. All equations
+which are descendants of the element you opened the contex menu on are
+loaded. If you select part of the document, all equations which are
+(partially) part of the selection are loaded.</p>
+
+<p>When you save an equation which has been loaded using this method,
+the respective document is serialized and saved.</p>
+
+<p><em>Danger</em>: Be careful with documents whose DOM gets altered
+in some way. This means, you must deactivate scripts that alter the
+document. When loading the equation, Gemse simply remembers a
+reference to the document in Firefox's memory. 
+When you save, the new equation is put
+directly in this document and then the document is saved to disk. So
+<em>all</em> changes of the document are saved whether they come from 
+Gemse or not.</p>
+
+<h3>Command Line</h3>
+
+<p>Lets assume you installed Gemse as a Firefox extension. (It works
+along the same lines if you use XULRunner.) Then you can invoke Gemse
+on the command line by calling <code>firefox</code> with at least one
+of the following arguments:</p>
+
+<dl>
+<dt><code>-gemse</code></dt>
+<dd>Starts Gemse if it is not already running.</dd>
+
+<dt><code>-gemse-load URI</code></dt>
+<dd>Causes Gemse to load the document at the given URI.</dd>
+
+<dt><code>-gemse-do COMMANDS</code></dt>
+<dd>Executes the COMMANDS in Gemse.</dd>
+</dl>
+
+<p>If an instance of Gemse is already running, no new instance is
+started. Instead, the running instance is informed and executes your
+whishes.</p>
+</div>
+
 <div id="doc.base.input">
 <h2>Input</h2>
 
