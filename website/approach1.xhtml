@@ -28,7 +28,7 @@ have been implemented. However,
 the newest version still is not a production release,
 its intention is only to get feedback from interested users.</p>
 
-<p>The current release is 1.0.11. Read the
+<p>The current release is 1.0.12. Read the
 <a href="demo/doc/releasenotes.xhtml">release notes</a> or the 
 <a href="demo/doc/index.xhtml">documentation</a>.
 Visit the <a href="https://trac.mathweb.org/gemse/">wiki and the bug tracker</a>.</p>
@@ -47,18 +47,18 @@ from the 5th to the 9th July.</p>
 <ul>
 <li>If you are using Firefox 3, <a href="demo/editor.xul">try the
 online demo</a>.</li>
-<li><a href="releases/gemseFirefoxExtension-1-0-11.xpi">Install Gemse as
+<li><a href="releases/gemseFirefoxExtension-1-0-12.xpi">Install Gemse as
 Firefox extension</a>. Then you can open it by
 visiting <code>chrome://gemse/content/editor.xul</code> and read its
 documentation at <code>chrome://gemse/content/doc/index.xhtml</code>.</li>
-<li>Get <a href="releases/gemseXULRunnerApplication-1-0-11.zip">Gemse
+<li>Get <a href="releases/gemseXULRunnerApplication-1-0-12.zip">Gemse
 as XULRunner application</a> and run it with XULRunner 1.9.</li>
-<li>Use the <a href="releases/gemseMinimal-1-0-11.zip">minimal version</a> with 
+<li>Use the <a href="releases/gemseMinimal-1-0-12.zip">minimal version</a> with 
 less weird directory structure, intended to be
 run outside of Firefox chrome, like the demo. Just unzip it and open
 <code>editor.xul</code> in Firefox. (If you do that, not
 all commands will work since Firefox prevents access to your system.)</li>
-<li>Get the <a href="releases/gemse_src-1-0-11.tar.gz">whole source</a>. (As
+<li>Get the <a href="releases/gemse_src-1-0-12.tar.gz">whole source</a>. (As
 tar ball, since the directory structure I use for development makes
 use of symbolic links.)</li>
 <li>Clone the <a href="http://git-scm.com/">git</a> repository from 
@@ -66,7 +66,7 @@ use of symbolic links.)</li>
 </ul>
 
 <p><em>Important:</em> Loading and saving of equations has been
-reimplemented in the latest release, so it may be buggy. Please be
+reimplemented not long ago, so it may be buggy. Please be
 careful and make a backup of your document before you edit it with
 Gemse. Also, please report any misfeatures back to me.
 However, if you use the demo or the minimal version, you are on the
@@ -117,36 +117,6 @@ overview. Gemse helps here a little.</li>
 <li>uses Mozilla (only runs in Firefox 3 or higher at the moment)</li>
 <li>is not mature, as it is a young project</li>
 <li>is fun</li>
-</ul>
-
-<h2>Roadmap</h2>
-
-<p>For the 1.0 branch, all planned features have been implemented. From
-now on, only small things will be added and bugs will be fixed. Some
-of them are</p>
-
-<ul>
-    <li>Fix saving and loading of files</li>
-    <li>Add important commands, mainly to the insert modes</li>
-    <li>Add a way to load external notations for NTNView</li>
-</ul>
-
-<p>For the 1.1 branch, the following is planned:</p>
-
-<ul>
-    <li>Improve speed by checking out the following ideas:
-        <ul>
-            <li>Change the style sheets such that the matching of the
-                rules is much quicker</li>
-            <li>Try to do the construction of the views in parallel, using threads</li>
-            <li>Instead of recreating the internal datastructures of
-                the views from scratch, just change what needs to be
-                changed</li>
-        </ul>
-    </li>
-    <li>Support for command line arguments</li>
-    <li>Reimplement undo/redo</li>
-    <li>Drastically improve code quality</li>
 </ul>
 
 <h2>Licence</h2>

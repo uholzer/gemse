@@ -25,6 +25,47 @@
 
 <h1>Release Notes</h1>
 
+<h2>1.0.12</h2>
+
+<ul>
+<li>Changed default value of option
+<code>SourceView.showAttributes</code> to <code>on</code>.</li>
+<li>A command creating a <code>mphantom</code> element has been added
+to the trivial and ucd insert modes.</li>
+<li>Added commands in the content insert mode for elements
+<code>bind</code> and <code>bvar</code>. Furthermore, a command that
+creates a lambda expression (<code>fns1#lambda</code>) has been
+added.</li>
+<li>Performance of NTNView: Do not rerender with JOMDoc if only the
+cursor has been moved.</li>
+<li>Performance improvement: If Gemse can not keep up with the user,
+the views are no longer reconstructed after every single command.</li>
+<li>New command <kbd>:goto</kbd>: It jumps to the equation with the
+given number.</li>
+<li>The OthersView now shows numbers along the equations. Like this,
+one can see empty equations and the number can be used with the
+command <kbd>:goto</kbd>.</li>
+<li>Gemse can now be called from the command line: Use the flag
+<code>-gemse</code> to start Gemse with an empty equation.
+<code>-gemse-load URI</code> opens Gemse and loads <code>URI</code> as
+equation. <code>-gemse-do COMMANDS</code> opens Gemse and executes the
+given commands. If there is already running an instance of Gemse, then
+no new instance is started but the running one is informed which then
+does what is requested.</li>
+<li>The backspace character is now shown in a human friendly way
+(using U+232B ⌫) in the documentation.</li>
+<li>Now, if an error is thrown, the input buffer is cleared. This
+prevents unexpected stuff from happening when the user types new
+commands after an error occured.</li>
+<li>A new equation no longer has an <code>id</code> attribute on its
+<code>math</code> element.</li>
+<li>SourceView no longer shows attributes whose names begin with a
+dash. Such attribute names are not well formed XML and are only used
+internally by the MathML rendering code of Mozilla. They should not be
+visible in the DOM but they are anyway because of a 
+<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=527201">bug</a> in Mozilla.</li>
+</ul>
+
 <h2>1.0.11</h2>
 
 <ul>
