@@ -1010,6 +1010,7 @@ function GemsePEditor() {
      */
     this.equationTemplate = document.getElementById("equationTemplate");
     this.equationTemplate.parentNode.removeChild(this.equationTemplate);
+    this.equationTemplate.removeAttribute("id");
     /**
      * OptionsAssistant that handles options
      */
