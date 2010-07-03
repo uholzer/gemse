@@ -309,7 +309,10 @@ SourceView.prototype = {
             var attrs = element.attributes;
             var attrs_array = [];
             for (var i=attrs.length-1; i>=0; i--) {
-                if (attrs[i].namespaceURI != NS_internal) {
+                // Do not show attributes whose names begin with a dash
+                // (Firefox shows them in the DOM although it should not.)
+                // Also, do not show attributes in the internal namespace.
+                if (attrs[i].namespaceURI != NS_internal && attrs[i].name[0]!='-') {
                     attrs_array.push(attrs[i]);
                 }
             }
