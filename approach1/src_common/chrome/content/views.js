@@ -28,13 +28,8 @@ DirectView.prototype = {
      * Builds the direct view. 
      */
     build: function() {
-        // Put the equation as child into the viewport, but only if it
-        // is not yet there. We must be careful, since sometimes
-        // this.equationEnv.equation itself changes.
-        if (mml_firstChild(this.viewport)!=this.equationEnv.equation) {
-            xml_flushElement(this.viewport);
-            this.viewport.appendChild(this.equationEnv.equation);
-        }
+        xml_flushElement(this.viewport);
+        this.viewport.appendChild(document.importNode(this.equationEnv.equation, true));
     }
 }
 ViewsetManager.viewClasses["DirectView"] = DirectView;
