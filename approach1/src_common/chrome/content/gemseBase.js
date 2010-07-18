@@ -19,10 +19,10 @@ function EquationEnv(editor, equation) {
     var nsResolver = standardNSResolver;
 
     /**
-     * Root element of the equation.
-     * @private
+     * Document that holds the equation.
      */
-    this.equation = equation;
+    this.document = document.implementation.createDocument(null,null,null);
+    this.document.appendChild(equation);
 
     /**
      * Where the equation originates from.
@@ -64,10 +64,18 @@ function EquationEnv(editor, equation) {
     this.modeStack = [new EditMode(editor, this)];
 }
 EquationEnv.prototype = {
-    /* Methods */
+    /**
+     * Root element of the equation.
+     */
+    get equation() {
+        return this.document.documentElement;
+    },
+    set equation(e) {
+        this.document.replaceChild(e, this.document.firstChild);
+    },
 
     /** 
-     * Replaces a currenly open equation with a different one.
+     * Replaces a currently open equation with a different one.
      * You must not set this.equation directly. You must use
      * this method instead. You also have to call reInit of
      * the current mode afterwards.
@@ -2210,15 +2218,14 @@ function mml_lastChild(element) {
 }
 
 /**
- * Returns the parent element. If the given element is a math element,
- * null is returned, since it is the root element of an equation.
+ * Returns the parent element. If the parent element is a document
+ * node, null is returned, since this means that the given element
+ * already is the root element. (More precisely: If the parent node is
+ * not an element, null is returned)
+ * @param element A DOM element
  */
 function mml_parent(element) {
-    // Important: We must not go above the formula
-    if (element.localName != "math" || element.namespaceURI != NS_MathML) {
-        return element.parentNode;
-    }
-    return null;
+    return (element.parentNode.nodeType==1) ? element.parentNode : null;
 }
 
 /**
