@@ -1527,8 +1527,11 @@ GemsePEditor.prototype = {
                     throw new Error("Refused to load the same equation twice!");
                 }
 
-                // Only allow math elements
-                if (m.localName != "math" || m.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
+                // Only allow math elements except the option
+                // loadAnyAsRoot is set to true
+                var is_math = (m.localName == "math" && m.namespaceURI == NS_MathML);
+                var is_OMOBJ = (m.localName == "OMOBJ" && m.namespaceURI == NS_OpenMath);
+                if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ) {
                     //XXX: Maybe we should not throw here, but just skip this equation
                     throw new Error("The element you load must be a math element in the MathML namespace");
                 }

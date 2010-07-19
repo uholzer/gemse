@@ -76,5 +76,13 @@ gemseGlobalOptions = {
             o.detailedErrors = this.parser(value);
         }
     },
+    "loadAnyAsRoot": {
+        defaultValue: "no",
+        validator: OptionsAssistant.validators.truthVal,
+        parser: OptionsAssistant.parsers.truthVal,
+        setter: function(o,value) {
+            o.loadAnyAsRoot = this.parser(value);
+        }
+    }
 }
 
