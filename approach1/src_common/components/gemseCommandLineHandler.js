@@ -1,27 +1,16 @@
-/* Command line handler for Gemse */
+/*
+ * This file is part of Gemse.
+ *
+ * Copyright 2009, 2010 Urs Holzer
+ *
+ * Gemse is licenced under the GNU Public Licence v3 (GPL3), 
+ * or (at your option) any later version.
+ */
 
-const nsIAppShellService    = Components.interfaces.nsIAppShellService;
-const nsISupports           = Components.interfaces.nsISupports;
-const nsICategoryManager    = Components.interfaces.nsICategoryManager;
-const nsIComponentRegistrar = Components.interfaces.nsIComponentRegistrar;
-const nsICommandLine        = Components.interfaces.nsICommandLine;
-const nsICommandLineHandler = Components.interfaces.nsICommandLineHandler;
-const nsIFactory            = Components.interfaces.nsIFactory;
-const nsIModule             = Components.interfaces.nsIModule;
-const nsIWindowWatcher      = Components.interfaces.nsIWindowWatcher;
+/* Command line handler for Gemse */
 
 // the chrome URI of Gemse
 const GEMSEEDITOR_URI = "chrome://gemse/content/editor.xul";
-
-// id, CID, and category to be unique to Gemse
-const clh_contractID = "@mozilla.org/commandlinehandler/general-startup;1?type=gemse";
-
-// unique ID generated with uuidgen
-const clh_CID = Components.ID("{4b3a7bd9-7796-4445-a9d5-edf85da6f9ff}");
-
-// category names are sorted alphabetically. Typical command-line handlers use a
-// category that begins with the letter "m".
-const clh_category = "m-gemse";
 
 /**
  * Calls Gemse. If there is already a window of Gemse, the
@@ -55,21 +44,40 @@ function callGemse(callback)
     }
 
 }
- 
-/*
- * The XPCOM component that implements nsICommandLineHandler.
- * It also implements nsIFactory to serve as its own singleton factory.
- */
-const gemseCommandLineHandler = {
-    /* nsISupports */
-    QueryInterface: function clh_QI(iid) {
-        if (iid.equals(nsICommandLineHandler) ||
-            iid.equals(nsIFactory) ||
-            iid.equals(nsISupports))
-          return this;
-        throw Components.results.NS_ERROR_NO_INTERFACE;
-    },
 
+/* 
+ * See 
+ * https://developer.mozilla.org/en/XPCOMUtils.jsm
+ * https://developer.mozilla.org/en/XPCOM/XPCOM_changes_in_Gecko_2.0
+ */
+
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
+function GemseCommandLineHandler() {  
+    // initialize the component here  
+}  
+GemseCommandLineHandler.prototype = {  
+    // properties required for XPCOM registration:  
+    classDescription: "Gemse command line handler",  
+    classID:          Components.ID("{4b3a7bd9-7796-4445-a9d5-edf85da6f9ff}"),  
+    contractID:       "@mozilla.org/commandlinehandler/general-startup;1?type=gemse",  
+
+    // [optional] an array of categories to register this component in.  
+    // category names are sorted alphabetically. Typical command-line handlers use a
+    // category that begins with the letter "m".
+    _xpcom_categories: [{  
+        category: "command-line-handler",
+        entry: "m-gemse",  
+        value: "@mozilla.org/commandlinehandler/general-startup;1?type=gemse"
+    }],  
+
+    // QueryInterface implementation, e.g. using the generateQI helper  
+    QueryInterface: XPCOMUtils.generateQI(  
+        [Components.interfaces.nsICommandLineHandler,  
+         Components.interfaces.nsISupports]
+    ),  
+
+    // ...component implementation...  
     /* nsICommandLineHandler */
     handle : function clh_handle(cmdLine) {
         var uristr = cmdLine.handleFlagWithParam("gemse-load", false);
@@ -102,77 +110,21 @@ const gemseCommandLineHandler = {
     // 72 characters with embedded newlines,
     // and finally, the string should end with a newline
     helpInfo: "  -gemse               Open Gemse with a new equation\n" +
-              "  -gemseload <uri>     Load URI in gemse (equals :loadall <uri>)\n" +
-              "  -gemsedo   <String>  Run command in Gemse\n",
-
-    /* nsIFactory */
-
-    createInstance: function clh_CI(outer, iid) {
-        if (outer != null) throw Components.results.NS_ERROR_NO_AGGREGATION;
-
-        return this.QueryInterface(iid);
-    },
-
-    lockFactory: function clh_lock(lock) {
-        /* no-op */
-    }
+              "  -gemse-load <uri>    Load URI in gemse (equals :loadall <uri>)\n" +
+              "  -gemse-do   <String> Run command in Gemse\n",
 };
 
-/**
- * The XPCOM glue that implements nsIModule
+/*
+ * XPCOMUtils.generateNSGetFactory was introduced in Mozilla 2 (Firefox 4).
+ * XPCOMUtils.generateNSGetModule is for Mozilla 1.9.2 (Firefox 3.6).
  */
-const gemseCommandLineHandlerModule = {
-    /* nsISupports */
-    QueryInterface: function mod_QI(iid) {
-        if (iid.equals(nsIModule) ||
-            iid.equals(nsISupports))
-          return this;
+if (XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory([GemseCommandLineHandler]);
+else if (XPCOMUtils.generateNSGetFactory)
+    var NSGetModule = XPCOMUtils.generateNSGetModule([GemseCommandLineHandler]);
+else
+    var NSGetModule = function(compMgr, fileSpec) {
+        return XPCOMUtils.generateModule([GemseCommandLineHandler]);
+    };
 
-        throw Components.results.NS_ERROR_NO_INTERFACE;
-    },
-
-    /* nsIModule */
-    getClassObject: function mod_gch(compMgr, cid, iid) {
-        if (cid.equals(clh_CID)) return gemseCommandLineHandler.QueryInterface(iid);
-
-        throw Components.results.NS_ERROR_NOT_REGISTERED;
-    },
-
-    registerSelf: function mod_regself(compMgr, fileSpec, location, type) {
-        compMgr.QueryInterface(nsIComponentRegistrar);
-
-        compMgr.registerFactoryLocation(clh_CID,
-                                        "gemseCommandLineHandler",
-                                        clh_contractID,
-                                        fileSpec,
-                                        location,
-                                        type);
-
-        var catMan = Components.classes["@mozilla.org/categorymanager;1"].
-                     getService(nsICategoryManager);
-        catMan.addCategoryEntry("command-line-handler",
-                                clh_category,
-                                clh_contractID, true, true);
-    },
-
-    unregisterSelf: function mod_unreg(compMgr, location, type) {
-        compMgr.QueryInterface(nsIComponentRegistrar);
-        compMgr.unregisterFactoryLocation(clh_CID, location);
-
-        var catMan = Components.classes["@mozilla.org/categorymanager;1"].
-          getService(nsICategoryManager);
-        catMan.deleteCategoryEntry("command-line-handler", clh_category);
-    },
-
-    canUnload: function (compMgr) {
-        return true;
-    }
-};
-
-/* The NSGetModule function is the magic entry point that XPCOM uses to find what XPCOM objects
- * this component provides
- */
-function NSGetModule(comMgr, fileSpec) {
-    return gemseCommandLineHandlerModule;
-}
 

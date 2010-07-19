@@ -1002,6 +1002,42 @@ function GemsePEditor() {
      */
     this.inputElement = document.getElementById("input");
     /**
+     * The directory where Gemse is installed as nsIFile (may be null
+     * if Gemse does not run with chrome privileges).
+     */
+    this.installationDirectory = null;
+    try {
+        if (Components.interfaces.nsIExtensionManager) {
+            // For Firefox 3.* (Mozilla 1.9.*)
+            this.installationDirectory = Components.classes["@mozilla.org/extensions/manager;1"].  
+                        getService(Components.interfaces.nsIExtensionManager).  
+                        getInstallLocation("Gemse@andonyar.com"). // guid of extension  
+                        getItemLocation("Gemse@andonyar.com");  
+        }
+        else {
+            // For Firefox 4 (Mozilla 2.0) we have to use the new
+            // AddonManager, the ExtensionManager doesn't exist
+            // anymore.
+            // TODO: Does this always work? I don't know how to work
+            // with this callback stuff.
+            Components.utils.import("resource://gre/modules/AddonManager.jsm");
+            var newEditor = this;
+            AddonManager.getAddonByID("Gemse@andonyar.com", function(a) { 
+                var uri = a.getResourceURI("");
+                newEditor.installationDirectory = uri.QueryInterface(Components.interfaces.nsIFileURL).file; 
+            });
+        }
+    }
+    catch (e) {}
+    if (!this.installationDirectory) {
+        // In a XULRunner application, Gemse is not an addon. So
+        // if the above fails or results in null, we try to use the directory service.
+        this.installationDirectory = Components.classes["@mozilla.org/file/directory_service;1"].
+                         getService(Components.interfaces.nsIProperties).
+                         get("CurProcD", Components.interfaces.nsIFile);
+        //XXX: Or should we use XCurProcD?
+    }
+    /**
      * The current working directory for internal use. If you want to
      * get or set the working directory, use editor.workingDirectory.
      * This value has nothing to do with the real current working
@@ -1680,7 +1716,7 @@ GemsePEditor.prototype = {
             newMessage.appendChild(document.createTextNode(message.toString()));
             this.messages.push(newMessage);
         }
-    }
+    },
 }
 
 GemsePEditor.knownClasses = [];

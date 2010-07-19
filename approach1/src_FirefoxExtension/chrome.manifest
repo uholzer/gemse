@@ -1,2 +1,6 @@
 content gemse chrome/content/ contentaccessible=yes
 overlay chrome://browser/content/browser.xul chrome://gemse/content/callGemseFromDocumentOverlay.xul
+# Command line handler component
+component {4b3a7bd9-7796-4445-a9d5-edf85da6f9ff} components/gemseCommandLineHandler.js
+contract @mozilla.org/commandlinehandler/general-startup;1?type=gemse {4b3a7bd9-7796-4445-a9d5-edf85da6f9ff}
+category command-line-handler m-gemse @mozilla.org/commandlinehandler/general-startup;1?type=gemse

@@ -814,7 +814,7 @@ function NTNView(editor,equationEnv,viewport) {
     this.o = editor.optionsAssistant.obtainOptionsObject(NTNView,this);
 
     try {
-        NTNView.prepareNTN();
+        NTNView.prepareNTN(this.editor);
     }
     catch(e) {
         this.showError(e);
@@ -831,7 +831,7 @@ function NTNView(editor,equationEnv,viewport) {
  * instances of this class: URIs for the java files, a class loader,
  * notations, ntn renderer, some XOM stuff
  */
-NTNView.prepareNTN = function() {
+NTNView.prepareNTN = function(editor) {
     if (NTNView.broken || NTNView.ready) {
         return;
     }
@@ -840,20 +840,8 @@ NTNView.prepareNTN = function() {
     EquationView.broken = true;
 
     //Get extension folder installation path...  
-    try {
-        var extensionPath = Components.classes["@mozilla.org/extensions/manager;1"].  
-                    getService(Components.interfaces.nsIExtensionManager).  
-                    getInstallLocation("Gemse@andonyar.com"). // guid of extension  
-                    getItemLocation("Gemse@andonyar.com");  
-    }
-    catch (e) {
-        // In a XULRunner application, Gemse is not an exstension. So
-        // if the above fails, we try to use the directory service.
-        var extensionPath = Components.classes["@mozilla.org/file/directory_service;1"].
-                         getService(Components.interfaces.nsIProperties).
-                         get("CurProcD", Components.interfaces.nsIFile);
-        //XXX: Or should we use XCurProcD?
-    }
+    var extensionPath = editor.installationDirectory;
+    if (!extensionPath) { throw "Unable to determine the directory where Gemse is installed" }
 
     // Get the path where the java libraries reside. It is the
     // subdirectory called "java" of extensionPath.
