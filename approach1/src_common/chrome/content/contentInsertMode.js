@@ -18,6 +18,7 @@ function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
     // children to the end of the inElement.
     this.editor = editor;
     this.equationEnv = equationEnv;
+    this.d = this.equationEnv.document;
     this.cursor = {
         inElement: inElement,
         beforeElement: beforeElement,
@@ -146,14 +147,14 @@ ContentInsertMode.prototype = {
                     precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities or similar?
                 }
                 else {
-                    var newElement = document.createElementNS(NS_MathML, "cn");
-                    newElement.appendChild(document.createTextNode(c));
+                    var newElement = this.d.createElementNS(NS_MathML, "cn");
+                    newElement.appendChild(this.d.createTextNode(c));
                     this.putElement(newElement, false);
                 }
             }
             else if (ucd.isIdentifier(c)) { // Identifier
-                var newElement = document.createElementNS(NS_MathML, "ci");
-                newElement.appendChild(document.createTextNode(c));
+                var newElement = this.d.createElementNS(NS_MathML, "ci");
+                newElement.appendChild(this.d.createTextNode(c));
                 this.putElement(newElement, false);
             }
             else {
@@ -178,7 +179,7 @@ ContentInsertMode.prototype = {
         if (this.cursor.numberOfElementsToSurround) {
             if (isOperator) { 
                 var operator = newElement;
-                newElement = document.createElementNS(NS_MathML, "apply");
+                newElement = this.d.createElementNS(NS_MathML, "apply");
             }
             this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
             for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
@@ -233,10 +234,10 @@ function contentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
     }
     var newElement;
     if (pragmatic && mode.o.pragmaticContent) {
-        newElement = document.createElementNS(NS_MathML, pragmatic);
+        newElement = mode.d.createElementNS(NS_MathML, pragmatic);
     }
     else {
-        newElement = document.createElementNS(NS_MathML, "csymbol");
+        newElement = mode.d.createElementNS(NS_MathML, "csymbol");
         if (cd) {
             newElement.setAttribute("cd", cd);
         }
@@ -244,10 +245,10 @@ function contentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
             newElement.setAttribute("cd", argumentLines[0]);
         }
         if (name) {
-            newElement.appendChild(document.createTextNode(name));
+            newElement.appendChild(mode.d.createTextNode(name));
         }
         else {
-            newElement.appendChild(document.createTextNode(argumentLines[1]));
+            newElement.appendChild(mode.d.createTextNode(argumentLines[1]));
         }
     }
     mode.putElement(newElement, false, true);
@@ -255,59 +256,59 @@ function contentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
 }
 
 function contentInsertModeCommand_ci(mode, instance) {
-    var newElement = document.createElementNS(NS_MathML, "ci");
-    newElement.appendChild(document.createTextNode(instance.argument));
+    var newElement = mode.d.createElementNS(NS_MathML, "ci");
+    newElement.appendChild(mode.d.createTextNode(instance.argument));
     mode.putElement(newElement, false);
     return true;
 }
 
 function contentInsertModeCommand_cn(mode, instance) {
-    var newElement = document.createElementNS(NS_MathML, "cn");
-    newElement.appendChild(document.createTextNode(instance.argument));
+    var newElement = mode.d.createElementNS(NS_MathML, "cn");
+    newElement.appendChild(mode.d.createTextNode(instance.argument));
     mode.putElement(newElement, false);
     return true;
 }
 
 function contentInsertModeCommand_apply(mode, instance) {
-    var newElement = document.createElementNS(NS_MathML, "apply");
+    var newElement = mode.d.createElementNS(NS_MathML, "apply");
     mode.putElement(newElement, true);
     return true;
 }
 
 function contentInsertModeCommand_arbitraryOperator(mode, instance) {
-    var newElement = document.createElementNS(NS_MathML, instance.argument);
+    var newElement = mode.d.createElementNS(NS_MathML, instance.argument);
     mode.putElement(newElement, false, true);
     return true;
 }
 
 function contentInsertModeCommand_arbitraryElement(mode, instance) {
-    var newElement = document.createElementNS(NS_MathML, instance.argument);
+    var newElement = mode.d.createElementNS(NS_MathML, instance.argument);
     mode.putElement(newElement, false, false);
     return true;
 }
 
 function contentInsertModeCommand_bind(mode, instance) {
-    var newElement = document.createElementNS(NS_MathML, "bind");
+    var newElement = mode.d.createElementNS(NS_MathML, "bind");
     mode.putElement(newElement, true);
     return true;
 }
 
 function contentInsertModeCommand_bvar(mode, instance) {
-    var newElement = document.createElementNS(NS_MathML, "bvar");
+    var newElement = mode.d.createElementNS(NS_MathML, "bvar");
     mode.putElement(newElement, true);
     return true;
 }
 
 function contentInsertModeCommand_lambda(mode, instance) {
     // Build our lambda construct
-    var lambdaConstruct = document.createElementNS(NS_MathML, "bind");
-    var csymbol = document.createElementNS(NS_MathML, "csymbol");
+    var lambdaConstruct = mode.d.createElementNS(NS_MathML, "bind");
+    var csymbol = mode.d.createElementNS(NS_MathML, "csymbol");
     csymbol.setAttribute("cd", "fns1");
-    csymbol.appendChild(document.createTextNode("lambda"));
+    csymbol.appendChild(mode.d.createTextNode("lambda"));
     lambdaConstruct.appendChild(csymbol);
-    var bvar = document.createElementNS(NS_MathML, "bvar");
+    var bvar = mode.d.createElementNS(NS_MathML, "bvar");
     lambdaConstruct.appendChild(bvar);
-    var apply = document.createElementNS(NS_MathML, "apply");
+    var apply = mode.d.createElementNS(NS_MathML, "apply");
     lambdaConstruct.appendChild(apply);
 
     // Insert the construct

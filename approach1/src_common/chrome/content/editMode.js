@@ -34,6 +34,7 @@ function EditMode(editor, equationEnv) {
      * @constant
      */
     this.equationEnv = equationEnv;
+    this.d = this.equationEnv.document;
     this.commandHandler = new CommandHandler(this,editModeCommandOptions,editModeCommands);
     /**
      * The selection (as returned by the visual mode) the next command
@@ -191,7 +192,7 @@ EditMode.prototype = {
     reInit: function () {
         // Search equation for the cursor
         var nsResolver = standardNSResolver;
-        this.cursor = document.evaluate(".//.[@internal:selected='editcursor']", this.equationEnv.equation, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+        this.cursor = this.d.evaluate(".//.[@internal:selected='editcursor']", this.equationEnv.equation, nsResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
         if (!this.cursor) { this.cursor = this.equationEnv.equation }
     },
 }
@@ -287,11 +288,11 @@ function editModeCommand_followRef(mode, currentElement) {
     var destID;
     var destElement = null;
     if (destID = currentElement.getAttribute("xref")) {
-        destElement = document.evaluate(".//.[@id='"+destID+"' or @xml:id='"+destID+"']", mode.equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+        destElement = mode.d.evaluate(".//.[@id='"+destID+"' or @xml:id='"+destID+"']", mode.equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
     }
     else if (destID = (currentElement.getAttribute("id")||currentElement.getAttributeNS(NS_XML,"id"))) {
         // Follow backwards
-        destElement = document.evaluate(".//.[@xref='"+destID+"']", mode.equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+        destElement = mode.d.evaluate(".//.[@xref='"+destID+"']", mode.equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
     }
     return destElement;
 }
@@ -441,7 +442,7 @@ function editModeCommand_serialize(mode, instance) {
     else {
         // Create new document, since cleanSubtreeOfDocument requires
         // a document.
-        var doc = document.implementation.createDocument(null, null, null);
+        var doc = mode.d.implementation.createDocument(null, null, null);
         rootNode = doc.importNode(mode.equationEnv.equation, true);
         doc.appendChild(rootNode);
         mode.equationEnv.cleanSubtreeOfDocument(doc, rootNode);
@@ -477,7 +478,7 @@ function editModeCommand_export(mode, instance) {
 
     // Create new document, since cleanSubtreeOfDocument requires
     // a document.
-    var doc = document.implementation.createDocument(null, null, null);
+    var doc = mode.d.implementation.createDocument(null, null, null);
     var rootNode = doc.importNode(mode.equationEnv.equation, true);
     doc.appendChild(rootNode);
     mode.equationEnv.cleanSubtreeOfDocument(doc, rootNode);
@@ -651,7 +652,7 @@ function editModeCommand_help(mode, instance) {
 }
 
 function editModeCommand_example(mode, instance) {
-    var base = document.documentURI.substring(0, document.documentURI.lastIndexOf("/")) + "/";
+    var base = window.document.documentURI.substring(0, window.document.documentURI.lastIndexOf("/")) + "/";
     var exampleBase = base + "doc/examples/";
     mode.editor.loadURI(exampleBase + instance.argument);
 }
@@ -736,10 +737,10 @@ function editModeCommand_mrowEnvelop(mode,instance) {
     // be careful that Presentation MathML support does not break.
     var newMrow;
     if (instance.selection.startElement.localName[1]=="m" || elementDescriptions[instance.selection.startElement.localName]) {
-        var newMrow = document.createElementNS(NS_MathML, "mrow");
+        var newMrow = mode.d.createElementNS(NS_MathML, "mrow");
     }
     else {
-        var newMrow = document.createElementNS(NS_MathML, "apply");
+        var newMrow = mode.d.createElementNS(NS_MathML, "apply");
     }
     
     // Fill the new mrow

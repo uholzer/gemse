@@ -19,6 +19,7 @@ function UCDInsertMode(editor, equationEnv, inElement, beforeElement) {
     // children to the end of the inElement.
     this.editor = editor;
     this.equationEnv = equationEnv;
+    this.d = this.equationEnv.document;
     this.cursor = {
         inElement: inElement,
         beforeElement: beforeElement,
@@ -148,8 +149,8 @@ UCDInsertMode.prototype = {
                 var parentElement = this.cursor.inElement;
                 var baseElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
                 if (!baseElement) { throw new Error("No element before the cursor, so don't know what to do with the combining mark.") }
-                var standaloneTextNode = document.createTextNode(standalone);
-                var standaloneElement = document.createElementNS(NS_MathML, "mo");      //TODO!
+                var standaloneTextNode = this.d.createTextNode(standalone);
+                var standaloneElement = this.d.createElementNS(NS_MathML, "mo");      //TODO!
                 standaloneElement.appendChild(standaloneTextNode);
                 var surroundingElementName;
                 switch (position) {
@@ -168,7 +169,7 @@ UCDInsertMode.prototype = {
                     default:
                         surroundingElementName = "mover";
                 }
-                var surroundingElement = document.createElementNS(NS_MathML, surroundingElementName);  //TODO!
+                var surroundingElement = this.d.createElementNS(NS_MathML, surroundingElementName);  //TODO!
                 parentElement.replaceChild(surroundingElement, baseElement);
                 surroundingElement.appendChild(baseElement);
                 surroundingElement.appendChild(standaloneElement);
@@ -177,7 +178,7 @@ UCDInsertMode.prototype = {
                 this.showCursor();
             }
             else if (ucd.isOperator(c)) {
-                this.putElement(null, "mo", document.createTextNode(c));
+                this.putElement(null, "mo", this.d.createTextNode(c));
             }
             else if (ucd.isDigit(c)) {
                 // We assume that it does not happen that the user
@@ -189,11 +190,11 @@ UCDInsertMode.prototype = {
                     precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities or similar?
                 }
                 else {
-                    this.putElement(null, "mn", document.createTextNode(c));
+                    this.putElement(null, "mn", this.d.createTextNode(c));
                 }
             }
             else if (ucd.isIdentifier(c)) { // Identifier
-                this.putElement(null, "mi", document.createTextNode(c));
+                this.putElement(null, "mi", this.d.createTextNode(c));
             }
             else {
                 throw new Error("I don't know what to do with " + c + ", it seems not to be an operator, a digit or an identifier.");
@@ -207,9 +208,9 @@ UCDInsertMode.prototype = {
         }
     },
     getNewPlaceholderElement: function() {
-        var placeholder = document.createElementNS(NS_MathML, "mi");
+        var placeholder = this.d.createElementNS(NS_MathML, "mi");
         placeholder.setAttributeNS(NS_internal, "missing", "1")
-        placeholder.appendChild(document.createTextNode("□"));
+        placeholder.appendChild(this.d.createTextNode("□"));
         return placeholder;
     },
     putElement: function() {
@@ -237,7 +238,7 @@ UCDInsertMode.prototype = {
             // Hide cursor
             this.hideCursor();
             // Create the new element
-            newElement = document.createElementNS(ns, name);
+            newElement = this.d.createElementNS(ns, name);
             for (var i = 2; i < arguments.length; ++i) {
                 newElement.appendChild(arguments[i]);
             }
@@ -270,7 +271,7 @@ UCDInsertMode.prototype = {
                 }
             }
             else if (description.type=="fixedChildren" || description.type=="childList") {
-                var surroundingMrow = document.createElementNS(NS_MathML,"mrow");
+                var surroundingMrow = this.d.createElementNS(NS_MathML,"mrow");
                 for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
                     surroundingMrow.insertBefore(
                         mml_previousSibling(newElement),

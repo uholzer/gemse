@@ -14,6 +14,7 @@ function TrivialInsertMode(editor, equationEnv, inElement, beforeElement) {
     // children to the end of the inElement.
     this.editor = editor;
     this.equationEnv = equationEnv;
+    this.d = this.equationEnv.document;
     this.cursor = {
         inElement: inElement,
         beforeElement: beforeElement,
@@ -107,9 +108,9 @@ TrivialInsertMode.prototype = {
         return true;
     },
     getNewPlaceholderElement: function() {
-        var placeholder = document.createElementNS(NS_MathML, "mi");
+        var placeholder = this.d.createElementNS(NS_MathML, "mi");
         placeholder.setAttributeNS(NS_internal, "missing", "1")
-        placeholder.appendChild(document.createTextNode("□"));
+        placeholder.appendChild(this.d.createTextNode("□"));
         return placeholder;
     },
     putElement: function() {
@@ -137,7 +138,7 @@ TrivialInsertMode.prototype = {
             // Hide cursor
             this.hideCursor();
             // Create the new element
-            newElement = document.createElementNS(ns, name);
+            newElement = this.d.createElementNS(ns, name);
             for (var i = 2; i < arguments.length; ++i) {
                 newElement.appendChild(arguments[i]);
             }
@@ -170,7 +171,7 @@ TrivialInsertMode.prototype = {
                 }
             }
             else if (description.type=="fixedChildren" || description.type=="childList") {
-                var surroundingMrow = document.createElementNS(NS_MathML,"mrow");
+                var surroundingMrow = this.d.createElementNS(NS_MathML,"mrow");
                 for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
                     surroundingMrow.insertBefore(
                         mml_previousSibling(newElement),
@@ -242,7 +243,7 @@ function trivialInsertModeCommand_insertDescribedElement(mode, instance, element
     // Inserts an mtext element
     var description = elementDescriptions[elementName];
     var placeholder = mode.getNewPlaceholderElement();
-    var newElement = document.createElementNS(description.namespace, description.name);
+    var newElement = mode.d.createElementNS(description.namespace, description.name);
     if (description.type == "fixedChildren") {
         for (var i=0; i<description.childCount; ++i) {
             newElement.appendChild(placeholder.cloneNode(true));
@@ -264,7 +265,7 @@ function trivialInsertModeCommand_insertDescribedElement(mode, instance, element
     else if (description.type == "token") {
         // The argument of the instance gives us the content for the
         // token elment
-        newElement.appendChild(document.createTextNode(instance.argument));
+        newElement.appendChild(mode.d.createTextNode(instance.argument));
     }
     else {
         throw new Error(description.type + " not yet supported by insertDescribedElement");

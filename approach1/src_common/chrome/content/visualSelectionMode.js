@@ -14,6 +14,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
     // children to the end of the inElement.
     this.editor = editor;
     this.equationEnv = equationEnv;
+    this.d = this.equationEnv.document;
     this.cursor = {
         startElement: startElement,
         endElement:   startElement,

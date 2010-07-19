@@ -22,6 +22,7 @@ function EquationEnv(editor, equation) {
      * Document that holds the equation.
      */
     this.document = document.implementation.createDocument(null,null,null);
+    equation = this.document.adoptNode(equation); // XXX: Or better importNode?
     this.document.appendChild(equation);
 
     /**
@@ -200,7 +201,7 @@ EquationEnv.prototype = {
         // XML file with the math element as a root node. 
 
         var root = this.equation.cloneNode(true);
-        this.cleanSubtreeOfDocument(document, root);
+        this.cleanSubtreeOfDocument(this.document, root);
 
         if (this.readOnly && !force) {
             throw new Error("Refused to save the equation, because it is opened read only.");

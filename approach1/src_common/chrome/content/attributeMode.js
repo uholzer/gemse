@@ -12,6 +12,7 @@ function AttributeMode(editor, equationEnv, element) {
     // The attribute mode is specially created for one element!
     this.editor = editor;
     this.equationEnv = equationEnv;
+    this.d = this.equationEnv.document;
     this.element = element;
     this.attributes = [];
     this.cursor = null;
