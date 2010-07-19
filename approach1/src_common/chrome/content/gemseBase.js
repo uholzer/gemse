@@ -144,16 +144,14 @@ EquationEnv.prototype = {
     /**
      * Removes all attributes in the internal namespace. This method
      * must be applied on a subtree of a document.
-     * XXX: Can this be done on nodes not part of any document?
-     * @param doc  The document that contains the subtree
-     * @param root The root node of the subtree
+     * @param root The root element of the subtree
      */
-    cleanSubtreeOfDocument: function(doc,root) {
+    cleanSubtree: function(root) {
         // Kills all attributes in the internal namespace
         // (Using TreeWalker, since createNodeIterator has been
         // introduced in firefox 3.1)
         // TODO: How to remove namespace declarations?
-        var iterator = doc.createTreeWalker(
+        var iterator = root.ownerDocument.createTreeWalker(
             root,
             NodeFilter.SHOW_ELEMENT,
             { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT } },
@@ -172,6 +170,16 @@ EquationEnv.prototype = {
             }
             n =  iterator.nextNode();
         }
+    },
+    /**
+     * Removes all attributes in the internal namespace. This method
+     * must be applied on a subtree of a document.
+     * This method is deprecated, use cleanSubtree instead.
+     * @param doc  The document that contains the subtree
+     * @param root The root node of the subtree
+     */
+    cleanSubtreeOfDocument: function(doc,root) {
+        return this.cleanSubtree(root);
     },
     /**
      * Saves the equation, as it currently looks like, to disk or to a remote
