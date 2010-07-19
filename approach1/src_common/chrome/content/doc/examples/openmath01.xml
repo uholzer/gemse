@@ -1,0 +1,11 @@
+<OMOBJ xmlns="http://www.openmath.org/OpenMath" version="2.0">
+  <OMA>
+    <OMS cd="arith1" name="plus"/>
+    <OMA>
+      <OMS cd="arith1" name="times"/>
+      <OMV name="a"/>
+      <OMV name="x"/>
+    </OMA>
+    <OMV name="b"/>
+  </OMA>
+</OMOBJ>

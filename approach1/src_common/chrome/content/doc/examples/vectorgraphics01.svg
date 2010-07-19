@@ -1,0 +1,24 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="12cm" height="4cm" viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+   <defs>
+     <style type="text/css"><![CDATA[
+        @namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
+        *[internal|selected="editcursor"]                { fill: yellow; stroke: red;   }
+        *[internal|selected="attributeCursor"]           { fill: black;  stroke: white; }
+        *[internal|selected="parent"]                    { fill: #ddd;                  }
+        *[internal|selected="userSelection"]             { fill: #7af;                  }
+        *[internal|selected="userSelectionCursor"]       { fill: #66f;                  }
+        *[internal|selected="attributeCursor selection"] { fill: #227;   stroke: white; }
+        *[internal|selected="insertCursorIn"]            { fill: #dfd;                  }
+        *[internal|selected="referenced"]                { fill: #faa;                  }
+    ]]></style>
+  </defs>
+  <circle cx="600" cy="200" r="100" fill="gray" stroke="purple" stroke-width="10" />
+  <polygon stroke="black" stroke-width="10" 
+           points="350,75  379,161 469,161 397,215
+                   423,301 350,250 277,301 303,215
+                   231,161 321,161" />
+  <polygon stroke="black" stroke-width="10" 
+           points="850,75  958,137.5 958,262.5
+                   850,325 742,262.6 742,137.5" />
+</svg>
