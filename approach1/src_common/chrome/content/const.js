@@ -18,6 +18,11 @@ const NS_internal = "http://www.andonyar.com/rec/2008-12/gemse/internalns";
  * @constant
  */
 const NS_MathML = "http://www.w3.org/1998/Math/MathML";
+/** 
+ * The namespace of OpenMath 
+ * @constant
+ */
+const NS_OpenMath = "http://www.openmath.org/OpenMath";
 /**
  * Namespace of XML
  * @constant
@@ -65,6 +70,8 @@ function standardNSResolver(prefix) {
     else if (prefix == "m") { return NS_MathML }
     else if (prefix == "math") { return NS_MathML }
     else if (prefix == "mathml") { return NS_MathML }
+    else if (prefix == "om") { return NS_OpenMath }
+    else if (prefix == "openmath") { return NS_OpenMath }
     else if (prefix == "xml") { return NS_XML }
     else { return null }
 }
