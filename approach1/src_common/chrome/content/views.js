@@ -1024,7 +1024,7 @@ NTNView.prototype = {
             );
             for (var i = 0; i<xpathResult.snapshotLength; ++i) { 
                 var selectedNode = xpathResult.snapshotItem(i);
-                var xref = selectedNode.getAttribute("xref");
+                var xref = selectedNode.getAttribute("xref") || selectedNode.getAttribute("href");
                 if (xref && xref.charAt(0) == "#") {
                     var target = document.getElementById(xref.substring(1));
                     if (target) {
