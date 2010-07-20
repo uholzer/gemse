@@ -94,6 +94,49 @@ contentInsertModeCommands[KEYMOD_CONTROL + "v"] = {
     argument: "none",
     implementation: contentInsertModeCommand_bvar
 }
+contentInsertModeCommands[KEYMOD_CONTROL + "s"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_semantics
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "p"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_omatp
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "a"] = {
+    type: "disamb",
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "ac"] = {
+    type: "command",
+    argument: "newlineTerminated",
+    argumentLineCount: 2,
+    implementation: contentInsertModeCommand_annotationxml_cmml
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "ap"] = {
+    type: "command",
+    argument: "newlineTerminated",
+    argumentLineCount: 2,
+    implementation: contentInsertModeCommand_annotationxml_pmml
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "ao"] = {
+    type: "command",
+    argument: "newlineTerminated",
+    argumentLineCount: 2,
+    implementation: contentInsertModeCommand_annotationxml_om
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "aa"] = {
+    type: "command",
+    argument: "newlineTerminated",
+    argumentLineCount: 3,
+    implementation: contentInsertModeCommand_annotation_arbitrary
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "ax"] = {
+    type: "command",
+    argument: "newlineTerminated",
+    argumentLineCount: 3,
+    implementation: contentInsertModeCommand_annotationxml_arbitrary
+}
 contentInsertModeCommands[KEYMOD_CONTROL + "h"] = {
     type: "command",
     argument: "none",
@@ -103,6 +146,24 @@ contentInsertModeCommands[KEYMOD_CONTROL + "l"] = {
     type: "command",
     argument: "none",
     implementation: contentInsertModeCommand_oneLessToSurround
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "f"] = {
+    type: "disamb",
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "fm"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_forceMathMLForNext
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "fo"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_forceOpenMathForNext
+}
+contentInsertModeCommands[KEYMOD_CONTROL + "fa"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_forceAutoForNext
 }
 contentInsertModeCommands[KEYMOD_CONTROL + ","] = {
     type: "command",

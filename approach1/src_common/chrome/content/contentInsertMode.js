@@ -36,6 +36,18 @@ function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
      * @private
      */
     this.o = editor.optionsAssistant.obtainOptionsObject(ContentInsertMode, this);
+    /**
+     *
+     */
+    this.langs = {
+        AUTO:     0,
+        MathML:   1,
+        OpenMath: 3
+    };
+    /**
+     *
+     */
+    this.langForNextElement = this.langs.AUTO;
 }
 ContentInsertMode.prototype = {
     name: "content",
@@ -143,19 +155,15 @@ ContentInsertMode.prototype = {
                 // not good, since for example in a subsup element,
                 // both children can be mn.
                 var precedingElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
-                if (precedingElement && precedingElement.namespaceURI == NS_MathML && precedingElement.localName == "cn" && !this.forceNewElement) {
-                    precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities or similar?
+                if (this.is_cn_integer(precedingElement) && !this.forceNewElement) {
+                    precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities, whitespace or similar?
                 }
                 else {
-                    var newElement = this.d.createElementNS(NS_MathML, "cn");
-                    newElement.appendChild(this.d.createTextNode(c));
-                    this.putElement(newElement, false);
+                    this.putElement(this.new_cn_integer(c), false);
                 }
             }
             else if (ucd.isIdentifier(c)) { // Identifier
-                var newElement = this.d.createElementNS(NS_MathML, "ci");
-                newElement.appendChild(this.d.createTextNode(c));
-                this.putElement(newElement, false);
+                this.putElement(this.new_ci(c), false);
             }
             else {
                 throw new Error("I don't know what to do with " + c + ", it seems not to be a digit or an identifier.");
@@ -220,95 +228,339 @@ ContentInsertMode.prototype = {
             });
         }
     },
+    /**
+     * Set the language to be used for the next created element
+     */
+    forceLang: function(lang) {
+        
+    },
+    currentLang: function() {
+        if (this.langForNextElement == this.langs.AUTO) {
+            if (this.cursor.inElement.namespaceURI == NS_OpenMath) {
+                return this.langs.OpenMath;
+            }
+            else if (this.cursor.inElement.namespaceURI == NS_MathML) {
+                return this.langs.MathML;
+            }
+        }
+        else {
+            return this.langForNextElement;
+        }
+    },
+    /**
+     * Creates a csymbol or OMS element
+     */
+    new_csymbol: function(cdbase,cd,name,pragmaticElementName) {
+        var element;
+        if (this.currentLang() == this.langs.OpenMath) {
+            element = this.d.createElementNS(NS_OpenMath, "OMS");
+            element.setAttribute("name", name);
+            if (cdbase) { element.setAttribute("cdbase", cdbase) }
+            element.setAttribute("cd", cd);
+        }
+        else if (pragmaticElementName && this.o.pragmaticContent) {
+            newElement = mode.d.createElementNS(NS_MathML, pragmaticElementName);
+        }
+        else {
+            element = this.d.createElementNS(NS_MathML, "csymbol");
+            element.appendChild(this.d.createTextNode(name));
+            if (cdbase) { element.setAttribute("cdbase", cdbase) }
+            element.setAttribute("cd", cd);
+        }
+        return element;
+    },
+    /**
+     * Creates a ci or OMV element
+     */
+    new_ci: function(name) {
+        var element;
+        if (this.currentLang() == this.langs.OpenMath) {
+            element = this.d.createElementNS(NS_OpenMath, "OMV");
+            element.setAttribute("name", name);
+        }
+        else {
+            element = this.d.createElementNS(NS_MathML, "ci");
+            element.appendChild(this.d.createTextNode(name));
+        }
+        return element;
+    },
+    /**
+     * Creates an apply or OMA element
+     */
+    new_apply: function() {
+        var element;
+        if (this.currentLang() == this.langs.OpenMath) {
+            element = this.d.createElementNS(NS_OpenMath, "OMA");
+        }
+        else {
+            element = this.d.createElementNS(NS_MathML, "apply");
+        }
+        return element;
+    },
+    /**
+     * Create a bind or OMBIND element
+     */
+    new_bind: function() {
+        var element;
+        if (this.currentLang() == this.langs.OpenMath) {
+            element = this.d.createElementNS(NS_OpenMath, "OMBIND");
+        }
+        else {
+            element = this.d.createElementNS(NS_MathML, "bind");
+        }
+        return element;
+    },
+    /**
+     * Create a bvar or OMBVAR element.
+     * Note that in MathML every bvar contains only one variable and a
+     * bind element can have more that one bvar elements. On the other
+     * hand, OpenMath allows only one OMBVAR in an OMBIND but an
+     * OMBVAR can contain more than one variable.
+     */
+    new_bvar: function() {
+        var element;
+        if (this.currentLang() == this.langs.OpenMath) {
+            element = this.d.createElementNS(NS_OpenMath, "OMBVAR");
+        }
+        else {
+            element = this.d.createElementNS(NS_MathML, "bvar");
+        }
+        return element;
+    },
+    /**
+     * Create a cn of type integer or a OMI
+     */
+    new_cn_integer: function(n) {
+        var element;
+        if (this.currentLang() == this.langs.OpenMath) {
+            element = this.d.createElementNS(NS_OpenMath, "OMI");
+        }
+        else {
+            element = this.d.createElementNS(NS_MathML, "cn");
+            element.setAttribute("type", "integer");
+        }
+        if (n) {
+            element.appendChild(this.d.createTextNode(n));
+        }
+        return element;
+    },
+    /**
+     * Returns a cn of autmatically determined type or an OMI or an OMF
+     * TODO: At the moment, this just calls new_cn_integer!
+     */
+    new_cn: function(n) {
+        return this.new_cn_integer(n);
+    },
+    /**
+     * Returns true if the given element is a cn of type integer or an OMI
+     */
+    is_cn_integer: function(element) {
+        return (element.namespaceURI == NS_MathML 
+                && element.localName == "cn" 
+                && element.getAttribute("type") == "integer")
+               ||
+               (element.namespaceURI == NS_OpenMath 
+                && element.localName == "OMI");
+    },
+    /**
+     * Creates a semantics or OMATTR element
+     */
+    new_semantics: function() {
+        var element;
+        if (this.currentLang() == this.langs.OpenMath) {
+            element = this.d.createElementNS(NS_OpenMath, "OMATTR");
+        }
+        else {
+            element = this.d.createElementNS(NS_MathML, "semantics");
+        }
+        return element;
+    }
 }
 
 function contentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
     // If cd is given, don't look for cd argument in the instance, if name is given as well,
     // don't look for name argument either.
-    // Should pragmatic be given, and the user whishes to use
-    // pragmatic MathML, a pragmatic element is created. (TODO:
-    // Automatic lookup?)
     var argumentLines;
     if (instance.argument) {
         argumentLines = instance.argument.split("\n");
     }
-    var newElement;
-    if (pragmatic && mode.o.pragmaticContent) {
-        newElement = mode.d.createElementNS(NS_MathML, pragmatic);
-    }
-    else {
-        newElement = mode.d.createElementNS(NS_MathML, "csymbol");
-        if (cd) {
-            newElement.setAttribute("cd", cd);
-        }
-        else {
-            newElement.setAttribute("cd", argumentLines[0]);
-        }
-        if (name) {
-            newElement.appendChild(mode.d.createTextNode(name));
-        }
-        else {
-            newElement.appendChild(mode.d.createTextNode(argumentLines[1]));
-        }
-    }
+    if (!cd) { cd = argumentLines[0] }
+    if (!name) { name = argumentLines[1] }
+
+    var newElement = mode.new_csymbol(null, cd, name, pragmatic);
     mode.putElement(newElement, false, true);
     return true;
 }
 
 function contentInsertModeCommand_ci(mode, instance) {
-    var newElement = mode.d.createElementNS(NS_MathML, "ci");
-    newElement.appendChild(mode.d.createTextNode(instance.argument));
-    mode.putElement(newElement, false);
+    mode.putElement(mode.new_ci(instance.argument), false);
     return true;
 }
 
 function contentInsertModeCommand_cn(mode, instance) {
-    var newElement = mode.d.createElementNS(NS_MathML, "cn");
-    newElement.appendChild(mode.d.createTextNode(instance.argument));
-    mode.putElement(newElement, false);
+    mode.putElement(mode.new_cn(instance.argument), false);
     return true;
 }
 
 function contentInsertModeCommand_apply(mode, instance) {
-    var newElement = mode.d.createElementNS(NS_MathML, "apply");
-    mode.putElement(newElement, true);
+    mode.putElement(mode.new_apply(), true);
     return true;
 }
 
 function contentInsertModeCommand_arbitraryOperator(mode, instance) {
-    var newElement = mode.d.createElementNS(NS_MathML, instance.argument);
+    var namespace = (mode.cursor.inElement.namespaceURI == OpenMath) ? NS_OpenMath : NS_MathML;
+    var newElement = mode.d.createElementNS(namespace, instance.argument);
     mode.putElement(newElement, false, true);
     return true;
 }
 
 function contentInsertModeCommand_arbitraryElement(mode, instance) {
-    var newElement = mode.d.createElementNS(NS_MathML, instance.argument);
+    var namespace = (mode.currentLang() == mode.langs.OpenMath) ? NS_OpenMath : NS_MathML;
+    var newElement = mode.d.createElementNS(namespace, instance.argument);
     mode.putElement(newElement, false, false);
     return true;
 }
 
 function contentInsertModeCommand_bind(mode, instance) {
-    var newElement = mode.d.createElementNS(NS_MathML, "bind");
-    mode.putElement(newElement, true);
+    mode.putElement(mode.new_bind(), true);
     return true;
 }
 
 function contentInsertModeCommand_bvar(mode, instance) {
-    var newElement = mode.d.createElementNS(NS_MathML, "bvar");
-    mode.putElement(newElement, true);
+    // If OpenMath, place the cursor inside the OMBVAR if one already
+    // exists. If MathML, create a new bvar.
+    if (mode.currentLang() == mode.langs.OpenMath) {
+        if (mode.cursor.inElement.localName == "OMBIND" && mode.cursor.inElement.namespaceURI == NS_OpenMath) {
+            // Place cursor inside existing OMBVAR if one is already
+            // present
+            var xpathResult = mode.d.evaluate(
+                "./openmath:OMBVAR", 
+                mode.cursor.inElement, 
+                standardNSResolver, 
+                XPathResult.FIRST_ORDERED_NODE_TYPE,
+                null
+            );
+            if (xpathResult.singleNodeValue) {
+                // Place cursor inside it
+                mode.moveCursor({
+                    beforeElement: null,
+                    inElement: xpathResult.singleNodeValue,
+                });
+                // XXX: Should we put old position on the cursor stack?
+            }
+            else {
+                // Create a new one
+                mode.putElement(mode.new_bvar(), true);
+            }
+        }
+        else if (mode.cursor.inElement.localName == "OMBVAR" && mode.cursor.inElement.namespaceURI == NS_OpenMath) {
+            // Do nothing
+        }
+        else {
+            mode.putElement(mode.new_bvar(), true);
+        }
+    }
+    else {
+        if (mode.cursor.inElement.localName == "bind" && mode.cursor.inElement.namespaceURI == NS_MathML) {
+            // Place new bvar
+            mode.putElement(mode.new_bvar(), true);
+        }
+        else if (mode.cursor.inElement.localName == "bvar" && mode.cursor.inElement.namespaceURI == NS_MathML) {
+            // Place new bvar behind this one
+            mode.moveCursor({
+                beforeElement: mml_nextSibling(mode.cursor.inElement),
+                inElement: mml_parent(mode.cursor.inElement),
+            });
+            mode.putElement(mode.new_bvar(), true);
+        }
+        else {
+            mode.putElement(mode.new_bvar(), true);
+        }
+
+    }
     return true;
 }
 
+function contentInsertModeCommand_semantics(mode, instance) {
+    mode.putElement(mode.new_semantics(), true);
+
+    return true;
+}
+
+function contentInsertModeCommand_omatp(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OpenMath, "OMATP");
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
+function contentInsertModeCommand_annotationxml_cmml(mode, instance) {
+    var argumentLines = instance.argument.split("\n");
+    var newElement = mode.d.createElementNS(NS_MathML, "annotation-xml");
+    newElement.setAttribute("cd", argumentLines[0]);
+    newElement.setAttribute("name", argumentLines[1]);
+    newElement.setAttribute("encoding", "MathML-Content");
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
+function contentInsertModeCommand_annotationxml_pmml(mode, instance) {
+    var argumentLines = instance.argument.split("\n");
+    var newElement = mode.d.createElementNS(NS_MathML, "annotation-xml");
+    newElement.setAttribute("cd", argumentLines[0]);
+    newElement.setAttribute("name", argumentLines[1]);
+    newElement.setAttribute("encoding", "MathML-Presentation");
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
+function contentInsertModeCommand_annotationxml_om(mode, instance) {
+    var argumentLines = instance.argument.split("\n");
+    var newElement = mode.d.createElementNS(NS_MathML, "annotation-xml");
+    newElement.setAttribute("cd", argumentLines[0]);
+    newElement.setAttribute("name", argumentLines[1]);
+    newElement.setAttribute("encoding", "application/openmath+xml");
+    mode.putElement(newElement, true);
+
+    // TODO: Should we automatically force the language to OpenMath
+    // here?
+
+    return true;
+}
+
+function contentInsertModeCommand_annotation_arbitrary(mode, instance) {
+    var argumentLines = instance.argument.split("\n");
+    var newElement = mode.d.createElementNS(NS_MathML, "annotation");
+    newElement.setAttribute("cd", argumentLines[0]);
+    newElement.setAttribute("name", argumentLines[1]);
+    newElement.setAttribute("encoding", argumentLines[2]);
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
+function contentInsertModeCommand_annotationxml_arbitrary(mode, instance) {
+    var argumentLines = instance.argument.split("\n");
+    var newElement = mode.d.createElementNS(NS_MathML, "annotation-xml");
+    newElement.setAttribute("cd", argumentLines[0]);
+    newElement.setAttribute("name", argumentLines[1]);
+    newElement.setAttribute("encoding", argumentLines[2]);
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
+
 function contentInsertModeCommand_lambda(mode, instance) {
     // Build our lambda construct
-    var lambdaConstruct = mode.d.createElementNS(NS_MathML, "bind");
-    var csymbol = mode.d.createElementNS(NS_MathML, "csymbol");
-    csymbol.setAttribute("cd", "fns1");
-    csymbol.appendChild(mode.d.createTextNode("lambda"));
+    var lambdaConstruct = mode.new_bind();
+    var csymbol = mode.new_csymbol(null, "fns1", "lambda");
     lambdaConstruct.appendChild(csymbol);
-    var bvar = mode.d.createElementNS(NS_MathML, "bvar");
+    var bvar = mode.new_bvar();
     lambdaConstruct.appendChild(bvar);
-    var apply = mode.d.createElementNS(NS_MathML, "apply");
+    var apply = mode.new_apply();
     lambdaConstruct.appendChild(apply);
 
     // Insert the construct
@@ -337,8 +589,35 @@ function contentInsertModeCommand_lambda(mode, instance) {
     return true;
 }
 
+function contentInsertModeCommand_mathElement(mode,instance) {
+    mode.putElement(mode.d.createElementNS(NS_MathML, "math"), true);
+    return true;
+}
+
+function contentInsertModeCommand_omobjElement(mode,instance) {
+    var element = mode.d.createElementNS(NS_OpenMath, "OMOBJ");
+    element.setAttribute("version", "2.0");
+    mode.putElement(element, true);
+    return true;
+}
+
 function contentInsertModeCommand_forceNewElement(mode) {
     mode.forceNewElement = true;
+    return true;
+}
+
+function contentInsertModeCommand_forceMathMLForNext(mode) {
+    mode.forceLang(mode.langs.MathML);
+    return true;
+}
+
+function contentInsertModeCommand_forceOpenMathForNext(mode) {
+    mode.forceLang(mode.langs.OpenMath);
+    return true;
+}
+
+function contentInsertModeCommand_forceAutoForNext(mode) {
+    mode.forceLang(mode.langs.AUTO);
     return true;
 }
 
