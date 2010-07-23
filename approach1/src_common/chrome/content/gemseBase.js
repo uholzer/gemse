@@ -1629,7 +1629,7 @@ GemsePEditor.prototype = {
      * @param {String} uri
      */
     loadAll: function(uri) {
-        this.loadURI(uri,null,"//m:math");
+        this.loadURI(uri,null,"(//m:math|//om:OMOBJ)[not(ancestor::m:math|ancestor::om:OMOBJ)]");
     },
     /**
      * Moves the focus to another equation.
