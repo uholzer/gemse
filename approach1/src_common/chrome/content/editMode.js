@@ -535,7 +535,7 @@ function editModeCommand_loadByXPath(mode, instance) {
     return true;
 }
 function editModeCommand_loadAll(mode, instance) {
-    mode.editor.loadURI(instance.argument,null,"//m:math");
+    mode.editor.loadAll(instance.argument);
     return true;
 }
 
