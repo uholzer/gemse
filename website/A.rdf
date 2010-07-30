@@ -21,13 +21,13 @@
     <dc:title xml:lang="en">Gemse: General Math Structure Editor</dc:title>
     <dc:description xml:lang="en">The intention is to create fast
 editors for mathematical formulas. At the moment, a first approach for
-such an editor is in development. It handles only Presentation MathML,
-i.e. it is only an editor for the appearance of a formula, not for
-its semantics. It is highly inspired by the text editor vi.</dc:description>
+such an editor is in development. It can be used to edit Presentation
+MathML, Content MathML and OpenMath.
+It is highly inspired by the text editor vi.</dc:description>
     <!--<dc:subject></dc:subject>-->
 
     <dcterms:created>2008-12-24</dcterms:created>
-    <dcterms:modified>2010-07-03</dcterms:modified>
+    <dcterms:modified>2010-09-07</dcterms:modified>
 
   </rdf:Description>
 
@@ -38,9 +38,9 @@ its semantics. It is highly inspired by the text editor vi.</dc:description>
     <doap:shortdesc xml:lang="en">General Math Structure Editor</doap:shortdesc>
     <doap:description xml:lang="en">The intention is to create fast
 editors for mathematical formulas. At the moment, a first approach for
-such an editor is in development. It handles only Presentation MathML,
-i.e. it is only an editor for the appearance of a formula, not for
-its semantics. It is highly inspired by the text editor vi.</doap:description>
+such an editor is in development. It can be used to edit Presentation
+MathML, Content MathML and OpenMath.
+It is highly inspired by the text editor vi.</doap:description>
     <doap:homepage rdf:resource="http://www.andonyar.com/rec/2008-12/gemse/" />
     <doap:programming-language>JavaScript</doap:programming-language>
     <!--<license rdf:resource="http://usefulinc.com/doap/licenses/mit" />-->

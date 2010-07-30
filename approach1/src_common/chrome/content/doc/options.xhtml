@@ -72,6 +72,19 @@ are treated as synonyms) and <code>false</code> (<code>off</code>,
     to insert modes listed in this option.</td>
 </tr>
 <tr>
+    <td><code>loadAnyAsRoot</code></td>
+    <td>truth value</td>
+    <td>When set to false, Gemse only allows you to load whole
+    formulas, that is, it only accepts <code>math</code> or
+    <code>OMOBJ</code> as root elements.
+    This behaviour protects you from loading a huge amount
+    of subtrees of a document which ar not formulaxs just
+    because you mistyped a complicated load command.
+    (<kbd>:loadxpath foo.xml //*</kbd> is such an example.)
+    If you set this option to true, Gemse will no longer complain and
+    just load what you ask it to load.</td>
+</tr>
+<tr>
     <td><code>SourceView.foldingDepth</code></td>
     <td><code>-1</code> or any bigger integer</td>
     <td>The source view only shows elements to this depth, relative to

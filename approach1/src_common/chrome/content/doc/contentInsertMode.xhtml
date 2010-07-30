@@ -31,14 +31,23 @@
 
 <h2>Introduction</h2>
 
-<p>The content insert mode allows you to insert Content MathML. It is
-similar to the UCD insert mode. When you insert a character that is
-not a command, a <code>ci</code> or, if it is a digit, a <code>cn</code> element is
+<p>The content insert mode allows you to insert Content MathML and
+OpenMath. The two languages are very similar. Therefore, most commands
+can produce both, MathML or its equivalent OpenMath. Which of those
+two they produce depends on the element the cursor is located in.
+There are also commands which force one of the two languages for the
+next element.</p>
+
+<p>The content insert mode is similar to the UCD insert mode.
+When you insert a character that is
+not a command, a <code>ci</code> or <code>OMV</code> or, if it is a
+digit, a <code>cn</code> or a <code>OMI</code> element is
 generated. Various commands let you insert elements. If such an
-element can cotain elements, the cursor is placed inside it instead of
+element can contain further elements, the cursor is placed inside it instead of
 after it. But the position after the new element gets remembered. When
 you hit <kbd><internal:cmdph ref="contentInsertModeCommand_cursorJump"/></kbd>
 the cursor will jump there.</p>
+
 
 <div id="commands">
 <h2>Commands</h2>
@@ -56,54 +65,170 @@ the cursor will jump there.</p>
     <p>Terminates the mode.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_apply">
-    <h3 class="commandTitle">Apply</h3>
+<div class="commandDocumentation" id="contentInsertModeCommand_killPrevious">
+    <h3 class="commandTitle">Remove previously inserted element</h3>
 
-    <p>Inserts an <code>apply</code> element and positions the cursor
-    inside it.</p>
+    <p></p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_apply">
+    <h3 class="commandTitle">Application</h3>
+
+    <p>Inserts an <code>apply</code> or <code>OMA</code> element 
+    and positions the cursor inside it.</p>
 </div>
 
 <div class="commandDocumentation" id="contentInsertModeCommand_ci">
     <h3 class="commandTitle">Identifier</h3>
 
-    <p>Creates an Identifier with given content.</p>
+    <p>Creates an Identifier (<code>ci</code> or <code>OMV</code>) 
+    with the given content.</p>
 </div>
 
 <div class="commandDocumentation" id="contentInsertModeCommand_cn">
     <h3 class="commandTitle">Number</h3>
 
-    <p>Creates a number with given content.</p>
+    <p>Creates a number (<code>cn</code> or <code>OMI</code>) 
+    with given content. At the moment, only integers are supported.</p>
 </div>
 
 <div class="commandDocumentation" id="contentInsertModeCommand_bind">
-    <h3 class="commandTitle">Bind</h3>
+    <h3 class="commandTitle">Binding</h3>
 
-    <p>Inserts a <code>bind</code> elements and places the cursor
+    <p>Inserts a <code>bind</code> or <code>OMBIND</code> element and places the cursor
     inside it.</p>
 </div>
 
 <div class="commandDocumentation" id="contentInsertModeCommand_bvar">
-    <h3 class="commandTitle">Bvar</h3>
+    <h3 class="commandTitle">Bound variable</h3>
 
-    <p>Creates a <code>bvar</code> element and places the cursor
-    inside it.</p>
+    <p>Creates a <code>bvar</code> or <code>OMBVAR</code> element and places the cursor
+    inside it. In some situations this commands behaves specially in
+    order to make it easier for the user to handle the differences between
+    MathML and OpenMath.</p>
+
+    <p>In MathML, the <code>bind</code> element can have more than one
+    <code>bvar</code> element, each contains exactly one variable. If you
+    use this command inside a <code>bvar</code> element, the cursor is
+    moved behind it before creating the new one.</p>
+
+    <p>In OpenMath, the <code>OMBIND</code> element contains exactly
+    one <code>OMBVAR</code> element, which itself contains one or more
+    variables. If you use this command inside a <code>OMBIND</code> which
+    already contains an <code>OMBVAR</code>, then the cursor is moved into
+    the <code>OMBVAR</code>. If you use it inside an <code>OMBVAR</code>
+    nothing happens.</p>
+
+    <p>In both cases, MathML and OpenMath, this allows you to
+    insert the bound variables by doing the following for every variable:
+    Hit this command and then insert the variable itself. For example the
+    following can be achieved by 
+    <kbd><internal:cmdph ref="contentInsertModeCommand_bind"/><internal:cmdph/>x<internal:cmdph/>y<internal:cmdph/>z</kbd>:</p>
+
+    <pre><![CDATA[<bind>
+    <bvar>
+        <ci>x</ci>
+    </bvar>
+    <bvar>
+        <ci>y</ci>
+    </bvar>
+    <bvar>
+        <ci>z</ci>
+    </bvar>
+</bind>]]></pre>
+
+    <pre><![CDATA[<OMBIND>
+    <OMBVAR>
+        <OMV name="x"/>
+        <OMV name="y"/>
+        <OMV name="z"/>
+    </OMBVAR>
+</OMBIND>]]></pre>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_semantics">
+    <h3 class="commandTitle">Attribution</h3>
+
+    <p>Creates a <code>semantics</code> or <code>OMATTR</code> element
+    and places the cursor inside it.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_omatp">
+    <h3 class="commandTitle">OMATP</h3>
+
+    <p>Creates an <code>OMATP</code> element. This command is only
+    useful when you write OpenMath.</p>
+
+    <p>Note that in OpenMath, every
+    <code>OMATTR</code> element contains exactly one <code>OMATP</code>
+    element, which has to be its first child. The <code>OMATP</code>
+    element then contains one or more key/value pairs of elements.</p>
+</div>
+<div class="commandDocumentation" id="contentInsertModeCommand_annotationxml_cmml">
+    <h3 class="commandTitle">Annotation: Content MathML</h3>
+
+    <p>Inserts an <code>annotation-xml</code> element with encoding
+    <code>MathML-Content</code>. The the cd and name have to be given
+    as first and second arguments, separated by a newline.</p>
+
+    <p>This command is only useful if you write MathML.</p>
+</div>
+<div class="commandDocumentation" id="contentInsertModeCommand_annotationxml_pmml">
+    <h3 class="commandTitle">Annotation: Presentation MathML</h3>
+
+    <p>Inserts an <code>annotation-xml</code> element with encoding
+    <code>MathML-Presentation</code>. The the cd and name have to be given
+    as first and second arguments, separated by a newline.</p>
+
+    <p>This command is only useful if you write MathML.</p>
+</div>
+<div class="commandDocumentation" id="contentInsertModeCommand_annotationxml_om">
+    <h3 class="commandTitle">Annotation: OpenMath</h3>
+
+    <p>Inserts an <code>annotation-xml</code> element with encoding
+    <code>application/openmath+xml</code>. The the cd and name have to be given
+    as first and second arguments, separated by a newline.</p>
+
+    <p>This command is only useful if you write MathML.</p>
+</div>
+<div class="commandDocumentation" id="contentInsertModeCommand_annotation_arbitrary">
+    <h3 class="commandTitle">Annotation: Arbitrary</h3>
+
+    <p>Inserts an <code>annotation</code> element.
+    The the cd, name and encoding have to be given
+    as first and second and third arguments, separated by newline
+    characters.</p>
+
+    <p>This command is only useful if you write MathML.</p>
+</div>
+<div class="commandDocumentation" id="contentInsertModeCommand_annotationxml_arbitrary">
+    <h3 class="commandTitle">Annotation: Arbitrary XML</h3>
+
+    <p>Inserts an <code>annotation-xml</code> element with encoding.
+    The the cd, name and encoding have to be given
+    as first and second and third arguments, separated by newline
+    characters.</p>
+
+    <p>This command is only useful if you write MathML.</p>
 </div>
 
 <div class="commandDocumentation" id="contentInsertModeCommand_lambda">
     <h3 class="commandTitle">Lambda</h3>
 
-    <p>Shoarthand for creating a lambda expression. It inserts a bind
-    element at the cursor which contains the csymbol
-    <code>fns1#lambda</code>, a <code>bvar</code> element and an
-    <code>apply</code> element. The cursor is placed in the
-    <code>bvar</code> element. 
-    The <code>apply</code> is remembered as a cursor location. This
-    means that
-    when you are done with the content of
-    the <code>bvar</code>, do 
+    <p>Shorthand for creating a lambda expression. It inserts a bind
+    element at the cursor which contains the symbol
+    <code>fns1#lambda</code>, a <code>bvar</code> or
+    <code>OMBVAR</code> element and an
+    <code>apply</code> or <code>OMA</code> element. The cursor is placed in the
+    <code>bvar</code> or <code>OMBVAR</code> element. 
+    The <code>apply</code> or <code>OMA</code> is remembered as a cursor location. This
+    means that when you are done with the bound variables of
+    the first one, do 
     <kbd><internal:cmdph ref="contentInsertModeCommand_cursorJump"/></kbd> 
     (<a href="#contentInsertModeCommand_cursorJump">cursor jump</a>)
-    and the cursor jumps into the <code>apply</code> element.</p>
+    and the cursor jumps into the <code>apply</code> or <code>OMA</code> element.</p>
+
+    <p>In the case of MathML, it looks like this:</p>
 
     <pre><![CDATA[<bind>
     <csymbol cd="fns1">lambda</csymbol>
@@ -117,6 +242,20 @@ the cursor will jump there.</p>
     </apply>
 </bind>]]></pre>
 
+    <p>And if you are writing OpenMath:</p>
+
+    <pre><![CDATA[<OMBIND>
+    <OMS name="lambda" cd="fns1"/>
+    <OMBVAR>
+        <!-- Cursor is placed here -->
+        <!-- When you are done here, let the
+             cursor jump. -->
+    </OMBVAR>
+    <OMA>
+        <!-- Cursor jumps to this place -->
+    </OMA>
+</OMBIND>]]></pre>
+
 </div>
 
 <div class="commandDocumentation" id="contentInsertModeCommand_oneMoreToSurround">
@@ -124,9 +263,9 @@ the cursor will jump there.</p>
 
     <p>Selects one more element to the left. The next time, you insert
     an element, the selection is used in a way depending on the type
-    of the inserted element. If it is a <code>csymbol</code> or a
-    pragmatic element representing a symbol, an <code>apply</code>
-    element is inserted, containing the symbol element followed by the
+    of the inserted element. If it is a symbol, an <code>apply</code>
+    or <code>OMA</code> element is inserted, containing 
+    the symbol element followed by the
     selected elements. Otherwise, the selection simply becomes the
     content of the newly inserted element.</p>
 </div>
@@ -143,7 +282,26 @@ the cursor will jump there.</p>
     <p>Forces the creation of a new element for the next character
     inserted. This is useful when you want to insert two consecutive
     numbers, since it prevents them to be merged into the same
-    <code>mn</code> element.</p>
+    <code>mn</code> or <code>OMI</code> element.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_forceMathMLForNext">
+    <h3 class="commandTitle">Next element as MathML</h3>
+
+    <p>Forces the next command to produce MathML.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_forceOpenMathForNext">
+    <h3 class="commandTitle">Next element as OpenMath</h3>
+
+    <p>Forces the next command to produce OpenMath.</p>
+</div>
+
+<div class="commandDocumentation" id="contentInsertModeCommand_forceAutoForNext">
+    <h3 class="commandTitle">Chose language automatically</h3>
+
+    <p>Makes shure that the language the next command will produce is
+    determined automatically.</p>
 </div>
 
 <div class="commandDocumentation" id="contentInsertModeCommand_cursorJump">
@@ -154,7 +312,7 @@ the cursor will jump there.</p>
 <div class="commandDocumentation" id="contentInsertModeCommand_symbol">
     <h3 class="commandTitle">Symbol</h3>
 
-    <p>Inserts a <code>csymbol</code>. For the <code>cd</code>
+    <p>Inserts a <code>csymbol</code> or <code>OMS</code>. For the <code>cd</code>
     attribute, the first line of the argument is used and for the
     content of the element, the second line is use.</p>
 </div>
@@ -162,8 +320,8 @@ the cursor will jump there.</p>
 <div class="commandDocumentation" id="contentInsertModeCommand_arbitraryOperator">
     <h3 class="commandTitle">Arbitrary operator</h3>
 
-    <p>Inserts an arbitrary empty element in the MathML namespace. You
-    can use this command to insert any pragmatic operator.
+    <p>Inserts an arbitrary empty element in the MathML or OpenMath namespace. You
+    can use also this command to insert any non-strict Content MathML operator.
     (If you have a selection, the element is considered to be an
     operator.)</p>
 </div>
@@ -171,7 +329,7 @@ the cursor will jump there.</p>
 <div class="commandDocumentation" id="contentInsertModeCommand_arbitraryElement">
     <h3 class="commandTitle">Arbitrary element</h3>
 
-    <p>Inserts an arbitrary empty element in the MathML namespace.
+    <p>Inserts an arbitrary empty element in the MathML or OpenMath namespace.
     (If you have a selection, the selection becomes the content of the
     new element, since this element is never considered an
     operator.)</p>

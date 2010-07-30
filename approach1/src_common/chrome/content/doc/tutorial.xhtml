@@ -35,15 +35,18 @@ improve this tutorial.</em></p>
 hopefully will be a powerful tool once it is finished. However, I am
 sure you will master it, if you want to.</p>
 
-<p>You wont need any knowledge about vim for this tutorial. But you
+<p>You won't need any knowledge about vim for this tutorial. But you
 will need knowledge about Presentation MathML.
-How you can edit Content MathML is discussed as well in this tutorial,
-but you may skip the corresponding section if your are unfamiliar with
-it. Gemse's documentation
+How you can edit Content MathML and OpenMath is discussed as well in this tutorial,
+but you may skip the corresponding sections if your are unfamiliar with
+them. Gemse's documentation
 contains a short <a href="introPMathML.xhtml">introduction to
 presentation MathML</a>. Additionally, you can find tutorials
 and the specification of MathML on the 
-<a href="http://www.w3.org/Math/">MathML page of the w3c</a>. Of course learning
+<a href="http://www.w3.org/Math/">MathML page of the w3c</a>. 
+Information on OpenMath can be found on the
+<a href="http://www.openmath.org/">OpenMath website</a>.
+Of course learning
 presentation MathML requires learning the fundamentals of XML. Gemse
 directly edits the XML structure of presentation MathML.</p>
 
@@ -63,6 +66,8 @@ directly edits the XML structure of presentation MathML.</p>
 <li><a href="#views">Views and Viewsets</a></li>
 <li><a href="#settings">Set your settings</a></li>
 <li><a href="#contentmathml">Working with Content MathML</a></li>
+<li><a href="#openmath">Working with OpenMath</a></li>
+<li><a href="#svg">Working with SVG</a></li>
 <li><a href="#customizing">Customizing</a></li>
 <li><a href="#how_to_go_on">How to go on?</a></li>
 </ul>
@@ -2007,7 +2012,7 @@ way. All you have to do is to choose the content insert mode. Hit
 
 <p>As you can see, the equation view is now little helpful, it does
 not show the equation in a rendered form. Instead, it seems to just
-shows garbage. The reason for this is that Mozilla's MathML rendering
+show garbage. The reason for this is that Mozilla's MathML rendering
 engine does not handle Content MathML. Indeed, it is not trivial to
 render Content MathML, i.e. to transform it to Presentation MathML.
 However, there is a view that can do that, called the NTNView. It uses
@@ -2161,7 +2166,7 @@ insert mode and try again.)</p>
 
 <p>Assume, instead of multiplying
 <code>d</code> and <code>e</code> with the rest, we want to multiply
-their sum with the rest. We are still in insert mode. hit
+their sum with the rest. We are still in insert mode. Hit
 <kbd>&ctrl;h&ctrl;h</kbd>. At this point, we could use
 <kbd>&space;</kbd> in order to put an <code>apply</code> around them
 and the insert a csymbol manually later on. But it is even easier:
@@ -2244,6 +2249,260 @@ Please look up their meaning in the documentation of the content
 insert mode.</p>
 
 <p>Now we are done with Content MathML, at least for this tutorial.</p>
+
+<h2 id="openmath">Working with OpenMath</h2>
+
+<p>Content MathML is very similar to OpenMath. (Actually, is has been
+designed to be so.) Because of this, the content insert mode can
+create OpenMath as well. To insert some OpenMath construct, you use
+the same commands as for the analogue Content MathML.</p>
+
+<p>Make shure you still have the content viewset by entering
+<kbd>:viewset content&enter;</kbd>. Also make shure that you have the
+content insert mode selected by hitting <kbd>&tab;</kbd>.
+Now load <code>examples/openmath01.xml</code>.</p>
+
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a3d8eb510-baaf-11df-a3c0-0025224150e7"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1-args1-arg1">a</mi><mo id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1-args1-fun1">⁢</mo><mi id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-fun">+</mo><mi id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg2">b</mi><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#a3d8eb510-baaf-11df-a3c0-0025224150e7">
+    <OMS cd="arith1" name="plus" href="#a3d8eb510-baaf-11df-a3c0-0025224150e7-args-fun"/>
+    <OMA href="#a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1">
+      <OMS cd="arith1" name="times" href="#a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1-args1-fun1"/>
+      <OMV name="a" href="#a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1-args1-arg1"/>
+      <OMV name="x" href="#a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1-args1-arg2"/>
+    </OMA>
+    <OMV name="b" href="#a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg2"/>
+  </OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div><html:div class="element">OMV</html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="editcursor"><html:span>&lt;OMOBJ version="2.0" xmlns="http://www.openmath.org/OpenMath"&gt;</html:span>
+<html:span class="element">    <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">        <html:span>&lt;OMS cd="arith1" name="plus"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;OMS cd="arith1" name="times"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="a"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="x"/&gt;</html:span>
+</html:span>        &lt;/OMA&gt;
+</html:span><html:span class="element">        <html:span>&lt;OMV name="b"/&gt;</html:span>
+</html:span>    &lt;/OMA&gt;
+</html:span>&lt;/OMOBJ&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
+<p>Move the cursor to the variable <code>b</code>. Hit <kbd>a</kbd> in
+order to add another summand. With <kbd>&space;</kbd> insert an
+<code>OMA</code> element. Now insert a symbol with
+<kbd>$calculus1&enter;defint&enter;</kbd>.</p>
+
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="af453e530-bab5-11df-a3c0-0025224150e7"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="af453e530-bab5-11df-a3c0-0025224150e7-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="af453e530-bab5-11df-a3c0-0025224150e7-args-arg1-args1-arg1">a</mi><mo id="af453e530-bab5-11df-a3c0-0025224150e7-args-arg1-args1-fun1">⁢</mo><mi id="af453e530-bab5-11df-a3c0-0025224150e7-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="af453e530-bab5-11df-a3c0-0025224150e7-args-fun">+</mo><mi id="af453e530-bab5-11df-a3c0-0025224150e7-args-arg2">b</mi><mo id="af453e530-bab5-11df-a3c0-0025224150e7-args-fun">+</mo><OMA xmlns="http://www.openmath.org/OpenMath" internal:selected="insertCursorIn"><OMS name="defint" cd="calculus1" internal:selected="insertCursorIn" id="af453e530-bab5-11df-a3c0-0025224150e7-args-arg3-defint3"/></OMA><mo a4:egroup="fence" xmlns:a4="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#af453e530-bab5-11df-a3c0-0025224150e7">
+    <OMS cd="arith1" name="plus" href="#af453e530-bab5-11df-a3c0-0025224150e7-args-fun"/>
+    <OMA href="#af453e530-bab5-11df-a3c0-0025224150e7-args-arg1">
+      <OMS cd="arith1" name="times" href="#af453e530-bab5-11df-a3c0-0025224150e7-args-arg1-args1-fun1"/>
+      <OMV name="a" href="#af453e530-bab5-11df-a3c0-0025224150e7-args-arg1-args1-arg1"/>
+      <OMV name="x" href="#af453e530-bab5-11df-a3c0-0025224150e7-args-arg1-args1-arg2"/>
+    </OMA>
+    <OMV name="b" href="#af453e530-bab5-11df-a3c0-0025224150e7-args-arg2"/>
+  <OMA internal:selected="insertCursorIn" href="#af453e530-bab5-11df-a3c0-0025224150e7-args-arg3-defint3"><OMS name="defint" cd="calculus1" internal:selected="insertCursorAfter"/></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div><html:div class="element">OMV</html:div><html:div class="element" internal:selected="insertCursorIn">OMA<html:div class="element" internal:selected="insertCursorAfter">OMS</html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element"><html:span>&lt;OMOBJ version="2.0" xmlns="http://www.openmath.org/OpenMath"&gt;</html:span>
+<html:span class="element">    <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">        <html:span>&lt;OMS cd="arith1" name="plus"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;OMS cd="arith1" name="times"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="a"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="x"/&gt;</html:span>
+</html:span>        &lt;/OMA&gt;
+</html:span><html:span class="element">        <html:span>&lt;OMV name="b"/&gt;</html:span>
+</html:span><html:span class="element" internal:selected="insertCursorIn">        <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element" internal:selected="insertCursorAfter">            <html:span>&lt;OMS cd="calculus1" name="defint"/&gt;</html:span>
+</html:span>        &lt;/OMA&gt;
+</html:span>    &lt;/OMA&gt;
+</html:span>&lt;/OMOBJ&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
+<p>Let us insert the range of
+the integral:
+<kbd>&space;$interval1&enter;interval&enter;</kbd>. Namely, we
+want to integrate from 0 to 1. Insert those two integers with 
+<kbd>0&ctrl;,1</kbd>. So much about the interval.</p>
+
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a5bcd2730-bab6-11df-a3c0-0025224150e7"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg1-args1-arg1">a</mi><mo id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg1-args1-fun1">⁢</mo><mi id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-fun">+</mo><mi id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg2">b</mi><mo id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-fun">+</mo><mrow id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3"><mo id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-fun3">∫</mo><mo fence="true" a3:egroup="fence" xmlns:a3="http://omdoc.org/ns">(</mo><mrow id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1" internal:selected="insertCursorIn"><mo fence="true" id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1-fun1">(</mo><mn id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1-arg11">0</mn><mo separator="true" id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1-fun1">,</mo><mn id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1-arg21" internal:selected="insertCursorAfter">1</mn><mo fence="true" id="a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1-fun1">)</mo></mrow><mo fence="true" a4:egroup="fence" xmlns:a4="http://omdoc.org/ns">)</mo></mrow><mo a5:egroup="fence" xmlns:a5="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7">
+    <OMS cd="arith1" name="plus" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-fun"/>
+    <OMA href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg1">
+      <OMS cd="arith1" name="times" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg1-args1-fun1"/>
+      <OMV name="a" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg1-args1-arg1"/>
+      <OMV name="x" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg1-args1-arg2"/>
+    </OMA>
+    <OMV name="b" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg2"/>
+  <OMA href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3"><OMS name="defint" cd="calculus1" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-fun3"/><OMA internal:selected="insertCursorIn" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1"><OMS name="interval" cd="interval1" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1-fun1"/><OMI href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1-arg11">0</OMI><OMI internal:selected="insertCursorAfter" href="#a5bcd2730-bab6-11df-a3c0-0025224150e7-args-arg3-args3-arg1-arg21">1</OMI></OMA></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div><html:div class="element">OMV</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element" internal:selected="insertCursorIn">OMA<html:div class="element">OMS</html:div><html:div class="element">OMI<html:div class="nodeValue">0</html:div></html:div><html:div class="element" internal:selected="insertCursorAfter">OMI<html:div class="nodeValue">1</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element"><html:span>&lt;OMOBJ version="2.0" xmlns="http://www.openmath.org/OpenMath"&gt;</html:span>
+<html:span class="element">    <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">        <html:span>&lt;OMS cd="arith1" name="plus"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;OMS cd="arith1" name="times"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="a"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="x"/&gt;</html:span>
+</html:span>        &lt;/OMA&gt;
+</html:span><html:span class="element">        <html:span>&lt;OMV name="b"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;OMS cd="calculus1" name="defint"/&gt;</html:span>
+</html:span><html:span class="element" internal:selected="insertCursorIn">            <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">                <html:span>&lt;OMS cd="interval1" name="interval"/&gt;</html:span>
+</html:span><html:span class="element">                <html:span>&lt;OMI&gt;</html:span>0&lt;/OMI&gt;
+</html:span><html:span class="element" internal:selected="insertCursorAfter">                <html:span>&lt;OMI&gt;</html:span>1&lt;/OMI&gt;
+</html:span>            &lt;/OMA&gt;
+</html:span>        &lt;/OMA&gt;
+</html:span>    &lt;/OMA&gt;
+</html:span>&lt;/OMOBJ&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
+<p>Hit <kbd>&enter;</kbd> and let us go on. Let us insert a lambda
+expression. Just hit <kbd>(</kbd>. The cursor is now located in the
+new <code>OMBVAR</code> element.</p>
+
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a0ee75f70-bab7-11df-a3c0-0025224150e7"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg1-args1-arg1">a</mi><mo id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg1-args1-fun1">⁢</mo><mi id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-fun">+</mo><mi id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg2">b</mi><mo id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-fun">+</mo><mrow id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3"><mo id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-fun3">∫</mo><mo fence="true" a3:egroup="fence" xmlns:a3="http://omdoc.org/ns">(</mo><mrow id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1"><mo fence="true" id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1-fun1">(</mo><mn id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1-arg11">0</mn><mo separator="true" id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1-fun1">,</mo><mn id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1-arg21">1</mn><mo fence="true" id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1-fun1">)</mo></mrow><mo separator="true">,</mo><OMBIND xmlns="http://www.openmath.org/OpenMath"><OMS name="lambda" cd="fns1" id="a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg2-lambda2"/><OMBVAR internal:selected="insertCursorIn"/><OMA/></OMBIND><mo fence="true" a4:egroup="fence" xmlns:a4="http://omdoc.org/ns">)</mo></mrow><mo a5:egroup="fence" xmlns:a5="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#a0ee75f70-bab7-11df-a3c0-0025224150e7">
+    <OMS cd="arith1" name="plus" href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-fun"/>
+    <OMA href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg1">
+      <OMS cd="arith1" name="times" href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg1-args1-fun1"/>
+      <OMV name="a" href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg1-args1-arg1"/>
+      <OMV name="x" href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg1-args1-arg2"/>
+    </OMA>
+    <OMV name="b" href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg2"/>
+  <OMA href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3"><OMS name="defint" cd="calculus1" href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-fun3"/><OMA href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1"><OMS name="interval" cd="interval1" href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1-fun1"/><OMI href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1-arg11">0</OMI><OMI href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg1-arg21">1</OMI></OMA><OMBIND href="#a0ee75f70-bab7-11df-a3c0-0025224150e7-args-arg3-args3-arg2-lambda2"><OMS name="lambda" cd="fns1"/><OMBVAR internal:selected="insertCursorIn"/><OMA/></OMBIND></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div><html:div class="element">OMV</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMI<html:div class="nodeValue">0</html:div></html:div><html:div class="element">OMI<html:div class="nodeValue">1</html:div></html:div></html:div><html:div class="element">OMBIND<html:div class="element">OMS</html:div><html:div class="element" internal:selected="insertCursorIn">OMBVAR</html:div><html:div class="element">OMA</html:div></html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element"><html:span>&lt;OMOBJ version="2.0" xmlns="http://www.openmath.org/OpenMath"&gt;</html:span>
+<html:span class="element">    <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">        <html:span>&lt;OMS cd="arith1" name="plus"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;OMS cd="arith1" name="times"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="a"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="x"/&gt;</html:span>
+</html:span>        &lt;/OMA&gt;
+</html:span><html:span class="element">        <html:span>&lt;OMV name="b"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;OMS cd="calculus1" name="defint"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">                <html:span>&lt;OMS cd="interval1" name="interval"/&gt;</html:span>
+</html:span><html:span class="element">                <html:span>&lt;OMI&gt;</html:span>0&lt;/OMI&gt;
+</html:span><html:span class="element">                <html:span>&lt;OMI&gt;</html:span>1&lt;/OMI&gt;
+</html:span>            &lt;/OMA&gt;
+</html:span><html:span class="element">            <html:span>&lt;OMBIND&gt;</html:span>
+<html:span class="element">                <html:span>&lt;OMS cd="fns1" name="lambda"/&gt;</html:span>
+</html:span><html:span class="element" internal:selected="insertCursorIn">                <html:span>&lt;OMBVAR/&gt;</html:span>
+</html:span><html:span class="element">                <html:span>&lt;OMA/&gt;</html:span>
+</html:span>            &lt;/OMBIND&gt;
+</html:span>        &lt;/OMA&gt;
+</html:span>    &lt;/OMA&gt;
+</html:span>&lt;/OMOBJ&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
+<p>Hit <kbd>x</kbd> in order to
+integrate over the variable <code>x</code>. Hit <kbd>&enter;</kbd> to
+jump into the application and hit <kbd>fx</kbd>. Hit
+<kbd>&esc;</kbd> to terminate the insert mode.</p>
+
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a9786f570-bab7-11df-a3c0-0025224150e7"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg1-args1-arg1">a</mi><mo id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg1-args1-fun1">⁢</mo><mi id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a9786f570-bab7-11df-a3c0-0025224150e7-args-fun">+</mo><mi id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg2">b</mi><mo id="a9786f570-bab7-11df-a3c0-0025224150e7-args-fun">+</mo><mrow id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3"><munderover><mo id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-fun3">∫</mo><mn id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-low3">0</mn><mn id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-high3">1</mn></munderover><mrow id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-scope3" internal:selected="parent"><mi id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-scope3-fun3">f</mi><mo fence="true" a3:egroup="fence" xmlns:a3="http://omdoc.org/ns">(</mo><mi id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-scope3-args3-arg1" internal:selected="editcursor">x</mi><mo fence="true" a4:egroup="fence" xmlns:a4="http://omdoc.org/ns">)</mo></mrow><mrow><mo id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-fun3">d</mo><mi id="a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-var3">x</mi></mrow></mrow><mo a5:egroup="fence" xmlns:a5="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#a9786f570-bab7-11df-a3c0-0025224150e7">
+    <OMS cd="arith1" name="plus" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-fun"/>
+    <OMA href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg1">
+      <OMS cd="arith1" name="times" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg1-args1-fun1"/>
+      <OMV name="a" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg1-args1-arg1"/>
+      <OMV name="x" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg1-args1-arg2"/>
+    </OMA>
+    <OMV name="b" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg2"/>
+  <OMA href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3"><OMS name="defint" cd="calculus1" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-fun3"/><OMA><OMS name="interval" cd="interval1"/><OMI href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-low3">0</OMI><OMI href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-high3">1</OMI></OMA><OMBIND><OMS name="lambda" cd="fns1"/><OMBVAR><OMV name="x" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-var3"/></OMBVAR><OMA internal:selected="parent" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-scope3"><OMV name="f" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-scope3-fun3"/><OMV name="x" internal:selected="editcursor" href="#a9786f570-bab7-11df-a3c0-0025224150e7-args-arg3-scope3-args3-arg1"/></OMA></OMBIND></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div><html:div class="element">OMV</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMI<html:div class="nodeValue">0</html:div></html:div><html:div class="element">OMI<html:div class="nodeValue">1</html:div></html:div></html:div><html:div class="element">OMBIND<html:div class="element">OMS</html:div><html:div class="element">OMBVAR<html:div class="element">OMV</html:div></html:div><html:div class="element" internal:selected="parent">OMA<html:div class="element">OMV</html:div><html:div class="element" internal:selected="editcursor">OMV</html:div></html:div></html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element"><html:span>&lt;OMOBJ version="2.0" xmlns="http://www.openmath.org/OpenMath"&gt;</html:span>
+<html:span class="element">    <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">        <html:span>&lt;OMS cd="arith1" name="plus"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;OMS cd="arith1" name="times"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="a"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMV name="x"/&gt;</html:span>
+</html:span>        &lt;/OMA&gt;
+</html:span><html:span class="element">        <html:span>&lt;OMV name="b"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;OMS cd="calculus1" name="defint"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">                <html:span>&lt;OMS cd="interval1" name="interval"/&gt;</html:span>
+</html:span><html:span class="element">                <html:span>&lt;OMI&gt;</html:span>0&lt;/OMI&gt;
+</html:span><html:span class="element">                <html:span>&lt;OMI&gt;</html:span>1&lt;/OMI&gt;
+</html:span>            &lt;/OMA&gt;
+</html:span><html:span class="element">            <html:span>&lt;OMBIND&gt;</html:span>
+<html:span class="element">                <html:span>&lt;OMS cd="fns1" name="lambda"/&gt;</html:span>
+</html:span><html:span class="element">                <html:span>&lt;OMBVAR&gt;</html:span>
+<html:span class="element">                    <html:span>&lt;OMV name="x"/&gt;</html:span>
+</html:span>                &lt;/OMBVAR&gt;
+</html:span><html:span class="element" internal:selected="parent">                <html:span>&lt;OMA&gt;</html:span>
+<html:span class="element">                    <html:span>&lt;OMV name="f"/&gt;</html:span>
+</html:span><html:span class="element" internal:selected="editcursor">                    <html:span>&lt;OMV name="x"/&gt;</html:span>
+</html:span>                &lt;/OMA&gt;
+</html:span>            &lt;/OMBIND&gt;
+</html:span>        &lt;/OMA&gt;
+</html:span>    &lt;/OMA&gt;
+</html:span>&lt;/OMOBJ&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
+
+<p>Unfortunately, there are some small and nasty differences between
+OpenMath and Contant MathML: Mainly bindings, attributions and numbers.
+The content insert mode tries to make
+your life easier by using the same commands for the equivalent expressions
+in both languages. This however, is not always perfect. Please refer
+to the documentation of the content insert mode in order to learn
+about these details.</p>
+
+<h2 id="svg">Working with SVG</h2>
+
+<p>You wonder why you find here a section about scalable vector
+graphics? It is just here to show you that Gemse can load any element
+of an XML document even if it is not the root element of a MathML or
+OpenMath formula. However, in practice this is useless. (There is no
+mode yet that lets you input SVG or arbitrary XML elements.)</p>
+
+<p>Make shure that you are using the viewset
+<code>presentation</code>. (If not, enter 
+<kbd>:viewset presentation&enter;</kbd>.)</p>
+
+<p>Let us load an SVG image. For this to work, we have to deactivate
+the sanity check that makes shure that what you load is alway a
+formula. You can do that by setting the option
+<code>loadAnyAsRoot</code> to true, i.e. enter 
+<kbd>:set loadAnyAsRoot=true</kbd>. Now you can load
+the file <code>examples/vectorgraphics01.svg</code> as usual.</p>
+
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="DirectView"><svg width="12cm" height="4cm" viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg" version="1.1" internal:selected="parent">
+   <defs>
+     <style type="text/css"><![CDATA[
+        @namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
+        *[internal|selected="editcursor"]                { fill: yellow; stroke: red;   }
+        *[internal|selected="attributeCursor"]           { fill: black;  stroke: white; }
+        *[internal|selected="parent"]                    { fill: #ddd;                  }
+        *[internal|selected="userSelection"]             { fill: #7af;                  }
+        *[internal|selected="userSelectionCursor"]       { fill: #66f;                  }
+        *[internal|selected="attributeCursor selection"] { fill: #227;   stroke: white; }
+        *[internal|selected="insertCursorIn"]            { fill: #dfd;                  }
+        *[internal|selected="referenced"]                { fill: #faa;                  }
+    ]]></style>
+  </defs>
+  <circle cx="600" cy="200" r="100" fill="gray" stroke="purple" stroke-width="10" internal:selected="editcursor"/>
+  <polygon stroke="black" stroke-width="10" points="350,75 379,161 469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161"/>
+  <polygon stroke="black" stroke-width="10" points="850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5"/>
+</svg></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="parent">svg<html:div class="element">defs<html:div class="element">style<html:div class="nodeValue">
+        @namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
+        *[internal|selected="editcursor"]                { fill: yellow; stroke: red;   }
+        *[internal|selected="attributeCursor"]           { fill: black;  stroke: white; }
+        *[internal|selected="parent"]                    { fill: #ddd;                  }
+        *[internal|selected="userSelection"]             { fill: #7af;                  }
+        *[internal|selected="userSelectionCursor"]       { fill: #66f;                  }
+        *[internal|selected="attributeCursor selection"] { fill: #227;   stroke: white; }
+        *[internal|selected="insertCursorIn"]            { fill: #dfd;                  }
+        *[internal|selected="referenced"]                { fill: #faa;                  }
+    </html:div></html:div></html:div><html:div class="element" internal:selected="editcursor">circle</html:div><html:div class="element">polygon</html:div><html:div class="element">polygon</html:div></html:div></html:div></html:div></vbox>
+</div>
+
+<p>Now move the cursor around to see what happens to the figures.</p>
+
+<p>(Note that this SVG image contains some CSS rules which make shure
+that one can see the cursor in the image itself. If you wanted to work
+with SVG in Gemse, you would better put them in Gemse's
+<code>gemse.css</code>.)</p>
 
 <h2 id="customizing">Customizing</h2>
 
