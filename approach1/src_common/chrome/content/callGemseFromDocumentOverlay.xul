@@ -11,16 +11,26 @@ or (at your option) any later version.
 
 <overlay id="callGemseFromDocumentOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+<script src="const.js"/>
 <script><![CDATA[
+  function pickEquations(doc, reference) {
+    var xpath = "(.//m:math|.//om:OMOBJ|./ancestor::m:math|./ancestor::om:OMOBJ)[not(ancestor::m:math|ancestor::om:OMOBJ)]";
+    var xpathResult = doc.evaluate(xpath, reference, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+
+    var mathElements = [];
+    var resultNode;
+    while ((resultNode = xpathResult.iterateNext())) { 
+        mathElements.push({ doc: doc, element: resultNode });
+    }
+    return mathElements;
+  }
   function editInGemse() {
-    var NS_MathML = "http://www.w3.org/1998/Math/MathML";
-    
     // Find the element the user clicked as he opened the popup
     var reference = gContextMenu.target;
     // Find the document
     var doc = reference.ownerDocument;
 
-    var mathElements = [];
+    var mathElements;
     
     // Collect Elements
     // Make distinction between these two cases
@@ -31,61 +41,17 @@ or (at your option) any later version.
         if (focusedWindow == window) focusedWindow = content;
         // Get its selection
         var selection = focusedWindow.getSelection();
-        // Now iterate over all descendants of the lower 
-        // most common ancestor of the selected elements. If a
-        // node is part of the selection accept it, otherwise
-        // skip it (but also check its descendants, so do not reject.)
-        var iterator = doc.createTreeWalker(
-            selection.getRangeAt(0).commonAncestorContainer,
-            NodeFilter.SHOW_ELEMENT,
-            { acceptNode: function(node) { 
-                if (selection.containsNode(node, true)) {
-                    return NodeFilter.FILTER_ACCEPT 
-                }
-                else {
-                    return NodeFilter.FILTER_SKIP 
-                }
-            } },
-            false
-        );
-        // Now go through all elements returned by the TreeWalker and
-        // Check whether they are math elements.
-        var n = iterator.currentNode;
-        while (n) {
-            if (n.namespaceURI == NS_MathML && n.localName == "math") {
-                mathElements.push({ doc: doc, element: n });
-            }
-            n = iterator.nextNode();
-        }
+        // Get the lower most common ancestor of the selected nodes
+        var commonAncestor = selection.getRangeAt(0).commonAncestorContainer;
+        // Get all equations in the subtree spanned by the
+        // commonAncestor. If commonAncestor is part of an equation,
+        // get its root element.
+        mathElements = pickEquations(doc, commonAncestor);
+        // Filter out the picked equations which are part of the selection.
+        mathElements = mathElements.filter(function(m) { return selection.containsNode(m.element, true) });
     }
     else { // If the user has not made any selection
-        // Now derive the MathML element(s) from reference.
-        // If there is an ancestor which is a math element, use it.
-        var ancestor = reference;
-        while (ancestor && !(ancestor.namespaceURI == NS_MathML && ancestor.localName == "math")) {
-            ancestor = ancestor.parentNode;
-        }
-        if (ancestor) {
-            mathElements.push({ doc: doc, element: ancestor });
-        }
-        else {
-            // Otherwise, collect all descendants which are math elements
-            // (Like this, the user can for example select all math elements
-            // in an OMDoc CMP by clicking the CMP.)
-            var iterator = doc.createTreeWalker(
-                reference,
-                NodeFilter.SHOW_ELEMENT,
-                { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT } },
-                false
-            );
-            var n = iterator.currentNode;
-            while (n) {
-                if (n.namespaceURI == NS_MathML && n.localName == "math") {
-                    mathElements.push({ doc: doc, element: n });
-                }
-                n = iterator.nextNode();
-            }
-        }
+        mathElements = pickEquations(doc, reference);
     }
 
     function callback(editor) {
