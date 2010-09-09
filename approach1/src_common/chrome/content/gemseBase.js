@@ -1533,7 +1533,7 @@ GemsePEditor.prototype = {
                 var is_OMOBJ = (m.localName == "OMOBJ" && m.namespaceURI == NS_OpenMath);
                 if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ) {
                     //XXX: Maybe we should not throw here, but just skip this equation
-                    throw new Error("The element you load must be a math element in the MathML namespace");
+                    throw new Error("The element you load must be a math element in the MathML namespace or an OMOBJ element in the OpenMath namespace");
                 }
 
                 // Create new environment using a deep copy
@@ -1580,8 +1580,12 @@ GemsePEditor.prototype = {
      *                 (the default), the document is saved as well.
      */
     loadFromOpenDocument: function(doc, element, inMemory) {
-        if (element.localName != "math" || element.namespaceURI != "http://www.w3.org/1998/Math/MathML") {
-            throw new Error("The element you load must be a math element in the MathML namespace");
+        // Only allow math elements except the option
+        // loadAnyAsRoot is set to true
+        var is_math = (element.localName == "math" && element.namespaceURI == NS_MathML);
+        var is_OMOBJ = (element.localName == "OMOBJ" && element.namespaceURI == NS_OpenMath);
+        if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ) {
+            throw new Error("The element you load must be a math element in the MathML namespace or an OMOBJ element in the OpenMath namespace");
         }
 
         // Create a storage with this URI
@@ -1589,8 +1593,8 @@ GemsePEditor.prototype = {
         if (inMemory) {
             newStorage = new InMemoryDocStorage(doc);
         }
-        else if (doc.URL) {
-            newStorage = this.newDocStorageByURI(doc.URL);
+        else if (doc.documentURI) {
+            newStorage = this.newDocStorageByURI(doc.documentURI);
             newStorage.adoptDocument(doc);
         }
         else {
