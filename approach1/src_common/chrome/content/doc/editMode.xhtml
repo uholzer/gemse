@@ -289,7 +289,28 @@
 <div class="commandDocumentation" id="editModeCommand_newEquation">
     <h4 class="commandTitle">Create a new equation</h4>
 
-    <p>Creates a new empty equation.</p>
+    <p>Creates a new empty equation. When you give no argument, a
+    MathML formula is created. (Currently the one you find in
+    the source code in <code>editor.xul</code> with id
+    <code>equationTemplate</code>) If you give
+    <code>m</code> as argument, an equation just consisting of an empty
+    MathML <code>math</code> element is created. If you give
+    <code>om</code> an OpenMath <code>OMOBJ</code> (with version set
+    to <code>2.0</code>) is created.</p>
+
+    <p>If you want to use an arbitrary element as root of the new
+    equation, you can give the namespace and the local name as
+    arguments, seperated by a space. For example
+    <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> http://example.org/ns root&enter;</kbd>
+    takes a <code>root</code> element in the namespace
+    <code>http://example.org/ns</code>. (For the clever ones: There
+    are some prefixes which can be used instead of the namespace.
+    For instance
+    <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> om OMA&enter;</kbd>
+    uses an <code>OMA</code> element in the OpenMath namespace.
+    For the list of all known prefixes, look at
+    <code>standardNSResolver</code> in <code>const.js</code> in the
+    source of Gemse.)</p>
 </div>
 </div>
 

@@ -509,8 +509,25 @@ function editModeCommand_export(mode, instance) {
     return true;
 }
 
-function editModeCommand_newEquation(mode) {
-    mode.editor.newEquation(null);
+function editModeCommand_newEquation(mode, instance) {
+    var rootInfo = /^([^\s]*)\s(.*)$/.exec(instance.argument);
+    var root;
+    if (rootInfo) {
+        var ns = standardNSResolver(rootInfo[1]) || rootInfo[1];
+        var name = rootInfo[2];
+        root = document.createElementNS(ns, name);
+    }
+    else if (instance.argument == "m") {
+        root = document.createElementNS(NS_MathML, "math");
+    }
+    else if (instance.argument == "om") {
+        root = document.createElementNS(NS_OpenMath, "OMOBJ");
+        root.setAttribute("version", "2.0");
+    }
+    else {
+        root = null;
+    }
+    mode.editor.newEquation(root);
     return true;
 }
 

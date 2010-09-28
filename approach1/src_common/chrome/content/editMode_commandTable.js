@@ -307,7 +307,7 @@ editModeCommands = {
         category: "action",
         type: "long",
         repeating: "prevent",
-        argument: "none",
+        argument: "newlineTerminated",
         implementation: editModeCommand_newEquation
     },
     ":next": {
