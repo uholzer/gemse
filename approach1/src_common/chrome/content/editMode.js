@@ -749,18 +749,18 @@ function editModeCommand_mrowEnvelop(mode,instance) {
     change.recordBefore(mode.equationEnv.equation,parentNode);
 
     // XXX: In order to partially support content, we have to use an
-    // apply or OMA element some times. This is a hack which works at the
-    // moment, but is completely wrong otherwise. It is important to
+    // apply or OMA element some times. This is a hack which works
+    // sometimes, but is completely wrong other times. It is important to
     // be careful that Presentation MathML support does not break.
     var newMrow;
-    if (instance.selection.startElement.namespareURI == NS_OpenMath) {
-        var newMrow = mode.d.createElementNS(NS_OpenMath, "OMA");
+    if (instance.selection.startElement.namespaceURI == NS_OpenMath) {
+        newMrow = mode.d.createElementNS(NS_OpenMath, "OMA");
     }
     else if (instance.selection.startElement.localName[1]=="m" || elementDescriptions[instance.selection.startElement.localName]) {
-        var newMrow = mode.d.createElementNS(NS_MathML, "mrow");
+        newMrow = mode.d.createElementNS(NS_MathML, "mrow");
     }
     else {
-        var newMrow = mode.d.createElementNS(NS_MathML, "apply");
+        newMrow = mode.d.createElementNS(NS_MathML, "apply");
     }
     
     // Fill the new mrow
