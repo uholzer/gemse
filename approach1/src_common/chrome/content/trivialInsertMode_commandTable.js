@@ -144,6 +144,12 @@ trivialInsertModeCommands = {
         argument: "none",
         implementation: function trivialInsertModeCommand_munderover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munderover") }
     },
+    "V": {
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_munderover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munderover") }
+    },
     "m": {
         type: "command",
         repeating: "external",

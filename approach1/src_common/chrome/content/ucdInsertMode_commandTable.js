@@ -107,6 +107,11 @@ ucdInsertModeCommands[KEYMOD_CONTROL + "U"] = {
     argument: "none",
     implementation: function ucdInsertModeCommand_munderover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munderover") }
 }
+ucdInsertModeCommands[KEYMOD_CONTROL + "V"] = {
+    type: "command",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_munderover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munderover") }
+}
 ucdInsertModeCommands[KEYMOD_CONTROL + "m"] = {
     type: "command",
     argument: "none",
