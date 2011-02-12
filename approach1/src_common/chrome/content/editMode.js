@@ -297,6 +297,10 @@ function editModeCommand_followRef(mode, currentElement) {
     return destElement;
 }
 
+function editModeCommand_doNothing(mode,currentElement) {
+    return true;
+}
+
 function editModeCommand_undo(mode,instance) {
     // The glorious undo
     mode.hideCursor();

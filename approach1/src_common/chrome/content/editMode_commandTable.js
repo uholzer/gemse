@@ -13,6 +13,13 @@ editModeCommandOptions = {
     repeating: true,
 }
 editModeCommands = {
+    "\n": {
+        category: "action",
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_doNothing,
+    },
     '"': {
         type: "singleCharacterPreArgumentPrefix",
     },
