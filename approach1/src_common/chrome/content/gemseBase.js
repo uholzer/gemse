@@ -1029,14 +1029,17 @@ function GemsePEditor() {
         }
     }
     catch (e) {}
-    if (!this.installationDirectory) {
-        // In a XULRunner application, Gemse is not an addon. So
-        // if the above fails or results in null, we try to use the directory service.
-        this.installationDirectory = Components.classes["@mozilla.org/file/directory_service;1"].
-                         getService(Components.interfaces.nsIProperties).
-                         get("CurProcD", Components.interfaces.nsIFile);
-        //XXX: Or should we use XCurProcD?
+    try {
+        if (!this.installationDirectory) {
+            // In a XULRunner application, Gemse is not an addon. So
+            // if the above fails or results in null, we try to use the directory service.
+            this.installationDirectory = Components.classes["@mozilla.org/file/directory_service;1"].
+                             getService(Components.interfaces.nsIProperties).
+                             get("CurProcD", Components.interfaces.nsIFile);
+            //XXX: Or should we use XCurProcD?
+        }
     }
+    catch (e) {}
     /**
      * The current working directory for internal use. If you want to
      * get or set the working directory, use editor.workingDirectory.
