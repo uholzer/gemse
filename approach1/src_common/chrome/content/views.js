@@ -837,76 +837,23 @@ NTNView.prepareNTN = function(editor) {
     }
 
     // Be pesimistic. Will be set to false later on.
-    EquationView.broken = true;
+    NTNView.broken = true;
 
-    //Get extension folder installation path...  
-    var extensionPath = editor.installationDirectory;
-    if (!extensionPath) { throw "Unable to determine the directory where Gemse is installed" }
-
-    // Get the path where the java libraries reside. It is the
-    // subdirectory called "java" of extensionPath.
-    libraryPath = extensionPath.clone();
-    libraryPath.append("java");
-   
-    // Compute the URIs of all library files we want to load
-    var jars = [];
-    //Remember the directories we want to check: The libraryPath and
-    //all its subdirectories.
-    var directoriesToProcess = [libraryPath];
-    var libraryFiles = libraryPath.directoryEntries;
-    while (libraryFiles.hasMoreElements()) {
-        var libraryFile = libraryFiles.getNext().QueryInterface(Components.interfaces.nsIFile);
-        if (libraryFile.isDirectory()) {
-            directoriesToProcess.push(libraryFile);
-        }
-    }
-    //Process the directories
-    directoriesToProcess.forEach(function(dir) {
-        //The directory itself
-        jars.push("file:///" + dir.path.replace(/\\/g,"/") + "/");
-        //All jar files the directory contains
-        var libraryFiles = dir.directoryEntries;
-        while (libraryFiles.hasMoreElements()) {
-            var libraryFile = libraryFiles.getNext().QueryInterface(Components.interfaces.nsIFile);
-            if (/\.jar$/.test(libraryFile.path)) {
-                jars.push("file:///" + libraryFile.path.replace(/\\/g,"/"));
-            }
-        }
-    });
-
-    // Make java URI objects out of the Strings
-    var urlArray = jars.map(function (path) { 
-        return new java.net.URL(path);
-    });
-    
-    // Obtain a class loader
-    //XXX: Do we have to indicate the parental class loader or could
-    //we use the constructor that only takes the urlArray?
-    var classLoader = java.net.URLClassLoader.newInstance(
-        urlArray,
-        java.lang.Thread.currentThread().getContextClassLoader()
-    );  
-
-    // Set up permissions by using our own policy
-    var policyClass = classLoader.loadClass('com.andonyar.gemse.security.URLSetPolicy');
-    var policy = policyClass.newInstance();
-    policy.setOuterPolicy(java.security.Policy.getPolicy());
-    policy.addPermission(new java.security.AllPermission());
-    urlArray.forEach(function (u) { policy.addURL(u) });
-    java.security.Policy.setPolicy(policy);
+    // Make shure JavaLink is initialized
+    JavaLink.init();
 
     // Get classes and constructors
     NTNView.javaClasses.String    = java.lang.Class.forName('java.lang.String');
-    NTNView.javaClasses.Element   = classLoader.loadClass('nu.xom.Element');
-    NTNView.javaClasses.Attribute = classLoader.loadClass('nu.xom.Attribute');
-    NTNView.javaClasses.Text      = classLoader.loadClass('nu.xom.Text');
-    NTNView.javaClasses.RendererFactory     = classLoader.loadClass('org.omdoc.jomdoc.ntn.rnd.RendererFactory');
-    NTNView.javaClasses.NotationCollector   = classLoader.loadClass('org.omdoc.jomdoc.coll.ntn.NotationCollector');
-    NTNView.javaClasses.NotationSource      = classLoader.loadClass('org.omdoc.jomdoc.coll.ntn.NotationSource');
-    NTNView.javaClasses.BundledFiles        = classLoader.loadClass('org.omdoc.jomdoc.coll.ntn.BundledFiles');
-    NTNView.javaClasses.IOUtil              = classLoader.loadClass('org.omdoc.jomdoc.util.etc.IOUtil');
-    NTNView.javaClasses.XMLUtil             = classLoader.loadClass('org.omdoc.jomdoc.util.xml.XMLUtil');
-    NTNView.javaClasses.OptionValueDynamic  = classLoader.loadClass('org.omdoc.jomdoc.cli.JOMDocOptionValue$Dynamic');
+    NTNView.javaClasses.Element   = JavaLink.getClass('nu.xom.Element');
+    NTNView.javaClasses.Attribute = JavaLink.getClass('nu.xom.Attribute');
+    NTNView.javaClasses.Text      = JavaLink.getClass('nu.xom.Text');
+    NTNView.javaClasses.RendererFactory     = JavaLink.getClass('org.omdoc.jomdoc.ntn.rnd.RendererFactory');
+    NTNView.javaClasses.NotationCollector   = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.NotationCollector');
+    NTNView.javaClasses.NotationSource      = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.NotationSource');
+    NTNView.javaClasses.BundledFiles        = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.BundledFiles');
+    NTNView.javaClasses.IOUtil              = JavaLink.getClass('org.omdoc.jomdoc.util.etc.IOUtil');
+    NTNView.javaClasses.XMLUtil             = JavaLink.getClass('org.omdoc.jomdoc.util.xml.XMLUtil');
+    NTNView.javaClasses.OptionValueDynamic  = JavaLink.getClass('org.omdoc.jomdoc.cli.JOMDocOptionValue$Dynamic');
 
     NTNView.javaConstructors.Element = NTNView.javaClasses.Element.getConstructor(
         [NTNView.javaClasses.String,NTNView.javaClasses.String]
