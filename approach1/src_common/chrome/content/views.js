@@ -818,6 +818,25 @@ function NTNView(editor,equationEnv,viewport) {
     try {
         NTNView.prepareNTN(this.editor);
 
+        /*
+        // setup Logging
+        NTNView.javaClasses.JOMDocEnvironment.getMethod("configureLogger", []).invoke(null, []);
+        var logger = NTNView.javaClasses.Logger.getMethod("getRootLogger", []).invoke(null, []);
+        var appenders = logger.getAllAppenders();
+        var appender = appenders.nextElement();
+        var ConsoleAppender = JavaLink.getClass('org.apache.log4j.ConsoleAppender');
+        var FileAppender = JavaLink.getClass('org.apache.log4j.FileAppender');
+        var FileAppenderConstructor = FileAppender.getConstructor([
+            JavaLink.getClass('org.apache.log4j.Layout'),
+            NTNView.javaClasses.String
+        ]);
+        appender.setTarget(ConsoleAppender.getField("SYSTEM_ERR").get(null));
+        appender.activateOptions();
+        var appender = FileAppenderConstructor.newInstance([appender.getLayout(), "/home/urs/GEMSELOG"]);
+        logger.addAppender(appender);
+        logger.fatal("heeeeeeeeeeeeeeeeeeeeeeeee!");
+        */
+
         // create collectors
         this.ntnCollector = NTNView.javaClasses.NotationCollector.newInstance();
 
@@ -858,18 +877,39 @@ NTNView.prepareNTN = function(editor) {
     JavaLink.init();
 
     // Get classes and constructors
+    NTNView.javaClasses.Class     = java.lang.Class.forName('java.lang.Class');
+    NTNView.javaClasses.Object    = java.lang.Class.forName('java.lang.Object');
+    NTNView.javaClasses.Integer   = java.lang.Class.forName('java.lang.Integer');
+    NTNView.javaClasses.int       = NTNView.javaClasses.Integer.getField("TYPE").get(null);
     NTNView.javaClasses.String    = java.lang.Class.forName('java.lang.String');
+    NTNView.javaClasses.Array     = java.lang.Class.forName('java.lang.reflect.Array');
+    NTNView.javaClasses.ArrayList = java.lang.Class.forName('java.util.ArrayList');
+    NTNView.javaClasses.ioFile    = java.lang.Class.forName('java.io.File');
     NTNView.javaClasses.Element   = JavaLink.getClass('nu.xom.Element');
     NTNView.javaClasses.Attribute = JavaLink.getClass('nu.xom.Attribute');
     NTNView.javaClasses.Text      = JavaLink.getClass('nu.xom.Text');
+    NTNView.javaClasses.XOMDocument         = JavaLink.getClass('nu.xom.Document');
     NTNView.javaClasses.RendererFactory     = JavaLink.getClass('org.omdoc.jomdoc.ntn.rnd.RendererFactory');
     NTNView.javaClasses.NotationCollector   = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.NotationCollector');
     NTNView.javaClasses.NotationSource      = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.NotationSource');
     NTNView.javaClasses.BundledFiles        = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.BundledFiles');
+    NTNView.javaClasses.NotationDocument    = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.NotationDocument');
+    NTNView.javaClasses.InputDocument       = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.InputDocument');
+    NTNView.javaClasses.NotationFile        = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.NotationFile');
+    NTNView.javaClasses.ContentDictionary   = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.ContentDictionary');
+    NTNView.javaClasses.DetachedElement     = JavaLink.getClass('org.omdoc.jomdoc.coll.ntn.DetachedElement');
     NTNView.javaClasses.IOUtil              = JavaLink.getClass('org.omdoc.jomdoc.util.etc.IOUtil');
     NTNView.javaClasses.XMLUtil             = JavaLink.getClass('org.omdoc.jomdoc.util.xml.XMLUtil');
     NTNView.javaClasses.OptionValueDynamic  = JavaLink.getClass('org.omdoc.jomdoc.cli.JOMDocOptionValue$Dynamic');
+    NTNView.javaClasses.JOMDocEnvironment   = JavaLink.getClass('org.omdoc.jomdoc.util.etc.JOMDocEnvironment');
+    NTNView.javaClasses.Logger              = JavaLink.getClass('org.apache.log4j.Logger');
 
+    NTNView.javaConstructors.Integer = NTNView.javaClasses.Integer.getConstructor(
+        [NTNView.javaClasses.int]
+    );
+    NTNView.javaConstructors.ArrayListCap = NTNView.javaClasses.ArrayList.getConstructor(
+        [NTNView.javaClasses.int]
+    );
     NTNView.javaConstructors.Element = NTNView.javaClasses.Element.getConstructor(
         [NTNView.javaClasses.String,NTNView.javaClasses.String]
     );
@@ -879,7 +919,23 @@ NTNView.prepareNTN = function(editor) {
     NTNView.javaConstructors.BundledFiles = NTNView.javaClasses.BundledFiles.getConstructor(
         [NTNView.javaClasses.String]
     );
-    
+    NTNView.javaConstructors.NotationFileFromFile = NTNView.javaClasses.NotationFile.getConstructor(
+        [NTNView.javaClasses.ioFile]
+    );
+    NTNView.javaConstructors.NotationDocument = NTNView.javaClasses.NotationDocument.getConstructor(
+        [NTNView.javaClasses.XOMDocument]
+    );
+    NTNView.javaConstructors.ioFileFromString = NTNView.javaClasses.ioFile.getConstructor(
+        [NTNView.javaClasses.String]
+    );
+    NTNView.javaConstructors.DetachedElement = NTNView.javaClasses.DetachedElement.getConstructor(
+        [NTNView.javaClasses.Element]
+    );
+
+    NTNView.javaObjects.arrayCreator = NTNView.javaClasses.Array.getMethod(
+        "newInstance", 
+        [NTNView.javaClasses.Class, NTNView.javaClasses.int]
+    );
 
     // Remember that we are ready
     NTNView.ready = true;
@@ -912,9 +968,85 @@ NTNView.prototype = {
 
         /* Fill collectors */
 
-        // The MathML notations which are bundled with JOMDoc, but not loaded ny default:
-        var mathMLB = NTNView.javaConstructors.BundledFiles.newInstance([NTNView.javaClasses.BundledFiles.getField("MATHML_NTN_DIR").get(null)])
-        this.ntnCollector.add(mathMLB);
+        for each (var nsource in this.o.notations) {
+            try {
+                var nsource_decoded;
+                if (nsource[0] == "B") {
+                    // The MathML notations which are bundled with JOMDoc, but not loaded by default:
+                    var coll = NTNView.javaConstructors.BundledFiles.newInstance([NTNView.javaClasses.BundledFiles.getField("MATHML_NTN_DIR").get(null)]);
+                    this.ntnCollector.add(coll);
+                }
+                else if ((nsource[0] == "F") && (nsource_decoded = /^file:\/\/(.*)$/.exec(nsource[1]))) {
+                    var javaFile = NTNView.javaConstructors.ioFileFromString.newInstance([nsource_decoded[1]]);
+                    var coll = NTNView.javaConstructors.NotationFileFromFile.newInstance([javaFile]);
+                    this.ntnCollector.add(coll);
+                }
+                else if ((nsource[0] == "D") && (nsource_decoded = /^file:\/\/(.*)$/.exec(nsource[1]))) {
+                    var javaFile = NTNView.javaConstructors.ioFileFromString.newInstance([nsource_decoded[1]]);
+                    var doc = NTNView.javaClasses.XMLUtil.
+                              getMethod("buildDocument", [NTNView.javaClasses.ioFile]).
+                              invoke(null, [javaFile]);
+                    this.editor.showMessage("Base URI of D file: " + doc.getBaseURI());
+                    var coll = NTNView.javaConstructors.NotationDocument.newInstance([doc]);
+                    this.ntnCollector.add(coll);
+                }
+                else if ((nsource[0] == "D") && (nsource[1]=="") && (nsource_decoded = /^file:(\/\/)?(.*)$/.exec(this.o.documentURI))) {
+                    var javaFile = NTNView.javaConstructors.ioFileFromString.newInstance([nsource_decoded[2]]);
+                    var doc = NTNView.javaClasses.XMLUtil.
+                              getMethod("buildDocument", [NTNView.javaClasses.ioFile]).
+                              invoke(null, [javaFile]);
+                    this.editor.showMessage("Base URI of D file: " + doc.getBaseURI());
+                    var coll = NTNView.javaConstructors.NotationDocument.newInstance([doc]);
+                    this.ntnCollector.add(coll);
+                    this.editor.showMessage("Added notations source D " + nsource_decoded[2]);
+                }
+                else if (nsource[0] == "I") {
+                    // Load the document the equation originates from
+                    // as for nsource=="D". It must have an URI and
+                    // this URI must be a file-URI.
+                    var uri = this.equationEnv.origin ?  this.equationEnv.origin.storage.uri : null;
+                    var nsource_decoded = /^file:(\/\/)?(.*)$/.exec(uri);
+                    if (!uri) {
+                        throw new Error("Failed to add notation source I because of missing/unsupported URI: " + uri);
+                    }
+            
+                    var javaFile = NTNView.javaConstructors.ioFileFromString.newInstance([nsource_decoded[2]]);
+                    var doc = NTNView.javaClasses.XMLUtil.
+                              getMethod("buildDocument", [NTNView.javaClasses.ioFile]).
+                              invoke(null, [javaFile]);
+                    this.editor.showMessage("Base URI of I file: " + doc.getBaseURI());
+                    var coll = NTNView.javaConstructors.NotationDocument.newInstance([doc]);
+                    this.ntnCollector.add(coll);
+                    this.editor.showMessage("Added notations source I " + nsource_decoded[2]);
+
+                    // TODO: Find better solution for the following
+                    // Set options documentURI and theoryName if not already set
+                    // (XXX:Maybe we should set it through the OptionsAssistant?)
+                    if (!this.o.theoryName) { 
+                        // Walk up the tree in the DOM document until
+                        // we hit a theory element. Use its id.
+                        var e = this.equationEnv.origin.node;
+                        while (e = e.parentNode) {
+                            if (e.localName=="theory") {
+                                this.o.theoryName = e.getAttributeNS(NS_XML, "id");
+                                break;
+                            }
+                        }
+                    }
+                    if (!this.o.documentURI) { this.o.documentURI = doc.getBaseURI() }
+                }
+                else if (nsource[0] == "C") {
+                    var coll = NTNView.javaClasses.ContentDictionary.newInstance();
+                    this.ntnCollector.add(coll);
+                }
+                else {
+                    this.showError('Problem loading notation source ' + nsource);
+                }
+            }
+            catch (e) {
+                this.showError(e);
+            }
+        }
 
     },
     /** 
@@ -950,6 +1082,19 @@ NTNView.prototype = {
 
                 // Build representation of the equation using XOM
                 var xomRoot = this.dom2xom(this.equationEnv.equation);
+                // Make a detached element out of it
+                var xomRoot = NTNView.javaConstructors.DetachedElement.newInstance([xomRoot]);
+                if (this.o.theoryName) { xomRoot.setTheoryName(this.o.theoryName) }
+                if (this.o.documentURI) { xomRoot.setDocumentURI(this.o.documentURI) }
+                this.editor.showMessage("Using URI " + xomRoot.getDocumentURI() + " and theory " + xomRoot.getTheoryName());
+                this.editor.showMessage("And XUtils says that the URI is " +
+                    NTNView.javaClasses.XMLUtil.
+                              getMethod("getTheoryURI", [NTNView.javaClasses.Element]).
+                              invoke(null, [xomRoot]));
+                this.editor.showMessage("same for first child " +
+                    NTNView.javaClasses.XMLUtil.
+                              getMethod("getTheoryURI", [NTNView.javaClasses.Element]).
+                              invoke(null, [xomRoot.getChildElements().get(0)]));
                 
                 // Invoke the renderer
                 xomRoot = this.renderer.renderElement(xomRoot);
@@ -1085,6 +1230,7 @@ NTNView.prototype = {
         }
         else {*/
             this.editor.showMessage(e);
+            this.editor.showMessage(new Error("dummy"));
         /*}*/
     },
     /**
@@ -1233,6 +1379,59 @@ NTNView.gemseOptions = {
         parser: OptionsAssistant.parsers.truthVal,
         setter: function(o,value) {
             o.shortcut = this.parser(value);
+        }
+    },
+    "NTNView.notations": {
+        localToClass: NTNView,
+        defaultValue: "B",
+        validator: function (value) {
+            // Maybe we should test here whether all entries are valid
+            // URIs?
+            return true;
+        },
+        parser: function (value) {
+            var notationuris = value.split(' ');
+            if (notationuris.length==1 && notationuris[0]=="") {
+                notationuris = [];
+            }
+            var parsed = [];
+            for each (var uri in notationuris) {
+                parsed.push([uri[0],uri.substring(1)]);
+            }
+            return parsed;
+        },
+        setter: function (o,value) {
+            o.notations = this.parser(value);
+        }
+    },
+    "NTNView.documentURI": {
+        localToClass: NTNView,
+        defaultValue: null,
+        validator: function (value) {
+            // Maybe we should test here whether all entries are valid
+            // URIs?
+            return true;
+        },
+        parser: function (value) {
+            if (value == "") { return null; }
+            return value;
+        },
+        setter: function (o,value) {
+            o.documentURI = this.parser(value);
+        }
+    },
+    "NTNView.theoryName": {
+        localToClass: NTNView,
+        defaultValue: null,
+        validator: function (value) {
+            return true;
+        },
+        parser: function (value) {
+            if (value == "") { return null; }
+            return value;
+        },
+        setter: function (o,value) {
+            o.theoryName = this.parser(value);
         }
     },
 }
