@@ -813,18 +813,33 @@ function NTNView(editor,equationEnv,viewport) {
 
     this.o = editor.optionsAssistant.obtainOptionsObject(NTNView,this);
 
+    this.ready = false;
+
     try {
         NTNView.prepareNTN(this.editor);
+
+        // create collectors
+        this.ntnCollector = NTNView.javaClasses.NotationCollector.newInstance();
+
+        //The class RendererFactory defines a method "newInstance" which
+        //we want to use instead of calling the default constructor. This
+        //means that we first have to get the method, since
+        //RendererFactory.newInstance() calls the default constructor.
+        var factory = NTNView.javaClasses.RendererFactory.getMethod("newInstance", []).invoke(null,[]);
+        factory.setNotationCollector(this.ntnCollector);
+        factory.setParallel(true);
+        factory.setContentLinks(true);
+        //factory.setDynamic(NTNView.javaClasses.OptionValueDynamic.getField("SHOW_ALL").get(null));
+        this.renderer = factory.newRenderer();
+
+        this.setupNotations();
+
+        this.ready = NTNView.ready;
     }
-    catch(e) {
+    catch (e) {
         this.showError(e);
+        return;
     }
-
-    this.classes = NTNView.javaClasses;
-    this.objects = NTNView.javaObjects;
-    this.constructors = NTNView.javaConstructors;
-
-    this.renderer = this.objects.renderer;
 }
 /**
  * Prepares stuff needed for rendering which is shared among all
@@ -865,23 +880,6 @@ NTNView.prepareNTN = function(editor) {
         [NTNView.javaClasses.String]
     );
     
-    // Prepair notations
-    var ntnCollector = NTNView.javaClasses.NotationCollector.newInstance();
-    // The MathML notations which are bundled with JOMDoc, but not loaded ny default:
-    var mathMLB = NTNView.javaConstructors.BundledFiles.newInstance([NTNView.javaClasses.BundledFiles.getField("MATHML_NTN_DIR").get(null)])
-    ntnCollector.add(mathMLB);
-
-    // Prepair renderer
-    //The class RendererFactory defines a method "newInstance" which
-    //we want to use instead of calling the default constructor. This
-    //means that we first have to get the method, since
-    //RendererFactory.newInstance() calls the default constructor.
-    var factory = NTNView.javaClasses.RendererFactory.getMethod("newInstance", []).invoke(null,[]);
-    factory.setNotationCollector(ntnCollector);
-    factory.setParallel(true);
-    factory.setContentLinks(true);
-    //factory.setDynamic(NTNView.javaClasses.OptionValueDynamic.getField("SHOW_ALL").get(null));
-    NTNView.javaObjects.renderer = factory.newRenderer();
 
     // Remember that we are ready
     NTNView.ready = true;
@@ -900,7 +898,7 @@ NTNView.broken = false;
  */
 NTNView.javaClasses = {};
 /**
- * Objects for the java objects we need
+ * Objects for the java objects needed by all instances of this class
  */
 NTNView.javaObjects = {};
 /**
@@ -908,15 +906,33 @@ NTNView.javaObjects = {};
  */
 NTNView.javaConstructors = {};
 NTNView.prototype = {    
+    setupNotations: function() {
+        // Collectors must already exist at this point
+        // Clear collectors
+
+        /* Fill collectors */
+
+        // The MathML notations which are bundled with JOMDoc, but not loaded ny default:
+        var mathMLB = NTNView.javaConstructors.BundledFiles.newInstance([NTNView.javaClasses.BundledFiles.getField("MATHML_NTN_DIR").get(null)])
+        this.ntnCollector.add(mathMLB);
+
+    },
     /** 
      * Builds the view.
      */
     build: function() {
 
-        if (!NTNView.ready) {
-            this.viewport.appendChild(document.createTextNode(
-                "NTNView failed to initialize."
-            ));
+        if (!this.ready) {
+            if (NTNView.ready) {
+                this.viewport.appendChild(document.createTextNode(
+                    "This NTNView instance failed to initialize."
+                ));
+            }
+            else {
+                this.viewport.appendChild(document.createTextNode(
+                    "NTNView globally failed to initialize."
+                ));
+            }
             return;
         }
 
@@ -936,7 +952,7 @@ NTNView.prototype = {
                 var xomRoot = this.dom2xom(this.equationEnv.equation);
                 
                 // Invoke the renderer
-                xomRoot = NTNView.javaObjects.renderer.renderElement(xomRoot);
+                xomRoot = this.renderer.renderElement(xomRoot);
 
                 // Build DOM structure according to the result
                 domRoot = this.xom2dom(xomRoot); 
@@ -979,7 +995,7 @@ NTNView.prototype = {
      * provided node is really an element.
      */
     dom2xom: function(domElement) {
-        var xomElement = this.constructors.Element.newInstance([
+        var xomElement = NTNView.javaConstructors.Element.newInstance([
             domElement.localName,
             domElement.namespaceURI || ""
         ]);
@@ -1010,7 +1026,7 @@ NTNView.prototype = {
                 //XXX: The DOM includes namespace declarations as
                 //attributes. xom doesn't like them, so we catch the
                 //error it throws.
-                var xomAttribute = this.constructors.Attribute.newInstance([
+                var xomAttribute = NTNView.javaConstructors.Attribute.newInstance([
                     name,
                     namespaceURI,
                     value
@@ -1052,11 +1068,11 @@ NTNView.prototype = {
         var childCount = xomElement.getChildCount();
         for (var i=0; i<childCount; ++i) {
             var child = xomElement.getChild(i);
-            if (this.classes.Element.isInstance(child)) {
+            if (NTNView.javaClasses.Element.isInstance(child)) {
                 // child is an Element
                 domElement.appendChild(this.xom2dom(child));
             }
-            else if (this.classes.Text.isInstance(child)) {
+            else if (NTNView.javaClasses.Text.isInstance(child)) {
                 // child is a Text node
                 domElement.appendChild(document.createTextNode(child.getValue()));
             }
