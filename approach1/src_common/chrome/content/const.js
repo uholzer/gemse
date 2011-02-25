@@ -33,6 +33,11 @@ const NS_XML = "http://www.w3.org/XML/1998/namespace";
  * @constant
  */
 const NS_HTML = "http://www.w3.org/1999/xhtml";
+/**
+ * The namespace of OMDoc
+ * @constant
+ */
+const NS_OMDoc = "http://omdoc.org/ns";
 //const KEYMOD_ALT = String.fromCharCode(KeyEvent.DOM_VK_ALT);
 //const KEYMOD_CONTROL = String.fromCharCode(KeyEvent.DOM_VK_CONTROL);
 //XXX: Knows the heck why KeyEvent.DOM_VK_* are undefined here ...
@@ -73,6 +78,8 @@ function standardNSResolver(prefix) {
     else if (prefix == "om") { return NS_OpenMath }
     else if (prefix == "openmath") { return NS_OpenMath }
     else if (prefix == "xml") { return NS_XML }
+    else if (prefix == "o") { return NS_OMDoc }
+    else if (prefix == "omdoc") { return NS_OMDoc }
     else { return null }
 }
 
