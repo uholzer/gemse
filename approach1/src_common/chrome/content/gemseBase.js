@@ -890,14 +890,14 @@ OptionsAssistant.prototype = {
         }
         // Find out which options object to use
         var dest_o;
-        if (localToClass) {
+        if (localToObject) {
+            dest_o = this.obtainOptionsObject(localToClass,localToObject);
+        }
+        else if (localToClass) {
             dest_o = this.obtainOptionsObject(localToClass);
         }
         else if (this.descs[name].localToClass) {
             dest_o = this.obtainOptionsObject(this.descs[name].localToClass);
-        }
-        else if (localToObject) {
-            dest_o = this.obtainOptionsObject(localToClass,localToObject);
         }
         else {
             dest_o = this.global_o;
