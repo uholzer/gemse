@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/css" href="omdoc.css"?>
+<omdoc 
+    xmlns="http://omdoc.org/ns" 
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:cc="http://creativecommons.org/ns"
+    xmlns:om="http://www.openmath.org/OpenMath">
+  <omgroup layout="sectioning" xml:id="sec.logic">
+    <metadata>
+      <dc:title>Logic</dc:title>
+    </metadata>
+    <theory xml:id="logic">
+      <symbol name="And" xml:id="And.sym"/>
+      <notation cd="logic" name="And">
+        <prototype>
+          <om:OMA>
+            <om:OMS cd="logic" cr="fun" name="And"/>
+            <exprlist name="args">
+              <expr name="arg"/>
+            </exprlist>
+          </om:OMA>
+        </prototype>
+        <rendering precedence="600">
+          <m:mrow>
+            <m:mo egroup="fence" fence="true">(</m:mo>
+            <iterate name="args">
+              <separator>
+                <m:mo cr="fun">&#x2227;</m:mo>
+              </separator>
+              <render name="arg"/>
+            </iterate>
+            <m:mo egroup="fence" fence="true">)</m:mo>
+          </m:mrow>
+        </rendering>
+      </notation>
+      <symbol name="Or" xml:id="Or.sym"/>
+      <notation cd="logic" name="Or">
+        <prototype>
+          <om:OMA>
+            <om:OMS cd="logic" cr="fun" name="Or"/>
+            <exprlist name="args">
+              <expr name="arg"/>
+            </exprlist>
+          </om:OMA>
+        </prototype>
+        <rendering precedence="500">
+          <m:mrow>
+            <m:mo egroup="fence" fence="true">(</m:mo>
+            <iterate name="args">
+              <separator>
+                <m:mo cr="fun">&#x2228;</m:mo>
+              </separator>
+              <render name="arg"/>
+            </iterate>
+            <m:mo egroup="fence" fence="true">)</m:mo>
+          </m:mrow>
+        </rendering>
+      </notation>
+      <symbol name="Implies" xml:id="Implies.sym"/>
+      <notation cd="logic" name="Implies">
+        <prototype>
+          <om:OMA>
+            <om:OMS cd="logic" cr="fun" name="Implies"/>
+            <expr name="arg1"/>
+            <expr name="arg2"/>
+          </om:OMA>
+        </prototype>
+        <rendering precedence="200">
+          <m:mrow>
+            <m:mo egroup="fence" fence="true">(</m:mo>
+            <render name="arg1" precedence="200"/>
+            <m:mo cr="fun">&#x21D2;</m:mo>
+            <render name="arg2" precedence="200"/>
+            <m:mo egroup="fence" fence="true">)</m:mo>
+          </m:mrow>
+        </rendering>
+      </notation>
+      <symbol name="Equiv" xml:id="Equiv.sym"/>
+      <notation cd="logic" name="Equiv">
+        <prototype>
+          <om:OMA>
+            <om:OMS cd="logic" cr="fun" name="Equiv"/>
+            <expr name="arg1"/>
+            <expr name="arg2"/>
+          </om:OMA>
+        </prototype>
+        <rendering precedence="300">
+          <m:mrow>
+            <m:mo egroup="fence" fence="true">(</m:mo>
+            <render name="arg1" precedence="300"/>
+            <m:mo cr="fun">&#x21D4;</m:mo>
+            <render name="arg2" precedence="300"/>
+            <m:mo egroup="fence" fence="true">)</m:mo>
+          </m:mrow>
+        </rendering>
+      </notation>
+    </theory>
+  </omgroup>
+</omdoc>

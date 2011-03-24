@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="omdoc.css"?>
+<omdoc xmlns="http://omdoc.org/ns" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:stex="http://kwarc.info/ns/sTeX" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns" xmlns:om="http://www.openmath.org/OpenMath">
+  <omgroup layout="sectioning" xml:id="sec.sets">
+    <metadata>
+      <dc:title>Sets</dc:title>
+    </metadata>
+    <theory xml:id="sets">
+      <imports from="logic.omdoc"/>
+      <symbol name="in" xml:id="in.sym"/>
+      <notation cd="sets" name="in">
+        <prototype>
+          <om:OMA>
+            <om:OMS cd="sets" cr="fun" name="in"/>
+            <expr name="el"/>
+            <expr name="set"/>
+          </om:OMA>
+        </prototype>
+        <rendering precedence="600">
+          <m:mrow>
+            <m:mo egroup="fence" fence="true">(</m:mo>
+            <render name="el"/>
+            <m:mo cr="fun">∈</m:mo>
+            <render name="set"/>
+            <m:mo egroup="fence" fence="true">)</m:mo>
+          </m:mrow>
+        </rendering>
+      </notation>
+
+      <symbol name="intersection" xml:id="in.cut"/>
+      <notation cd="sets" name="intersection">
+        <prototype>
+          <om:OMA>
+            <om:OMS cd="sets" cr="fun" name="intersection"/>
+            <exprlist name="args">
+              <expr name="arg"/>
+            </exprlist>
+          </om:OMA>
+        </prototype>
+        <rendering precedence="600">
+          <m:mrow>
+            <m:mo egroup="fence" fence="true">(</m:mo>
+            <iterate name="args">
+              <separator>
+                <m:mo cr="fun">∩</m:mo>
+              </separator>
+              <render name="arg"/>
+            </iterate>
+            <m:mo egroup="fence" fence="true">)</m:mo>
+          </m:mrow>
+        </rendering>
+      </notation>
+      
+      <definition for="intersection" xml:id="intersection.def">
+        <CMP>
+        The intersection <om:OMOBJ><om:OMV name="C"/></om:OMOBJ> of <om:OMOBJ><om:OMV name="A"/></om:OMOBJ> and <om:OMOBJ><om:OMV name="B"/></om:OMOBJ>
+        is defined as
+        <om:OMOBJ><om:OMA><om:OMS name="eq" cd="relation1"/><om:OMV name="C"/><om:OMA><om:OMS name="intersection" cd="sets"/><om:OMV name="A"/><om:OMV name="B"/></om:OMA></om:OMA></om:OMOBJ>
+        </CMP>
+      </definition>
+    </theory>
+  </omgroup>
+</omdoc>

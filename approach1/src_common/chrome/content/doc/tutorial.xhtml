@@ -67,6 +67,7 @@ directly edits the XML structure of presentation MathML.</p>
 <li><a href="#settings">Set your settings</a></li>
 <li><a href="#contentmathml">Working with Content MathML</a></li>
 <li><a href="#openmath">Working with OpenMath</a></li>
+<li><a href="#notations">Notations</a></li>
 <li><a href="#svg">Working with SVG</a></li>
 <li><a href="#customizing">Customizing</a></li>
 <li><a href="#how_to_go_on">How to go on?</a></li>
@@ -2446,6 +2447,52 @@ your life easier by using the same commands for the equivalent expressions
 in both languages. This however, is not always perfect. Please refer
 to the documentation of the content insert mode in order to learn
 about these details.</p>
+
+<h2 id="notations">Notations</h2>
+
+<p>In order to render Presentation MathML or OpenMath, notation
+definitions are needed. By default, Gemse uses the ones bundled with
+jomdoc. As they currently cover only a small set of the public
+OpenMath content dictionaries, you probably want to configure how
+external notations are collected. This is done using the option
+<code>NTNView.notations</code>. (In some cases you also need to set
+the <code>NTNView.documentURI</code> and
+<code>NTNView.theoryName</code>.) For details, see the 
+<a href="views.xhtml">documentation of the NTNView</a>.</p>
+
+<p>Here we want to open a formula from an OMDoc document. Make shure
+you are using the viewset <code>content</code> by entering 
+<kbd>:viewset content&enter;</kbd>. Open the equation
+<code>examples/sets.omdoc#xpath1(//*[@xml:id="intersection.def"]//om:OMOBJ[4])</code>.</p>
+
+<!-- TODO: Screenshot -->
+
+<p>As you see, the NTNView renders the symbol <code>eq</code> from
+content dictionary <code>relation1</code> correctly. This is because
+a notation definition for it is bundled with JOMDoc. However, for the
+symbol <code>intersection</code> from the OMDoc document the equation
+belongs to, there is no notation definition bundled with JOMDoc, of
+course. Therefore, the default rendering is used for this symbol.
+However, the OMDoc document containing our equation does have a
+notation definition for the symbol. Let us use it. Do 
+<kbd>:set NTNView.notations=I</kbd>. (TODO: Reset of views
+necessairy?)</p>
+
+<!-- TODO: Screenshot -->
+
+<p>The intersection is now rendered as we want it, but now the symbol
+<code>eq</code> is rendered using the default notation. This is
+because we removed the notation bundled with JOMDoc as notation
+source. It is possible to use more than one notation source by listing
+them all in the option <code>NTNView.notations</code> using spaces to
+separate them: Do <kbd>:set NTNView.notations=I B</kbd>. This causes
+NTNView to use the notations defined in the document as well as those
+bundled with JOMDoc.(TODO: Reset of views necessairy?)</p>
+
+<!-- TODO: Screenshot -->
+
+<p>So far so good, let us clean up. Do 
+<kbd>:set NTNView.notations=B</kbd> and <kbd>:close!</kbd>.</p>
 
 <h2 id="svg">Working with SVG</h2>
 

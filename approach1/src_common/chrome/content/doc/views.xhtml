@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE html [
-  <!ENTITY  enter  "¿">
+  <!ENTITY  enter  "↵">
   <!ENTITY  esc    "ESC">
   <!ENTITY  ctrl   "CRTL+">
   <!ENTITY  alt    "ALT+">
-  <!ENTITY  space  "¿">
+  <!ENTITY  space  "␣">
 ]>
 
 
@@ -37,6 +37,57 @@ JOMDoc, which is written in Java. Because of this, you have to
 <a href="java.xhtml">make some preparations</a>. When you are ready,
 you can start Gemse and switch to viewset 5 by entering
 <kbd>:viewset 5&enter;</kbd>.</p>
+
+<p>By default, only the notation definitions bundled with JOMDoc are
+used. However, notation sources can be configured manually. If the
+formula originates from an OMDoc document, notations can be collected
+from there as well as from its imports. The following options can be
+set to customize the behaviour:</p>
+
+<dl>
+<dt><code>NTNView.notations</code></dt>
+<dd>A space-serparated list of notation sources. Each source consists
+of a type (one or more uppercase letters) from the list below and an
+optional argument which is usually an URI. The default value for this
+option is <code>B</code>.
+<ul>
+<li>Type <code>B</code> without any arguments denotes the notations
+bundled with JOMDoc.</li>
+<li>Type <code>C</code> without any arguments causes content
+dictionaries to be searched for notations. That is, if a symbol with
+cdbase <code>http://example.com/somedir</code>, cd <code>foo</code> and name
+<code>bar</code>, the document
+<code>http://example.com/somedir/foo</code> is fetched and searched
+for notation definitions for <code>foo</code> and for references to
+such notation definitions. (This might not yet work as you expect it.
+There is a problem with the default cdbase.)</li>
+<li>Type <code>F</code> loads from the URL given as argument.</li>
+<li>Type <code>D</code> looks in the document at the given URL for
+notation definition and also searches all its imports. If the URL is
+omitted, the value of the option <code>NTNView.theoryName</code> is
+used.</li>
+<li>Type <code>I</code> is useful when you load the equation from an
+OMDoc document. In this case, the options
+<code>NTNView.documentURI</code> and <code>NTNView.theoryName</code>
+are set automatically to the right value should they not already have
+been set. (Note that this is at the moment the same as <code>D</code>
+with <code>NTNView.documentURI</code> set to the URL for the document
+the formula is part of and <code>NTNView.theoryName</code> set to the
+name of the innermost theory the formula is located in.</li>
+</ul>
+</dd>
+
+<dt><code>NTNView.documentURI</code></dt>
+<dd>The document the formula should be considered part of 
+when choosing the notations used for rendering.</dd>
+
+<dt><code>NTNView.theoryName</code></dt>
+<dd>The name of the theory the formula should be considered to be
+located in when choosing the notations used for rendering.</dd>
+</dl>
+
+<p>Only file and http URLs are supported for notation
+sources. Contexts and tags are not yet supported.</p>
 
 </body>
 

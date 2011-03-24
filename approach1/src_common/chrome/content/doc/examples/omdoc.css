@@ -1,0 +1,164 @@
+/* This file is put into the public domain by the author */
+
+@namespace "http://omdoc.org/ns";
+@namespace dc "http://purl.org/dc/elements/1.1/";
+@namespace om "http://www.openmath.org/OpenMath";
+
+omdoc, theory, omtext, metadata, symbol, definition, notation, omgroup,
+assertion, proof, CMP { display: block }
+
+omdoc { color: black; background-color: white }
+
+theory, omtext, definition, assertion, proof, symbol { 
+    margin-top: 1ex; 
+    margin-bottom: 1ex;
+}
+omgroup { margin-top: 5ex; }
+
+/*Nesting*/
+theory, omgroup { 
+    border-left: 2px solid black;
+    margin-left: 2px;
+    padding-left: 2px;
+}
+
+metadata { 
+    display: block; 
+    background-color: #DDD;
+    border: 1px solid gray;
+}
+metadata > dc|title { display: block; font-size: 200% }
+title { display: block; font-size: 200% }
+
+symbol { display: block; border: 2px solid green }
+definition { display: block; border: 2px solid red }
+assertion { display: block; border: 2px solid red }
+proof { display: block; border: 2px solid blue }
+
+symbol:before {
+    content: "Sym: " attr(name);
+    background-color: green; 
+    display: block; 
+}
+definition:before { 
+    content: "Def: " attr(for); 
+    background-color: red; 
+    display: block; 
+}
+assertion:before { content: "Ass: "; background-color: red }
+proof:before { content:"Proof: "; background-color: blue }
+
+imports { 
+    display: block; /*border: 2px solid black;*/
+    background-color: black; color: white;
+}
+imports:before { content: "imports " attr(from); }
+
+notation { display: block; border: 2px solid green }
+notation:before { content: "Notation: " attr(cd) "#" attr(name); background-color: green; }
+prototype { display: block; margin: 1px; border: 1px solid green }
+rendering { display: block; margin: 1px; border: 1px solid green }
+
+/**:after { content: attr(xml|id); display: block; text-align: right; }*/
+
+/* OpenMath */
+om|OMOBJ {
+    display: inline;
+    background-color: #FAF;
+}
+om|* { 
+    display: inline; 
+    margin: 0 1px 0 1px;
+    padding: 0 1px 0 1px;
+}
+om|*:before {
+    content: "?(" attr(cd) " " attr(name);
+}
+om|*:after {
+    content: ")";
+}
+
+/* For Amaya */
+OMOBJ {
+    display: inline;
+    /*background-color: #FAF;*/
+    color: #A5A;
+}
+OMS, OMV, OMA, OMBIND, OMBVAR {
+    display: inline; 
+    margin: 0 1px 0 1px;
+    padding: 0 1px 0 1px;
+}
+OMS:before, OMV:before, OMA:before {
+    content: "?(" attr(cd) " " attr(name);
+}
+OMS:after, OMV:after, OMA:after {
+    content: ")";
+}
+
+/* HTML like elements */
+html, address,
+blockquote,
+body, dd, div,
+dl, dt, fieldset, form,
+frame, frameset,
+h1, h2, h3, h4,
+h5, h6, noframes,
+ol, p, ul, center,
+dir, hr, menu, pre   { display: block }
+li              { display: list-item }
+head            { display: none }
+table           { display: table }
+tr              { display: table-row }
+thead           { display: table-header-group }
+tbody           { display: table-row-group }
+tfoot           { display: table-footer-group }
+col             { display: table-column }
+colgroup        { display: table-column-group }
+td, th          { display: table-cell }
+caption         { display: table-caption }
+th              { font-weight: bolder; text-align: center }
+caption         { text-align: center }
+body            { margin: 8px }
+h1              { font-size: 2em; margin: .67em 0 }
+h2              { font-size: 1.5em; margin: .75em 0 }
+h3              { font-size: 1.17em; margin: .83em 0 }
+h4, p,
+blockquote, ul,
+fieldset, form,
+ol, dl, dir,
+menu            { margin: 1.12em 0 }
+h5              { font-size: .83em; margin: 1.5em 0 }
+h6              { font-size: .75em; margin: 1.67em 0 }
+h1, h2, h3, h4,
+h5, h6, b,
+strong          { font-weight: bolder }
+blockquote      { margin-left: 40px; margin-right: 40px }
+i, cite, em,
+var, address    { font-style: italic }
+pre, tt, code,
+kbd, samp       { font-family: monospace }
+pre             { white-space: pre }
+button, textarea,
+input, select   { display: inline-block }
+big             { font-size: 1.17em }
+small, sub, sup { font-size: .83em }
+sub             { vertical-align: sub }
+sup             { vertical-align: super }
+table           { border-spacing: 2px; }
+thead, tbody,
+tfoot           { vertical-align: middle }
+td, th          { vertical-align: inherit }
+s, strike, del  { text-decoration: line-through }
+hr              { border: 1px inset }
+ol, ul, dir,
+menu, dd        { margin-left: 40px }
+ol              { list-style-type: decimal }
+ol ul, ul ol,
+ul ul, ol ol    { margin-top: 0; margin-bottom: 0 }
+u, ins          { text-decoration: underline }
+br:before       { content: "\A" }
+:before, :after { white-space: pre-line }
+center          { text-align: center }
+:link, :visited { text-decoration: underline }
+:focus          { outline: thin dotted invert }
