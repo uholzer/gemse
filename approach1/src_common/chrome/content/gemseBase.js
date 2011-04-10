@@ -2360,3 +2360,19 @@ function xml_flushElement(element) {
     while (element.hasChildNodes()) { element.removeChild(element.firstChild); }
 }
 
+function stringTonsIURI(uri, base) {
+    var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService);
+    return ioService.newURI(uri, null, base);
+}
+
+function chromeURLtoFileURLString(chromeurl) {
+    return chromeURLtoFileURLnsIURI(StringTonsIURI(chromeurl)).spec;    
+}
+
+function chromeURLtoFileURLnsIURI(chromeurl) {
+    var chromeRegistry = Components.classes["@mozilla.org/chrome/chrome-registry;1"]
+                         .getService(Components.interfaces.nsIChromeRegistry);
+    return chromeRegistry.convertChromeURL(chromeurl);
+}
+
