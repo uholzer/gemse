@@ -2366,6 +2366,16 @@ function stringTonsIURI(uri, base) {
     return ioService.newURI(uri, null, base);
 }
 
+function stringTonsIURL(uri, base) {
+    var myURI = stringTonsIURI(uri, base);
+    // Throws an error if it is no URL
+    return myURI.QueryInterface(Components.interfaces.nsIURL);
+}
+
+function nsIURItonsIURL(uri) {
+    return uri.QueryInterface(Components.interfaces.nsIURL);
+}
+
 function chromeURLtoFileURLString(chromeurl) {
     return chromeURLtoFileURLnsIURI(StringTonsIURI(chromeurl)).spec;    
 }
