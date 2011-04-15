@@ -1500,7 +1500,7 @@ GemsePEditor.prototype = {
         var uriParts = /^((([^:]*):)?[^#]*)(#(.*))?$/.exec(uri);
         if (!uriParts) { throw new Error("Failed to parse URI") }
         protocol = uriParts[3];
-        var fragmentPart = uriParts[5];
+        var fragmentPart = decodeURIComponent(uriParts[5]);
         if (!fragmentId && !xpath && fragmentPart && fragmentPart.indexOf('(')!=-1) {
             // Parse fragmentPart as XPointer
             var fragmentPartInfo = /^xpath1\((.*)\)$/.exec(fragmentPart);
