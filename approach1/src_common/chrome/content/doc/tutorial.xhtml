@@ -2465,7 +2465,20 @@ you are using the viewset <code>content</code> by entering
 <kbd>:viewset content&enter;</kbd>. Open the equation
 <code>examples/sets.omdoc#xpath1(//*[@xml:id="intersection.def"]//om:OMOBJ[4])</code>.</p>
 
-<!-- TODO: Screenshot -->
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="afcf1fdd0-6843-11e0-b33c-0025224150e7"><mi id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg1">C</mi><mo id="afcf1fdd0-6843-11e0-b33c-0025224150e7-fun">=</mo><mrow id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2"><mo id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-fun">intersection</mo><mo fence="true" a0:egroup="fence" xmlns:a0="http://omdoc.org/ns">(</mo><mi id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-args-arg1">A</mi><mo separator="true">,</mo><mi id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-args-arg2">B</mi><mo fence="true" a1:egroup="fence" xmlns:a1="http://omdoc.org/ns">)</mo></mrow></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7"><OMS name="eq" cd="relation1" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-fun"/><OMV name="C" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg1"/><OMA href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2"><OMS name="intersection" cd="sets" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-fun"/><OMV name="A" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-args-arg1"/><OMV name="B" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-args-arg2"/></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="editcursor"><html:span>&lt;om:OMOBJ&gt;</html:span>
+<html:span class="element">    <html:span>&lt;om:OMA&gt;</html:span>
+<html:span class="element">        <html:span>&lt;om:OMS cd="relation1" name="eq"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;om:OMV name="C"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;om:OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;om:OMS cd="sets" name="intersection"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;om:OMV name="A"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;om:OMV name="B"/&gt;</html:span>
+</html:span>        &lt;/om:OMA&gt;
+</html:span>    &lt;/om:OMA&gt;
+</html:span>&lt;/om:OMOBJ&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
 
 <p>As you see, the NTNView renders the symbol <code>eq</code> from
 content dictionary <code>relation1</code> correctly. This is because
@@ -2475,21 +2488,48 @@ belongs to, there is no notation definition bundled with JOMDoc, of
 course. Therefore, the default rendering is used for this symbol.
 However, the OMDoc document containing our equation does have a
 notation definition for the symbol. Let us use it. Do 
-<kbd>:set NTNView.notations=I</kbd>. (TODO: Reset of views
-necessairy?)</p>
+<kbd>:set NTNView.notations=I</kbd>. Unfortunately Gemse does not
+(yet) reconfigure its notation sources when setting this option. Force
+it to rebuild the view by hitting <kbd>&ctrl;l</kbd>.</p>
 
-<!-- TODO: Screenshot -->
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a061dff60-684b-11e0-867e-0025224150e7"><mo id="a061dff60-684b-11e0-867e-0025224150e7-fun">eq</mo><mo fence="true" a0:egroup="fence" xmlns:a0="http://omdoc.org/ns">(</mo><mi id="a061dff60-684b-11e0-867e-0025224150e7-args-arg1">C</mi><mo separator="true">,</mo><mrow id="a061dff60-684b-11e0-867e-0025224150e7-args-arg2"><mi id="a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-arg1">A</mi><mo id="a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-fun2">∩</mo><mi id="a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-arg2">B</mi></mrow><mo fence="true" a1:egroup="fence" xmlns:a1="http://omdoc.org/ns">)</mo></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#a061dff60-684b-11e0-867e-0025224150e7"><OMS name="eq" cd="relation1" href="#a061dff60-684b-11e0-867e-0025224150e7-fun"/><OMV name="C" href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg1"/><OMA href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg2"><OMS name="intersection" cd="sets" href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-fun2"/><OMV name="A" href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-arg1"/><OMV name="B" href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-arg2"/></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="editcursor"><html:span>&lt;om:OMOBJ&gt;</html:span>
+<html:span class="element">    <html:span>&lt;om:OMA&gt;</html:span>
+<html:span class="element">        <html:span>&lt;om:OMS cd="relation1" name="eq"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;om:OMV name="C"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;om:OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;om:OMS cd="sets" name="intersection"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;om:OMV name="A"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;om:OMV name="B"/&gt;</html:span>
+</html:span>        &lt;/om:OMA&gt;
+</html:span>    &lt;/om:OMA&gt;
+</html:span>&lt;/om:OMOBJ&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
 
 <p>The intersection is now rendered as we want it, but now the symbol
 <code>eq</code> is rendered using the default notation. This is
-because we removed the notation bundled with JOMDoc as notation
+because we removed the notations bundled with JOMDoc as notation
 source. It is possible to use more than one notation source by listing
 them all in the option <code>NTNView.notations</code> using spaces to
 separate them: Do <kbd>:set NTNView.notations=I B</kbd>. This causes
 NTNView to use the notations defined in the document as well as those
-bundled with JOMDoc.(TODO: Reset of views necessairy?)</p>
+bundled with JOMDoc. Again, hit <kbd>&ctrl;l</kbd>.</p>
 
-<!-- TODO: Screenshot -->
+<div class="documentationScreenshot">
+<vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a81acf080-684d-11e0-867e-0025224150e7"><mi id="a81acf080-684d-11e0-867e-0025224150e7-arg1">C</mi><mo id="a81acf080-684d-11e0-867e-0025224150e7-fun">=</mo><mrow id="a81acf080-684d-11e0-867e-0025224150e7-arg2"><mi id="a81acf080-684d-11e0-867e-0025224150e7-arg2-args-arg1">A</mi><mo id="a81acf080-684d-11e0-867e-0025224150e7-arg2-args-fun">∩</mo><mi id="a81acf080-684d-11e0-867e-0025224150e7-arg2-args-arg2">B</mi></mrow></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#a81acf080-684d-11e0-867e-0025224150e7"><OMS name="eq" cd="relation1" href="#a81acf080-684d-11e0-867e-0025224150e7-fun"/><OMV name="C" href="#a81acf080-684d-11e0-867e-0025224150e7-arg1"/><OMA href="#a81acf080-684d-11e0-867e-0025224150e7-arg2"><OMS name="intersection" cd="sets" href="#a81acf080-684d-11e0-867e-0025224150e7-arg2-args-fun"/><OMV name="A" href="#a81acf080-684d-11e0-867e-0025224150e7-arg2-args-arg1"/><OMV name="B" href="#a81acf080-684d-11e0-867e-0025224150e7-arg2-args-arg2"/></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="editcursor"><html:span>&lt;om:OMOBJ&gt;</html:span>
+<html:span class="element">    <html:span>&lt;om:OMA&gt;</html:span>
+<html:span class="element">        <html:span>&lt;om:OMS cd="relation1" name="eq"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;om:OMV name="C"/&gt;</html:span>
+</html:span><html:span class="element">        <html:span>&lt;om:OMA&gt;</html:span>
+<html:span class="element">            <html:span>&lt;om:OMS cd="sets" name="intersection"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;om:OMV name="A"/&gt;</html:span>
+</html:span><html:span class="element">            <html:span>&lt;om:OMV name="B"/&gt;</html:span>
+</html:span>        &lt;/om:OMA&gt;
+</html:span>    &lt;/om:OMA&gt;
+</html:span>&lt;/om:OMOBJ&gt;
+</html:span></html:pre></html:div></vbox>
+</div>
 
 <p>So far so good, let us clean up. Do 
 <kbd>:set NTNView.notations=B</kbd> and <kbd>:close!</kbd>.</p>
