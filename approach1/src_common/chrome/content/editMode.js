@@ -433,7 +433,7 @@ function editModeCommand_insertAtEnd(mode) {
 }
 
 function editModeCommand_redisplay(mode) {
-    mode.moveCursor(mode.cursor);
+    mode.editor.viewsetManager.create();
     return true;
 }
 
