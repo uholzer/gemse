@@ -1500,7 +1500,10 @@ GemsePEditor.prototype = {
         var uriParts = /^((([^:]*):)?[^#]*)(#(.*))?$/.exec(uri);
         if (!uriParts) { throw new Error("Failed to parse URI") }
         protocol = uriParts[3];
-        var fragmentPart = decodeURIComponent(uriParts[5]);
+        // decodeURIComponent seems to call .toString on its argument,
+        // which yields "undefined" for undefined values. So make
+        // shure it is the empty string in this case:
+        var fragmentPart = decodeURIComponent(uriParts[5] ?  uriParts[5] : "");
         if (!fragmentId && !xpath && fragmentPart && fragmentPart.indexOf('(')!=-1) {
             // Parse fragmentPart as XPointer
             var fragmentPartInfo = /^xpath1\((.*)\)$/.exec(fragmentPart);
