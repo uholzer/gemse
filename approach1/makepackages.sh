@@ -1,23 +1,26 @@
 #!/bin/sh
-rm -f gemse_src.tar.gz
-rm -f gemseFirefoxExtension.xpi
-rm -f gemseXULRunnerApplication.zip
-rm -f gemseMinimal.zip
 
-cd ../..
-tar -czf gemse/approach1/gemse_src.tar.gz gemse/approach1/*
-cd gemse/approach1/
+# Packages are created in parent directory
+cd ..
 
+rm -f gemse_src-$1.tar.gz
+rm -f gemseFirefoxExtension-$1.xpi
+rm -f gemseXULRunnerApplication-$1.zip
+rm -f gemseMinimal-$1.zip
+
+tar -czf gemse_src-$1.tar.gz -C ../ gemse/approach1
+
+cd approach1
 cd src_common
-zip -r ../gemseFirefoxExtension.xpi *
-zip -r ../gemseXULRunnerApplication.zip *
+zip -r ../../gemseFirefoxExtension-$1.xpi *
+zip -r ../../gemseXULRunnerApplication-$1.zip *
 
 cd ../src_FirefoxExtension
-zip -r ../gemseFirefoxExtension.xpi *
+zip -r ../../gemseFirefoxExtension-$1.xpi *
 
 cd ../src_XULRunnerApplication
-zip -r ../gemseXULRunnerApplication.zip *
+zip -r ../../gemseXULRunnerApplication-$1.zip *
 
 cd ../src_common/chrome/content/
-zip -r ../../../gemseMinimal.zip *
+zip -r ../../../../gemseMinimal-$1.zip *
 
