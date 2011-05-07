@@ -922,6 +922,9 @@ NTNView.prepareNTN = function(editor) {
     NTNView.javaConstructors.NotationFileFromFile = NTNView.javaClasses.NotationFile.getConstructor(
         [NTNView.javaClasses.ioFile]
     );
+    NTNView.javaConstructors.NotationFileEmpty = NTNView.javaClasses.NotationFile.getConstructor(
+        []
+    );
     NTNView.javaConstructors.NotationDocument = NTNView.javaClasses.NotationDocument.getConstructor(
         [NTNView.javaClasses.XOMDocument]
     );
@@ -1046,6 +1049,23 @@ NTNView.prototype = {
                     var coll = NTNView.javaClasses.ContentDictionary.newInstance();
                     this.ntnCollector.add(coll);
                 }
+                else if (nsource[0] == "E") {
+                    this.editor.showMessage("E: " + nsource[1]);
+
+                    if (nsource[1]) {
+                        var xomRoot = this.dom2xom(this.editor.equations[nsource[1]].equation);
+                    }
+                    else {
+                        var xomRoot = this.dom2xom(this.equationEnv.equation);
+                    }
+
+                    // NotationFile can be used to add single notation
+                    // elements.
+                    var coll = NTNView.javaConstructors.NotationFileEmpty.newInstance([]);
+                    coll.add(xomRoot);
+                    this.ntnCollector.add(coll);
+                    this.editor.showMessage("Added notations source E" + nsource[1]);
+                }
                 else {
                     this.showError('Problem loading notation source ' + nsource);
                 }
@@ -1079,7 +1099,7 @@ NTNView.prototype = {
             // Check if we need to rerender or if changing internal
             // attributes is enough.
             var rerenderRequired = true;
-            if (this.o.shortcut) {
+            if (this.o.shortcut && !this.o.equation) {
                 rerenderRequired = !this.updateInternals(this.viewport.firstChild, this.equationEnv.equation);
             }
             
@@ -1088,7 +1108,7 @@ NTNView.prototype = {
                 xml_flushElement(this.viewport);
 
                 // Build representation of the equation using XOM
-                var xomRoot = this.dom2xom(this.equationEnv.equation);
+                var xomRoot = this.dom2xom(this.o.equation ? this.editor.equations[this.o.equation].equation : this.equationEnv.equation);
                 // Make a detached element out of it
                 var xomRoot = NTNView.javaConstructors.DetachedElement.newInstance([xomRoot]);
                 if (this.o.theoryName) { xomRoot.setTheoryName(this.o.theoryName) }
@@ -1440,6 +1460,20 @@ NTNView.gemseOptions = {
         setter: function (o,value) {
             o.theoryName = this.parser(value);
         }
+    },
+    "NTNView.equation": {
+        localToClass: NTNView,
+        defaultValue: "",
+        validator: function(value) {
+            return /^\d*$/.test(value);
+        },
+        parser: function(value) {
+            if (value == "") { return null; }
+            return value;
+        },
+        setter: function(o, value) {
+            o.equation = this.parser(value);
+        },
     },
 }
 ViewsetManager.viewClasses["NTNView"] = NTNView;
