@@ -205,6 +205,30 @@ trivialInsertModeCommands = {
         implementation: trivialInsertModeCommand_oneLessToSurround
     },
 }
+trivialInsertModeCommands[KEYMOD_ALT] = {
+    type: "disamb",
+}
+trivialInsertModeCommands[KEYMOD_ALT + "n"] = {
+    type: "disamb",
+}
+trivialInsertModeCommands[KEYMOD_ALT + "ni"] = {
+    type: "command",
+    repeating: "external",
+    argument: "newlineTerminated",
+    implementation: trivialInsertModeCommand_notation_iterate
+}
+trivialInsertModeCommands[KEYMOD_ALT + "ns"] = {
+    type: "command",
+    repeating: "external",
+    argument: "none",
+    implementation: function trivialInsertModeCommand_notation_separator (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"separator") }
+}
+trivialInsertModeCommands[KEYMOD_ALT + "nr"] = {
+    type: "command",
+    repeating: "external",
+    argument: "newlineTerminated",
+    implementation: trivialInsertModeCommand_notation_render
+}
 trivialInsertModeCommands[String.fromCharCode(0x08)] = { // Backspace
     type: "command",
     repeating: "external",

@@ -47,6 +47,9 @@ ucdInsertModeCommands = {
 ucdInsertModeCommands[KEYMOD_CONTROL] = {
     type: "disamb",
 }
+ucdInsertModeCommands[KEYMOD_ALT] = {
+    type: "disamb",
+}
 ucdInsertModeCommands[KEYMOD_CONTROL + "i"] = {
     type: "command",
     argument: "newlineTerminated",
@@ -146,6 +149,27 @@ ucdInsertModeCommands[KEYMOD_CONTROL + "h"] = {
     type: "command",
     argument: "none",
     implementation: trivialInsertModeCommand_oneMoreToSurround
+}
+ucdInsertModeCommands[KEYMOD_ALT + "n"] = {
+    type: "disamb",
+}
+ucdInsertModeCommands[KEYMOD_ALT + "ni"] = {
+    type: "command",
+    repeating: "external",
+    argument: "newlineTerminated",
+    implementation: trivialInsertModeCommand_notation_iterate
+}
+ucdInsertModeCommands[KEYMOD_ALT + "ns"] = {
+    type: "command",
+    repeating: "external",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_notation_separator (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"separator") }
+}
+ucdInsertModeCommands[KEYMOD_ALT + "nr"] = {
+    type: "command",
+    repeating: "external",
+    argument: "newlineTerminated",
+    implementation: trivialInsertModeCommand_notation_render
 }
 ucdInsertModeCommands[KEYMOD_CONTROL + "l"] = {
     type: "command",

@@ -552,6 +552,21 @@ function contentInsertModeCommand_annotationxml_arbitrary(mode, instance) {
     return true;
 }
 
+function contentInsertModeCommand_notation_expr(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "expr");
+    newElement.setAttribute("name", instance.argument);
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
+function contentInsertModeCommand_notation_exprlist(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "exprlist");
+    newElement.setAttribute("name", instance.argument);
+    mode.putElement(newElement, true);
+
+    return true;
+}
 
 function contentInsertModeCommand_lambda(mode, instance) {
     // Build our lambda construct

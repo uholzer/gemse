@@ -274,6 +274,21 @@ function trivialInsertModeCommand_insertDescribedElement(mode, instance, element
     return true;
 }
 
+function trivialInsertModeCommand_notation_iterate(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "iterate");
+    newElement.setAttribute("name", instance.argument);
+    newElement.appendChild(mode.getNewPlaceholderElement());
+    mode.putElement(newElement);
+    return true;
+}
+
+function trivialInsertModeCommand_notation_render(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "render");
+    newElement.setAttribute("name", instance.argument);
+    mode.putElement(newElement);
+    return true;
+}
+
 function trivialInsertModeCommand_cursorJump(mode,instance) {
     if (mode.cursorStack.length<1) { 
         // If the stack is empty, the user is done with inserting, so exit
