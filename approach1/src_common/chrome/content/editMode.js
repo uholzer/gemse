@@ -528,6 +528,11 @@ function editModeCommand_newEquation(mode, instance) {
         root = document.createElementNS(NS_OpenMath, "OMOBJ");
         root.setAttribute("version", "2.0");
     }
+    else if (instance.argument == "ntn") {
+        root = document.createElementNS(NS_OMDoc, "notation");
+        root.appendChild(document.createElementNS(NS_OMDoc, "prototype"));
+        root.appendChild(document.createElementNS(NS_OMDoc, "rendering"));
+    }
     else {
         root = null;
     }
