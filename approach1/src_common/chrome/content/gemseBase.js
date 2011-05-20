@@ -780,8 +780,24 @@ ViewsetManager.prototype = {
             }
             // Create view
             //XXX: Is this ok?
-            this.views.push(new constructor(this.editor,this.editor.equations[this.editor.focus],viewports[i]));
+            var newview = new constructor(this.editor,this.editor.equations[this.editor.focus],viewports[i]);
+            this.views.push(newview);
+            // Read in options from internal:options attribute of the viewort
+            if (viewports[i].hasAttributeNS(NS_internal, "options")) {
+                var options = this.parseOptionsString(viewports[i].getAttributeNS(NS_internal, "options"));
+                for each (var option in options) {
+                    this.editor.optionsAssistant.set(option[0],option[1],null,newview);
+                }
+            }
         }
+    },
+    /**
+     * Parses the value of an internal:options attribute and returns a
+     * list of name/value pairs
+     */
+    parseOptionsString: function(optionsString) {
+        var options = optionsString.split(/\$(?!\$)/);
+        return options.map(function (s) { return s.split(/=/,2) });
     },
     /**
      * Load viewsets contained in a DOM element.
