@@ -28,6 +28,11 @@ const NS_OpenMath = "http://www.openmath.org/OpenMath";
  * @constant
  */
 const NS_XML = "http://www.w3.org/XML/1998/namespace";
+/**
+ * Namespace of XUL
+ * @constant
+ */
+const NS_XUL = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 /** 
  * The namespace of HTML 
  * @constant
