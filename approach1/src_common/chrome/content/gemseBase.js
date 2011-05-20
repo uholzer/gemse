@@ -721,6 +721,10 @@ function ViewsetManager(editor,dock) {
      * @private
      */
     this.globalViewsetNumber = 0;
+    /*
+     *
+     */
+    this.confWindow = null;
 }
 ViewsetManager.viewClasses = {};
 ViewsetManager.prototype = {
@@ -787,7 +791,12 @@ ViewsetManager.prototype = {
             if (viewports[i].hasAttributeNS(NS_internal, "options")) {
                 var options = this.parseOptionsString(viewports[i].getAttributeNS(NS_internal, "options"));
                 for each (var option in options) {
-                    this.editor.optionsAssistant.set(option[0],option[1],null,newview);
+                    try {
+                        this.editor.optionsAssistant.set(option[0],option[1],null,newview);
+                    }
+                    catch(e) {
+                        this.editor.showMessage(e);
+                    }
                 }
             }
         }
@@ -799,6 +808,21 @@ ViewsetManager.prototype = {
     parseOptionsString: function(optionsString) {
         var options = optionsString.split(/\$(?!\$)/);
         return options.map(function (s) { return s.split(/=/,2) });
+    },
+    /**
+     * Parses the value of an internal:options attribute and returns a
+     * list of name/value pairs
+     */
+    parseOptionsString: function(optionsString) {
+        var options = optionsString.split(/\$(?!\$)/);
+        return options.map(function (s) { return s.split(/=/,2) });
+    },
+    /**
+     * Takes a list of name/value pairs and encodes them in a string
+     * suitable for an internal:options attribute
+     */
+    encodeOptionsString: function(optionsList) {
+        return optionsList.map(function (o) { return (o[0] + "=" + o[1]).replace("$","$$") }).join("$");
     },
     /**
      * Load viewsets contained in a DOM element.
@@ -884,6 +908,36 @@ ViewsetManager.prototype = {
      */
     showAllViews: function(viewNumber) {
         this.views.forEach(function (v) { v.viewport.style.display = "block" });
+    },
+    openConfWindow: function() {
+        if (this.confWindow) {
+            this.confWindow.focus();
+        }
+        else {
+            // Use the wrappedJSObject trick as described in
+            // https://developer.mozilla.org/en/Working_with_windows_in_chrome_code
+            // in order to be able to pass arbitrary JavaScript objects.
+            var arg = { 
+                editor: this.editor, 
+                editorWindow: window, 
+                viewsetManager: this, 
+                onunload: function() {this.confWindow=null} 
+            };
+            //arg.wrappedJSObject = arg;
+            this.confWindow = window.openDialog("chrome://gemse/content/viewsetconf.xul", "_blank",
+                "chrome,menubar,toolbar,status,resizable,dialog=no",
+                arg);
+    /*var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
+             getService(Components.interfaces.nsIWindowWatcher);
+    ww.openWindow(null, "chrome://gemse/content/viewsetconf.xul", "_blank",
+                      "chrome,menubar,toolbar,status,resizable,dialog=no",
+                      arg);*/
+        }
+    },
+    closeConfWindow: function() {
+        if (this.confWindow) {
+            this.confWindow.close();
+        }
     },
 }
 

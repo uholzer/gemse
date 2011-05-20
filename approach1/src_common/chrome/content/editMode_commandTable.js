@@ -295,6 +295,13 @@ editModeCommands = {
         argument: "newlineTerminated",
         implementation: editModeCommand_chooseViewset
     },
+    ":viewsetconf": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_viewsetconfWindow
+    },
 
     ":serialize": {
         category: "action",

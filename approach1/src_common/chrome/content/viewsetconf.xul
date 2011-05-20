@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="viewsetconf.css" type="text/css"?>
+
+<!--
+This file is part of Gemse.
+
+Copyright 2009, 2010 Urs Holzer
+
+Gemse is licenced under the GNU Public Licence v3 (GPL3), 
+or (at your option) any later version.
+-->
+
+
+<window
+    id="GemseViewsetConfigurationWindow"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="Gemse Viewset Configuration"
+    orient="vertical"
+    onload="configurator.start()"
+    onunload="configurator.unload()"
+    onfocus="configurator.restart()">
+    <script src="viewsetconf.js"/>
+    <script src="const.js"/>
+
+<hbox>
+    <textbox id="viewsetName" onchange="configurator.changeMetaInfo()" flex="1"/> 
+    <textbox id="viewsetDescription" onchange="configurator.changeMetaInfo()" flex="3"/>
+</hbox>
+
+<groupbox flex="1">
+    <caption>preview</caption>
+    <box orient="vertical" id="schematicsContainer" flex="1" style="max-height: 100%; overflow: auto">
+
+    </box>
+</groupbox>
+
+<!-- How to move/place boxes and views? -->
+
+<menupopup id="attributesMenupopup">
+    <menuitem label="Add arbitrary attribute" onclick="configurator.attributeAdd(null,null,null)"/>
+    <menuitem label="Add arbitrary option" onclick="configurator.optionAdd(null,null)"/>
+    <menuitem label="Delete selected" onclick="configurator.attroptDelete()"/>
+    <menuitem label="Add attribute 'orientation=horizontal'" onclick="configurator.attributeAdd(NS_XUL, 'orientation', 'horizontal')"/>
+    <menuitem label="Add attribute 'orientation=vertical'" onclick="configurator.attributeAdd(NS_XUL, 'orientation', 'vertical')"/>
+</menupopup>
+<!-- Attributes and Options -->
+<tree id="attributesTree" editable="true" flex="1" rows="2">
+    <treecols>
+        <treecol id="namespaceCol" label="Namespace" primary="true" flex="1"/>
+        <treecol id="nameCol" label="Attributes" flex="2"/>
+        <treecol id="valueCol" label="Value" flex="2"/>
+    </treecols>
+    <treechildren context="attributesMenupopup"/>
+</tree>
+
+<hbox>
+    <radiogroup id="insertPosRadiogroup" orient="horizontal">
+        <radio id="insertBefore" label="before" selected="true"/>
+        <radio id="insertAfter" label="after"/>
+        <radio id="insertIn" label="in"/>
+    </radiogroup>
+    <!-- Dropbox and button to create a view from the list -->
+    <button type="menu" label="Insert" flex="1">
+      <menupopup id="viewsMenupopup">
+        <menuitem label="box" onclick="configurator.insertBox()"/>
+      </menupopup>
+    </button>
+    <button label="Remove" onclick="configurator.remove()" flex="1"/>
+</hbox>
+
+<grid>
+<columns>
+    <column flex="1"/>
+    <column flex="1"/>
+</columns>
+<rows>
+<row>
+    <hbox flex="1">
+    <!-- Button for saving viewset under a new name -->
+    <button label="Save Viewset as" onclick="configurator.saveViewsetAs()" flex="1"/>
+    </hbox>
+
+    <!-- Button for loading existing viewset -->
+    <button type="menu" label="Load Viewset" flex="1">
+      <menupopup id="viewsetsMenupopup" onpopupshowing="configurator.fillViewsetsMenupopup()">
+      </menupopup>
+    </button>
+</row>
+
+<row>
+    <!-- Button for using this viewset for all equations -->
+    <button label="Use this viewset for all equations"/>
+    <!-- Button for using this viewset for this equation -->
+    <button label="Remove local viewsets on all equaitons"/>
+</row>
+
+</rows>
+</grid>
+
+</window>

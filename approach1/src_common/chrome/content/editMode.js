@@ -857,6 +857,16 @@ function editModeCommand_chooseViewset(mode, instance) {
     return true;
 }
 
+function editModeCommand_viewsetconfWindow(mode, instance) {
+    if (instance.argument=="close") {
+        mode.editor.viewsetManager.closeConfWindow();
+    }
+    else {
+        mode.editor.viewsetManager.openConfWindow();
+    }
+    return true;
+}
+
 function editModeCommand_printWorkingDirectory(mode, instance) {
     mode.editor.showMessage(mode.editor.workingDirectory);
     return true;

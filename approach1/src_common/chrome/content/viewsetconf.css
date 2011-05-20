@@ -1,0 +1,34 @@
+/*
+ * This file is part of Gemse.
+ *
+ * Copyright 2009, 2010 Urs Holzer
+ *
+ * Gemse is licenced under the GNU Public Licence v3 (GPL3), 
+ * or (at your option) any later version.
+ */
+
+@namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
+@namespace html     "http://www.w3.org/1999/xhtml";
+@namespace xul      "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+@namespace          "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
+#schematicsContainer *|box {
+    border: 1px solid Gray;
+    padding: 0.5ex; margin: 0.5ex;
+    background: White;
+}
+
+#schematicsContainer *|box[internal|function~="viewport"] {
+    border: 2px solid black;
+    padding: 0.5ex; margin: 0.5ex;
+}
+
+#schematicsContainer *|*[class~="selected"] {
+    background-color: red;
+}
+
+#schematicsContainer {
+    font-size: x-small;
+}
+
+

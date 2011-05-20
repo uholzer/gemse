@@ -7,6 +7,12 @@
  * or (at your option) any later version.
  */
 
+function createDefaultViewport(className, elementNS, elementName) {
+    var viewport = d.createElementNS(elementNS, elementName);
+    viewport.setAttributeNS(NS_internal, "function", "viewport");
+    viewport.setAttributeNS(NS_internal, "viewClass", className);
+    return viewport;
+}
 
 /**
  * @class direct view of the equation by directly putting the math
@@ -32,6 +38,7 @@ DirectView.prototype = {
         this.viewport.appendChild(document.importNode(this.equationEnv.equation, true));
     }
 }
+DirectView.createViewport = function(d) { return createDefaultViewport("DirectView", NS_HTML, "div"); };
 ViewsetManager.viewClasses["DirectView"] = DirectView;
 
 /**
@@ -59,6 +66,7 @@ MessageView.prototype = {
         }, this);
     }
 }
+MessageView.createViewport = function(d) { return createDefaultViewport("MessageView", NS_XUL, "box"); };
 ViewsetManager.viewClasses["MessageView"] = MessageView;
 
 
@@ -128,6 +136,7 @@ TreeView.prototype = {
         }
     },
 }
+TreeView.createViewport = function(d) { return createDefaultViewport("TreeView", NS_HTML, "div"); };
 ViewsetManager.viewClasses["TreeView"] = TreeView;
 
 /**
@@ -405,6 +414,7 @@ SourceView.gemseOptions = {
         }
     },
 }
+SourceView.createViewport = function(d) { return createDefaultViewport("SourceView", NS_HTML, "div"); };
 ViewsetManager.viewClasses["SourceView"] = SourceView;
 GemsePEditor.knownClasses.push(SourceView);
 
@@ -507,6 +517,7 @@ EquationView.prototype = {
         });
     },
 }
+EquationView.createViewport = function(d) { return createDefaultViewport("EquationView", NS_HTML, "div"); };
 ViewsetManager.viewClasses["EquationView"] = EquationView;
 
 /**
@@ -606,6 +617,7 @@ AttributeView.prototype = {
         }
     },
 }
+AttributeView.createViewport = function(d) { return createDefaultViewport("AttributeView", NS_HTML, "div"); };
 ViewsetManager.viewClasses["AttributeView"] = AttributeView;
 
 /**
@@ -710,6 +722,7 @@ DictionaryView.prototype = {
         this.viewport.appendChild(table);
     },
 }
+DictionaryView.createViewport = function(d) { return createDefaultViewport("DictionaryView", NS_XUL, "box"); };
 ViewsetManager.viewClasses["DictionaryView"] = DictionaryView;
 
 /**
@@ -776,6 +789,7 @@ OthersView.prototype = {
         };
     },
 };
+OthersView.createViewport = function(d) { return createDefaultViewport("OthersView", NS_XUL, "box"); };
 ViewsetManager.viewClasses["OthersView"] = OthersView;
 
 /**
@@ -800,6 +814,7 @@ StatusbarView.prototype = {
         this.viewport.appendChild(modeNameLabel);
     },
 }
+StatusbarView.createViewport = function(d) { return createDefaultViewport("StatusbarView", NS_XUL, "box"); };
 ViewsetManager.viewClasses["StatusbarView"] = StatusbarView;
 
 /**
@@ -1442,5 +1457,6 @@ NTNView.gemseOptions = {
         }
     },
 }
+NTNView.createViewport = function(d) { return createDefaultViewport("NTNView", NS_HTML, "div"); };
 ViewsetManager.viewClasses["NTNView"] = NTNView;
 GemsePEditor.knownClasses.push(NTNView);
