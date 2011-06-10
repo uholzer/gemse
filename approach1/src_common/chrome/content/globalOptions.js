@@ -83,6 +83,56 @@ gemseGlobalOptions = {
         setter: function(o,value) {
             o.loadAnyAsRoot = this.parser(value);
         }
-    }
+    },
+    "viewset": {
+        defaultValue: "auto",
+        validator: function(value) { return true },
+        parser: function(value) { return value },
+        setter: function(o,value) {
+            o.viewsetName = this.parser(value);
+        }
+    },
+    "defaultViewset": {
+        defaultValue: "xpath1(self::om:OMOBJ) content, presentation",
+        validator: function(value) { return true },
+        parser: function(value) { 
+            var rules = value.split(/,\s*/);
+            var ruleRegexXPath = /^(xpath1\((.*)\)\s+)?(\w+)$/;
+            return rules.map(function (r) { 
+                var testFunction;
+                var match = ruleRegexXPath.exec(r);
+                if (match && match[1]) {
+                    testFunction = this.testFunctionFactoryXPath(match[2]);
+                }
+                else if (match) {
+                    testFunction = this.testFunctionFactoryFinal();
+                }
+                else {
+                    // Wrong value. XXX: validator should catch this!
+                    return null;
+                }
+                return [testFunction,match[3]];
+            },
+            this);
+        },
+        testFunctionFactoryXPath: function(xpathexpr) {
+            return function(equationEnv) {
+                //var res = equationEnv.document.evaluate(xpathexpr, equationEnv.equation, standardNSResolver, XPathResult.BOOLEAN_TYPE, null);
+                //return res.booleanValue;
+                var res = equationEnv.document.evaluate(xpathexpr, equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null);
+                if (window.editor) {
+                window.editor.showMessage("Test function got XPath result " + res.singleNodeValue);
+                }
+                return res.singleNodeValue ? true : false;
+            }
+        },
+        testFunctionFactoryFinal: function() { return function() { return true } },
+        setter: function(o,value) {
+            o.defaultViewsetRules = this.parser(value);
+            if (window.editor) {
+            window.editor.showMessage(o.defaultViewsetRules.toSource());
+            }
+        }
+    },
 }
 

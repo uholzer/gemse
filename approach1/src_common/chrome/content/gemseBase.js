@@ -744,6 +744,7 @@ ViewsetManager.prototype = {
      */
     create: function() {
         // Find out which viewset to use
+        this.decideViewset();
         var viewsetNumber = this.globalViewsetNumber;
         if (!this.viewsets[viewsetNumber]) {
             throw new Error("There is no viewset with number " + viewsetNumber);
@@ -813,26 +814,52 @@ ViewsetManager.prototype = {
         }
     },
     /**
+     * Determines the viewset to be created based on the options
+     * viewset and defaultViewset and sets this.globalViewsetNumber.
+     * Returns nothing.
+     */
+    decideViewset: function() {
+        this.globalViewsetNumber = 0;
+        var viewsetName = this.editor.o.viewsetName;
+        // If there is no viewset given, use the rules to determine
+        // which is the default viewset
+        if (!viewsetName || viewsetName=="auto") {
+            viewsetName = null;
+            for (var ruleIndex=0; ruleIndex<this.editor.o.defaultViewsetRules.length && !viewsetName; ++ruleIndex) {
+                var rule = this.editor.o.defaultViewsetRules[ruleIndex];
+                if (rule[0](this.editor.equations[this.editor.focus])) {
+                    viewsetName = rule[1];
+                }
+            }
+        }
+        // Translate the name of the viewset into the index of the
+        // corresponding viewset.
+        var chosenViewset = this.viewsets.filter(function(viewset) { return viewset.getAttribute("name") == viewsetName })[0];
+        if (chosenViewset) { 
+            this.globalViewsetNumber = this.viewsets.indexOf(chosenViewset);
+        }
+        else {
+            var num = parseInt(viewsetName);
+            if (!isNaN(num)) { this.globalViewsetNumber = num }
+        }
+        this.editor.showMessage("Decided to use viewset " + this.globalViewsetNumber);
+    },
+    /**
      * Selects the viewset to be used from now on. This is normally
-     * called from a command executed by teh user.
+     * called from a command executed by the user. It basically just
+     * sets the options viewset or defaultViewset.
      * @param viewsetName Name or number of the viewset to be used.
      * @param scope       Tells whether the viewset should be used for
      *                    all equations, just for the equation on
-     *                    focus or for a given mode. (Not yet
-     *                    implemented!) TODO!
+     *                    focus or for a given mode. 
      */
     chooseViewset: function(viewsetName,scope) {
-        var candidates = this.viewsets.filter(function(viewset) { return viewset.getAttribute("name") == viewsetName });
-        var chosenViewset = null;
-        if (candidates.length==0) { 
-            var num = parseInt(viewsetName);
-            if (!isNaN(num)) { chosenViewset = this.viewsets[num] }
+        if (scope=="default") {
+            this.editor.optionsAssistant.set("defaultViewset", viewsetName);
         }
         else {
-            chosenViewset = candidates[0];
+            this.editor.optionsAssistant.set("viewset", viewsetName);
         }
-        if (!chosenViewset) { throw new Error("No viewset with name " + viewsetName + " found"); }
-        this.globalViewsetNumber = this.viewsets.indexOf(chosenViewset);
         // XXX: Is the following a good idea or does it break something?
         this.create();
         this.build(); // XXX: necessary?
