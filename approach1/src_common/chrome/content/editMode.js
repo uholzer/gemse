@@ -865,19 +865,23 @@ function editModeCommand_printWorkingDirectory(mode, instance) {
 function editModeCommand_set(mode, instance) {
     // TODO: Use parameter parsing facility from the CommandHandler
     // instead of doing our own. Problem: set global?
-    var args = instance.argument.match(/^(global )?([^=\s]+)(=(.*))?$/);
+    var args = instance.argument.match(/^((all )|(-))?([^=\s]+)(=(.*))?$/);
     if (!args) { throw new Error("I do not understand " + instance.argument); }
-    var global = args[1];
-    var key = args[2];
-    var value = args[4];
-    if (value!==undefined) {
+    var eqindep = args[2];
+    var remove = args[3];
+    var key = args[4];
+    var value = args[6];
+    if (remove) {
+        mode.editor.optionsAssistant.remove(key,null,null,eqindep ? false : true);
+    }
+    else if (value!==undefined) {
         // set the option
-        mode.editor.optionsAssistant.set(key,value);
+        mode.editor.optionsAssistant.set(key,value,null,null,eqindep ? false : true);
     }
     else {
         // Only show the user the current setting
         value = mode.editor.o["_" + key];
-        mode.editor.showMessage(key + "=" + value);
+        mode.editor.showMessage("about option " + key + ": [" + mode.editor.optionsAssistant.inheritanceInfo(key,null,null,true) + "]");
     }
     return true;
 }
