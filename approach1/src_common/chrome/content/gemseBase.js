@@ -1876,6 +1876,7 @@ GemsePEditor.prototype = {
         if (dest >= this.equations.length) { return false }
         if (dest < 0) { return false }
         this.focus = dest;
+        this.optionsAssistant.setCurrentEquation(this.equations[dest]);
         this.viewsetManager.create();
         this.viewsetManager.build(); // XXX: necessairy?
     },
