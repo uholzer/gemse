@@ -211,6 +211,18 @@ trivialInsertModeCommands[KEYMOD_ALT] = {
 trivialInsertModeCommands[KEYMOD_ALT + "n"] = {
     type: "disamb",
 }
+trivialInsertModeCommands[KEYMOD_ALT + "nR"] = {
+    type: "command",
+    repeating: "external",
+    argument: "none",
+    implementation: function trivialInsertModeCommand_notation_rendering (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"rendering") }
+}
+trivialInsertModeCommands[KEYMOD_ALT + "nP"] = {
+    type: "command",
+    repeating: "external",
+    argument: "none",
+    implementation: function trivialInsertModeCommand_notation_prototype (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"prototype") }
+}
 trivialInsertModeCommands[KEYMOD_ALT + "ni"] = {
     type: "command",
     repeating: "external",

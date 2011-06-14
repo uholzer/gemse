@@ -153,6 +153,18 @@ ucdInsertModeCommands[KEYMOD_CONTROL + "h"] = {
 ucdInsertModeCommands[KEYMOD_ALT + "n"] = {
     type: "disamb",
 }
+ucdInsertModeCommands[KEYMOD_ALT + "nR"] = {
+    type: "command",
+    repeating: "external",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_notation_rendering (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"rendering") }
+}
+ucdInsertModeCommands[KEYMOD_ALT + "nP"] = {
+    type: "command",
+    repeating: "external",
+    argument: "none",
+    implementation: function ucdInsertModeCommand_notation_prototype (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"prototype") }
+}
 ucdInsertModeCommands[KEYMOD_ALT + "ni"] = {
     type: "command",
     repeating: "external",

@@ -891,17 +891,13 @@ notation: {
         },
     },
     help: "",
-},
+},*/
 
 prototype: {
     name: "prototype",
     namespace: NS_OMDoc,
     type: "childList",
     attributes: {
-        : {
-            name: "",
-            defaultValue: "",
-        },
     },
     help: "",
 },
@@ -909,15 +905,11 @@ prototype: {
 rendering: {
     name: "rendering",
     namespace: NS_OMDoc,
-    type: "childList",
+    type: "inferred_mrow",
     attributes: {
-        : {
-            name: "",
-            defaultValue: "",
-        },
     },
     help: "",
-},*/
+},
 
 iterate: {
     name: "iterate",
