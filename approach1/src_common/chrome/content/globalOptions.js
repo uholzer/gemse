@@ -24,7 +24,8 @@ gemseGlobalOptions = {
         parser: OptionsAssistant.parsers.truthVal,
         setter: function(o,value) {
             o.pragmaticContent = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.pragmaticContent }
     },
     "selectableInsertModes": {
         defaultValue: "trivial,ucd,content",
@@ -42,7 +43,8 @@ gemseGlobalOptions = {
         },
         setter: function(o,value,editor) {
             o.selectableInsertModes = this.parser(value,editor);
-        }
+        },
+        remover: function(o) { delete o.selectableInsertModes }
     },
     "currentInsertMode": {
         defaultValue: "ucd",
@@ -66,7 +68,8 @@ gemseGlobalOptions = {
         },
         setter: function(o,value,editor) {
             o.insertMode = this.parser(value,editor);
-        }
+        },
+        remover: function(o) { delete o.insertMode }
     },
     "detailedErrors": {
         defaultValue: "on",
@@ -74,7 +77,8 @@ gemseGlobalOptions = {
         parser: OptionsAssistant.parsers.truthVal,
         setter: function(o,value) {
             o.detailedErrors = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.detailedErrors }
     },
     "loadAnyAsRoot": {
         defaultValue: "no",
@@ -82,7 +86,8 @@ gemseGlobalOptions = {
         parser: OptionsAssistant.parsers.truthVal,
         setter: function(o,value) {
             o.loadAnyAsRoot = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.loadAnyAsRoot }
     }
 }
 
