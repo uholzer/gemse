@@ -117,21 +117,13 @@ gemseGlobalOptions = {
         },
         testFunctionFactoryXPath: function(xpathexpr) {
             return function(equationEnv) {
-                //var res = equationEnv.document.evaluate(xpathexpr, equationEnv.equation, standardNSResolver, XPathResult.BOOLEAN_TYPE, null);
-                //return res.booleanValue;
-                var res = equationEnv.document.evaluate(xpathexpr, equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null);
-                if (window.editor) {
-                window.editor.showMessage("Test function got XPath result " + res.singleNodeValue);
-                }
-                return res.singleNodeValue ? true : false;
+                var res = equationEnv.document.evaluate(xpathexpr, equationEnv.equation, standardNSResolver, XPathResult.BOOLEAN_TYPE, null);
+                return res.booleanValue;
             }
         },
         testFunctionFactoryFinal: function() { return function() { return true } },
         setter: function(o,value) {
             o.defaultViewsetRules = this.parser(value);
-            if (window.editor) {
-            window.editor.showMessage(o.defaultViewsetRules.toSource());
-            }
         }
     },
 }

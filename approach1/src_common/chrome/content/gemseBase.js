@@ -866,7 +866,6 @@ ViewsetManager.prototype = {
             var num = parseInt(viewsetName);
             if (!isNaN(num)) { this.globalViewsetNumber = num }
         }
-        this.editor.showMessage("Decided to use viewset " + this.globalViewsetNumber);
     },
     /**
      * Selects the viewset to be used from now on. This is normally
@@ -927,11 +926,6 @@ ViewsetManager.prototype = {
             this.confWindow = window.openDialog("chrome://gemse/content/viewsetconf.xul", "_blank",
                 "chrome,menubar,toolbar,status,resizable,dialog=no",
                 arg);
-    /*var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
-             getService(Components.interfaces.nsIWindowWatcher);
-    ww.openWindow(null, "chrome://gemse/content/viewsetconf.xul", "_blank",
-                      "chrome,menubar,toolbar,status,resizable,dialog=no",
-                      arg);*/
         }
     },
     closeConfWindow: function() {
