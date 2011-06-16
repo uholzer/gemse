@@ -366,7 +366,8 @@ SourceView.gemseOptions = {
         parser: OptionsAssistant.parsers.truthVal,
         setter: function(o,value) {
             o.syntaxHighlighting = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.syntaxHighlighting }
     },
     "SourceView.showAttributes": {
         localToClass: SourceView,
@@ -375,7 +376,8 @@ SourceView.gemseOptions = {
         parser: OptionsAssistant.parsers.truthVal,
         setter: function(o,value) {
             o.showAttributes = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.showAttributes }
     },
     "SourceView.foldingDepth": {
         localToClass: SourceView,
@@ -384,7 +386,8 @@ SourceView.gemseOptions = {
         parser: OptionsAssistant.parsers.number_integer,
         setter: function(o,value) {
             o.foldingDepth = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.foldingDepth }
     },
     "SourceView.foldingStart": {
         localToClass: SourceView,
@@ -393,7 +396,8 @@ SourceView.gemseOptions = {
         parser: OptionsAssistant.parsers.number_integer,
         setter: function(o,value) {
             o.foldingStart = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.foldingStart }
     },
     "SourceView.indentation": {
         localToClass: SourceView,
@@ -402,7 +406,8 @@ SourceView.gemseOptions = {
         parser: function(value) { return value },
         setter: function(o,value) {
             o.indentation = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.indentation }
     },
     "SourceView.foldingKeepIndentation": {
         localToClass: SourceView,
@@ -411,7 +416,8 @@ SourceView.gemseOptions = {
         parser: OptionsAssistant.parsers.truthVal,
         setter: function(o,value) {
             o.foldingKeepIndentation = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.foldingKeepIndentation }
     },
 }
 SourceView.createViewport = function(d) { return createDefaultViewport("SourceView", NS_HTML, "div"); };
@@ -1401,7 +1407,8 @@ NTNView.gemseOptions = {
         parser: OptionsAssistant.parsers.truthVal,
         setter: function(o,value) {
             o.shortcut = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.shortcut }
     },
     "NTNView.notations": {
         localToClass: NTNView,
@@ -1424,7 +1431,8 @@ NTNView.gemseOptions = {
         },
         setter: function (o,value) {
             o.notations = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.notations }
     },
     "NTNView.documentURI": {
         localToClass: NTNView,
@@ -1440,7 +1448,8 @@ NTNView.gemseOptions = {
         },
         setter: function (o,value) {
             o.documentURI = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.documentURI }
     },
     "NTNView.theoryName": {
         localToClass: NTNView,
@@ -1454,7 +1463,8 @@ NTNView.gemseOptions = {
         },
         setter: function (o,value) {
             o.theoryName = this.parser(value);
-        }
+        },
+        remover: function(o) { delete o.theoryName }
     },
 }
 NTNView.createViewport = function(d) { return createDefaultViewport("NTNView", NS_HTML, "div"); };
