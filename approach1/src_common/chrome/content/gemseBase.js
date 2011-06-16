@@ -872,16 +872,18 @@ ViewsetManager.prototype = {
      * called from a command executed by the user. It basically just
      * sets the options viewset or defaultViewset.
      * @param viewsetName Name or number of the viewset to be used.
-     * @param scope       Tells whether the viewset should be used for
-     *                    all equations, just for the equation on
-     *                    focus or for a given mode. 
+     * @param scope       "default" to define how to choose a viewset
+     *                    by default, "eqindep" to set the viewset for
+     *                    all equations, "eqlocal" to set it just for
+     *                    the current equation. (If missing, "eqlocal"
+     *                    is assumed.)
      */
     chooseViewset: function(viewsetName,scope) {
         if (scope=="default") {
             this.editor.optionsAssistant.set("defaultViewset", viewsetName);
         }
         else {
-            this.editor.optionsAssistant.set("viewset", viewsetName);
+            this.editor.optionsAssistant.set("viewset", viewsetName, null, null, scope=="eqindep" ? false : true);
         }
         // XXX: Is the following a good idea or does it break something?
         this.create();
