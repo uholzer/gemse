@@ -1573,9 +1573,13 @@ GemsePEditor.prototype = {
                 // loadAnyAsRoot is set to true
                 var is_math = (m.localName == "math" && m.namespaceURI == NS_MathML);
                 var is_OMOBJ = (m.localName == "OMOBJ" && m.namespaceURI == NS_OpenMath);
-                if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ) {
+                var is_notation = (m.localName == "notation" && m.namespaceURI == NS_OMDoc);
+                if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ && !is_notation) {
                     //XXX: Maybe we should not throw here, but just skip this equation
-                    throw new Error("The element you load must be a math element in the MathML namespace or an OMOBJ element in the OpenMath namespace");
+                    throw new Error("The element you load must be a math element " + 
+                                    "in the MathML namespace, an OMOBJ element " + 
+                                    "in the OpenMath namespace or a notation " +
+                                    "element in the OMDoc namespace");
                 }
 
                 // Create new environment using a deep copy
@@ -1626,8 +1630,12 @@ GemsePEditor.prototype = {
         // loadAnyAsRoot is set to true
         var is_math = (element.localName == "math" && element.namespaceURI == NS_MathML);
         var is_OMOBJ = (element.localName == "OMOBJ" && element.namespaceURI == NS_OpenMath);
-        if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ) {
-            throw new Error("The element you load must be a math element in the MathML namespace or an OMOBJ element in the OpenMath namespace");
+        var is_notation = (element.localName == "notation" && element.namespaceURI == NS_OMDoc);
+        if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ && !is_notation) {
+            throw new Error("The element you load must be a math element " + 
+                            "in the MathML namespace, an OMOBJ element " + 
+                            "in the OpenMath namespace or a notation " +
+                            "element in the OMDoc namespace");
         }
 
         // Create a storage with this URI
@@ -1675,7 +1683,7 @@ GemsePEditor.prototype = {
      * @param {String} uri
      */
     loadAll: function(uri) {
-        this.loadURI(uri,null,"(//m:math|//om:OMOBJ)[not(ancestor::m:math|ancestor::om:OMOBJ)]");
+        this.loadURI(uri,null,"(//m:math|//om:OMOBJ|//o:notation)[not(ancestor::m:math|ancestor::om:OMOBJ|ancestor::o:notation)]");
     },
     /**
      * Moves the focus to another equation.
