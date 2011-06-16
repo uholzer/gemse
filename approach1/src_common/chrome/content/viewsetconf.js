@@ -144,6 +144,11 @@ configurator = {
         }, this);
     },
 
+    useCurrentViewsetEqindep: function() {
+        this.viewsetManager.chooseViewset(this.viewsetNumber, "eqindep");
+        this.restart();
+    },
+
     /* Internal stuff */
     createViewsMenupopupEventHandler: function(viewClass) {
         return function () { configurator.insertView(viewClass) }

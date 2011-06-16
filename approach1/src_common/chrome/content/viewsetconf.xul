@@ -71,33 +71,19 @@ or (at your option) any later version.
     <button label="Remove" onclick="configurator.remove()" flex="1"/>
 </hbox>
 
-<grid>
-<columns>
-    <column flex="1"/>
-    <column flex="1"/>
-</columns>
-<rows>
-<row>
-    <hbox flex="1">
+<hbox>
     <!-- Button for saving viewset under a new name -->
     <button label="Save Viewset as" onclick="configurator.saveViewsetAs()" flex="1"/>
-    </hbox>
 
     <!-- Button for loading existing viewset -->
     <button type="menu" label="Load Viewset" flex="1">
       <menupopup id="viewsetsMenupopup" onpopupshowing="configurator.fillViewsetsMenupopup()">
       </menupopup>
     </button>
-</row>
+</hbox>
 
-<row>
-    <!-- Button for using this viewset for all equations -->
-    <button label="Use this viewset for all equations"/>
-    <!-- Button for using this viewset for this equation -->
-    <button label="Remove local viewsets on all equaitons"/>
-</row>
-
-</rows>
-</grid>
+<!-- Button for using this viewset for all equations -->
+<button label="Choose for all equations" onclick="configurator.useCurrentViewsetEqindep()"
+        tooltiptext="Uses this viewset for all equations if they don't specify another one locally"/>
 
 </window>
