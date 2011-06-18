@@ -8,7 +8,7 @@
  */
 
 function createDefaultViewport(className, elementNS, elementName) {
-    var viewport = d.createElementNS(elementNS, elementName);
+    var viewport = document.createElementNS(elementNS, elementName);
     viewport.setAttributeNS(NS_internal, "function", "viewport");
     viewport.setAttributeNS(NS_internal, "viewClass", className);
     return viewport;
