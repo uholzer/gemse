@@ -232,7 +232,7 @@ ContentInsertMode.prototype = {
      * Set the language to be used for the next created element
      */
     forceLang: function(lang) {
-        
+        this.langForNextElement = lang;
     },
     currentLang: function() {
         if (this.langForNextElement == this.langs.AUTO) {
