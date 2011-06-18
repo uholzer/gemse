@@ -7,7 +7,19 @@
     </metadata>
     <theory xml:id="sets">
       <imports from="logic.omdoc"/>
-      <symbol name="in" xml:id="in.sym"/>
+
+      <symbol name="bylist"/>
+
+      <notation cd="sets" name="bylist">
+      <prototype><om:OMA><om:OMS name="bylist" cd="sets"/><exprlist name="elements"><expr name="element"/></exprlist></om:OMA></prototype><rendering><m:mo>{</m:mo><iterate name="elements"><separator><m:mo>,</m:mo></separator><render name="element"/></iterate><m:mo>}</m:mo></rendering></notation>
+
+      <symbol name="bycondition"/>
+
+      <notation cd="sets" name="bycondition">
+      <prototype><om:OMA><om:OMS name="bycondition" cd="sets"/><om:OMBIND><om:OMS name="lambda" cd="fns1"/><om:OMBVAR><expr name="var"/></om:OMBVAR><expr name="condition"/></om:OMBIND></om:OMA></prototype><rendering><m:mo>{</m:mo><render name="var"/><m:mo>|</m:mo><render name="condition"/><m:mo>}</m:mo></rendering></notation>
+
+      <symbol name="in"/>
+
       <notation cd="sets" name="in">
         <prototype>
           <om:OMA>
@@ -16,7 +28,7 @@
             <expr name="set"/>
           </om:OMA>
         </prototype>
-        <rendering precedence="600">
+        <rendering a0:attributeCursor="" xmlns:a0="http://www.andonyar.com/rec/2008-12/gemse/internalns">
           <m:mrow>
             <m:mo egroup="fence" fence="true">(</m:mo>
             <render name="el"/>
@@ -27,7 +39,8 @@
         </rendering>
       </notation>
 
-      <symbol name="intersection" xml:id="in.cut"/>
+      <symbol name="intersection"/>
+
       <notation cd="sets" name="intersection">
         <prototype>
           <om:OMA>
@@ -37,7 +50,7 @@
             </exprlist>
           </om:OMA>
         </prototype>
-        <rendering precedence="600">
+        <rendering a1:attributeCursor="" xmlns:a1="http://www.andonyar.com/rec/2008-12/gemse/internalns">
           <m:mrow>
             <m:mo egroup="fence" fence="true">(</m:mo>
             <iterate name="args">
@@ -55,9 +68,58 @@
         <CMP>
         The intersection <om:OMOBJ><om:OMV name="C"/></om:OMOBJ> of <om:OMOBJ><om:OMV name="A"/></om:OMOBJ> and <om:OMOBJ><om:OMV name="B"/></om:OMOBJ>
         is defined as
-        <om:OMOBJ><om:OMA><om:OMS name="eq" cd="relation1"/><om:OMV name="C"/><om:OMA><om:OMS name="intersection" cd="sets"/><om:OMV name="A"/><om:OMV name="B"/></om:OMA></om:OMA></om:OMOBJ>
+        <om:OMOBJ><om:OMA><om:OMS name="eq" cd="relation1"/><om:OMA><om:OMS name="intersection" cd="sets"/><om:OMV name="A"/><om:OMV name="B"/></om:OMA><om:OMA><om:OMS name="bycondition" cd="sets"/><om:OMBIND><om:OMS name="lambda" cd="fns1"/><om:OMBVAR><om:OMV name="x"/></om:OMBVAR><om:OMA><om:OMS name="And" cd="logic"/><om:OMA><om:OMS name="in" cd="sets"/><om:OMV name="x"/><om:OMV name="A"/></om:OMA><om:OMA><om:OMS name="in" cd="sets"/><om:OMV name="x"/><om:OMV name="B"/></om:OMA></om:OMA></om:OMBIND></om:OMA></om:OMA></om:OMOBJ>
         </CMP>
       </definition>
+
+      <example for="intersection">
+        <FMP>
+          <om:OMOBJ><om:OMA><om:OMS name="eq" cd="relation1"/><om:OMA><om:OMS name="intersection" cd="sets"/><om:OMA><om:OMS name="bylist" cd="sets"/><om:OMI>1</om:OMI><om:OMI>2</om:OMI><om:OMI>3</om:OMI><om:OMI>4</om:OMI></om:OMA><om:OMA><om:OMS name="bylist" cd="sets"/><om:OMI>2</om:OMI><om:OMI>4</om:OMI><om:OMI>6</om:OMI><om:OMI>8</om:OMI></om:OMA></om:OMA><om:OMA><om:OMS name="bylist" cd="sets"/><om:OMI>2</om:OMI><om:OMI>4</om:OMI></om:OMA></om:OMA></om:OMOBJ>
+        </FMP>
+      </example>
+
+      <symbol name="union"/>
+
+      <notation cd="sets" name="union">
+        <prototype>
+          <om:OMA>
+            <om:OMS cd="sets" cr="fun" name="union"/>
+            <exprlist name="args">
+              <expr name="arg"/>
+            </exprlist>
+          </om:OMA>
+        </prototype>
+        <rendering a2:attributeCursor="" xmlns:a2="http://www.andonyar.com/rec/2008-12/gemse/internalns">
+          <m:mrow>
+            <m:mo egroup="fence" fence="true">(</m:mo>
+            <iterate name="args">
+              <separator><m:mo>∪</m:mo></separator>
+              <render name="arg"/>
+            </iterate>
+            <m:mo egroup="fence" fence="true">)</m:mo>
+          </m:mrow>
+        </rendering>
+      </notation>
+      
+      <definition for="union" xml:id="union.def">
+        <CMP>
+        The union <om:OMOBJ><om:OMV name="C"/></om:OMOBJ> of <om:OMOBJ><om:OMV name="A"/></om:OMOBJ> and <om:OMOBJ><om:OMV name="B"/></om:OMOBJ>
+        is defined as
+        <om:OMOBJ><om:OMA><om:OMS name="eq" cd="relation1"/><om:OMA><om:OMS name="union" cd="sets"/><om:OMV name="A"/><om:OMV name="B"/></om:OMA><om:OMA><om:OMS name="bycondition" cd="sets"/><om:OMBIND><om:OMS name="lambda" cd="fns1"/><om:OMBVAR><om:OMV name="x"/></om:OMBVAR><om:OMA><om:OMS name="Or" cd="logic"/><om:OMA><om:OMS name="in" cd="sets"/><om:OMV name="x"/><om:OMV name="A"/></om:OMA><om:OMA><om:OMS name="in" cd="sets"/><om:OMV name="x"/><om:OMV name="B"/></om:OMA></om:OMA></om:OMBIND></om:OMA></om:OMA></om:OMOBJ>
+        </CMP>
+      </definition>
+
+      <example for="union">
+        <FMP>
+          <om:OMOBJ><om:OMA><om:OMS name="eq" cd="relation1"/><om:OMA><om:OMS name="union" cd="sets"/><om:OMA><om:OMS name="bylist" cd="sets"/><om:OMI>1</om:OMI><om:OMI>2</om:OMI><om:OMI>3</om:OMI><om:OMI>4</om:OMI></om:OMA><om:OMA><om:OMS name="bylist" cd="sets"/><om:OMI>2</om:OMI><om:OMI>4</om:OMI><om:OMI>6</om:OMI><om:OMI>8</om:OMI></om:OMA></om:OMA><om:OMA><om:OMS name="bylist" cd="sets"/><om:OMI>1</om:OMI><om:OMI>2</om:OMI><om:OMI>3</om:OMI><om:OMI>4</om:OMI><om:OMI>6</om:OMI><om:OMI>8</om:OMI></om:OMA></om:OMA></om:OMOBJ>
+        </FMP>
+      </example>
+
+      <assertion type="theorem">
+        <FMP>
+            <om:OMOBJ><om:OMA><om:OMS name="eq" cd="relation1"/><om:OMA><om:OMS name="intersection" cd="sets"/><om:OMV name="A"/><om:OMA><om:OMS name="union" cd="sets"/><om:OMV name="B"/><om:OMV name="C"/></om:OMA></om:OMA><om:OMA><om:OMS name="union" cd="sets"/><om:OMA><om:OMS name="intersection" cd="sets"/><om:OMV name="A"/><om:OMV name="B"/></om:OMA><om:OMA><om:OMS name="intersection" cd="sets"/><om:OMV name="A"/><om:OMV name="C"/></om:OMA></om:OMA></om:OMA></om:OMOBJ>
+        </FMP>
+      </assertion>
     </theory>
   </omgroup>
 </omdoc>
