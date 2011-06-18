@@ -569,7 +569,7 @@ function contentInsertModeCommand_notation_rendering(mode, instance) {
 function contentInsertModeCommand_notation_expr(mode, instance) {
     var newElement = mode.d.createElementNS(NS_OMDoc, "expr");
     newElement.setAttribute("name", instance.argument);
-    mode.putElement(newElement, true);
+    mode.putElement(newElement, false);
 
     return true;
 }
