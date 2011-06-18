@@ -143,6 +143,16 @@ contentInsertModeCommands[KEYMOD_CONTROL + "ax"] = {
 contentInsertModeCommands[KEYMOD_ALT + "n"] = {
     type: "disamb",
 }
+contentInsertModeCommands[KEYMOD_ALT + "nP"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_notation_prototype
+}
+contentInsertModeCommands[KEYMOD_ALT + "nR"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_notation_rendering
+}
 contentInsertModeCommands[KEYMOD_ALT + "ne"] = {
     type: "command",
     argument: "newlineTerminated",

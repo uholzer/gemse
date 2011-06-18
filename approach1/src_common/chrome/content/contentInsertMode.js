@@ -552,6 +552,20 @@ function contentInsertModeCommand_annotationxml_arbitrary(mode, instance) {
     return true;
 }
 
+function contentInsertModeCommand_notation_prototype(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "prototype");
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
+function contentInsertModeCommand_notation_rendering(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "rendering");
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
 function contentInsertModeCommand_notation_expr(mode, instance) {
     var newElement = mode.d.createElementNS(NS_OMDoc, "expr");
     newElement.setAttribute("name", instance.argument);
