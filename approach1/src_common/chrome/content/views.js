@@ -1422,9 +1422,9 @@ NTNView.gemseOptions = {
                 notationuris = [];
             }
             var parsed = [];
-            for each (var uri in notationuris) {
+            notationuris.forEach(function(uri) {
                 parsed.push([uri[0],uri.substring(1)]);
-            }
+            });
             return parsed;
         },
         setter: function (o,value) {
