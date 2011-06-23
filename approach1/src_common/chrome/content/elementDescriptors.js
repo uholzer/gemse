@@ -867,4 +867,110 @@ maction: {
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.maction",
 },
 
+/*notations: {
+    name: "notations",
+    namespace: NS_OMDoc,
+    type: "childList",
+    attributes: {
+        : {
+            name: "",
+            defaultValue: "",
+        },
+    },
+    help: "",
+},
+
+notation: {
+    name: "notation",
+    namespace: NS_OMDoc,
+    type: "childList",
+    attributes: {
+        : {
+            name: "",
+            defaultValue: "",
+        },
+    },
+    help: "",
+},*/
+
+prototype: {
+    name: "prototype",
+    namespace: NS_OMDoc,
+    type: "childList",
+    attributes: {
+    },
+    help: "",
+},
+
+rendering: {
+    name: "rendering",
+    namespace: NS_OMDoc,
+    type: "inferred_mrow",
+    attributes: {
+    },
+    help: "",
+},
+
+iterate: {
+    name: "iterate",
+    namespace: NS_OMDoc,
+    type: "childList",
+    attributes: {
+        name: {
+            name: "name",
+            defaultValue: "",
+        },
+    },
+    help: "",
+},
+
+separator: {
+    name: "separator",
+    namespace: NS_OMDoc,
+    type: "childList",
+    attributes: {
+    },
+    help: "",
+},
+
+render: {
+    name: "render",
+    namespace: NS_OMDoc,
+    type: "empty",
+    attributes: {
+        name: {
+            name: "name",
+            defaultValue: "",
+        },
+    },
+    help: "",
+},
+
+/*exprlist: {
+    name: "exprlist",
+    namespace: NS_OMDoc,
+    type: "childList",
+    attributes: {
+        : {
+            name: "",
+            defaultValue: "",
+        },
+    },
+    help: "",
+},
+
+expr: {
+    name: "expr",
+    namespace: NS_OMDoc,
+    type: "childList",
+    attributes: {
+        : {
+            name: "",
+            defaultValue: "",
+        },
+    },
+    help: "",
+},*/
+
+
 }

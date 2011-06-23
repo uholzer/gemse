@@ -74,6 +74,9 @@ contentInsertModeCommands = {
 contentInsertModeCommands[KEYMOD_CONTROL] = {
     type: "disamb",
 }
+contentInsertModeCommands[KEYMOD_ALT] = {
+    type: "disamb",
+}
 contentInsertModeCommands[KEYMOD_CONTROL + "i"] = {
     type: "command",
     argument: "newlineTerminated",
@@ -136,6 +139,29 @@ contentInsertModeCommands[KEYMOD_CONTROL + "ax"] = {
     argument: "newlineTerminated",
     argumentLineCount: 3,
     implementation: contentInsertModeCommand_annotationxml_arbitrary
+}
+contentInsertModeCommands[KEYMOD_ALT + "n"] = {
+    type: "disamb",
+}
+contentInsertModeCommands[KEYMOD_ALT + "nP"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_notation_prototype
+}
+contentInsertModeCommands[KEYMOD_ALT + "nR"] = {
+    type: "command",
+    argument: "none",
+    implementation: contentInsertModeCommand_notation_rendering
+}
+contentInsertModeCommands[KEYMOD_ALT + "ne"] = {
+    type: "command",
+    argument: "newlineTerminated",
+    implementation: contentInsertModeCommand_notation_expr
+}
+contentInsertModeCommands[KEYMOD_ALT + "nl"] = {
+    type: "command",
+    argument: "newlineTerminated",
+    implementation: contentInsertModeCommand_notation_exprlist
 }
 contentInsertModeCommands[KEYMOD_CONTROL + "h"] = {
     type: "command",

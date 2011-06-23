@@ -232,7 +232,7 @@ ContentInsertMode.prototype = {
      * Set the language to be used for the next created element
      */
     forceLang: function(lang) {
-        
+        this.langForNextElement = lang;
     },
     currentLang: function() {
         if (this.langForNextElement == this.langs.AUTO) {
@@ -552,6 +552,35 @@ function contentInsertModeCommand_annotationxml_arbitrary(mode, instance) {
     return true;
 }
 
+function contentInsertModeCommand_notation_prototype(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "prototype");
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
+function contentInsertModeCommand_notation_rendering(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "rendering");
+    mode.putElement(newElement, true);
+
+    return true;
+}
+
+function contentInsertModeCommand_notation_expr(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "expr");
+    newElement.setAttribute("name", instance.argument);
+    mode.putElement(newElement, false);
+
+    return true;
+}
+
+function contentInsertModeCommand_notation_exprlist(mode, instance) {
+    var newElement = mode.d.createElementNS(NS_OMDoc, "exprlist");
+    newElement.setAttribute("name", instance.argument);
+    mode.putElement(newElement, true);
+
+    return true;
+}
 
 function contentInsertModeCommand_lambda(mode, instance) {
     // Build our lambda construct

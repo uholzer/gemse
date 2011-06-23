@@ -14,7 +14,7 @@ or (at your option) any later version.
 <script src="const.js"/>
 <script><![CDATA[
   function pickEquations(doc, reference) {
-    var xpath = "(./descendant-or-self::m:math|./descendant-or-self::om:OMOBJ|./ancestor::m:math|./ancestor::om:OMOBJ)[not(ancestor::m:math|ancestor::om:OMOBJ)]";
+    var xpath = "(./descendant-or-self::m:math|./descendant-or-self::om:OMOBJ|./descendant-or-self::o:notation|./ancestor::m:math|./ancestor::om:OMOBJ|./ancestor::o:notation)[not(ancestor::m:math|ancestor::om:OMOBJ|ancestor::o:notation)]";
     var xpathResult = doc.evaluate(xpath, reference, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 
     var mathElements = [];
