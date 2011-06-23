@@ -96,6 +96,7 @@ configurator = {
         else {
             this.selected.appendChild(newel);
         }
+        this.commitChange();
     },
 
     remove: function() {
@@ -223,13 +224,10 @@ function AttributesTreeView(element) {
     this.updateSorted();
 };
 AttributesTreeView.prototype = {
-    ATTRIBUTE: 0,
-    OPTION: 1,
-    HEADER: 2,
     updateSorted: function() {
         this.sorted = [];
         for (var i=0; i<this.attributes.length; ++i) {
-            this.sorted.push([this.ATTRIBUTE, this.attributes.item(i)]);
+            this.sorted.push(this.attributes.item(i));
         }
         this.sorted = this.sorted.sort(
             function (a, b) { 
@@ -244,12 +242,11 @@ AttributesTreeView.prototype = {
         if (this.attributes.getNamedItemNS(NS_internal, "function") && optionsAttribute) {
             var options = configurator.viewsetManager.parseOptionsString(optionsAttribute.nodeValue);
             //var options = options.sort();
-            options.forEach(function (o) { o.unshift(this.OPTION) }, this);
             this.includesOptions = true;
             this.optionsParent = this.sorted.length;
             this.optionsStart = this.sorted.length + 1;
             this.optionsCount = options.length;
-            this.sorted = this.sorted.concat([[this.HEADER]], options);
+            this.sorted = this.sorted.concat([null], options);
         }
         else {
             this.includesOptions = false;
@@ -372,28 +369,28 @@ AttributesTreeView.prototype = {
     //function getProgressMode
     //function getCellValue
     getCellText: function(row, col) {
-        if (this.sorted[row][0]==this.ATTRIBUTE) {
+        if (row < this.optionsParent) {
             if (col.id=="nameCol") {
-                return this.sorted[row][1].localName;
+                return this.sorted[row].localName;
             }
             else if (col.id=="namespaceCol") {
-                return this.sorted[row][1].namespaceURI;
+                return this.sorted[row].namespaceURI;
             }
             else if (col.id=="valueCol") {
-                return this.sorted[row][1].nodeValue;
+                return this.sorted[row].nodeValue;
             }
         }
-        else if (this.sorted[row][0]==this.HEADER) {
+        else if (row==this.optionsParent) {
             if (col.id=="nameCol") {
                 return "Options";
             }
         }
         else {
             if (col.id=="nameCol") {
-                return this.sorted[row][1];
+                return this.sorted[row][0];
             }
             else if (col.id=="valueCol") {
-                return this.sorted[row][2];
+                return this.sorted[row][1];
             }
         }
         return "";
@@ -412,7 +409,7 @@ AttributesTreeView.prototype = {
     //function setCellValue
     setCellText: function(row, col, value) {
         if (row < this.optionsParent) {
-            var oldatt = this.sorted[row][1];
+            var oldatt = this.sorted[row];
             this.attributes.removeNamedItemNS(oldatt.namespaceURI, oldatt.localName);
             var newatt = configurator.editorWindow.document.createAttributeNS(
                 col.id=="namespaceCol" ? value : oldatt.namespaceURI,
@@ -423,13 +420,13 @@ AttributesTreeView.prototype = {
         }
         else if (row >= this.optionsStart && (col.id=="nameCol" || col.id=="valueCol")) {
             // Reencode options
-            this.sorted[row][col.id=="nameCol" ? 1 : 2] = value;
+            this.sorted[row][col.id=="nameCol" ? 0 : 1] = value;
             var optionsatt = this.attributes.getNamedItemNS(NS_internal, "options");
             if (!optionsatt) { 
                 optionsatt = configurator.editorWindow.document.createAttributeNS(NS_internal, "options");
                 this.attributes.setNamedItemNS(optionsatt);
             }
-            optionsatt.nodeValue = configurator.viewsetManager.encodeOptionsString(this.sorted.slice(this.optionsStart).map(function (e) { return [e[1],e[2]] }));
+            optionsatt.nodeValue = configurator.viewsetManager.encodeOptionsString(this.sorted.slice(this.optionsStart));
         }
         this.updateSorted();
         configurator.commitChange();
