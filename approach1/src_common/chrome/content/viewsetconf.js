@@ -314,7 +314,7 @@ AttributesTreeView.prototype = {
             for (var row = rangeStart.value; row <= rangeEnd.value; ++row) {
                 if (row < this.optionsParent) {
                     // The row is an attribute
-                    var att = this.sorted[row][1];
+                    var att = this.sorted[row];
                     this.attributes.removeNamedItemNS(att.namespaceURI, att.localName);
                 }
                 else if (row >= this.optionsStart) {
@@ -327,9 +327,7 @@ AttributesTreeView.prototype = {
         if (this.includesOptions) {
             var optionsatt = this.attributes.getNamedItemNS(NS_internal, "options");
             optionsatt.nodeValue = configurator.viewsetManager.encodeOptionsString(
-                this.sorted.slice(this.optionsStart).
-                            filter(function(e) { return e }).
-                            map(function (e) { return [e[1],e[2]] })
+                this.sorted.slice(this.optionsStart).filter(function(e) { return e })
             );
         }
         // Note that this.sorted is in a bad state here, since it
