@@ -23,7 +23,65 @@
 
 <body>
 
-<h1>Views</h1>
+<h1 id="viewsets">Viewsets</h1>
+
+<p>A viewset describes which views should be placed where in the
+window.</p>
+
+<h2 id="chooseviewset">Choosing the viewset</h2>
+
+<p>Which viewset is used for an equation is defined by the two options
+<code>viewset</code> and <code>defaultViewset</code>. If viewset is
+not set at all or is set to <code>auto</code>, then the option
+<code>defaultViewset</code> is used to find out which viewset should
+be used. Because options can also be set locally to an equaiton, it is
+possible to choose a certain viewset for only one equaiton. You can
+either set these options directly, or use the 
+<a href="editMode.xhtml#editModeCommand_chooseViewset">dedicated
+command</a> for choosing viewsets from the editMode.</p>
+
+<h2 id="viewsetdescriptions">Describing a viewset with XML</h2>
+
+<p>A viewset is described using XML. Currently, the viewset
+descriptions are only to be found in <code>editor.xul</code>
+itself.</p>
+
+<h2 id="viewsetconf">The viewset configuration window</h2>
+
+<p>While Gemse is running, there is a userfriendly way to edit
+viewsets. Changes made like this are however lost when Gemse is
+closed.</p>
+
+<p>The edit mode provides a 
+<a href="editMode.xhtml#editModeCommand_viewsetconfWindow">command to
+open the configuraiton window</a>. You can keep it open during your
+Gemse session. It allows you to remove and add views to a viewset. In
+order to place the views, you can also insert XUL box elements.
+Attributes of all elements and options of views can be set as
+well.</p>
+
+<p>First of all, note that every change you make takes effect
+immediately. Keep in mind that the changes also take effect for all
+other equations using the same viewset. If you don't want that, you
+first have to save the viewset under anoter name and <em>then</em>
+make the changes.</p>
+
+<p>On the top of the configuration window you see an input box which
+allows you to change the name of the viewset and one which allows you
+to change its description. Below, you see a preview of the viewset
+using boxes. Every box represents an element of the viewset
+description. You can click on a box to select it. Below the preview
+you have a list of all attributes and options of the currently
+selected element of the viewset. Open the context menu on this list if
+you want delete or add an entry. Below the list, you find buttons
+which allow you to insert a view, a box before, after or into the
+selected element or remove the selected element. At the bottom you can
+save a copy of the current viewset under a new name, load another
+viewset. The last button at the very bottom allows you to use this
+viewset for all equations (except for the ones that are locally
+configured to use a certain viewset).</p>
+
+<h1>Available Views</h1>
 
 <p>This is an incomplete overview of the available views and viewsets.
 If you know XUL, you can edit the viewsets defined in

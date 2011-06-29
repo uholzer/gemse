@@ -353,6 +353,16 @@
     display does not get updated. In such a case you can use this command
     to force an update of the display.</p>
 </div>
+
+<div class="commandDocumentation" id="editModeCommand_viewsetconfWindow">
+    <h4 class="commandTitle">Open/close viewset configuration window</h4>
+
+    <p>Opens a window which allows you to configure viewsets. The
+    window can be kept open while working with Gemse. If the window is
+    already open, this command moves the focus to it. If the argument
+    <code>close</code> is given to this command, the configuraiton window gets
+    closed.</p>
+</div>
 </div>
 
 <div id="callinginsertmode">
@@ -533,12 +543,23 @@
     argument, it shows you the current value of the option. For
     example
     <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> detailedErrors&enter;</kbd>
-    shows you the value of the option <code>detailedErrors</code>.
-    If you want to set an option, put an equal sign after the name of
+    shows you the value of the option <code>detailedErrors</code>.</p>
+
+    <p>If you want to set an option, put an equal sign after the name of
     the option and then the value. For example
     <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> detailedErrors=off&enter;</kbd>
     sets the option <code>detailedErrors</code> to
-    <code>off</code>.</p>
+    <code>off</code>. Note that like this, the option is set only for
+    the current equation. If you want to change the global setting of
+    this option, use the keyword <code>all</code> like 
+    <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> all detailedErrors=off&enter;</kbd>.</p>
+
+    <p>Note that a global setting of an option is always overridden by
+    the setting local to the current equation if it is present. In
+    order to remove the local setting of the current equation of an
+    option, put a dash right in front of the name of the option,
+    for example
+    <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> -detailedErrors</kbd>.</p>
 
     <p>Do not place whitespaces before or
     after the equal sign that are not part of the value of the option.

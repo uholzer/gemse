@@ -23,7 +23,24 @@
 
 <body>
 
-<h1>Options</h1>
+<h1>Options system</h1>
+
+<p>Options can be set globally for allequaitons or locally to one
+equaiton. Is an option set locally for an equation, then this setting
+precedes the global one. It is also possible to set an option only for
+a certain functionality of Gemse (for example a view). (Options set
+in this way are also local to the current equation and precede all
+other settings.)</p>
+
+<p>The edit mode provides a 
+<a href="editMode.xhtml#editModeCommand_set">command for setting options</a>. It can set
+them globally or locally to an equation. Setting an option for a view
+must be done via the attribute <code>internal:options</code> in the
+<a href="views.xhtml#viewsetdescription">description of a viewset</a>. (One can use the 
+<a href="views.xhtml#viewsetconf">viewset configuration window</a>
+to do this easily while Gemse is running.)</p>
+
+<h1>List of options</h1>
 
 <p>In the following table, <q>truth value</q> denotes
 <code>true</code> (<code>on</code>, <code>yes</code>, <code>1</code>
@@ -84,6 +101,28 @@ are treated as synonyms) and <code>false</code> (<code>off</code>,
     If you set this option to true, Gemse will no longer complain and
     just load what you ask it to load.</td>
 </tr>
+<tr>
+    <td><code>viewset</code></td>
+    <td>name or number of a viewset of <code>auto</code></td>
+    <td>The viewset to be used. If set to <code>auto</code> or not set
+    at all, the option <code>defaultViewset</code> takes effect. Note
+    that setting this option does not change the viewset immediately.</td>
+</tr>
+<tr>
+    <td><code>defaultViewset</code></td>
+    <td>A comma separated list of rules, each consisting of an
+    optional selector folowed by a whitespace and the name or number of a
+    viewset</td>
+    <td>The rules are traversed in order. For every rule, the selector
+    is applied to the current equation. If it results in true, the
+    viewset given in the rule is used and processing of the rules stops.
+    If the selector is not present, it is assumed to be true. (Therefore,
+    you only want to have a rule without selector as the last one of
+    the list.) Currently the only supported selector is of the form
+    <code>xpath1(xpathexpression)</code> where
+    <code>xpathexpression</code> is an XPath 1 expression.</td>
+</tr>
+
 <tr>
     <td><code>SourceView.foldingDepth</code></td>
     <td><code>-1</code> or any bigger integer</td>
