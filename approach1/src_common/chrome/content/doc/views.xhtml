@@ -81,33 +81,122 @@ viewset. The last button at the very bottom allows you to use this
 viewset for all equations (except for the ones that are locally
 configured to use a certain viewset).</p>
 
-<h1>Available Views</h1>
+<h1 id="listofviews">Available Views</h1>
 
-<p>This is an incomplete overview of the available views and viewsets.
-If you know XUL, you can edit the viewsets defined in
-<code>editor.xul</code>.</p>
+<h2 id="DirectView">DirectView</h2>
 
-<h3>NTNView</h3>
+<p>Just shows the equation using Mozilla's rendering engine. This
+works excellent for Presentation MathML. However, Mozilla's rendering
+engine does not show Content MathML and OpenMath.</p>
+
+<h2 id="MessageView">MessageView</h2>
+
+<p>Shows errors, warnings and other messages</p>
+
+<h2 id="TreeView">TreeView</h2>
+
+<p>Uses nested boxes to depict the tree structore of the equation's
+XML code.</p>
+
+<h2 id="SourceView">SourceView</h2>
+
+<p>Shows the XML source code of the current equation. The cursor is
+shown here as well. The appearance can be configured in various ways.
+(Note, not a real serializer is used, therefore the output of this view might
+not be usable as XML document directly.)</p>
+
+<p>Options:</p>
+
+<dl>
+    <dt><code>SourceView.foldingDepth</code></dt>
+    <dd>Only show elements to this depth, relative to
+    the element where the view starts. The special value <code>-1</code> causes
+    the source view to show all elements from the starting point to
+    the leaves.</dd>
+
+    <dt><code>SourceView.foldingStart</code></dt>
+    <dd>When set to <code>0</code>, the source view starts at the
+    element under the cursor. That is, it only shows this element and
+    its descendants (how deep is defined by
+    <code>SourceView.foldingDepth</code>). 
+    If set to <code>-n</code>, it starts at the n-th
+    ancestor of the element under the cursor. If set to
+    <code>1</code>, the view starts at the root element of the
+    equation.</dd>
+
+    <dt><code>SourceView.foldingKeepIndentation</code></dt>
+    <dd>When activated, prevents that the indentation level of an
+    element changes when the topmost displayed element of the source
+    view changes.</dd>
+
+    <dt><code>SourceView.indentation</code></dt>
+    <dd>The SourceView puts this string at the beginning of every line
+    as many times as the level of indentation. A typical value would
+    two or four spaces.</dd>
+
+    <dt><code>SourceView.showAttributes</code></dt>
+    <dd>Controls wheter attributes are shown.</dd>
+
+    <dt><code>SourceView.syntaxHighlighting</code></dt>
+    <dd>Activates special styling of the syntax. The
+    styling itself is controlled in the CSS file
+    <code>gemse.css</code>.</dd>
+</dl>
+
+<h2 id="EquaitonView">EquationView</h2>
+
+<p>A more advanced version of the DirectView. It also shows
+Content MathML in a non-rendered form.</p>
+
+<h2 id="AttributeView">AttributeView</h2>
+
+<p>Shows the attributes of the current element.</p>
+
+<h2 id="DictionaryView">DictionaryView</h2>
+
+<p>Shows information from the opterator dictionary for a MathML
+<code>mo</code> element.</p>
+
+<h2 id="OthersView">OthersView</h2>
+
+<p>Shows a list of the other loaded equations.</p>
+
+<h2 id="StatsbarView">StatusbarView</h2>
+
+<p>Shows a status bar indicating the current mode and other
+things.</p>
+
+<h2 id="NTNView">NTNView</h2>
 
 <p>If you work with Content MathML, this view renders your formula as
-Presentation MathML in real time. It is part of viewset 5. It uses
+Presentation MathML in real time. It is part of the viewset
+<code>content</code>. It uses
 JOMDoc, which is written in Java. Because of this, you have to 
 <a href="java.xhtml">make some preparations</a>. When you are ready,
-you can start Gemse and switch to viewset 5 by entering
-<kbd>:viewset 5&enter;</kbd>.</p>
+you can start Gemse and switch to viewset <code>content</code> by entering
+<kbd>:viewset content&enter;</kbd>.</p>
 
 <p>By default, only the notation definitions bundled with JOMDoc are
 used. However, notation sources can be configured manually. If the
 formula originates from an OMDoc document, notations can be collected
-from there as well as from its imports. The following options can be
+from there as well as from its imports.</p>
+
+<p>It is also possible to render another equation loaded in Gemse and
+use the current equation as notation source. Like this it is possible
+to edit a notation definition and see the effect on an equation
+immediately.</p>
+
+<p>The following options can be
 set to customize the behaviour:</p>
 
 <dl>
 <dt><code>NTNView.notations</code></dt>
 <dd>A space-serparated list of notation sources. Each source consists
-of a type (one or more uppercase letters) from the list below and an
-optional argument which is usually an URI. The default value for this
-option is <code>B</code>.
+of a type (one uppercase letter) from the list below and an
+optional argument which is usually an URI. The argument must be
+written directly after the type, without space between. The default value for this
+option is <code>B</code>. Notations from notation sources that turn up
+sooner in the list have higher priority.
 <ul>
 <li>Type <code>B</code> without any arguments denotes the notations
 bundled with JOMDoc.</li>
@@ -132,6 +221,9 @@ been set. (Note that this is at the moment the same as <code>D</code>
 with <code>NTNView.documentURI</code> set to the URL for the document
 the formula is part of and <code>NTNView.theoryName</code> set to the
 name of the innermost theory the formula is located in.</li>
+<li>Type <code>E</code> uses an equation currently loaded in Gemse as
+a notation definition. The argument is the number of the equation. If
+the argument is missing, the current equation is used.</li>
 </ul>
 </dd>
 
@@ -142,6 +234,10 @@ when choosing the notations used for rendering.</dd>
 <dt><code>NTNView.theoryName</code></dt>
 <dd>The name of the theory the formula should be considered to be
 located in when choosing the notations used for rendering.</dd>
+
+<dt><code>NTNView.equation</code></dt>
+<dd>The number of the equation that should be rendered. When empty,
+the current equation is used.</dd>
 </dl>
 
 <p>Only file and http URLs are supported for notation
