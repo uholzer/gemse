@@ -60,49 +60,49 @@ It is highly inspired by the text editor vi.</doap:description>
     <progress:progress>0.98</progress:progress>
     <doap:release>
         <doap:Version>
-            <doap:name>alpha</doap:name>
+            <doap:name>Gemse 1.0.15 (alpha)</doap:name>
             <doap:created>2011-04-27</doap:created>
             <doap:revision>1.0.15</doap:revision>
         </doap:Version>
     </doap:release>
     <doap:release>
         <doap:Version>
-            <doap:name>alpha</doap:name>
+            <doap:name>Gemse 1.0.14 (alpha)</doap:name>
             <doap:created>2011-02-13</doap:created>
             <doap:revision>1.0.14</doap:revision>
         </doap:Version>
     </doap:release>
     <doap:release>
         <doap:Version>
-            <doap:name>alpha</doap:name>
+            <doap:name>Gemse 1.0.13 (alpha)</doap:name>
             <doap:created>2010-10-08</doap:created>
             <doap:revision>1.0.13</doap:revision>
         </doap:Version>
     </doap:release>
     <doap:release>
         <doap:Version>
-            <doap:name>alpha</doap:name>
+            <doap:name>Gemse 1.0.12 (alpha)</doap:name>
             <doap:created>2010-07-03</doap:created>
             <doap:revision>1.0.12</doap:revision>
         </doap:Version>
     </doap:release>
     <doap:release>
         <doap:Version>
-            <doap:name>alpha</doap:name>
+            <doap:name>Gemse 1.0.11 (alpha)</doap:name>
             <doap:created>2010-02-27</doap:created>
             <doap:revision>1.0.11</doap:revision>
         </doap:Version>
     </doap:release>
     <doap:release>
         <doap:Version>
-            <doap:name>alpha</doap:name>
+            <doap:name>Gemse 1.0.10 (alpha)</doap:name>
             <doap:created>2010-01-15</doap:created>
             <doap:revision>1.0.10</doap:revision>
         </doap:Version>
     </doap:release>
     <doap:release>
         <doap:Version>
-            <doap:name>alpha</doap:name>
+            <doap:name>Gemse 1.0.9 (alpha)</doap:name>
             <doap:created>2009-10-18</doap:created>
             <doap:revision>1.0.9</doap:revision>
         </doap:Version>
