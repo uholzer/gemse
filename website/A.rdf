@@ -13,10 +13,10 @@
 
     <agv:licenseCategory rdf:resource="http://u.andonyar.com/ageneralvoc/LicenseFree"/>
     <!-- or LicenseFree, LicensePublicDomain -->
-    <dcterms:rightsHolder>Urs Holzer</dcterms:rightsHolder>
+    <dcterms:rightsHolder rdf:resource="http://u.andonyar.com/people/UrsHolzer"/>
     <dcterms:dateCopyrighted>2011-04-27</dcterms:dateCopyrighted>
 
-    <dc:creator>Urs Holzer</dc:creator>
+    <dcterms:creator rdf:resource="http://u.andonyar.com/people/UrsHolzer"/>
 
     <dc:title xml:lang="en">Gemse: General Math Structure Editor</dc:title>
     <dc:description xml:lang="en">The intention is to create fast
@@ -44,14 +44,7 @@ It is highly inspired by the text editor vi.</doap:description>
     <doap:homepage rdf:resource="http://www.andonyar.com/rec/2008-12/gemse/" />
     <doap:programming-language>JavaScript</doap:programming-language>
     <!--<license rdf:resource="http://usefulinc.com/doap/licenses/mit" />-->
-    <!--<maintainer>
-    <foaf:Person>
-      <foaf:name>Urs Holzer</foaf:name>
-      <foaf:homepage rdf:resource="http://www.andonyar.com" />
-      <foaf:mbox rdf:resource="mailto:urs@andonyar.com" />
-      <foaf:mbox_sha1sum>4952c76c53675443f085b808c3a44c7f21f8d1de</foaf:mbox_sha1sum>
-    </foaf:Person>
-    </maintainer>-->
+    <doap:maintainer rdf:resource="http://u.andonyar.com/people/UrsHolzer"/>
     <doap:repository>
         <doap:GitRepository>
             <doap:location rdf:resource="http://www.andonyar.com/rec/2008-12/gemse/repo/gemse_public.git"/>
