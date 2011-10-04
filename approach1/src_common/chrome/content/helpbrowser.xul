@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!--
+This file is part of Gemse.
+
+Copyright 2009, 2010 Urs Holzer
+
+Gemse is licenced under the GNU Public Licence v3 (GPL3), 
+or (at your option) any later version.
+-->
+
+<!-- In XULRunner, this window is used as a browser, for example for
+the help. This is configured by setting the preference
+browser.chromeURL to this file. In Firefox, the usual browser is used
+of course. -->
+
+<window
+    id="GemseHelpBrowser"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="Gemse Help"
+    orient="vertical">
+
+<browser type="content-primary" flex="1"/>
+
+</window>
