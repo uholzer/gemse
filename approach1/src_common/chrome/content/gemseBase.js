@@ -911,6 +911,7 @@ ViewsetManager.prototype = {
         this.views.forEach(function (v) { v.viewport.style.display = "block" });
     },
     openConfWindow: function() {
+        var viewsetManager = this;
         if (this.confWindow) {
             this.confWindow.focus();
         }
@@ -921,8 +922,8 @@ ViewsetManager.prototype = {
             var arg = { 
                 editor: this.editor, 
                 editorWindow: window, 
-                viewsetManager: this, 
-                onunload: function() {this.confWindow=null} 
+                viewsetManager: viewsetManager, 
+                onunload: function() {viewsetManager.confWindow=null} 
             };
             //arg.wrappedJSObject = arg;
             this.confWindow = window.openDialog("chrome://gemse/content/viewsetconf.xul", "_blank",
