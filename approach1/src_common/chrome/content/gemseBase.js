@@ -1257,73 +1257,92 @@ OptionsAssistant.parsers = {
 /**
  * @class The Gemse main object. It hosts all equation environments, handles
  * input by the user, keeps registers, options, and so on.
+ * @param callback A function which is called when the setup of the
+ *                 editor object has been completed. It must not be 
+ *                 used before this function has been called!
+ *                 The first argument handed over to the callback is
+ *                 the new editor object.
  */
-function GemsePEditor() {
+function GemsePEditor(callback) {
+    /* We split initialization up into multiple steps which are called
+     * at the end. */
+
+    var newEditor = this;
+
+    var step1 = function(nextstep) {
+
     /**
      * Maps single unicode characters to register objects
      */
-    this.registerManager = new RegisterManager();
+    newEditor.registerManager = new RegisterManager();
     /**
      * Array of EquationEnv objects
      * @private
      */
-    this.equations = [];
+    newEditor.equations = [];
     /**
      * The number of the equation that currently has the focus
      * @private
      */
-    this.focus = -1;
+    newEditor.focus = -1;
     /**
      * List of open documents
      * @private
      */
-    this.storages = [];
+    newEditor.storages = [];
     /**
      * The input box where the user enters commands
      * (The constructor of the editor looks for the element with id
      * "input".)
      * @private
      */
-    this.inputElement = document.getElementById("input");
+    newEditor.inputElement = document.getElementById("input");
     /**
      * The directory where Gemse is installed as nsIFile (may be null
      * if Gemse does not run with chrome privileges).
      */
-    this.installationDirectory = null;
+    newEditor.installationDirectory = null;
     try {
         if (Components.interfaces.nsIExtensionManager) {
             // For Firefox 3.* (Mozilla 1.9.*)
-            this.installationDirectory = Components.classes["@mozilla.org/extensions/manager;1"].  
+            newEditor.installationDirectory = Components.classes["@mozilla.org/extensions/manager;1"].  
                         getService(Components.interfaces.nsIExtensionManager).  
                         getInstallLocation("Gemse@andonyar.com"). // guid of extension  
                         getItemLocation("Gemse@andonyar.com");  
+            nextstep();
         }
         else {
             // For Firefox 4 (Mozilla 2.0) we have to use the new
             // AddonManager, the ExtensionManager doesn't exist
             // anymore.
-            // TODO: Does this always work? I don't know how to work
-            // with this callback stuff.
+            // This is the last thing we do in this step. The callback
+            // will call the next step.
+            // (Note: getAddonByID will mess with this of the callback
+            // and will not propagate exceptions!)
             Components.utils.import("resource://gre/modules/AddonManager.jsm");
-            var newEditor = this;
             AddonManager.getAddonByID("Gemse@andonyar.com", function(a) { 
-                var uri = a.getResourceURI("");
-                newEditor.installationDirectory = uri.QueryInterface(Components.interfaces.nsIFileURL).file; 
+                if (a) { // Gemse is an addon
+                    var uri = a.getResourceURI("");
+                    newEditor.installationDirectory = uri.QueryInterface(Components.interfaces.nsIFileURL).file; 
+                }
+                else { // Gemse is not an addon, but a XULRunner application
+                    newEditor.installationDirectory = Components.classes["@mozilla.org/file/directory_service;1"].
+                                     getService(Components.interfaces.nsIProperties).
+                                     get("CurProcD", Components.interfaces.nsIFile);
+                    //XXX: Or should we use XCurProcD?
+                }
+                nextstep();
             });
         }
     }
-    catch (e) {}
-    try {
-        if (!this.installationDirectory) {
-            // In a XULRunner application, Gemse is not an addon. So
-            // if the above fails or results in null, we try to use the directory service.
-            this.installationDirectory = Components.classes["@mozilla.org/file/directory_service;1"].
-                             getService(Components.interfaces.nsIProperties).
-                             get("CurProcD", Components.interfaces.nsIFile);
-            //XXX: Or should we use XCurProcD?
-        }
+    catch (e) {
+        nextstep();
     }
-    catch (e) {}
+    
+    }; // end of step1
+
+    var step2 = function(nextstep) {
+
     /**
      * The current working directory for internal use. If you want to
      * get or set the working directory, use editor.workingDirectory.
@@ -1332,13 +1351,13 @@ function GemsePEditor() {
      * The value is an URI as string.
      * @private
      */
-    this.internalWorkingDirectory = this.processWorkingDirectory;
-    if (!this.internalWorkingDirectory) {
+    newEditor.internalWorkingDirectory = newEditor.processWorkingDirectory;
+    if (!newEditor.internalWorkingDirectory) {
         // For some reason we are not able to find out the current
         // working directory of the process, so we try the base URI of
         // the editor.xul, which should always be available (DOM3,
         // Node interface)
-        this.internalWorkingDirectory = document.baseURI;
+        newEditor.internalWorkingDirectory = document.baseURI;
     }
     /**
      * A template as a DOM element of a new equation.
@@ -1348,32 +1367,32 @@ function GemsePEditor() {
      * element from the document itself.)
      * @private
      */
-    this.equationTemplate = document.getElementById("equationTemplate");
-    this.equationTemplate.parentNode.removeChild(this.equationTemplate);
-    this.equationTemplate.removeAttribute("id");
+    newEditor.equationTemplate = document.getElementById("equationTemplate");
+    newEditor.equationTemplate.parentNode.removeChild(newEditor.equationTemplate);
+    newEditor.equationTemplate.removeAttribute("id");
     /**
      * OptionsAssistant that handles options
      */
-    this.optionsAssistant = new OptionsAssistant();
+    newEditor.optionsAssistant = new OptionsAssistant();
     /* Load global options and options from known classes */
-    this.optionsAssistant.loadDescriptions(gemseGlobalOptions);
+    newEditor.optionsAssistant.loadDescriptions(gemseGlobalOptions);
     for (var i=0;i<GemsePEditor.knownClasses.length;++i) {
-        this.optionsAssistant.loadDescriptions(GemsePEditor.knownClasses[i].gemseOptions);
+        newEditor.optionsAssistant.loadDescriptions(GemsePEditor.knownClasses[i].gemseOptions);
     }
     /**
      * Option object for global options
      */
-    this.o = this.optionsAssistant.obtainOptionsObject();
+    newEditor.o = newEditor.optionsAssistant.obtainOptionsObject();
     /**
      * Recordings of options created automatically or by the user 
      * @private
      */
-    this.inputRecordings = { };
+    newEditor.inputRecordings = { };
     /**
      * The last messages for the user stored as DOM nodes.
      * Messages the user doesn't want to see anymore are deleted.
      */
-    this.messages = [];
+    newEditor.messages = [];
     /**
      * Manages the view sets.
      * (The constructor of the editor does use the element with id
@@ -1383,16 +1402,24 @@ function GemsePEditor() {
      * removed from the document afterwards.)
      * @private
      */
-    this.viewsetManager = new ViewsetManager(this,document.getElementById("viewsetDock"));
+    newEditor.viewsetManager = new ViewsetManager(newEditor,document.getElementById("viewsetDock"));
     var viewsets = document.getElementsByTagNameNS(NS_internal, "viewsets")[0];
-    this.viewsetManager.loadViewsets(viewsets);
+    newEditor.viewsetManager.loadViewsets(viewsets);
     viewsets.parentNode.removeChild(viewsets);
     /**
      * Internal input substitution method. This is implemented in
      * inputSubstitution/cors.js and is perhaps not even present.
      * @private
      */
-    this.inputSubstitution = inputSubstitution;
+    newEditor.inputSubstitution = inputSubstitution;
+
+    nextstep();
+    }; // end of step2
+
+    // Now call the steps:
+    var callbackcall = function() { callback(newEditor) };
+    var step2call = function() { step2(callbackcall) }
+    step1(step2call);
 }
 GemsePEditor.prototype = {
     /**

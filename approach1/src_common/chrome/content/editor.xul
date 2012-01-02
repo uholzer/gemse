@@ -47,7 +47,9 @@ or (at your option) any later version.
         var editor;
 
         function start() {
-            editor = new GemsePEditor();
+            editor = new GemsePEditor(editorsetup);
+        }
+        function editorsetup(editor) {
             editor.inputElement.focus();
 
             // Give the window a name:
