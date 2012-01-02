@@ -67,7 +67,8 @@ directly edits the XML structure of presentation MathML.</p>
 <li><a href="#settings">Set your settings</a></li>
 <li><a href="#contentmathml">Working with Content MathML</a></li>
 <li><a href="#openmath">Working with OpenMath</a></li>
-<li><a href="#notations">Notations</a></li>
+<li><a href="#notations">Using Notations</a></li>
+<li><a href="#editnotations">Editing Notations</a></li>
 <li><a href="#svg">Working with SVG</a></li>
 <li><a href="#customizing">Customizing</a></li>
 <li><a href="#how_to_go_on">How to go on?</a></li>
@@ -1735,13 +1736,40 @@ equation is gone. Now reactivate the tree view by writing
 <code>:showview 1&enter;</code>. You can also reactivate all hidden views
 with <code>:showview all&enter;</code>.</p>
 
-<p>Counting views and remembering the numbers of the viewsets is not
-very userfriendly. This situation will be improved in a future version
-of Gemse. Also, hiding a single view does not deactivate it, it is
-constructed anyway but just not shown. This will change in the future
-as well, because constructing a view can take too much time on slow
-machines and deactivating a view should be a way to speed up
-things.</p>
+<p>You can create and modify viewsets using the viewset configuration
+window. It can be opened with the command <code>:viewsetconf</code>.
+It is the only part of Gemse that requires a mouse.</p>
+
+<img src="viewsetconf1.png"/>
+
+<p>At the top are edit boxes for the name and the description of the
+view. Below is a preview of the arrangement of the views using boxes.
+Note that the thick black boxes are views and the thin gray ones are
+XUL boxes which are used for more complex arrangements. You can click
+a box to make it active. The active box is marked red. Below the
+preview is a list of attributes of the active view or XUL box. For a
+XUL box, you may like to set the attributes <code>orientation</code>
+and <code>flex</code>. For views, you also see their options. This
+allows you to easily adjust the options of a specific view, while
+using <kbd>:set</kbd> in edit mode only allows you the set options for
+all views of the same kind. Use the context menu in the list of
+attributes to add or remove attributes or options. To change a value
+(namespace, name or value of an attribute, name or value of an
+option), double click it. (After adding an attribute or an option, all
+its fields are empty, so you may not see it, but it is there anyway,
+at the end of the list. Double cklick in its fields to fill in the
+values.) Below the list of
+options is a drop-down button which allows you to insert views or XUL
+boxes inside, in front of or behind the active box.</p>
+
+<p>Note that changes to a viewset take effect immediately. Note that
+all equations using this viewset will be affected. Maybe you
+want to safe the viewset under a different name first. The button at
+the bottom causes all equations to use the viewset you are currently
+editing.</p>
+
+<p>We will make use of this feature in the section about 
+<a href="#editnotations">editing notations</a>.</p>
 
 <h2 id="settings">Set your settings</h2>
 
@@ -2448,7 +2476,7 @@ in both languages. This however, is not always perfect. Please refer
 to the documentation of the content insert mode in order to learn
 about these details.</p>
 
-<h2 id="notations">Notations</h2>
+<h2 id="notations">Using Notations</h2>
 
 <p>In order to render Presentation MathML or OpenMath, notation
 definitions are needed. By default, Gemse uses the ones bundled with
@@ -2533,6 +2561,78 @@ bundled with JOMDoc. Again, hit <kbd>&ctrl;l</kbd>.</p>
 
 <p>So far so good, let us clean up. Do 
 <kbd>:set NTNView.notations=B</kbd> and <kbd>:close!</kbd>.</p>
+
+<h2 id="editnotations">Editing Notations</h2>
+
+<p>The lecture is good, but its the notations we don't like! Gemse
+helps you fixing them. It is useful to look at an example formula
+while editing a notation definition, and Gemse allows you to do
+exactly this! Let's see how it works:</p>
+
+<p>Again, we open equations from the document of the last section,
+however, this time we open the notation definitions as well. Use the
+command <kbd>:loadall chrome://gemse/content/doc/examples/sets.omdoc&enter;</kbd>.
+This may take some seconds. Issue the command <kbd>:goto 3</kbd> to
+look at another equation.</p>
+
+<p>Now do <kbd>:viewsetconf&enter;</kbd>. If the viewset
+<code>content</code> has not been automatically chosen (look at the
+box to the top left), do that
+manually with the button <code>load viewset</code>. Now, click into the
+<code>NTNView</code>. Its box is now red.</p>
+
+<img src="viewsetconf2.png"/>
+
+<p>Let us insert two more NTNViews. (Be careful, sometimes the active
+box changes unexpectedly, in this case, make shure to click the
+NTNView again.) Choose twice the <code>NTNView</code> from the insert
+drop down box.</p>
+
+<img src="viewsetconf3.png"/>
+
+<p>In the mainwindow of Gemse you can see that the views have been
+added immediately. Now let us set some options. Click the first
+NTNView. Open the contextmenu on the list of attributes (e.g. by
+clicking with the right mouse button into the list). Choose <q>Add
+arbitrary option</q>. A row <q>Options</q> has been inserted, but it
+is just a header below which all options are listed. An empty option
+has been inserted, it is the row below the header. Since it contains
+no values yet, it might be invisible. Anyway, click into the
+<q>Attribute</q> field of this invisible row.</p>
+
+<img src="viewsetconf4.png"/>
+
+<p>Now, type in the name of the option we want to set, namely
+<code>NTNView.equation</code> and hit enter. Now double click on the Value field of
+the same row and insert <code>16</code>. Now add another option
+by opening the context menu, choosing <q>Add arbitrary option</q>,
+clicking in the field <q>Attribute</q> of the new row, insert
+<code>NTNView.notations</code> and hit enter. In the
+<q>Value</q> field insert <code>E I B</code> and hit enter. Now it
+should look like this:</p>
+
+<img src="viewsetconf5.png"/>
+
+<p>We do exactly the same with the second and third NTNViews. But we
+use in the option <code>NTNView.equation</code> the values
+<code>15</code> and <code>14</code> instead. Do this as above, click
+the view, use the right mouse button to add an option, fill in the
+name of the option and its value (double click).</p>
+
+<img src="viewsetconf6.png"/>
+
+<p>As a final action, click on the button <q>Choose for all
+equations</q>. You can now close the window <q>Viewset
+configuration</q> (or enter in the main window the command
+<kbd>:viewsetconf close&enter;</kbd>).</p>
+
+<p>Now let's see what we have done. The NTNViews show three different
+equations. We are currently editing a notation definition. We can make
+a change to it and then hit <kbd>&ctrl;l</kbd> in order to update the
+views. Now we immediately see how our change affects the equations
+shown by the NTNViews. (Hitting <kbd>&ctrl;l</kbd> is unfortunately
+necessary to update the views. Mabye this will be addressed in a later
+version of Gemse.)</p>
 
 <h2 id="svg">Working with SVG</h2>
 
