@@ -153,6 +153,7 @@ function SourceView(editor,equationEnv,viewport) {
      * Option object
      */
     this.o = editor.optionsAssistant.obtainOptionsObject(SourceView,this);
+    this.editor.viewsetManager.readOptionsFromViewport(this, this.viewport);
 }
 SourceView.prototype = {    
     /** 
@@ -833,6 +834,7 @@ function NTNView(editor,equationEnv,viewport) {
     this.viewport = viewport;
 
     this.o = editor.optionsAssistant.obtainOptionsObject(NTNView,this);
+    this.editor.viewsetManager.readOptionsFromViewport(this, this.viewport);
 
     this.ready = false;
 

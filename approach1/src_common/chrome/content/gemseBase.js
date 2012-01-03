@@ -787,27 +787,26 @@ ViewsetManager.prototype = {
             //XXX: Is this ok?
             var newview = new constructor(this.editor,this.editor.equations[this.editor.focus],viewports[i]);
             this.views.push(newview);
-            // Read in options from internal:options attribute of the viewort
-            if (viewports[i].hasAttributeNS(NS_internal, "options")) {
-                var options = this.parseOptionsString(viewports[i].getAttributeNS(NS_internal, "options"));
-                for each (var option in options) {
-                    try {
-                        this.editor.optionsAssistant.set(option[0],option[1],null,newview);
-                    }
-                    catch(e) {
-                        this.editor.showMessage(e);
-                    }
-                }
-            }
+            // Reading in options from internal:options attribute of
+            // the viewort is done by the views themselves.
         }
     },
     /**
-     * Parses the value of an internal:options attribute and returns a
-     * list of name/value pairs
+     * Reads the options from the viewport's internal:options attribute
      */
-    parseOptionsString: function(optionsString) {
-        var options = optionsString.split(/\$(?!\$)/);
-        return options.map(function (s) { return s.split(/=/,2) });
+    readOptionsFromViewport: function(view, viewport) {
+        // Read in options from internal:options attribute of the Element element
+        if (viewport.hasAttributeNS(NS_internal, "options")) {
+            var options = this.parseOptionsString(viewport.getAttributeNS(NS_internal, "options"));
+            for each (var option in options) {
+                try {
+                    this.editor.optionsAssistant.set(option[0],option[1],null,view);
+                }
+                catch(e) {
+                    this.editor.showMessage(e);
+                }
+            }
+        }
     },
     /**
      * Parses the value of an internal:options attribute and returns a
