@@ -1123,6 +1123,11 @@ NTNView.prototype = {
             if (this.o.shortcut && !this.o.equation) {
                 rerenderRequired = !this.updateInternals(this.viewport.firstChild, this.equationEnv.equation);
             }
+            else if (this.o.shortcut && this.o.equation && this.viewport.firstChild) {
+                // TODO: Since using notations is too slow, we do
+                // never rerender 
+                rerenderRequired = false;
+            }
             
             var domRoot;
             if (rerenderRequired) {
