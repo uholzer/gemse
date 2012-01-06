@@ -206,6 +206,54 @@ identifier <code>c</code>.</p>
     of this command in the documentation of the trivial insert mode</a>.</p>
 </div>
 
+<div class="commandDocumentation" id="ucdInsertModeCommand_notation_prototype">
+    <h3 class="commandTitle">Notation: prototype</h3>
+
+    <p>Inserts a <code>prototype</code> element in the OMDoc
+    namespace. This is a child of the <code>notation</code>
+    element. It contains a pattern which is matched against the
+    expression.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_notation_rendering">
+    <h3 class="commandTitle">Notation: rendering</h3>
+
+    <p>Inserts a <code>rendering</code> element in the OMDoc
+    namespace. This is a child of the <code>notation</code>
+    element. It describes how an expression to which this notation
+    definition is applied has to be rendered.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_notation_iterate">
+    <h3 class="commandTitle">Notation: iterate</h3>
+
+    <p>Inserts an <code>iterate</code> element in the OMDoc
+    namespace. It is used inside a <code>rendering</code> in order to
+    loop over an expression list as defined in the prototype.</p>
+
+    <p>As an argument, the name of the <code>exprlist</code> from the
+    prototype has to be provided.</p>
+</div>
+
+<div class="commandDocumentation" id="ucdInsertModeCommand_notation_separator">
+    <h3 class="commandTitle">Notation: separator</h3>
+
+    <p>Inserts a <code>separator</code> element in the OMDoc
+    namespace. It is used inside an <code>iterate</code>.</p>
+</div>
+
+<div class="commandDocumentation" id="trivialInsertModeCommand_notation_render">
+    <h3 class="commandTitle">Notation: render</h3>
+
+    <p>Inserts a <code>render</code> element in the OMDoc
+    namespace. It is used inside a <code>rendering</code>
+    element. It causes an argument from the prototype to be rendered
+    using a suitable notation definition.</p>
+
+    <p>As an argument, the name of the <code>expr</code> from the
+    prototype has to be provided.</p>
+</div>
+
 
 <div class="commandDocumentation" id="trivialInsertModeCommand_oneMoreToSurround">
     <h3 class="commandTitle">one more to surround</h3>
