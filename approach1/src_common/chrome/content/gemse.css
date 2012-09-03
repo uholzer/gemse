@@ -31,6 +31,7 @@ html|div {
     background-color: rgba(255,255,255,0.7);
     color: #000;
     -moz-border-radius: 3px; /* Rounded corners */
+    border-radius: 3px; /* No longer prefixed in Mozilla 18 */
 }
 html|table {
     border-collapse: collapse;
@@ -186,6 +187,7 @@ html|kbd {
     display: inline-block;
     border: 1px solid black;
     -moz-border-radius: 3px;
+    border-radius: 3px; /* No longer prefixed in Mozilla 18 */
     padding: 1px;
     background-color: #ddd;
     color: black;
