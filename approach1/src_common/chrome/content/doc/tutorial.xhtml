@@ -77,8 +77,8 @@ directly edits the XML structure of presentation MathML.</p>
 <h2 id="intro">Introduction</h2>
 
 <p>Gemse 1 is an application written in Javascript using Mozilla. So,
-if you have installed Firefox 3, you are already lucky. If you do not
-like the idea of installing Firefox 3, you can use XULRunner 1.9.
+if you have installed Firefox, you are already lucky. If you do not
+like the idea of installing Firefox, you can use XULRunner.
 Please refer to the <a href="base.xhtml">base documentation</a>
 to find out how to install and run Gemse.</p>
 
@@ -96,18 +96,18 @@ editor. Observe that the input box is empty at this point. If you
 have made a typo, hit <kbd>&esc;</kbd> (that is, hit the escape key.)
 to clear the input box and try again.</p>
 
-<p>There are a couple example equations included in the documentation of Gemse.
+<p>There are a couple of example equations included in the documentation of Gemse.
 We will use some of them. You will now learn how to load them.</p>
 
 <p>Basically loading works like this: You enter <kbd>:load</kbd> followed
 by a space and the URI of the file you want to load. Finally, you hit
 enter. Yes, you have to enter the URI. This allows you to load any
 file from the web you can access. Of course, files on your computer
-also can be loaded like that too. Their URIs begin with
+can be loaded like that too. Their URIs begin with
 <code>file://</code>. So, for example, in order to load the file
-<code>/home/urs/foo.xml</code> you have to use the URI
-<code>file:///home/urs/foo.xml</code> and in this case, the command is
-<kbd>:load file:///home/urs/foo.xml&enter;</kbd>. You can also use
+<code>/home/john/foo.xml</code> you have to use the URI
+<code>file:///home/john/foo.xml</code> and in this case, the command is
+<kbd>:load file:///home/john/foo.xml&enter;</kbd>. You can also use
 a relative URI.</p>
 
 <p>In this tutorial, when I tell you to load a file
@@ -120,7 +120,7 @@ If you use the demo on the web or if you opened
 <kbd>:load doc/examples/foo.xml&enter;</kbd>.
 Alternatively, you can just enter <kbd>:example foo.xml&enter;</kbd>.</p>
 
-<p>Try it: Load the file <code>examples/pres.xml</code>.
+<p>Try it: Load the file <code>examples/pres01.xml</code>.
 You should see something like shown below.</p>
 
 <div class="documentationScreenshot">
@@ -237,7 +237,7 @@ Below the second box, you can see the (a little bit simplified) source
 of the equation and a table of attributes of the selected element.
 On the righthand side, you can see a list of all equations that you
 currently have opened. At the bottom, there is a status line which informs
-you about the current state the editor is in. In the following
+you about the editor's current state. In the following
 sections you will learn what all this means.</p>
 
 <p>From now on, I will show you only those boxes that I think are
@@ -477,8 +477,7 @@ its descendants. Move the cursor to the <code>(</code> after the
 </div>
 
 <p>Beware: <kbd>x</kbd> can be dangerous:
-Select the denominator of the fraction by
-hitting <kbd>klljljl</kbd>. Now hit <kbd>x</kbd> to delete it. You
+Select the denominator of the fraction. Now hit <kbd>x</kbd> to delete it. You
 immediately see that this was not good.</p>
 
 <div class="documentationScreenshot">
@@ -510,7 +509,7 @@ immediately see that this was not good.</p>
 
 <p>What does cause this? Well, some MathML elements must have a fixed
 number of children, in case of <code>mfrac</code> this number is two.
-If a <code>mfrac</code> element does not have two children, it is
+If an <code>mfrac</code> element does not have two children, it is
 invalid. The MathML renderer no longer understands what is meant by
 the <code>mfrac</code> element and can not render the equation
 completely. If something like this happens, you have to look at the
@@ -639,13 +638,13 @@ mode, but it looks different. Well, it doesn't only look different, it
 has a further very important difference: It lies between two elements,
 not on an element.</p>
 
-<p>It is important to know that the insert mode of gemse is not yet mature and
-will most certainly change in the future. Even more, different insert
+<p>It is important to know that the insert mode of gemse is not yet final and
+will probably change in the future. Even more, different insert
 modes can coexist. At the moment, there are two insert modes, the UCD
 insert mode and the trivial insert mode. While in edit mode, you can
 switch the insert mode to be used by hitting <kbd>&tab;</kbd>
 (the tabulator key). In this
-tutorial we will use the UCD insert mode which is the default.
+tutorial we will use the UCD insert mode, which is the default.
 If you want, you can also take a look at the documentation of the
 trivial insert mode. This mode is called like that because it was
 trivial to implement, not because it is trivial to use it. Though it
@@ -876,7 +875,7 @@ without indicating explicitely that we enter an operator using
 that we want the identifier <code>l</code> followed by the identifier
 <code>i</code> followed by <code>m</code>.</p>
 
-<p>Actually, always if we need an identifier or an operator which is
+<p>Actually, whenever we need an identifier or an operator which is
 longer than one character or which is treated by the insert mode the
 wrong way, we have to first hit <kbd>&ctrl;o</kbd> for an operator or
 <kbd>&ctrl;i</kbd> for an identifier, then we have to enter the
@@ -983,13 +982,13 @@ the equation for this tutorial, since later, you can just load the
 equation as it is now from a file included in the documentation. But
 anyway, I want to tell you here how to save an equation to a file.</p>
 
-<p><em>Important:</em> <strong>Be careful!</strong> This software is
-very young and the implementation of laoding and saving is rather a
-hack. For example, it will overwrite existing files without moaning.
+<p><em>Important:</em> Gemse will overwrite existing files without
+moaning. (The author has still not yet taken care of a proper
+implementation.)
 If you give the save or load commands a relative URI, then it is
 considered to be relative to the current working directory, as
 indicated by firefox. Also be aware, that if you are using gemse
-not as firefox extension or XULRunner application,
+not as Firefox extension or XULRunner application,
 it has no permission to write to your harddisk.</p>
 
 <p>For saving you simply write <kbd>:save&space;</kbd>, followed by the
@@ -1076,10 +1075,10 @@ creates an <code>mrow</code> element. Go on with
 
 <p> Rats! We have
 forgotten something important. The expression inside the brackets
-including the brackets actually should be the base of a potency.
+including the brackets actually should be the base of a power.
 Actually, we should have hit <kbd>^&space;</kbd> right before the
 <kbd>(</kbd>. This mistake happens regularly (at least to me).
-Usually, one thinks of the potency after having written the base.
+Usually, one thinks of the power after having written the base.
 Unfortunately, the current insert mode does not work like that, it
 needs you to enter the <kbd>^</kbd> before writing the base. However,
 there is a feature that allows you to fix this situation. Find out
@@ -1256,7 +1255,7 @@ new <code>mrow</code> element. The cursor is currently on it.</p>
 
 <p>Since you now know how the visual mode works, copying is no more
 difficult. Gemse uses the command <kbd>y</kbd> for copying the
-(with visual mode) selected elements into a register. A register is
+selected elements into a register. A register is
 simply a place where copied elements are stored. If you use a command
 that works on a register and you do not say on which one, it will use
 the default register (which is called <code>"</code>).</p>
@@ -1710,7 +1709,7 @@ attributes in order to get back to the edit mode.</p>
 
 <p>Gemse provides different ways to look at an equation: Its
 rendering, its tree structure shown by using nested boxes, its XML source
-and more. These are what is called views in Gemse. But in Gemse the
+and more. These are what is called views in Gemse. But the
 concept of views goes even further. The list of attributes of the
 selected element, the list of dictionary entries, the list of the
 other opened equations and the status bar are views as well. (However,
@@ -1726,18 +1725,8 @@ As you can see, every viewset has a name. Indeed, you can
 give the command <kbd>:viewset</kbd> also the name of a viewset
 instead of its number.</p>
 
-<p>Although the viewsets can not be changed while Gemse is running,
-you can deactivate a view of the current viewset: Enter 
-<kbd>:hideview 1&enter;</kbd>. The tree view is no longer visible. The
-views are counted in the order they appear in the XUL description of
-the viewset in <code>editor.xul</code>, beginning at 0. Type
-<kbd>:hideview 0&enter;</kbd> and the view of the rendering of the
-equation is gone. Now reactivate the tree view by writing
-<code>:showview 1&enter;</code>. You can also reactivate all hidden views
-with <code>:showview all&enter;</code>.</p>
-
 <p>You can create and modify viewsets using the viewset configuration
-window. It can be opened with the command <code>:viewsetconf</code>.
+window. It can be opened with the command <kbd>:viewsetconf&enter;</kbd>.
 It is the only part of Gemse that requires a mouse.</p>
 
 <img src="viewsetconf1.png"/>
@@ -1762,8 +1751,8 @@ values.) Below the list of
 options is a drop-down button which allows you to insert views or XUL
 boxes inside, in front of or behind the active box.</p>
 
-<p>Note that changes to a viewset take effect immediately. Note that
-all equations using this viewset will be affected. Maybe you
+<p>Note that changes to a viewset take effect immediately.
+All equations using this viewset will be affected. Maybe you
 want to safe the viewset under a different name first. The button at
 the bottom causes all equations to use the viewset you are currently
 editing.</p>
@@ -1856,9 +1845,8 @@ you have a big equation, the source view spans below the window. You
 can fix that by configuring the source view such that it only shows an
 extract of the source. Enter <kbd>:set SourceView.foldingDepth=3&enter;</kbd>. 
 Now the source view only shows
-the elements three levels deep. Does an element at the third level,
-like the <code>munderover</code> contain children, they are replaced
-by <code>...</code>.</p>
+the elements three levels deep. Does an element at the third level contain children
+they are replaced by <code>...</code>.</p>
 
 <div class="documentationScreenshot">
 <vbox style="width:100%" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -2025,19 +2013,19 @@ it and see the effect.</p>
 
 <p>Note that options that can be set either to <code>true</code> or
 <code>false</code>, also allow the values <code>yes</code>,
-<code>on</code>, <code>1</code> which are handled as
+<code>on</code>, <code>1</code> for
 <code>true</code> and <code>no</code>, <code>off</code>,
-<code>0</code> which are handled as <code>false</code>.</p>
+<code>0</code> for <code>false</code>.</p>
 
 <p>Of course, gemse has <a href="options.xhtml">many more options</a>.</p>
 
 <h2 id="contentmathml">Working with Content MathML</h2>
 
 <p>What you learned up to now extends to Content MathML in a natural
-way. All you have to do is to choose the content insert mode. Hit
-<kbd>&tab;</kbd> until the content insert mode is selected.</p>
+way. All you have to do is to choose the content insert mode.</p>
 
-<p>Load the file <code>examples/content01.xml</code>.</p>
+<p>Load the file <code>examples/content01.xml</code>. Hit
+<kbd>&tab;</kbd> until the content insert mode is selected.</p>
 
 <p>As you can see, the equation view is now little helpful, it does
 not show the equation in a rendered form. Instead, it seems to just
@@ -2048,9 +2036,9 @@ However, there is a view that can do that, called the NTNView. It uses
 the java library JOMDoc. Unfortunately, Gemse can only load java
 libraries if it is running with full permissions, that is, you have to
 run it as Firefox extension or XULRunner appilcation. Additionally,
-you must have installed a Java plugin which supports LiveConnect.
+you must have installed a Java plugin which is scriptable.
 Please read the <a href="java.xhtml">instructions</a>. If you get it
-working, you can enter <kbd>:viewset content&enter;</kbd> and you can
+working, you can enter <kbd>:viewset content&enter;</kbd> to
 see the rendered equation, as in the screenshots of this section. In
 any way, you should not forget that Gemse always acts on the XML
 structure of the equation and that the rendered equation can differ
@@ -2137,7 +2125,7 @@ element for <code>b</code>. Hit <kbd>&space;</kbd> once.</p>
 symbol, <kbd>+</kbd>, <kbd>-</kbd>, <kbd>/</kbd> do the analogue.
 (Note: If you got an <code>mo</code> element instead of a
 <code>csymbol</code>, you haven't selected the content insert mode. In
-this ase, hit escape, undo your wrong change, select the content
+this case, hit escape, undo your wrong change, select the content
 insert mode and try again.)</p>
 
 <div class="documentationScreenshot">
@@ -2164,7 +2152,7 @@ insert mode and try again.)</p>
 </html:span></html:pre></html:div></vbox>
 </div>
 
-<p>Do <kbd>&esc;Acde</kbd>.</p>
+<p>Hit <kbd>&esc;</kbd> and do <kbd>Acde</kbd>.</p>
 
 <div class="documentationScreenshot">
 <vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1-args1-arg1">a</mi><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1-args1-fun1">⁢</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-fun1">+</mo><mrow id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2" internal:selected="insertCursorIn"><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg1">b</mi><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-fun1">⁢</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg2">c</mi><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-fun2">⁢</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg3">d</mi><mo id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-fun3">⁢</mo><mi id="a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-arg2-args2-arg4" internal:selected="insertCursorAfter">e</mi><mo a4:egroup="fence" xmlns:a4="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo a5:egroup="fence" xmlns:a5="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><apply xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e"><csymbol cd="arith1" xref="#a04ae0970-a51b-4b31-a6bc-b0f3355f427e-args-fun1">plus</csymbol>
@@ -2286,10 +2274,10 @@ designed to be so.) Because of this, the content insert mode can
 create OpenMath as well. To insert some OpenMath construct, you use
 the same commands as for the analogue Content MathML.</p>
 
-<p>Make shure you still have the content viewset by entering
-<kbd>:viewset content&enter;</kbd>. Also make shure that you have the
-content insert mode selected by hitting <kbd>&tab;</kbd>.
-Now load <code>examples/openmath01.xml</code>.</p>
+<p>Load <code>examples/openmath01.xml</code>. Make shure you still
+have the content viewset by entering <kbd>:viewset content&enter;</kbd>. 
+Also make shure that you have the content insert mode selected by
+hitting <kbd>&tab;</kbd>.</p>
 
 <div class="documentationScreenshot">
 <vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a3d8eb510-baaf-11df-a3c0-0025224150e7"><mo a0:egroup="fence" xmlns:a0="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mrow id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1"><mo a1:egroup="fence" xmlns:a1="http://www.w3.org/ns/mathml-cd" fence="true">(</mo><mi id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1-args1-arg1">a</mi><mo id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1-args1-fun1">⁢</mo><mi id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg1-args1-arg2">x</mi><mo a2:egroup="fence" xmlns:a2="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><mo id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-fun">+</mo><mi id="a3d8eb510-baaf-11df-a3c0-0025224150e7-args-arg2">b</mi><mo a3:egroup="fence" xmlns:a3="http://www.w3.org/ns/mathml-cd" fence="true">)</mo></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#a3d8eb510-baaf-11df-a3c0-0025224150e7">
@@ -2488,10 +2476,15 @@ the <code>NTNView.documentURI</code> and
 <code>NTNView.theoryName</code>.) For details, see the 
 <a href="views.xhtml">documentation of the NTNView</a>.</p>
 
-<p>Here we want to open a formula from an OMDoc document. Make shure
-you are using the viewset <code>content</code> by entering 
-<kbd>:viewset content&enter;</kbd>. Open the equation
-<code>examples/sets.omdoc#xpath1(//*[@xml:id="intersection.def"]//om:OMOBJ[4])</code>.</p>
+<p>Here we want to open a formula from an OMDoc document. 
+First load all equations from <code>examples/sets.omdoc</code>. This
+can be done by typing 
+<kbd>:loadall chrome://gemse/content/doc/examples/sets.omdoc&enter;</kbd>.
+It takes some seconds to load them all.
+Switch to the last equation. (By <kbd>goto 16</kbd> if you had no
+other equations open before.)
+Make shure you are using the viewset <code>content</code> by entering 
+<kbd>:viewset content&enter;</kbd>.</p>
 
 <div class="documentationScreenshot">
 <vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="afcf1fdd0-6843-11e0-b33c-0025224150e7"><mi id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg1">C</mi><mo id="afcf1fdd0-6843-11e0-b33c-0025224150e7-fun">=</mo><mrow id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2"><mo id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-fun">intersection</mo><mo fence="true" a0:egroup="fence" xmlns:a0="http://omdoc.org/ns">(</mo><mi id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-args-arg1">A</mi><mo separator="true">,</mo><mi id="afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-args-arg2">B</mi><mo fence="true" a1:egroup="fence" xmlns:a1="http://omdoc.org/ns">)</mo></mrow></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7"><OMS name="eq" cd="relation1" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-fun"/><OMV name="C" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg1"/><OMA href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2"><OMS name="intersection" cd="sets" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-fun"/><OMV name="A" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-args-arg1"/><OMV name="B" href="#afcf1fdd0-6843-11e0-b33c-0025224150e7-arg2-args-arg2"/></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="editcursor"><html:span>&lt;om:OMOBJ&gt;</html:span>
@@ -2509,16 +2502,15 @@ you are using the viewset <code>content</code> by entering
 </div>
 
 <p>As you see, the NTNView renders the symbol <code>eq</code> from
-content dictionary <code>relation1</code> correctly. This is because
-a notation definition for it is bundled with JOMDoc. However, for the
-symbol <code>intersection</code> from the OMDoc document the equation
-belongs to, there is no notation definition bundled with JOMDoc, of
-course. Therefore, the default rendering is used for this symbol.
-However, the OMDoc document containing our equation does have a
-notation definition for the symbol. Let us use it. Do 
-<kbd>:set NTNView.notations=I</kbd>. Unfortunately Gemse does not
-(yet) reconfigure its notation sources when setting this option. Force
-it to rebuild the view by hitting <kbd>&ctrl;l</kbd>.</p>
+content dictionary <code>relation1</code> correctly, because a
+notation definition for it is bundled with JOMDoc. This is not the
+case for the symbols <code>intersection</code> and <code>union</code>
+introduced by the OMDoc document the equation belongs to. Therefore,
+the default rendering is used for these symbols.  However, the OMDoc
+document containing the equation does have notation definitions for
+them. In order to sue them, do <kbd>:set NTNView.notations=I&enter;</kbd>. You
+need to force Gemse to rebuild the view by hitting <kbd>&ctrl;l</kbd>,
+as the changes do not apply automatically.</p>
 
 <div class="documentationScreenshot">
 <vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a061dff60-684b-11e0-867e-0025224150e7"><mo id="a061dff60-684b-11e0-867e-0025224150e7-fun">eq</mo><mo fence="true" a0:egroup="fence" xmlns:a0="http://omdoc.org/ns">(</mo><mi id="a061dff60-684b-11e0-867e-0025224150e7-args-arg1">C</mi><mo separator="true">,</mo><mrow id="a061dff60-684b-11e0-867e-0025224150e7-args-arg2"><mi id="a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-arg1">A</mi><mo id="a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-fun2">∩</mo><mi id="a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-arg2">B</mi></mrow><mo fence="true" a1:egroup="fence" xmlns:a1="http://omdoc.org/ns">)</mo></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#a061dff60-684b-11e0-867e-0025224150e7"><OMS name="eq" cd="relation1" href="#a061dff60-684b-11e0-867e-0025224150e7-fun"/><OMV name="C" href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg1"/><OMA href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg2"><OMS name="intersection" cd="sets" href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-fun2"/><OMV name="A" href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-arg1"/><OMV name="B" href="#a061dff60-684b-11e0-867e-0025224150e7-args-arg2-args2-arg2"/></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="editcursor"><html:span>&lt;om:OMOBJ&gt;</html:span>
@@ -2535,14 +2527,14 @@ it to rebuild the view by hitting <kbd>&ctrl;l</kbd>.</p>
 </html:span></html:pre></html:div></vbox>
 </div>
 
-<p>The intersection is now rendered as we want it, but now the symbol
-<code>eq</code> is rendered using the default notation. This is
-because we removed the notations bundled with JOMDoc as notation
-source. It is possible to use more than one notation source by listing
-them all in the option <code>NTNView.notations</code> using spaces to
-separate them: Do <kbd>:set NTNView.notations=I B</kbd>. This causes
-NTNView to use the notations defined in the document as well as those
-bundled with JOMDoc. Again, hit <kbd>&ctrl;l</kbd>.</p>
+<p>The intersection and the union are now rendered as we want it, but
+now the symbol <code>eq</code> is rendered using the default notation.
+This is because we removed the notations bundled with JOMDoc as a
+notation source. It is possible to use more than one notation source
+by listing them all in the option <code>NTNView.notations</code> using
+spaces to separate them: Do <kbd>:set NTNView.notations=I B&enter;</kbd>.
+This causes NTNView to use the notations defined in the document as
+well as those bundled with JOMDoc. Again, hit <kbd>&ctrl;l</kbd>.</p>
 
 <div class="documentationScreenshot">
 <vbox flex="1"><html:div internal:function="viewport" internal:viewClass="NTNView"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow id="a81acf080-684d-11e0-867e-0025224150e7"><mi id="a81acf080-684d-11e0-867e-0025224150e7-arg1">C</mi><mo id="a81acf080-684d-11e0-867e-0025224150e7-fun">=</mo><mrow id="a81acf080-684d-11e0-867e-0025224150e7-arg2"><mi id="a81acf080-684d-11e0-867e-0025224150e7-arg2-args-arg1">A</mi><mo id="a81acf080-684d-11e0-867e-0025224150e7-arg2-args-fun">∩</mo><mi id="a81acf080-684d-11e0-867e-0025224150e7-arg2-args-arg2">B</mi></mrow></mrow><annotation-xml><OMA xmlns="http://www.openmath.org/OpenMath" href="#a81acf080-684d-11e0-867e-0025224150e7"><OMS name="eq" cd="relation1" href="#a81acf080-684d-11e0-867e-0025224150e7-fun"/><OMV name="C" href="#a81acf080-684d-11e0-867e-0025224150e7-arg1"/><OMA href="#a81acf080-684d-11e0-867e-0025224150e7-arg2"><OMS name="intersection" cd="sets" href="#a81acf080-684d-11e0-867e-0025224150e7-arg2-args-fun"/><OMV name="A" href="#a81acf080-684d-11e0-867e-0025224150e7-arg2-args-arg1"/><OMV name="B" href="#a81acf080-684d-11e0-867e-0025224150e7-arg2-args-arg2"/></OMA></OMA></annotation-xml></semantics></math></html:div><html:div internal:function="viewport" internal:viewClass="TreeView"><html:div><html:div class="element" internal:selected="editcursor">OMOBJ<html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMA<html:div class="element">OMS</html:div><html:div class="element">OMV</html:div><html:div class="element">OMV</html:div></html:div></html:div></html:div></html:div></html:div><html:div internal:function="viewport" internal:viewClass="SourceView"><html:pre><html:span class="element" internal:selected="editcursor"><html:span>&lt;om:OMOBJ&gt;</html:span>
@@ -2560,20 +2552,24 @@ bundled with JOMDoc. Again, hit <kbd>&ctrl;l</kbd>.</p>
 </div>
 
 <p>So far so good, let us clean up. Do 
-<kbd>:set NTNView.notations=B</kbd> and <kbd>:close!</kbd>.</p>
+<kbd>:set NTNView.notations=B&enter;</kbd> and <kbd>:close!&enter;</kbd>.</p>
 
 <h2 id="editnotations">Editing Notations</h2>
 
-<p>The lecture is good, but its the notations we don't like! Gemse
-helps you fixing them. It is useful to look at an example formula
-while editing a notation definition, and Gemse allows you to do
-exactly this! Let's see how it works:</p>
+<p>You don't like the notations used in your newly bought book? Gemse
+helps you fixing them (if it has been written in JOMDoc). It is useful
+to look at an example formula while editing a notation definition, and
+Gemse allows you to do exactly this! Let's see how it works:</p>
 
 <p>Again, we open equations from the document of the last section,
 however, this time we open the notation definitions as well. Use the
-command <kbd>:loadall chrome://gemse/content/doc/examples/sets.omdoc&enter;</kbd>.
-This may take some seconds. Issue the command <kbd>:goto 10&enter;</kbd> to
-look at another equation.</p>
+command <kbd>:loadall chrome://gemse/content/doc/examples/sets.omdoc&enter;</kbd>
+if you haven't loaded them anymore from the last section.
+Issue the command <kbd>:goto 10&enter;</kbd> to
+to switch to a notation definition. (In case the equations are
+numbered differently, just switch to the one which is displayed as a
+uson sign in fences. The first line of its source code is
+<code>&lt;notation cd="sets" name="union"&gt;</code>.)</p>
 
 <p>Now do <kbd>:viewsetconf&enter;</kbd>. If the viewset
 <code>content</code> has not been automatically chosen (look at the
@@ -2597,7 +2593,7 @@ clicking with the right mouse button into the list). Choose <q>Add
 arbitrary option</q>. A row <q>Options</q> has been inserted, but it
 is just a header below which all options are listed. An empty option
 has been inserted, it is the row below the header. Since it contains
-no values yet, it might be invisible. Anyway, click into the
+no values yet, it might be invisible. Anyway, double click into the
 <q>Attribute</q> field of this invisible row.</p>
 
 <img src="viewsetconf4.png"/>
@@ -2751,6 +2747,15 @@ with SVG in Gemse, you would better put them in Gemse's
 
 <h2 id="customizing">Customizing</h2>
 
+<p>This section quickly gives you a hint how to customize some
+internals of Gemse. Be aware that these things are internal and
+therefore Gemse will break if you mess it up. You find the files
+mentioned below in the subdirectory <code>chrome/content</code> of
+the installation directory of Gemse. The command 
+<kbd>:help installation-directory&enter;</kbd> helps you with locating
+the installation directory (which can otherwise be a pain with Firefox
+extensions on windows).</p>
+
 <p>If you want to change the appearance of Gemse, you have to lay hands on
 the file <code>gemse.css</code>. Note that the documentation also uses this
 stylesheet file, so the examples in it are always consistent with your
@@ -2762,7 +2767,7 @@ the formula, open gemse.css in a text editor, look out for
 and change the
 <code>font-size</code> for example to <code>large</code>.</p>
 
-<p>If you want to modify the viewsets, you find them in the file
+<p>If you want to modify the pre-defined viewsets, you find them in the file
 <code>editor.xul</code>.</p>
 
 <p>If you do not like the keyboard layout, i.e. you want to change the
