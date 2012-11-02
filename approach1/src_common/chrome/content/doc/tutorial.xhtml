@@ -2481,7 +2481,7 @@ First load all equations from <code>examples/sets.omdoc</code>. This
 can be done by typing 
 <kbd>:loadall chrome://gemse/content/doc/examples/sets.omdoc&enter;</kbd>.
 It takes some seconds to load them all.
-Switch to the last equation. (By <kbd>goto 16</kbd> if you had no
+Switch to the last equation. (By <kbd>:goto 16</kbd> if you had no
 other equations open before.)
 Make shure you are using the viewset <code>content</code> by entering 
 <kbd>:viewset content&enter;</kbd>.</p>
@@ -2508,7 +2508,7 @@ case for the symbols <code>intersection</code> and <code>union</code>
 introduced by the OMDoc document the equation belongs to. Therefore,
 the default rendering is used for these symbols.  However, the OMDoc
 document containing the equation does have notation definitions for
-them. In order to sue them, do <kbd>:set NTNView.notations=I&enter;</kbd>. You
+them. In order to activate them, do <kbd>:set NTNView.notations=I&enter;</kbd>. You
 need to force Gemse to rebuild the view by hitting <kbd>&ctrl;l</kbd>,
 as the changes do not apply automatically.</p>
 
@@ -2568,7 +2568,7 @@ if you haven't loaded them anymore from the last section.
 Issue the command <kbd>:goto 10&enter;</kbd> to
 to switch to a notation definition. (In case the equations are
 numbered differently, just switch to the one which is displayed as a
-uson sign in fences. The first line of its source code is
+union sign in fences. The first line of its source code is
 <code>&lt;notation cd="sets" name="union"&gt;</code>.)</p>
 
 <p>Now do <kbd>:viewsetconf&enter;</kbd>. If the viewset
