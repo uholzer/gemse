@@ -24,10 +24,17 @@
 
 <h1>Activating Java based features</h1>
 
+<p><strong>This feature is not available in Firefox and Xulrunner 16
+and higher.</strong> Mozilla removed the <code>Window.java</code> attribute 
+(see <a href="https://developer.mozilla.org/vi/docs/Firefox_16_for_developers">Firefox
+16 for developers</a>. However, this feature has 
+<a href="https://developer.mozilla.org/en-US/docs/LiveConnect_Reference/java">not been
+undocumented</a> as they claim. (Getting it working again is
+definitely possible, but it would require some work.)</p>
+
 <p>Some features of Gemse are implemented using Java. If you do not
 need these features, you do not have to worry. However, if you want to
-use such a feature, you first have to do some preparations. The
-technology Gemse uses to call Java is called LiveConnect.</p>
+use such a feature, you first have to do some preparations.</p>
 
 <h2>Permissions</h2>
 
@@ -45,12 +52,9 @@ Firefox that comes along with it. (If you use XULRunner you have to
 make it aware of the plugin. I do not know how one does that. Though, on my
 system it works out of the box.)</p>
 
-<p>Older versions probably work as well. Therefore, if you don't like
-to update to the above versions, you should try with your older ones
-first. Be aware that you might run into weird bugs.</p>
-
-<p>I am not aware of any other Java plugin that implements LiveConnect
-than the one from Sun.</p>
+<p>There are other Java plugins, for example 
+<a href="http://icedtea.classpath.org/wiki/IcedTea-Web">IcedTea-Web</a>.
+They may or may not work.</p>
 
 <h2>Java libraries</h2>
 
@@ -59,12 +63,10 @@ you want to update them, modify them, or if you checked out the git
 repository (which does not yet contain these libraries), you can read
 here where they are located.</p>
 
-<p>If you use Gemse as Firefox extension, the
-installation directory is located at <code>extensions/Gemse@andonyar.com</code>
-in you profile directory. You can also start Gemse and enter the
+<p>If you use Gemse as Firefox extension, start it and enter the
 command <kbd>:help installation-directory&enter;</kbd>. It prints the
 location of the directory where Gemse is installed. (It fails with an
-error, if Gemse does not run with full privileges.)</p>
+error if Gemse does not run with full privileges.)</p>
 
 <p>In Gemse's installation directory, you find a folder called
 <code>java</code>. Gemse automatically loads all jar files of this
@@ -80,8 +82,8 @@ JOMDoc can be obtained from the
 <a href="https://trac.omdoc.org/jomdoc/wiki/Download">JOMDoc download page</a>.
 JOMDoc itself depends on a couple of additional libraries. Only those
 that are essential for Gemse are shipped along with it. Gemse's
-documentation contains <a href="libs.xhtml">a list</a> of those libraries.</p>
-
+documentation contains <a href="libs.xhtml">a list</a> of those
+libraries. They should all be included in the JOMDoc download.</p>
 
 </body>
 
