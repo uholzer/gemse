@@ -57,12 +57,23 @@ JavaLink = {
         var urlArray = jars.map(function (path) { 
             return new java.net.URL(path);
         });
-        
+
+        // We construct a Java array manually. IcedTea doesn't seem to
+        // like the JavaScript array.
+        var urlArrayJava = java.lang.reflect.Array.newInstance(java.lang.Class.forName("java.net.URL"),urlArray.length);
+        urlArray.forEach(function(value, index) {
+            java.lang.reflect.Array.set(urlArrayJava, index, value);
+        });
+
+        // Problem. See: http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=626
+        // https://bugzilla.redhat.com/show_bug.cgi?id=598519
+        // https://bugs.launchpad.net/ubuntu/+source/openjdk-6/+bug/596688
+
         // Obtain a class loader
         //XXX: Do we have to indicate the parental class loader or could
         //we use the constructor that only takes the urlArray?
-        var classLoader = java.net.URLClassLoader.newInstance(
-            urlArray,
+        var classLoader = new java.net.URLClassLoader(
+            urlArrayJava,
             java.lang.Thread.currentThread().getContextClassLoader()
         );  
         JavaLink.classLoader = classLoader;
