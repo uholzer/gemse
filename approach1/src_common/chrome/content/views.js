@@ -66,7 +66,7 @@ MessageView.prototype = {
         }, this);
     }
 }
-MessageView.createViewport = function(d) { return createDefaultViewport("MessageView", NS_XUL, "box"); };
+MessageView.createViewport = function(d) { var viewport = createDefaultViewport("MessageView", NS_XUL, "vbox"); };
 ViewsetManager.viewClasses["MessageView"] = MessageView;
 
 
