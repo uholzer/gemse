@@ -14,20 +14,19 @@
     <agv:licenseCategory rdf:resource="http://u.andonyar.com/ageneralvoc/LicenseFree"/>
     <!-- or LicenseFree, LicensePublicDomain -->
     <dcterms:rightsHolder rdf:resource="http://u.andonyar.com/people/UrsHolzer"/>
-    <dcterms:dateCopyrighted>2011-04-27</dcterms:dateCopyrighted>
+    <dcterms:dateCopyrighted>2012-11-03</dcterms:dateCopyrighted>
 
     <dcterms:creator rdf:resource="http://u.andonyar.com/people/UrsHolzer"/>
 
     <dc:title xml:lang="en">Gemse: General Math Structure Editor</dc:title>
-    <dc:description xml:lang="en">The intention is to create fast
-editors for mathematical formulas. At the moment, a first approach for
-such an editor is in development. It can be used to edit Presentation
-MathML, Content MathML and OpenMath.
-It is highly inspired by the text editor vi.</dc:description>
+    <dc:description xml:lang="en">An editor for mathematical
+formulas controlled by keyboard similar to the text editor Vim.
+Supported are Presentation MathML, Content MathML, OpenMath, and
+notation definitions as used by JOMDoc.</dc:description>
     <!--<dc:subject></dc:subject>-->
 
     <dcterms:created>2008-12-24</dcterms:created>
-    <dcterms:modified>2011-04-27</dcterms:modified>
+    <dcterms:modified>2012-11-03</dcterms:modified>
 
   </rdf:Description>
 
@@ -36,11 +35,10 @@ It is highly inspired by the text editor vi.</dc:description>
     <doap:name>Gemse</doap:name>
     <doap:created>2008-12-24</doap:created>
     <doap:shortdesc xml:lang="en">General Math Structure Editor</doap:shortdesc>
-    <doap:description xml:lang="en">The intention is to create fast
-editors for mathematical formulas. At the moment, a first approach for
-such an editor is in development. It can be used to edit Presentation
-MathML, Content MathML and OpenMath.
-It is highly inspired by the text editor vi.</doap:description>
+    <doap:description xml:lang="en">An editor for mathematical
+formulas controlled by keyboard similar to the text editor Vim.
+Supported are Presentation MathML, Content MathML, OpenMath, and
+notation definitions as used by JOMDoc.</doap:description>
     <doap:homepage rdf:resource="http://www.andonyar.com/rec/2008-12/gemse/" />
     <doap:programming-language>JavaScript</doap:programming-language>
     <!--<license rdf:resource="http://usefulinc.com/doap/licenses/mit" />-->
@@ -50,7 +48,14 @@ It is highly inspired by the text editor vi.</doap:description>
             <doap:location rdf:resource="http://www.andonyar.com/rec/2008-12/gemse/repo/gemse_public.git"/>
         </doap:GitRepository>
     </doap:repository>
-    <progress:progress>0.98</progress:progress>
+    <progress:progress>1</progress:progress>
+    <doap:release>
+        <doap:Version>
+            <doap:name>Gemse 1.0.16</doap:name>
+            <doap:created>2012-11-03</doap:created>
+            <doap:revision>1.0.16</doap:revision>
+        </doap:Version>
+    </doap:release>
     <doap:release>
         <doap:Version>
             <doap:name>Gemse 1.0.15 (alpha)</doap:name>
