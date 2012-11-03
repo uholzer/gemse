@@ -1,12 +1,14 @@
 #!/bin/sh
 
-# Packages are created in parent directory
+# The first argument must be the version number of the release you
+# want to package.
+# Packages are created in parent directory.
+
 cd ..
 
 rm -f gemse_src-$1.tar.gz
 rm -f gemseFirefoxExtension-$1.xpi
 rm -f gemseXULRunnerApplication-$1.zip
-rm -f gemseMinimal-$1.zip
 
 tar -czf gemse_src-$1.tar.gz -C ../ gemse/approach1
 
@@ -20,7 +22,4 @@ zip -r ../../gemseFirefoxExtension-$1.xpi *
 
 cd ../src_XULRunnerApplication
 zip -r ../../gemseXULRunnerApplication-$1.zip *
-
-cd ../src_common/chrome/content/
-zip -r ../../../../gemseMinimal-$1.zip *
 
