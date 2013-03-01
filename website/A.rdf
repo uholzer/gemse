@@ -2,31 +2,31 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:dc="http://purl.org/dc/elements/1.1/"
          xmlns:dcterms="http://purl.org/dc/terms/"
-         xmlns:agv="http://u.andonyar.com/ageneralvoc/"
+         xmlns:recpub="http://www.andonyar.com/rec/2007-01/aspec/recpub#"
          xmlns:doap="http://usefulinc.com/ns/doap#"
          xmlns:progress="http://www.andonyar.com/rec/2008-12/progress/voc#">
 
   <rdf:Description rdf:about="http://www.andonyar.com/rec/2008-12/gemse/">
-    <rdf:type rdf:resource="http://u.andonyar.com/ageneralvoc/RecPub"/>
+    <rdf:type rdf:resource="http://www.andonyar.com/rec/2007-01/aspec/recpub#RecPub"/>
   
-    <agv:aspec rdf:resource="http://www.andonyar.com/rec/2007-01/aspec/rec1"/>
+    <recpub:aspec rdf:resource="http://www.andonyar.com/rec/2007-01/aspec/rec2"/>
 
-    <agv:licenseCategory rdf:resource="http://u.andonyar.com/ageneralvoc/LicenseFree"/>
+    <recpub:licenseCategory rdf:resource="http://u.andonyar.com/ageneralvoc/LicenseFree"/>
     <!-- or LicenseFree, LicensePublicDomain -->
     <dcterms:rightsHolder rdf:resource="http://u.andonyar.com/people/UrsHolzer"/>
     <dcterms:dateCopyrighted>2012-11-03</dcterms:dateCopyrighted>
 
     <dcterms:creator rdf:resource="http://u.andonyar.com/people/UrsHolzer"/>
 
-    <dc:title xml:lang="en">Gemse: General Math Structure Editor</dc:title>
-    <dc:description xml:lang="en">An editor for mathematical
+    <dcterms:title xml:lang="en">Gemse: General Math Structure Editor</dcterms:title>
+    <dcterms:description xml:lang="en">An editor for mathematical
 formulas controlled by keyboard similar to the text editor Vim.
 Supported are Presentation MathML, Content MathML, OpenMath, and
-notation definitions as used by JOMDoc.</dc:description>
+notation definitions as used by JOMDoc.</dcterms:description>
     <!--<dc:subject></dc:subject>-->
 
-    <dcterms:created>2008-12-24</dcterms:created>
-    <dcterms:modified>2012-11-03</dcterms:modified>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-12-24</dcterms:created>
+    <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2012-11-03</dcterms:modified>
 
   </rdf:Description>
 
