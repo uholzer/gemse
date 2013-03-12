@@ -877,6 +877,31 @@ function editModeCommand_printWorkingDirectory(mode, instance) {
     return true;
 }
 
+function editModeCommand_changeWorkingDirectory(mode, instance) {
+    var absolute = mode.editor.makeURIAbsolute(instance.argument)
+    if (absolute[absolute.length-1]!="/") { absolute += "/" }
+
+    // If it is a file URL, check whether the file exists and is a
+    // directory
+    var ios;
+    ios = Components.classes["@mozilla.org/network/io-service;1"].
+                    getService(Components.interfaces.nsIIOService);
+    var uri = ios.newURI(absolute,null,null);
+    if (uri.scheme == "file") {
+        file = uri.QueryInterface(Components.interfaces.nsIFileURL).file
+        if (!file.exists()) {
+            throw new Error("Directory " + absolute + " does not exist.");
+        }
+        else if (!file.isDirectory()) {
+            throw new Error(absolute + " is not a directory.");
+        }
+    }
+
+    // Set directory
+    mode.editor.workingDirectory = absolute;
+    return true;
+}
+
 function editModeCommand_set(mode, instance) {
     // TODO: Use parameter parsing facility from the CommandHandler
     // instead of doing our own. Problem: set global?

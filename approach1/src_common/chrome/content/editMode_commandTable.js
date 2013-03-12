@@ -274,6 +274,20 @@ editModeCommands = {
         argument: "none",
         implementation: editModeCommand_printWorkingDirectory
     },
+    ":cwd": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_changeWorkingDirectory
+    },
+    ":cd": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "newlineTerminated",
+        implementation: editModeCommand_changeWorkingDirectory
+    },
     ":hideview": {
         category: "action",
         type: "long",
