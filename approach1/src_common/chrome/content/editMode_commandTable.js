@@ -429,6 +429,20 @@ editModeCommands = {
         argument: "none",
         implementation: editModeCommand_closeAll
     },
+    ":quit": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_closeAll
+    },
+    ":q": {
+        category: "action",
+        type: "long",
+        repeating: "prevent",
+        argument: "none",
+        implementation: editModeCommand_closeAll
+    },
     ":document": {
         category: "action",
         type: "long",
