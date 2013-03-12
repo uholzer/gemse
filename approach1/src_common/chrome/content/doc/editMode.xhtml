@@ -150,6 +150,16 @@
 
     <p>Moves the cursor to the previous leaf.</p>
 </div>
+
+<div class="commandDocumentation" id="editModeCommand_followRef">
+    <h4 class="commandTitle">Follows an xref attribute</h4>
+
+    <p>Jumps to the element referenced by an xref attribute on the
+    current element. Conversely, if there is no xref attribute, it
+    tries to jump to an element referencing this one with its cref
+    attribute. This is useful when working with a mix of interlinked
+    Presentation and Content MathML.</p>
+</div>
 </div>
 
 <div id="loadsave">
@@ -170,6 +180,20 @@
     added at the end automatically if missing). If it is a file URL,
     Gemse checks whether it is really a directory and denies to change
     to it if not.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_printDocumentInformation">
+    <h4 class="commandTitle">Print information on document</h4>
+
+    <p>Tells which document the current equation belongs to.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_printAllDocumentInformation">
+    <h4 class="commandTitle">Print information on all documents</h4>
+
+    <p>Prints a list of all currently loaded documents and open
+    equations. <a href="base.xhtml">Gemse Basics</a> explains the
+    relationship between documents and equations.</p>
 </div>
 
 <div class="commandDocumentation" id="editModeCommand_load">
@@ -592,12 +616,29 @@
 <div id="others">
 <h3>Others</h3>
 
+<div class="commandDocumentation" id="editModeCommand_contentInfo">
+    <h4 class="commandTitle">Show information about the current element</h4>
+
+    <p>Displays the unicode codepoint and the name from the unicode
+    character database for every character contained in the current
+    element.</p>
+</div>
+
 <div class="commandDocumentation" id="editModeCommand_doNothing">
     <h4 class="commandTitle">do nothing</h4>
 
     <p>Does absolutely nothing except wasting your time and
     electricity. This is useful for keys that sometimes get hit
     accidentally in this mode.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_serialize">
+    <h4 class="commandTitle">Serialize to Message View</h4>
+
+    <p>Serializes the equation and prints the result to the message
+    view. If the argument <code>pretty</code> is given, indentation
+    will be added such that the code is more readable. This command is
+    mostly useful for developers debugging Gemse.</p>
 </div>
 </div>
 
