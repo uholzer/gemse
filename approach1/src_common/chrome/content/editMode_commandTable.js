@@ -212,13 +212,13 @@ editModeCommands = {
         argument: "none",
         implementation: editModeCommand_putBefore
     },
-    "q": {
+    /*"q": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
         implementation: editModeCommand_startstopUserRecording
-    },
+    },*/
     "w": {
         category: "action",
         type: "command",
