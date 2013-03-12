@@ -155,6 +155,23 @@
 <div id="loadsave">
 <h3>Loading, saving and exporting</h3>
 
+<div class="commandDocumentation" id="editModeCommand_printWorkingDirectory">
+    <h4 class="commandTitle">Print working directory</h4>
+
+    <p>Tells the URL of the current working directory. Load/save
+    commands use this URL as base when they are given a relative
+    URL.</p>
+</div>
+
+<div class="commandDocumentation" id="editModeCommand_changeWorkingDirectory">
+    <h4 class="commandTitle">Change working directory</h4>
+
+    <p>Sets the current working directory. It can be any URL (/ is
+    added at the end automatically if missing). If it is a file URL,
+    Gemse checks whether it is really a directory and denies to change
+    to it if not.</p>
+</div>
+
 <div class="commandDocumentation" id="editModeCommand_load">
     <h4 class="commandTitle">Load</h4>
 
