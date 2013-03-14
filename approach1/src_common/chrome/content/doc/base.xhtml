@@ -198,6 +198,28 @@ directly in this document and then the document is saved to disk. So
 <em>all</em> changes of the document are saved whether they come from 
 Gemse or not.</p>
 
+<h3>Running Commands at Startup</h3>
+
+<p>It is possible to automatically run commands at startup. For this,
+put Gemse commands in a file called <code>.gemserc</code> in your home
+directory or alternatively, in Gemse's installation directory.</p>
+
+<p>For example, if you put the following content into the file
+<code>.gemserc</code> in your home directory, then Gemse's working
+directory will be <code>/home/urs/p/</code> and the UCD insert mode
+will be used after starting Gemse.</p>
+
+<pre>
+:cwd file:///home/urs/p
+:set currentInsertMode=ucd
+
+</pre>
+
+<p>Note that these commands are executed <em>after</em> loading the
+equation given on the command line or by the Firefox overlay. They are
+also executed <em>after</em> the commands given at the command
+line.</p>
+
 <h3>Command Line</h3>
 
 <p>Lets assume you installed Gemse as a Firefox extension. (It works
