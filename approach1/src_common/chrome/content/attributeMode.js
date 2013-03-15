@@ -197,7 +197,7 @@ function attributeModeCommand_setFromDictionary(mode,instance) {
     if (! (mode.element.namespaceURI==NS_MathML && mode.element.localName=="mo")) { return false }
 
     var applyEntry = function(entry,element) {
-        for (name in entry.attributes) {
+        for (var name in entry.attributes) {
             element.setAttribute(name, entry.attributes[name]);
         }
     }

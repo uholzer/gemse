@@ -59,6 +59,7 @@ function inputSubstitution() {
     // So the event must not be handed on to the mode if it returns false!
     
     var position = 0;
+    var startIndex;
     while (-1 != (startIndex = this.inputBuffer.substring(position).indexOf(inputSubstitutionStartSign))) {
         // Find the end
         var endIndex = this.inputBuffer.substring(startIndex).indexOf(inputSubstitutionEndSign);

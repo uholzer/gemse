@@ -20,7 +20,7 @@ visualSelectionModeCommands = {};
 // Get all movement commands from the edit mode but use our own
 // execution handler
 
-for (s in editModeCommands) {
+for (var s in editModeCommands) {
     if (editModeCommands[s].category=="movement") {
         // We must not use the object editModeCommands[s] directly,
         // since we are going to change some values. Here we simply

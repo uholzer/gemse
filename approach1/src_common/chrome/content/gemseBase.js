@@ -329,7 +329,7 @@ RegisterManager.prototype = {
         else if (clipboardDOM.documentElement.localName == "math" && clipboardDOM.documentElement.namespaceURI == NS_MathML) {
             // Put the child elements into an array
             var arrayOfElements = [];
-            for (i=0; i < clipboardDOM.documentElement.childNodes.length; ++i) {
+            for (var i=0; i < clipboardDOM.documentElement.childNodes.length; ++i) {
                 arrayOfElements.push(clipboardDOM.documentElement.childNodes[i]);
             }
             registerData = new RegisterData('*',arrayOfElements);
@@ -1579,7 +1579,7 @@ GemsePEditor.prototype = {
      * For eating input based on UTF16 characters, use eatInput16.
      */
     eatInput: function(numberOfCharacters) {
-        for (r in this.inputRecordings) {
+        for (var r in this.inputRecordings) {
             this.inputRecordings[r] += this.inputBuffer.uSlice(0,numberOfCharacters);
         }
         this.inputBuffer = this.inputBuffer.uSlice(numberOfCharacters);
@@ -2160,13 +2160,13 @@ CommandHandler.prototype = {
         if (!goOn) { return this.instance }
 
         /* Complete instance object */
-        if (this.instance.commandInfo.repeating=="prevent") { repeat = 1 }
         if (this.instance.commandInfo.repeating=="internal") {
             this.instance.internalRepeat = this.instance.repeat;
         }
         else if (this.instance.commandInfo.repeating=="external") {
             this.instance.externalRepeat = this.instance.repeat;
         }
+        //else if (this.instance.commandInfo.repeating=="prevent") { /* noop */ }
         delete this.instance.repeat;
         this.instance.mode = this.mode;
         this.instance.category = this.instance.commandInfo.category;

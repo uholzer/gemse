@@ -608,7 +608,7 @@ AttributeView.prototype = {
             table.appendChild(caption);
             var defaultAttributesHash = elementDescriptions[forElement.localName].attributes;
             var defaultAttributes = [];
-            for (a in defaultAttributesHash) {
+            for (var a in defaultAttributesHash) {
                 defaultAttributes.push(defaultAttributesHash[a]);
             }
             for (var i = 0; i < defaultAttributes.length; i++) {
@@ -697,7 +697,7 @@ DictionaryView.prototype = {
             tr.appendChild(td);
             
             var td = document.createElementNS(NS_HTML,"td");
-            for (a in entry.attributes) {
+            for (var a in entry.attributes) {
                 var text = document.createTextNode(
                     a + " = " + entry.attributes[a]
                 );

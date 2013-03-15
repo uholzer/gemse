@@ -800,7 +800,7 @@ function editModeCommand_contentInfo(mode) {
     // TODO: Improve that
     var s = "Contents: <";
     var content = new String(mode.cursor.textContent);
-    for (i = 0; i < content.uLength; ++i) {
+    for (var i = 0; i < content.uLength; ++i) {
         if (i>0) { s += ", " }
         s += "U+" + content.uCharCodeAt(i).toString(16) + " ";
         s += ucd.lookupName(content.uCharAt(i));

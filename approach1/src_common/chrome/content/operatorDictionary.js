@@ -49,8 +49,8 @@ function OperatorDictionary() {
 
     this.entriesByContent = function(content) {
         var entries = [];
-        for each (f in this.db[content]) {
-            for each (entry in f) {
+        for each (var f in this.db[content]) {
+            for each (var entry in f) {
                 entries.push(entry);
             }
         }
@@ -130,7 +130,7 @@ function OperatorDictionary() {
                     if (sEscaped[1]!="#"||sEscaped[2]!="x") {
                         throw new Error("Only hexadecimal entities allowed in content dictionary")
                     }
-                    endIndex = sEscaped.indexOf(";");
+                    var endIndex = sEscaped.indexOf(";");
                     if (endIndex==-1) { throw new Error("Malformed entity in content dictionary") }
                     var hexString = sEscaped.slice(3,endIndex);
                     var codepoint = parseInt(hexString,16);
@@ -155,7 +155,7 @@ function OperatorDictionary() {
         var attributeRegex = /([^\s=]+)="([^"]*)"/g;
 
         var match;
-        groupingPrecedenceAuto = 1000;
+        var groupingPrecedenceAuto = 1000;
         for (var i=0; i<dictionaryLines.length; ++i) {
             var l = dictionaryLines[i];
             if (emptyRegex.test(l)) {

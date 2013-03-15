@@ -182,7 +182,7 @@ String.prototype.index_16ToU = function(index16) {
  */
 String.uFromCharCode = function() {
     // Returns a string value, not an object
-    result = "";
+    var result = "";
     for (var i=0; i<arguments.length; ++i) {
         var codePt = arguments[i];
         if (codePt > 0xFFFF) {  
