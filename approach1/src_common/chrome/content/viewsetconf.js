@@ -39,9 +39,19 @@ configurator = {
         this.restart();
     },
     restart: function() {
-        this.viewsetNumber = this.viewsetManager.globalViewsetNumber;
-        this.viewset = this.viewsetManager.viewsets[this.viewsetNumber];
-        this.select(this.editorWindow.mml_firstChild(this.viewset));
+        if (this.viewsetNumber != this.viewsetManager.globalViewsetNumber
+            || this.viewset != this.viewsetManager.viewsets[this.viewsetNumber]) {
+            this.viewsetNumber = this.viewsetManager.globalViewsetNumber;
+            this.viewset = this.viewsetManager.viewsets[this.viewsetNumber];
+            this.select(this.editorWindow.mml_firstChild(this.viewset));
+        }
+        else {
+            var p = this.selected;
+            while (p && p != this.viewset) { p = p.parentNode() }
+            if (!p) {
+                this.select(this.editorWindow.mml_firstChild(this.viewset));
+            }
+        }
 
         document.getElementById("viewsetName").value        = this.viewset.getAttribute("name");
         document.getElementById("viewsetDescription").value = this.viewset.getAttribute("description");
