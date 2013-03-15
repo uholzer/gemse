@@ -31,7 +31,7 @@ or (at your option) any later version.
 </hbox>
 
 <groupbox flex="1">
-    <caption>preview</caption>
+    <caption label="preview"/>
     <box orient="vertical" id="schematicsContainer" flex="1" style="max-height: 100%; overflow: auto">
 
     </box>
