@@ -41,13 +41,17 @@ configurator = {
     restart: function() {
         if (this.viewsetNumber != this.viewsetManager.globalViewsetNumber
             || this.viewset != this.viewsetManager.viewsets[this.viewsetNumber]) {
+            // Different viewset than before, reset selection.
             this.viewsetNumber = this.viewsetManager.globalViewsetNumber;
             this.viewset = this.viewsetManager.viewsets[this.viewsetNumber];
             this.select(this.editorWindow.mml_firstChild(this.viewset));
         }
         else {
+            // The viewset is still the same. For safety, check
+            // whether the selected element is still part of the
+            // viewset. If not, reset selection.
             var p = this.selected;
-            while (p && p != this.viewset) { p = p.parentNode() }
+            while (p && p != this.viewset) { p = p.parentNode }
             if (!p) {
                 this.select(this.editorWindow.mml_firstChild(this.viewset));
             }
