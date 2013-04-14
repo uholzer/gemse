@@ -148,7 +148,7 @@ or (at your option) any later version.
                         <html:div internal:function="viewport" internal:viewClass="TreeView"/>
                     </vbox>
                     <hbox flex="1" style="overflow: auto; height: 0;">
-                        <html:div internal:function="viewport" internal:viewClass="SourceView"/>
+                        <html:div internal:function="viewport" internal:viewClass="SourceView" internal:options="SourceView.autoscroll=yes"/>
                         <html:div internal:function="viewport" internal:viewClass="AttributeView"/>
                         <html:div internal:function="viewport" internal:viewClass="DictionaryView"/>
                     </hbox>
