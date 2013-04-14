@@ -182,6 +182,7 @@ SourceView.prototype = {
             }
         }
         this.writeSourceOfElement(root,pre,startIndentation,this.o.foldingDepth);
+        if (this.o.autoscroll && this.scrollTo) { this.scrollTo.scrollIntoView(); }
     },
     /**
      * Writes the source for of an element to the document.
@@ -207,6 +208,7 @@ SourceView.prototype = {
         // Put internal:selected attribute if present
         if (src.getAttributeNS(NS_internal, "selected")) {
             elementSpan.setAttributeNS(NS_internal, "selected", src.getAttributeNS(NS_internal, "selected"));
+            this.scrollTo = elementSpan;
         }
         // Add it to dest
         dest.appendChild(elementSpan);
@@ -419,6 +421,16 @@ SourceView.gemseOptions = {
             o.foldingKeepIndentation = this.parser(value);
         },
         remover: function(o) { delete o.foldingKeepIndentation }
+    },
+    "SourceView.autoscroll": {
+        localToClass: SourceView,
+        defaultValue: "no",
+        validator: OptionsAssistant.validators.truthVal,
+        parser: OptionsAssistant.parsers.truthVal,
+        setter: function(o,value) {
+            o.autoscroll = this.parser(value);
+        },
+        remover: function(o) { delete o.autoscroll }
     },
 }
 SourceView.createViewport = function(d) { return createDefaultViewport("SourceView", NS_HTML, "div"); };
