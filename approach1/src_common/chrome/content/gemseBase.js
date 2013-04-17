@@ -1332,7 +1332,7 @@ function GemsePEditor(callback) {
      * The value is an URI as string.
      * @private
      */
-    newEditor.internalWorkingDirectory = newEditor.processWorkingDirectory;
+    newEditor._workingDirectory = newEditor.processWorkingDirectory;
     /**
      * A template as a DOM element of a new equation.
      * (The constructor of this class does set this property by
@@ -1400,11 +1400,11 @@ GemsePEditor.prototype = {
      * The working directory of the editor.
      */
     get workingDirectory() {
-        return this.internalWorkingDirectory;
+        return this._workingDirectory;
     },
     set workingDirectory(dir) {
         if (dir) {
-            this.internalWorkingDirectory = dir;
+            this._workingDirectory = dir;
         }
         else {
             // If dir is empty, we should change to the user's home
@@ -1415,9 +1415,9 @@ GemsePEditor.prototype = {
                              getService(Components.interfaces.nsIProperties).
                              get("Home", Components.interfaces.nsIFile);
             var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
-            this.internalWorkingDirectory = workingDirectory;
+            this._workingDirectory = workingDirectory;
         }
-        this.showMessage("Changed working directory to " + this.internalWorkingDirectory);
+        this.showMessage("Changed working directory to " + this._workingDirectory);
     },
 
     /**
