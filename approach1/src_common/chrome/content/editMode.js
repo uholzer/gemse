@@ -878,6 +878,12 @@ function editModeCommand_printWorkingDirectory(mode, instance) {
 }
 
 function editModeCommand_changeWorkingDirectory(mode, instance) {
+    if (!instance.argument) {
+        // Change to user's home directory
+        mode.editor.workingDirectory = null;
+        return true;
+    }
+
     var absolute = mode.editor.makeURIAbsolute(instance.argument)
     if (absolute[absolute.length-1]!="/") { absolute += "/" }
 
