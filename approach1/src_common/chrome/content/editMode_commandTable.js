@@ -9,10 +9,10 @@
 
 
 
-editModeCommandOptions = {
+var editModeCommandOptions = {
     repeating: true,
 }
-editModeCommands = {
+var editModeCommands = {
     "\n": {
         category: "action",
         type: "command",

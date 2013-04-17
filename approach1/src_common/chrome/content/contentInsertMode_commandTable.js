@@ -8,11 +8,11 @@
  */
 
 
-contentInsertModeCommandOptions = {
+var contentInsertModeCommandOptions = {
     repeating: false, // Must be false, since digits have to be treated as tokens!
 }
 
-contentInsertModeCommands = {
+var contentInsertModeCommands = {
     "+": {
         type: "command",
         argument: "none",

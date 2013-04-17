@@ -8,14 +8,14 @@
  */
 
 
-visualSelectionModeCommandOptions = {
+var visualSelectionModeCommandOptions = {
     repeating: true,
 }
 
 // We construct the command table for the visual mode using the table
 // of the edit mode. Afterwards we add some additional commands.
 
-visualSelectionModeCommands = {};
+var visualSelectionModeCommands = {};
 
 // Get all movement commands from the edit mode but use our own
 // execution handler

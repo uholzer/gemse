@@ -7,7 +7,7 @@
  * or (at your option) any later version.
  */
 
-JavaLink = {
+var JavaLink = {
     ready: false,
     broken: false,
     init: function() {

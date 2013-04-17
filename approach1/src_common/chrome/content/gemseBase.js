@@ -2045,7 +2045,7 @@ GemsePEditor.knownClasses = [];
  *        <dd>function(mode,data,commandInfo)</dd>
  *        </dl>
  */
-CommandHandler = function(mode,options,commandTable) {
+function CommandHandler(mode,options,commandTable) {
     this.editor = mode.editor;
     this.mode = mode;
     this.options = options;
@@ -2347,7 +2347,7 @@ CommandHandler.prototype = {
  * incomplete, unknown or invalid commands.
  * The method execute() can be used to execute the command.
  */
-CommandInstance = function() {
+function CommandInstance() {
     // Must create these objects for every object, since otherwise, the
     // array of the prototype could be modified accidentally
     /**

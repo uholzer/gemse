@@ -40,7 +40,7 @@ The best way would be to put them in one file and the user defined
 ones in another.
 */
 
-operatorDictionary = new OperatorDictionary();
+var operatorDictionary = new OperatorDictionary();
 
 function OperatorDictionary() {
     this.db = {}

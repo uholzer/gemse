@@ -229,6 +229,6 @@ UCD4Gemse.prototype = {
 
 }
 
-ucd = new UCD4Gemse();
+var ucd = new UCD4Gemse();
 ucd.load();
 

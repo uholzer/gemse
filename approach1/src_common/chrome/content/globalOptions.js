@@ -17,7 +17,7 @@
  * @const Global Options. This object defines the options that can be
  * used globally
  */
-gemseGlobalOptions = {
+var gemseGlobalOptions = {
     "pragmaticContent": {
         defaultValue: "no",
         validator: OptionsAssistant.validators.truthVal,

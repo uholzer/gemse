@@ -10,17 +10,17 @@
 
 /* Configuration */
 
-inputSubstitutionActive = true;
+var inputSubstitutionActive = true;
 
-inputSubstitutionStartSign = "&";
-inputSubstitutionEndSign = ";";
+var inputSubstitutionStartSign = "&";
+var inputSubstitutionEndSign = ";";
 
 /* Loading of tables */
 
 if (inputSubstitutionActive) { inputSubstitution_loadTables(); }
 
 function inputSubstitution_loadTables() {
-    inputSubstitutionTable = {
+    var inputSubstitutionTable = {
         // Here you can add additional entries to the input substitution
         // table. They have to look like
         //   name: "character",

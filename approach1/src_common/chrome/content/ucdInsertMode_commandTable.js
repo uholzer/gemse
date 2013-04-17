@@ -13,11 +13,11 @@
 // should work as long as our putElement and cursor/moveCursor are 
 // compatible with the ones from trivial mode.
 
-ucdInsertModeCommandOptions = {
+var ucdInsertModeCommandOptions = {
     repeating: false, // Must be false, since digits have to be treated as tokens!
 }
 
-ucdInsertModeCommands = {
+var ucdInsertModeCommands = {
     "^": {
         type: "command",
         argument: "none",

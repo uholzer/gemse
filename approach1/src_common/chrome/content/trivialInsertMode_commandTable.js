@@ -8,11 +8,11 @@
  */
 
 
-trivialInsertModeCommandOptions = {
+var trivialInsertModeCommandOptions = {
     repeating: true,
 }
 
-trivialInsertModeCommands = {
+var trivialInsertModeCommands = {
     "i": {
         type: "command",
         repeating: "external",

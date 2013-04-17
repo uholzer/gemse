@@ -12,7 +12,7 @@ StorageLink.prototype = {
 /*
  * Manages loading and saving of a DOM document
  */
-DocStoragePrototype = {
+var DocStoragePrototype = {
     /**
      * Read the resource
      * @returns root element of the equation

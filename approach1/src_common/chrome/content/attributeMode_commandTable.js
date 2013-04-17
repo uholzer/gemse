@@ -7,10 +7,10 @@
  * or (at your option) any later version.
  */
 
-attributeModeCommandOptions = {
+var attributeModeCommandOptions = {
     repeating: true,
 }
-attributeModeCommands = {
+var attributeModeCommands = {
     "j": {
         type: "command",
         repeating: "external",
