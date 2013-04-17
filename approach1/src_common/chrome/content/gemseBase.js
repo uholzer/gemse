@@ -1302,42 +1302,23 @@ function GemsePEditor(callback) {
      * if Gemse does not run with chrome privileges).
      */
     newEditor.installationDirectory = null;
-    try {
-        if (Components.interfaces.nsIExtensionManager) {
-            // For Firefox 3.* (Mozilla 1.9.*)
-            newEditor.installationDirectory = Components.classes["@mozilla.org/extensions/manager;1"].  
-                        getService(Components.interfaces.nsIExtensionManager).  
-                        getInstallLocation("Gemse@andonyar.com"). // guid of extension  
-                        getItemLocation("Gemse@andonyar.com");  
-            nextstep();
+    Components.utils.import("resource://gre/modules/AddonManager.jsm");
+    // We can only continue when we know the installationDirectory.
+    // This we do when the callback scheduled by getAddonByID is
+    // called later, so we call nextstep in the callback.
+    AddonManager.getAddonByID("Gemse@andonyar.com", function(a) { 
+        if (a) { // Gemse is an addon
+            var uri = a.getResourceURI("");
+            newEditor.installationDirectory = uri.QueryInterface(Components.interfaces.nsIFileURL).file; 
         }
-        else {
-            // For Firefox 4 (Mozilla 2.0) we have to use the new
-            // AddonManager, the ExtensionManager doesn't exist
-            // anymore.
-            // This is the last thing we do in this step. The callback
-            // will call the next step.
-            // (Note: getAddonByID will mess with this of the callback
-            // and will not propagate exceptions!)
-            Components.utils.import("resource://gre/modules/AddonManager.jsm");
-            AddonManager.getAddonByID("Gemse@andonyar.com", function(a) { 
-                if (a) { // Gemse is an addon
-                    var uri = a.getResourceURI("");
-                    newEditor.installationDirectory = uri.QueryInterface(Components.interfaces.nsIFileURL).file; 
-                }
-                else { // Gemse is not an addon, but a XULRunner application
-                    newEditor.installationDirectory = Components.classes["@mozilla.org/file/directory_service;1"].
-                                     getService(Components.interfaces.nsIProperties).
-                                     get("CurProcD", Components.interfaces.nsIFile);
-                    //XXX: Or should we use XCurProcD?
-                }
-                nextstep();
-            });
+        else { // Gemse is not an addon, but a XULRunner application
+            newEditor.installationDirectory = Components.classes["@mozilla.org/file/directory_service;1"].
+                             getService(Components.interfaces.nsIProperties).
+                             get("CurProcD", Components.interfaces.nsIFile);
+            //XXX: Or should we use XCurProcD?
         }
-    }
-    catch (e) {
         nextstep();
-    }
+    });
     
     }; // end of step1
 
@@ -1352,13 +1333,6 @@ function GemsePEditor(callback) {
      * @private
      */
     newEditor.internalWorkingDirectory = newEditor.processWorkingDirectory;
-    if (!newEditor.internalWorkingDirectory) {
-        // For some reason we are not able to find out the current
-        // working directory of the process, so we try the base URI of
-        // the editor.xul, which should always be available (DOM3,
-        // Node interface)
-        newEditor.internalWorkingDirectory = document.baseURI;
-    }
     /**
      * A template as a DOM element of a new equation.
      * (The constructor of this class does set this property by
@@ -1435,20 +1409,13 @@ GemsePEditor.prototype = {
         else {
             // If dir is empty, we should change to the user's home
             // directory
-            try {
-                var ios = Components.classes["@mozilla.org/network/io-service;1"].
-                                 getService(Components.interfaces.nsIIOService);
-                var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
-                                 getService(Components.interfaces.nsIProperties).
-                                 get("Home", Components.interfaces.nsIFile);
-                var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
-                this.internalWorkingDirectory = workingDirectory;
-            }
-            catch(e) {
-                // If we fail, we should not change anything
-                this.showMessage("Unable to change working directory")
-                return;
-            }
+            var ios = Components.classes["@mozilla.org/network/io-service;1"].
+                             getService(Components.interfaces.nsIIOService);
+            var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
+                             getService(Components.interfaces.nsIProperties).
+                             get("Home", Components.interfaces.nsIFile);
+            var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
+            this.internalWorkingDirectory = workingDirectory;
         }
         this.showMessage("Changed working directory to " + this.internalWorkingDirectory);
     },
@@ -1457,23 +1424,16 @@ GemsePEditor.prototype = {
      * Get the real current working directory of the application as
      * indicated by the io-service.
      * @private
-     * @returns The current working directory as URI as string. If
-     *          it is not possible to find out, null is returned (for
-     *          example when Gemse runs outside the chrome).
+     * @returns The current working directory as URI as string.
      */
     get processWorkingDirectory() {
-        try {
-            var ios = Components.classes["@mozilla.org/network/io-service;1"].
-                             getService(Components.interfaces.nsIIOService);
-            var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
-                             getService(Components.interfaces.nsIProperties).
-                             get("CurWorkD", Components.interfaces.nsIFile);
-            var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
-            return workingDirectory;
-        }
-        catch(e) {
-            return null;
-        }
+        var ios = Components.classes["@mozilla.org/network/io-service;1"].
+                         getService(Components.interfaces.nsIIOService);
+        var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
+                         getService(Components.interfaces.nsIProperties).
+                         get("CurWorkD", Components.interfaces.nsIFile);
+        var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
+        return workingDirectory;
     },
 
     /**
@@ -1677,14 +1637,8 @@ GemsePEditor.prototype = {
      */
     newDocStorageByURI: function(uriString) {
         var ios;
-        try {
-            ios = Components.classes["@mozilla.org/network/io-service;1"].
-                            getService(Components.interfaces.nsIIOService);
-        }
-        catch(e) {
-            // If we do not have chrome privileges, we just do
-            return new XMLHttpRequestDocStorage(uriString);
-        }
+        ios = Components.classes["@mozilla.org/network/io-service;1"].
+                        getService(Components.interfaces.nsIIOService);
 
         var uri = ios.newURI(uriString,null,null);
         var protocol = uri.scheme;
@@ -1772,18 +1726,9 @@ GemsePEditor.prototype = {
      */
     makeURIAbsolute: function(uri) {
         // Check whether uri is relative. Make an absolute one out of it.
-        try {
-            // Fails, if the preivileges for accessing Components.classes
-            // are missing. In such a case, do not make the uri absolute
-            // and let that handle by the XMLHttpRequest. I think this
-            // means that then the location of the editor.xul is taken
-            // as base by XMLHttpRequest.
-            // XXX: What happens if this fails for another reason?
-            var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                    .getService(Components.interfaces.nsIIOService);
-            uri = ios.newURI(uri,null,ios.newURI(this.workingDirectory,null,null)).spec;
-        }
-        catch (e) { }
+        var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                .getService(Components.interfaces.nsIIOService);
+        uri = ios.newURI(uri,null,ios.newURI(this.workingDirectory,null,null)).spec;
         return uri;
     },
     /** 
