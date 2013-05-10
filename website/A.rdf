@@ -4,7 +4,8 @@
          xmlns:dcterms="http://purl.org/dc/terms/"
          xmlns:recpub="http://www.andonyar.com/rec/2007-01/aspec/recpub#"
          xmlns:doap="http://usefulinc.com/ns/doap#"
-         xmlns:progress="http://www.andonyar.com/rec/2008-12/progress/voc#">
+         xmlns:progress="http://www.andonyar.com/rec/2008-12/progress/voc#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#">
 
   <rdf:Description rdf:about="http://www.andonyar.com/rec/2008-12/gemse/">
     <rdf:type rdf:resource="http://www.andonyar.com/rec/2007-01/aspec/recpub#RecPub"/>
@@ -31,7 +32,8 @@ notation definitions as used by JOMDoc.</dcterms:description>
   </rdf:Description>
 
   <!-- About the project -->
-  <doap:Project rdf:about="http://www.andonyar.com/rec/2008-12/gemse/Project">
+  <doap:Project rdf:about="http://u.andonyar.com/projects/gemse">
+    <owl:sameAs rdf:resource="http://www.andonyar.com/rec/2008-12/gemse/Project"/>
     <doap:name>Gemse</doap:name>
     <doap:created>2008-12-24</doap:created>
     <doap:shortdesc xml:lang="en">General Math Structure Editor</doap:shortdesc>
