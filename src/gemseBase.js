@@ -789,7 +789,7 @@ ViewsetManager.prototype = {
         // Read in options from internal:options attribute of the Element element
         if (viewport.hasAttributeNS(NS_internal, "options")) {
             var options = this.parseOptionsString(viewport.getAttributeNS(NS_internal, "options"));
-            for each (var option in options) {
+            for (var option of options) {
                 try {
                     this.editor.optionsAssistant.set(option[0],option[1],null,view);
                 }

@@ -39,13 +39,7 @@ function OperatorDictionary() {
     /* Public methods */
 
     this.entriesByContent = function(content) {
-        var entries = [];
-        for each (var f in this.db[content]) {
-            for each (var entry in f) {
-                entries.push(entry);
-            }
-        }
-        return entries;
+        return Object.values(this.db[content]).flatMap(x => Object.values(x));
     }
 
     this.getNodesByElement= function(element) {

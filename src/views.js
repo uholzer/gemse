@@ -273,7 +273,7 @@ SourceView.prototype = {
                 tagName.appendChild(document.createTextNode(element.tagName));
                 span.appendChild(tagName);
                 if (showAttributes && !(type==TAGTYPE_END)) {
-                    for each (var attr in attributeslist(element)) {
+                    for (var attr of attributeslist(element)) {
                         span.appendChild(attribute(attr));
                     }
                 }
@@ -284,7 +284,7 @@ SourceView.prototype = {
                 if (!(type==TAGTYPE_END) && showAttributes) {
                     var span = document.createElementNS(NS_HTML,"span");
                     span.appendChild(document.createTextNode("<" + element.tagName));
-                    for each (var attr in attributeslist(element)) {
+                    for (var attr of attributeslist(element)) {
                         span.appendChild(attribute(attr));
                     }
                     span.appendChild(document.createTextNode(type==TAGTYPE_BOTH ? "/>" : ">"));
@@ -985,7 +985,7 @@ NTNView.prototype = {
 
         /* Fill collectors */
 
-        for each (var nsource in this.o.notations) {
+        for (var nsource of this.o.notations) {
             try {
                 var nsource_decoded;
                 if (nsource[0] == "B") {

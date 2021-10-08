@@ -143,7 +143,7 @@ function attributeModeCommand_insertForeign(mode,instance) {
 function attributeModeCommand_setDefaultForMissing(mode) {
     // Sets default value for attributes not already present
     var elementDesc = elementDescriptions[mode.element.localName];
-    for each (var attributeDesc in elementDesc.attributes) {
+    for (var attributeDesc of elementDesc.attributes) {
         if (!mode.element.hasAttributeNS(attributeDesc.namespace||"",attributeDesc.name)) {
             mode.element.setAttributeNS(attributeDesc.namespace||"",attributeDesc.name,attributeDesc.defaultValue);
         }
