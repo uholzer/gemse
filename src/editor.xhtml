@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="gemse.css" type="text/css"?>
+
+<!DOCTYPE html>
+<html
+    id="GemseWindow"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
+    title="Gemse">
+    <head>
+        <script src="const.js"/>
+        <script src="UString.js"/>
+        <script src="JavaLink.js"/>
+        <script src="gemseBase.js"/>
+        <script src="views.js"/>
+        <script src="storage.js"/>
+        <script src="elementDescriptors.js"/>
+        <script src="ucd.js"/>
+        <script src="editMode.js"/>
+        <script src="editMode_commandTable.js"/>
+        <script src="attributeMode.js"/>
+        <script src="attributeMode_commandTable.js"/>
+        <script src="trivialInsertMode.js"/>
+        <script src="trivialInsertMode_commandTable.js"/>
+        <script src="ucdInsertMode.js"/>
+        <script src="ucdInsertMode_commandTable.js"/>
+        <script src="contentInsertMode.js"/>
+        <script src="contentInsertMode_commandTable.js"/>
+        <script src="visualSelectionMode.js"/>
+        <script src="visualSelectionMode_commandTable.js"/>
+        <script src="operatorDictionary.js"/>
+        <script src="inputSubstitution/core.js"/>
+        <script src="globalOptions.js"/>
+        <script><![CDATA[
+            var editor;
+
+            function start() {
+                editor = new GemsePEditor(editorsetup);
+            }
+            function editorsetup(editor) {
+                editor.inputElement.focus();
+
+                // Give the window a name:
+                window.name = "globalGemseInstance";
+
+                // Locate callback function provided by the first argument
+                // (But check first the type of the argument, since it
+                // seems that windows for XUL documents receive some
+                // arguments ...)
+                var onready;
+                if (window.arguments && window.arguments.length > 0 && window.arguments[0]) {
+                    var arg = window.arguments[0];
+                    // If the argument has been passed by using the
+                    // wrappedJSObject-trick, unwrap it
+                    if (arg.wrappedJSObject) {
+                        arg = arg.wrappedJSObject;
+                    }
+                    onready = arg.onready;
+                }
+
+                // Execute onReady callback
+                if (onready) { onready(editor) }
+
+                // If there are no equations up to now, create a new one
+                if (editor.equations.length==0) {
+                    editor.newEquation();
+                }
+
+                try {
+                    // Add startup script from installation directory
+                    var rcfile = editor.installationDirectory.clone();
+                    rcfile.append(".gemserc");
+                    loadInitScript(rcfile);
+                }
+                catch (e) {}
+                try {
+                    // Add startup script from user directory
+                    var rcfile = Components.classes["@mozilla.org/file/directory_service;1"].
+                                     getService(Components.interfaces.nsIProperties).
+                                     get("Home", Components.interfaces.nsIFile);
+                    rcfile.append(".gemserc");
+                    loadInitScript(rcfile);
+                }
+                catch (e) {}
+
+                // If there is already stuff in the input buffer (for
+                // example placed by one of the above callback functions),
+                // run it.
+                if (editor.inputBuffer) { editor.inputEvent() }
+            }
+
+            function loadInitScript(rcfile) {
+                    var ios = Components.classes["@mozilla.org/network/io-service;1"].  
+                                        getService(Components.interfaces.nsIIOService);  
+                    var rcuri = ios.newFileURI(rcfile).spec;  
+
+                    var request = new XMLHttpRequest();
+                    request.open("GET", rcuri, false);
+                    request.send(null);
+                    editor.inputBuffer = editor.inputBuffer + request.responseText;
+            }
+
+            /* Event processing */
+            // The curent event processing is completely broken. Perhaps I
+            // should use XUL right away to clean up the mess?
+
+            function processKey(event) {
+                editor.keyEvent(event);
+            }
+
+            function processInput() {
+                editor.inputEvent();
+            }
+
+        ]]></script>
+    </head>
+    <body onload="start()">
+
+<vbox id="viewsetDock" flex="1" style="max-height: 100%; overflow: auto">
+
+
+</vbox>
+
+<textbox type="gemse" id="input" onkeypress="processKey(event)" oncommand="processInput()"/>
+
+<internal:viewsets>
+    <!-- 0 -->
+    <internal:viewset 
+        name="presentation"
+        description="all views for presentation markup">
+        <vbox flex="1">
+            <hbox>
+                <vbox flex="1">
+                    <div internal:function="viewport" internal:viewClass="DirectView"/>
+                    <div internal:function="viewport" internal:viewClass="TreeView"/>
+                    <hbox>
+                        <div internal:function="viewport" internal:viewClass="SourceView"/>
+                        <div internal:function="viewport" internal:viewClass="AttributeView"/>
+                        <div internal:function="viewport" internal:viewClass="DictionaryView"/>
+                    </hbox>
+                </vbox>
+                <vbox internal:function="viewport" internal:viewClass="OthersView"/>
+            </hbox>
+            <!--<spacer flex="1"/>-->
+            <vbox flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
+            <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
+        </vbox>
+    </internal:viewset>
+    <!-- 1 -->
+    <internal:viewset
+        name="light"
+        description="lightweight viewset for presentation markup">
+        <vbox flex="1">
+            <div internal:function="viewport" internal:viewClass="DirectView"/>
+            <div internal:function="viewport" internal:viewClass="TreeView"/>
+            <hbox>
+                <div internal:function="viewport" internal:viewClass="AttributeView"/>
+                <div internal:function="viewport" internal:viewClass="DictionaryView"/>
+            </hbox>
+            <!--<spacer flex="1"/>-->
+            <vbox flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
+            <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
+        </vbox>
+    </internal:viewset>
+    <!-- 2 -->
+    <internal:viewset
+        name="screenshot"
+        description="used to create the screenshots for the tutorial">
+        <vbox flex="1">
+            <div internal:function="viewport" internal:viewClass="DirectView"/>
+            <div internal:function="viewport" internal:viewClass="TreeView"/>
+        </vbox>
+    </internal:viewset>
+    <!-- 3 -->
+    <internal:viewset
+        name="screenshot+"
+        description="used to create screenshots showing some additional views">
+        <vbox flex="1">
+            <div internal:function="viewport" internal:viewClass="DirectView"/>
+            <div internal:function="viewport" internal:viewClass="TreeView"/>
+            <hbox>
+                <div internal:function="viewport" internal:viewClass="AttributeView"/>
+                <div internal:function="viewport" internal:viewClass="DictionaryView"/>
+            </hbox>
+            <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
+        </vbox>
+    </internal:viewset>
+    <!-- 4 -->
+    <internal:viewset
+        name="use_EquationView"
+        description="uses EquationView instead of DirectView">
+        <vbox flex="1">
+            <hbox>
+                <vbox flex="1">
+                    <div internal:function="viewport" internal:viewClass="EquationView"/>
+                    <div internal:function="viewport" internal:viewClass="TreeView"/>
+                    <hbox>
+                        <div internal:function="viewport" internal:viewClass="SourceView"/>
+                        <div internal:function="viewport" internal:viewClass="AttributeView"/>
+                        <div internal:function="viewport" internal:viewClass="DictionaryView"/>
+                    </hbox>
+                </vbox>
+                <vbox internal:function="viewport" internal:viewClass="OthersView"/>
+            </hbox>
+            <!--<spacer flex="1"/>-->
+            <vbox flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
+            <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
+        </vbox>
+    </internal:viewset>
+    <!-- 5 -->
+    <internal:viewset
+        name="content"
+        description="for editing Content MathML, includes a live rendering provided by JOMDoc">
+        <vbox flex="1">
+            <hbox>
+                <vbox flex="1">
+                    <div internal:function="viewport" internal:viewClass="NTNView"/>
+                    <div internal:function="viewport" internal:viewClass="TreeView"/>
+                    <hbox>
+                        <div internal:function="viewport" internal:viewClass="SourceView"/>
+                        <div internal:function="viewport" internal:viewClass="AttributeView"/>
+                        <div internal:function="viewport" internal:viewClass="DictionaryView"/>
+                    </hbox>
+                </vbox>
+                <vbox internal:function="viewport" internal:viewClass="OthersView"/>
+            </hbox>
+            <!--<spacer flex="1"/>-->
+            <vbox flex="1" style="overflow: auto;" internal:function="viewport" internal:viewClass="MessageView"/>
+            <hbox internal:function="viewport" internal:viewClass="StatusbarView"/>
+        </vbox>
+    </internal:viewset>
+    <!-- 6 -->
+    <internal:viewset
+        name="screenshot-content"
+        description="used to create the screenshots for the tutorial">
+        <vbox flex="1">
+            <div internal:function="viewport" internal:viewClass="NTNView"/>
+            <div internal:function="viewport" internal:viewClass="TreeView"/>
+            <div internal:function="viewport" internal:viewClass="SourceView"/>
+        </vbox>
+    </internal:viewset>
+</internal:viewsets>
+
+<math id="equationTemplate" xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mrow></mrow> 
+</math>
+
+    </body>
+</html>
