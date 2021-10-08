@@ -65,38 +65,10 @@
                     editor.newEquation();
                 }
 
-                try {
-                    // Add startup script from installation directory
-                    var rcfile = editor.installationDirectory.clone();
-                    rcfile.append(".gemserc");
-                    loadInitScript(rcfile);
-                }
-                catch (e) {}
-                try {
-                    // Add startup script from user directory
-                    var rcfile = Components.classes["@mozilla.org/file/directory_service;1"].
-                                     getService(Components.interfaces.nsIProperties).
-                                     get("Home", Components.interfaces.nsIFile);
-                    rcfile.append(".gemserc");
-                    loadInitScript(rcfile);
-                }
-                catch (e) {}
-
                 // If there is already stuff in the input buffer (for
                 // example placed by one of the above callback functions),
                 // run it.
                 if (editor.inputBuffer) { editor.inputEvent() }
-            }
-
-            function loadInitScript(rcfile) {
-                    var ios = Components.classes["@mozilla.org/network/io-service;1"].  
-                                        getService(Components.interfaces.nsIIOService);  
-                    var rcuri = ios.newFileURI(rcfile).spec;  
-
-                    var request = new XMLHttpRequest();
-                    request.open("GET", rcuri, false);
-                    request.send(null);
-                    editor.inputBuffer = editor.inputBuffer + request.responseText;
             }
 
             /* Event processing */
