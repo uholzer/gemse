@@ -1288,28 +1288,8 @@ function GemsePEditor(callback) {
      * @private
      */
     newEditor.inputElement = document.getElementById("input");
-    /**
-     * The directory where Gemse is installed as nsIFile (may be null
-     * if Gemse does not run with chrome privileges).
-     */
-    newEditor.installationDirectory = null;
-    Components.utils.import("resource://gre/modules/AddonManager.jsm");
-    // We can only continue when we know the installationDirectory.
-    // This we do when the callback scheduled by getAddonByID is
-    // called later, so we call nextstep in the callback.
-    AddonManager.getAddonByID("Gemse@andonyar.com", function(a) { 
-        if (a) { // Gemse is an addon
-            var uri = a.getResourceURI("");
-            newEditor.installationDirectory = uri.QueryInterface(Components.interfaces.nsIFileURL).file; 
-        }
-        else { // Gemse is not an addon, but a XULRunner application
-            newEditor.installationDirectory = Components.classes["@mozilla.org/file/directory_service;1"].
-                             getService(Components.interfaces.nsIProperties).
-                             get("CurProcD", Components.interfaces.nsIFile);
-            //XXX: Or should we use XCurProcD?
-        }
-        nextstep();
-    });
+
+    nextstep();
     
     }; // end of step1
 

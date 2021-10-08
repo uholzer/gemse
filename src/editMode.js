@@ -632,18 +632,9 @@ function editModeCommand_help(mode, instance) {
             throw new Error("No description found for element " + args[1]);
         }
     }
-    else if (args[0] == "installation-directory") {
-        var p = document.createElementNS(NS_HTML, "p");
-        p.appendChild(document.createTextNode("Installation directory of Gemse: "));
-        var a = document.createElementNS(NS_HTML, "a");
-        a.setAttribute("href", "file://" + mode.editor.installationDirectory.path);
-        a.appendChild(document.createTextNode(mode.editor.installationDirectory.path));
-        p.appendChild(a);
-        mode.editor.showMessage(p);
-    }
     else if (args[0]) {
         mode.editor.showMessage("'" + args[0] + "' is no legal argument for :help. " +
-                                "Available arguments: tutorial, element, installation-directory. " +
+                                "Available arguments: tutorial, element. " +
                                 "Use ':help' without argument to open the main help page.");
     }
     else {
