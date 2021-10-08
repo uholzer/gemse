@@ -1,12 +1,3 @@
-/*
- * This file is part of Gemse.
- *
- * Copyright 2009, 2010 Urs Holzer
- *
- * Gemse is licenced under the GNU Public Licence v3 (GPL3), 
- * or (at your option) any later version.
- */
-
 function createDefaultViewport(className, elementNS, elementName) {
     var viewport = document.createElementNS(elementNS, elementName);
     viewport.setAttributeNS(NS_internal, "function", "viewport");

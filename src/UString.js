@@ -1,12 +1,3 @@
-/*
- * This file is part of Gemse.
- *
- * Copyright 2009, 2010 Urs Holzer
- *
- * Gemse is licenced under the GNU Public Licence v3 (GPL3), 
- * or (at your option) any later version.
- */
-
 /**
  * @fileOverview Extension of the String class for actions on true Unicode
  * characters.

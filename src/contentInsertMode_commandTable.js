@@ -1,13 +1,3 @@
-/*
- * This file is part of Gemse.
- *
- * Copyright 2009, 2010 Urs Holzer
- *
- * Gemse is licenced under the GNU Public Licence v3 (GPL3), 
- * or (at your option) any later version.
- */
-
-
 var contentInsertModeCommandOptions = {
     repeating: false, // Must be false, since digits have to be treated as tokens!
 }
