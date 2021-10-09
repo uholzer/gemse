@@ -585,7 +585,7 @@ AttributeView.prototype = {
                 attributes[i].localName,
                 attributes[i].nodeValue,
                 attributes[i].nodeName == forElement.getAttributeNS(NS_internal, "attributeCursor"),
-                forElement.getAttributeNS(NS_internal, "selectedAttributes").split(' ').indexOf(attributes[i].nodeName) != -1
+                (forElement.getAttributeNS(NS_internal, "selectedAttributes") || "").split(' ').indexOf(attributes[i].nodeName) != -1
             ));
         }
         this.viewport.appendChild(table);
