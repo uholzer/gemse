@@ -1303,7 +1303,7 @@ function GemsePEditor(callback) {
      * The value is an URI as string.
      * @private
      */
-    newEditor._workingDirectory = newEditor.processWorkingDirectory;
+    newEditor._workingDirectory = document.URL;
     /**
      * A template as a DOM element of a new equation.
      * (The constructor of this class does set this property by
@@ -1378,33 +1378,10 @@ GemsePEditor.prototype = {
             this._workingDirectory = dir;
         }
         else {
-            // If dir is empty, we should change to the user's home
-            // directory
-            var ios = Components.classes["@mozilla.org/network/io-service;1"].
-                             getService(Components.interfaces.nsIIOService);
-            var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
-                             getService(Components.interfaces.nsIProperties).
-                             get("Home", Components.interfaces.nsIFile);
-            var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
-            this._workingDirectory = workingDirectory;
+            // If dir is empty, we change to a useful default location.
+            this._workingDirectory = document.URL;
         }
         this.showMessage("Changed working directory to " + this._workingDirectory);
-    },
-
-    /**
-     * Get the real current working directory of the application as
-     * indicated by the io-service.
-     * @private
-     * @returns The current working directory as URI as string.
-     */
-    get processWorkingDirectory() {
-        var ios = Components.classes["@mozilla.org/network/io-service;1"].
-                         getService(Components.interfaces.nsIIOService);
-        var workingDirectoryFile = Components.classes["@mozilla.org/file/directory_service;1"].
-                         getService(Components.interfaces.nsIProperties).
-                         get("CurWorkD", Components.interfaces.nsIFile);
-        var workingDirectory = ios.newFileURI(workingDirectoryFile).spec;
-        return workingDirectory;
     },
 
     /**
