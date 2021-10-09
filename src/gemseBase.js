@@ -248,8 +248,8 @@ EquationEnv.prototype = {
 
         // Check whether there are unsaved changes
         if (this.history.hasChanges() && !force) {
+            this.editor.showMessage("Refused to close equation, since it has unsaved changes.");
             return false;
-            this.editor.showMessage("Neglected to close equation, since it has unsaved changes.");
         }
 
         // close
