@@ -1,19 +1,21 @@
 @namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
 @namespace html     "http://www.w3.org/1999/xhtml";
-@namespace xul      "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
-/*** The window (XUL) **/
-/* Initial size of window, when using the XUL interface (if this is
-set to a higher value than the size of the screen, the window is made
-smaller automatically */
-xul|window {
-    width: 1200px;
-    height: 900px;
+html|html, html|body {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 }
 
-/*** The input box ***/
-xul|textbox[type="gemse"] {
-    -moz-binding: url("chrome://gemse/content/ui.xml#inputbox");
+html|body {
+    display: flex;
+    flex-direction: column;
+}
+
+html|body > vbox {
+    flex: 1 1 0;
 }
 
 /*** Boxes and tables ***/
@@ -158,9 +160,8 @@ html|table {
 /*** The input box ***/
 
 #input {
+    flex: 0 0 3ex;
     position: relative;
-    left: 40%; 
-    right: 40%;
 }
 
 

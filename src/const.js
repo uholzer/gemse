@@ -33,9 +33,6 @@ const NS_HTML = "http://www.w3.org/1999/xhtml";
  * @constant
  */
 const NS_OMDoc = "http://omdoc.org/ns";
-//const KEYMOD_ALT = String.fromCharCode(KeyEvent.DOM_VK_ALT);
-//const KEYMOD_CONTROL = String.fromCharCode(KeyEvent.DOM_VK_CONTROL);
-//XXX: Knows the heck why KeyEvent.DOM_VK_* are undefined here ...
 /** 
  * The character Gemse uses to represent the ALT key. When the user
  * presses a key while holding ALT, this character followed by the
@@ -50,14 +47,19 @@ const KEYMOD_ALT = String.fromCharCode(18);
  * @constant
  */
 const KEYMOD_CONTROL = String.fromCharCode(17);
-/** 
- * The character Gemse uses to represent the META key. When the user
- * presses a key while holding META, this character followed by the
- * character of the key are added to the input buffer.
+/**
+ * The characters Gemse uses to represent various keys.
  * @constant
  */
-const KEYMOD_META = KeyEvent.VK_META;
-
+const KeyRepresentation = {
+    Backspace: String.fromCodePoint(0x08),
+    Enter: "\n",
+    Escape: String.fromCodePoint(0x1b),
+};
+/**
+ * Quote character surrounding key names.
+ */
+const KEYNAME_QUOTE = '`';
 /**
  * The default namespace resolver. It is used in various places in the
  * code of Gemse. Thus, already present prefixes should not be

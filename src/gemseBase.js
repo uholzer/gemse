@@ -1422,9 +1422,9 @@ GemsePEditor.prototype = {
         finally {
             // Now, if there is still something in the buffer, it is
             // either an incomplete command or an invalid command. So,
-            // if the remeining string ends with ESCAPE, the user
+            // if the remaining string ends with ESCAPE, the user
             // wants to clear the input buffer.
-            if (this.inputBuffer.charCodeAt(this.inputBuffer.length-1) == KeyEvent.DOM_VK_ESCAPE) {
+            if (this.inputBuffer[this.inputBuffer.length-1] == KeyRepresentation.Escape) {
                 this.inputBuffer = "";
             }
             // Update the views
@@ -1432,34 +1432,65 @@ GemsePEditor.prototype = {
         }
     },
     /**
-     * Handle key event. This is called by editor.xhtml when the user
-     * hits a key. It adds the character gnerated by this key to the
-     * input buffer and calls inputEvent on this object. (Not all
-     * input generates key events, for example pasting from the
-     * cpboard.)
+     * Handle key event. This is called by editor.xhtml when the user hits a
+     * key. If a modifier is used or the key is a special key that would not
+     * add a character by default (such as escape) a string representation of
+     * the pressed key combination is added to the input buffer. Note: Not all
+     * input generates key events, for example pasting from the clipboard.
      */
     keyEvent: function (event) {
         // Is called when a key gets hit. This also is called
         // if the key does not cause a character to be entered
         // into the input element (i.e. the input buffer).
 
-        var nondefault = false;
-        if (event.altKey)  { editor.inputBuffer += KEYMOD_ALT; nondefault=true; }
-        if (event.ctrlKey) { editor.inputBuffer += KEYMOD_CONTROL; nondefault=true; }
-        //if (event.metaKey) { editor.inputBuffer += KEYMOD_META }
-        /*
-        if (event.charCode || event.keyCode) {
-            editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
-                // event.which does not seem to work, it returns 0 for the escape Key
+        const editor = this;
+
+        const modifiers = [
+            "Alt",
+            "AltGraph",
+            "CapsLock",
+            "Control",
+            "Fn",
+            "FnLock",
+            "Hyper",
+            "Meta",
+            "NumLock",
+            "ScrollLock",
+            "Shift",
+            "Super",
+            "Symbol",
+            "SymbolLock",
+            "OS", // Firefox Bug, should be Meta. https://bugzilla.mozilla.org/show_bug.cgi?id=1232918
+        ];
+
+        const modifierPrefix = [["Alt", KEYMOD_ALT], ["Control", KEYMOD_CONTROL]]
+            .filter(([modifier, _]) => event.getModifierState(modifier))
+            .map(([_, prefix]) => prefix)
+            .join("");
+
+        if (event.composing) {
+            // The user should be capable to input via composing. In this case,
+            // we must let the input box do the usual thing.
         }
-        //if (event.keyCode) { event.preventDefault(); }
-        event.preventDefault();
-        event.stopPropagation();
-        editor.inputEvent();
-        */
-        if (nondefault || ((!event.charCode) && event.keyCode)) {
-            editor.inputBuffer += String.fromCharCode(event.charCode || event.keyCode);
-                // event.which does not seem to work, it returns 0 for the escape Key
+        else if (modifiers.includes(event.key)) {
+            // We do not treat key presses of modifiers as distinct key presses
+            // because other events will be fired for any keys pressed while
+            // this modifier is active.
+        }
+        else if (event.key.length > 1) {
+            editor.inputBuffer += modifierPrefix + (KeyRepresentation[event.key] || KEYNAME_QUOTE + event.key + KEYNAME_QUOTE);
+            stopDefaultBehaviour();
+        }
+        else if (modifierPrefix) {
+            editor.inputBuffer += modifierPrefix + event.key;
+            stopDefaultBehaviour();
+        }
+        else {
+            // We do not do anything special, the respective character(s) will
+            // be added by normal input box behaviour.
+        }
+
+        function stopDefaultBehaviour() {
             event.preventDefault();
             event.stopPropagation();
             if (!editor.globalI) { editor.globalI = 1 }
