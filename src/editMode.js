@@ -555,7 +555,12 @@ export const commands = {
     },
 
     load(mode, instance) {
-        return mode.editor.loadURI(instance.argument);
+        if (instance.argument == '-') {
+            return mode.editor.loadFile();
+        }
+        else {
+            return mode.editor.loadURI(instance.argument);
+        }
     },
     loadById(mode, instance) {
         var inf = instance.argument.match(/^(\S+)\s(.*)$/);

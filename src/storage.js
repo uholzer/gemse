@@ -85,54 +85,48 @@ var DocStoragePrototype = {
 };
 
 /**
- * @class Storage for local files
- * @param file an nsIFile
+ * @class Storage for local files, using HTML input elements. This is a
+ * temporary solution until the file system API gets implemented in Firefox.
+ * See https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API
+ * @param file an input HTML element
  */
-export function FileDocStorage(file) {
+export function FileDocStorage(fileInputElement) {
     this.document = document.implementation.createDocument(null,null,null);
-    this.file = file;
-    var ios = Components.classes["@mozilla.org/network/io-service;1"].  
-                        getService(Components.interfaces.nsIIOService);  
-    this.uri = ios.newFileURI(file).spec;  
-    this.lastModifiedTimeOfLastSync = null;
+    this.fileInputElement = fileInputElement;
 }
 FileDocStorage.prototype = {
     write: function() {
         var serializer = new XMLSerializer();
-        var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                                 .createInstance(Components.interfaces.nsIFileOutputStream);
-        foStream.init(this.file, 0x02 | 0x08 | 0x20, 0o664, 0);
-        serializer.serializeToStream(this.document, foStream, "");
-        this.lastModifiedTimeOfLastSync = this.file.lastModifiedTime;
-        return Promise.resolve();
+        var serialized = serializer.serializeToString(this.document);
+        var blob = new Blob([serialized], {type: "application/octet-stream"});
+        var url = URL.createObjectURL(blob);
+        window.setTimeout(function () { URL.revokeObjectURL(url) }, 600000);
+        window.location = url;
     },
     read: function() {
-        return HTTP.send(HTTP.open("GET", this.uri)).then(
-            HTTP.only2xx
+        this.fileInputElement.click();
+
+        return (new Promise(resolve => {
+            // TODO: This promise does never get resolved if the user cancels
+            // the dialog.
+            this.fileInputElement.addEventListener(
+                "change",
+                () => { resolve(this.fileInputElement.files[0]); },
+                {once: true}
+            );
+        })).then(
+            file => file.text()
         ).then(
-            request => {
-                this.document = request.responseXML;
-                this.lastModifiedTimeOfLastSync = this.file.lastModifiedTime;
+            (s) => {
+                this.document = new DOMParser().parseFromString(s, "application/xml");
             }
         );
     },
     adoptDocument: function(doc) {
         this.document = doc;
-        // Silently assume that doc is the content of the file at the
-        // time this.file.lastModifiedTime
-        this.lastModifiedTimeOfLastSync = this.file.lastModifiedTime;
-    },
-    exists: function() {
-        return this.file.exists();
-    },
-    readOnly: function() {
-        return (!this.file.isWritable());
-    },
-    hasChanged: function() {
-        return (this.file.lastModifiedTime > this.lastModifiedTimeOfLastSync);
     },
     toString: function() {
-        return "File " + this.file.path;
+        return "File (path unknown)";
     },
     __proto__: DocStoragePrototype
 };

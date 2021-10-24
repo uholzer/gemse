@@ -9,7 +9,7 @@ import { OptionsAssistant } from "./optionsAssistant.js";
 import { inputSubstitution, inputSubstitutionActive } from "./inputSubstitution/core.js";
 import { EditMode } from "./editMode.js";
 import { RegisterManager } from "./register.js";
-import { XMLHttpRequestDocStorage, ReadOnlyXMLHttpRequestDocStorage, InMemoryDocStorage } from "./storage.js";
+import { XMLHttpRequestDocStorage, ReadOnlyXMLHttpRequestDocStorage, FileDocStorage, InMemoryDocStorage, StorageLink } from "./storage.js";
 
 import { viewClasses } from "./views.js"; // Sets 
 
@@ -1261,14 +1261,43 @@ GemsePEditor.prototype = {
         return newEquationEnv;
     },
     /** 
+     * Load a file and its equations from the file system. If elementId and
+     * xpathString are empty, it uses the root element as the MathML element.
+     * If elementId is given, it uses the element with this id. Else, if xpath
+     * is given (and elementId is null), it evaluates this xpath expression and
+     * uses the first result.
+     * Unfortunately, it is not possible to provide a path to the file as a
+     * browser won't allow us opening any file. Instead, the user is shown a
+     * file picker dialog.
+     * @param {String} elementId
+     * @param {String} xpath
+     */
+    loadFile: function (fragmentId, xpath) {
+        var filePickerElement = document.getElementById("filepicker");
+        var newStorage = new FileDocStorage(filePickerElement);
+        this.showMessage("Created a new file storage " + newStorage.toString());
+
+        // We have to assume that this file has not already been loaded, i.e.
+        // that the storage is new. We have no way to tell otherwise.
+        this.showMessage("Read storage " + newStorage.toString());
+        return newStorage.read().then(
+            () => this.loadEquationsFromStorage(newStorage, fragmentId, xpath)
+        ).catch(
+            e => {
+                this.freeUnusedDocStorage(newStorage);
+                return Promise.reject(e);
+            }
+        );
+    },
+    /** 
      * Loads the document at the given URI and loads its equations. 
      * If elementId and xpathString are empty, it
      * uses the root element as the MathML element. If elementId
      * is given, it uses the element with this id. Else, if
      * xpathString is given (and elementId is null), it evaluates
      * this xpath expression and uses the first result.
-     * This is done using an XMLHttpRequest. This also works for
-     * local files.
+     * This is done using an XMLHttpRequest. This des not work to load local
+     * files via the file URL scheme due to browser restrictions.
      * @param {String} uri Absolute or relative URL including a
      *                     fragment identifier or XPointer (only the
      *                     scheme xpath1 is supported)
@@ -1311,12 +1340,13 @@ GemsePEditor.prototype = {
         // Check whether an equivalent storage already exists
         var eqStorage = this.getEquivalentStorage(newStorage);
         if (eqStorage) { newStorage = eqStorage }
+        if (!eqStorage) { this.storages.push(newStorage) }
 
         // If its a new storage, try to load the file
         this.showMessage("Using storage " + newStorage.toString());
         if (eqStorage) {
             return Promise.resolve().then(
-                () => loadEquationsFromStorage.call(this)
+                () => this.loadEquationsFromStorage(newStorage, fragmentId, xpath)
             ).catch(
                 e => {
                     this.freeUnusedDocStorage(newStorage);
@@ -1328,7 +1358,7 @@ GemsePEditor.prototype = {
             this.showMessage("Read storage " + newStorage.toString());
             this.storages.push(newStorage)
             return newStorage.read().then(
-                () => loadEquationsFromStorage.call(this)
+                () => this.loadEquationsFromStorage(newStorage, fragmentId, xpath)
             ).catch(
                 e => {
                     this.freeUnusedDocStorage(newStorage);
@@ -1336,78 +1366,75 @@ GemsePEditor.prototype = {
                 }
             );
         }
-
-        function loadEquationsFromStorage() {
-            // Find the math elements
-            var mathElements = [];
-            if (fragmentId) {
-                mathElements[0] = newStorage.document.getElementById(fragmentId);
-                if (!mathElements[0]) {
-                    mathElements.pop();
-                }
+    },
+    loadEquationsFromStorage: function (newStorage, fragmentId, xpath) {
+        // Find the math elements
+        var mathElements = [];
+        if (fragmentId) {
+            mathElements[0] = newStorage.document.getElementById(fragmentId);
+            if (!mathElements[0]) {
+                mathElements.pop();
             }
-            else if (xpath) {
-                var xpathResult = newStorage.document.evaluate(xpath, newStorage.document, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-                var resultNode;
-                var i=0;
-                while ((resultNode = xpathResult.iterateNext())) { 
-                    mathElements.push(resultNode);
-                    ++i;
-                }
+        }
+        else if (xpath) {
+            var xpathResult = newStorage.document.evaluate(xpath, newStorage.document, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+            var resultNode;
+            var i=0;
+            while ((resultNode = xpathResult.iterateNext())) { 
+                mathElements.push(resultNode);
+                ++i;
             }
-            else {
-                mathElements[0] = newStorage.document.documentElement;
-                if (!mathElements[0]) {
-                    throw new Error("Can not open an empty document");
-                }
+        }
+        else {
+            mathElements[0] = newStorage.document.documentElement;
+            if (!mathElements[0]) {
+                throw new Error("Can not open an empty document");
+            }
+        }
+
+        //loop over all significant math elements
+        mathElements.forEach(function(m) {
+            // Check whether this equation is already open
+            if (this.equations.some(function (e) { return (e.origin && m === e.origin.node) })) {
+                //XXX: Maybe we should not throw here, but just skip this equation
+                throw new Error("Refused to load the same equation twice!");
             }
 
-            if (!eqStorage) { this.storages.push(newStorage) }
-
-            //loop over all significant math elements
-            mathElements.forEach(function(m) {
-                // Check whether this equation is already open
-                if (this.equations.some(function (e) { return (e.origin && m === e.origin.node) })) {
-                    //XXX: Maybe we should not throw here, but just skip this equation
-                    throw new Error("Refused to load the same equation twice!");
-                }
-
-                // Only allow math elements except the option
-                // loadAnyAsRoot is set to true
-                var is_math = (m.localName == "math" && m.namespaceURI == NS.MathML);
-                var is_OMOBJ = (m.localName == "OMOBJ" && m.namespaceURI == NS.OpenMath);
-                var is_notation = (m.localName == "notation" && m.namespaceURI == NS.OMDoc);
-                if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ && !is_notation) {
-                    //XXX: Maybe we should not throw here, but just skip this equation
-                    throw new Error("The element you load must be a math element " + 
-                                    "in the MathML namespace, an OMOBJ element " + 
-                                    "in the OpenMath namespace or a notation " +
-                                    "element in the OMDoc namespace");
-                }
-
-                // Create new environment using a deep copy
-                var newEquationEnv = this.newEquation(document.importNode(m, true));
-
-                // Create Origin object
-                newEquationEnv.origin = new StorageLink(newStorage, m);
-
-                // Tell the history object that this new equation is already
-                // saved.
-                newEquationEnv.history.reportSaving();
-
-                // Set the equationEnv to be read only if the storage is
-                if (newStorage.readOnly()==1) {
-                    newEquationEnv.readOnly = true;
-                }
-
-                this.showMessage("Succesfully loaded an equation from " + newStorage.toString());
-            }, this);
-
-            // If no equation has been opened
-            if (mathElements.length == 0) {
-                this.showMessage("No equation(s) found");
-                this.freeUnusedDocStorage(newStorage);
+            // Only allow math elements except the option
+            // loadAnyAsRoot is set to true
+            var is_math = (m.localName == "math" && m.namespaceURI == NS.MathML);
+            var is_OMOBJ = (m.localName == "OMOBJ" && m.namespaceURI == NS.OpenMath);
+            var is_notation = (m.localName == "notation" && m.namespaceURI == NS.OMDoc);
+            if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ && !is_notation) {
+                //XXX: Maybe we should not throw here, but just skip this equation
+                throw new Error("The element you load must be a math element " + 
+                                "in the MathML namespace, an OMOBJ element " + 
+                                "in the OpenMath namespace or a notation " +
+                                "element in the OMDoc namespace");
             }
+
+            // Create new environment using a deep copy
+            var newEquationEnv = this.newEquation(document.importNode(m, true));
+
+            // Create Origin object
+            newEquationEnv.origin = new StorageLink(newStorage, m);
+
+            // Tell the history object that this new equation is already
+            // saved.
+            newEquationEnv.history.reportSaving();
+
+            // Set the equationEnv to be read only if the storage is
+            if (newStorage.readOnly()==1) {
+                newEquationEnv.readOnly = true;
+            }
+
+            this.showMessage("Succesfully loaded an equation from " + newStorage.toString());
+        }, this);
+
+        // If no equation has been opened
+        if (mathElements.length == 0) {
+            this.showMessage("No equation(s) found");
+            this.freeUnusedDocStorage(newStorage);
         }
     },
     /**

@@ -74,6 +74,16 @@
 
 <textarea id="input" onkeydown="processKey(event)" oninput="processInput()"/>
 
+<!--
+    When clicking the file input element (click event via JavaScript or actual
+    clicking by a user), a file picker dialog is shown. The contents of the
+    chosen file can then be retrieved by the JavaScript code via the DOM.
+    As soon as available, it would make sense to switch to the file system
+    access API:
+    https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API
+-->
+<input id="filepicker" type="file"/>
+
 <internal:viewsets>
     <!-- 0 -->
     <internal:viewset 

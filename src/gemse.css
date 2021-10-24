@@ -165,6 +165,13 @@ html|table {
 }
 
 
+/*** The file open input element ***/
+
+#filepicker {
+    display: none;
+}
+
+
 /*** Additional rules for the documentation ***/
 
 /* the "screenshots" in the tutorial */
