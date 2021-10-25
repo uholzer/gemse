@@ -865,7 +865,7 @@ function editModeCommand_changeWorkingDirectory(mode, instance) {
         return true;
     }
 
-    var absolute = mode.editor.makeURIAbsolute(instance.argument)
+    var absolute = new URL(instance.argument, mode.editor.workingDirectory);
     if (absolute[absolute.length-1]!="/") { absolute += "/" }
 
     // If it is a file URL, check whether the file exists and is a
@@ -873,7 +873,7 @@ function editModeCommand_changeWorkingDirectory(mode, instance) {
     var ios;
     ios = Components.classes["@mozilla.org/network/io-service;1"].
                     getService(Components.interfaces.nsIIOService);
-    var uri = ios.newURI(absolute,null,null);
+    var uri = new URL(absolute);
     if (uri.scheme == "file") {
         file = uri.QueryInterface(Components.interfaces.nsIFileURL).file
         if (!file.exists()) {

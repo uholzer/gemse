@@ -123,17 +123,6 @@ EquationEnv.prototype = {
     get mode() { return this.modeStack[this.modeStack.length-1]; },
 
     /**
-     * Turns an URI given as string into an URI object of the
-     * nsIIOService. Relative URIs are considered to be relative to
-     * the working directory of this equation.
-     * @param {String} s the URI as string, may be relative
-     */
-    stringToURI: function(s) {
-        var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                .getService(Components.interfaces.nsIIOService);
-        return ios.newURI(s,null,ios.newURI(this.editor.workingDirectory,null,null));
-    },
-    /**
      * Removes all attributes in the internal namespace. This method
      * must be applied on a subtree of a document.
      * @param root The root element of the subtree
@@ -202,7 +191,7 @@ EquationEnv.prototype = {
         }
 
         if (destinationURIString) {
-            destinationURIString = this.editor.makeURIAbsolute(destinationURIString);
+            destinationURIString = new URL(destinationURIString, this.workingDirectory);
 
             var storage = this.editor.newDocStorageByURI(destinationURIString);
             if (storage.exists()==1 && !force) {
@@ -1619,7 +1608,7 @@ GemsePEditor.prototype = {
         ios = Components.classes["@mozilla.org/network/io-service;1"].
                         getService(Components.interfaces.nsIIOService);
 
-        var uri = ios.newURI(uriString,null,null);
+        var uri = new URL(uriString);
         var protocol = uri.scheme;
         
         if (protocol == "http") {
@@ -1697,19 +1686,6 @@ GemsePEditor.prototype = {
         this.moveFocusTo(this.equations.length-1);
         return newEquationEnv;
     },
-    /**
-     * Makes an URI absolute if we have chrome privileges. If not,
-     * return the input
-     * @param {String} uri 
-     * @param {String}
-     */
-    makeURIAbsolute: function(uri) {
-        // Check whether uri is relative. Make an absolute one out of it.
-        var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                .getService(Components.interfaces.nsIIOService);
-        uri = ios.newURI(uri,null,ios.newURI(this.workingDirectory,null,null)).spec;
-        return uri;
-    },
     /** 
      * Loads the document at the given URI and loads its equations. 
      * If elementId and xpathString are empty, it
@@ -1728,7 +1704,7 @@ GemsePEditor.prototype = {
     loadURI: function (uri, fragmentId, xpath) {
         var protocol = null;
 
-        uri = this.makeURIAbsolute(uri);
+        uri = new URL(uri, this.workingDirectory);
 
         // Take URI apart
         // XXX: Most probably broken. We should really use nsIURI!
@@ -2606,30 +2582,3 @@ function mml_previousLeaf(element) {
 function xml_flushElement(element) {
     while (element.hasChildNodes()) { element.removeChild(element.firstChild); }
 }
-
-function stringTonsIURI(uri, base) {
-    var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                    .getService(Components.interfaces.nsIIOService);
-    return ioService.newURI(uri, null, base);
-}
-
-function stringTonsIURL(uri, base) {
-    var myURI = stringTonsIURI(uri, base);
-    // Throws an error if it is no URL
-    return myURI.QueryInterface(Components.interfaces.nsIURL);
-}
-
-function nsIURItonsIURL(uri) {
-    return uri.QueryInterface(Components.interfaces.nsIURL);
-}
-
-function chromeURLtoFileURLString(chromeurl) {
-    return chromeURLtoFileURLnsIURI(StringTonsIURI(chromeurl)).spec;    
-}
-
-function chromeURLtoFileURLnsIURI(chromeurl) {
-    var chromeRegistry = Components.classes["@mozilla.org/chrome/chrome-registry;1"]
-                         .getService(Components.interfaces.nsIChromeRegistry);
-    return chromeRegistry.convertChromeURL(chromeurl);
-}
-

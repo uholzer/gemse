@@ -1023,12 +1023,6 @@ NTNView.prototype = {
                     // this URI must be a file-URI.
                     var uri = this.equationEnv.origin ?  this.equationEnv.origin.storage.uri : null;
 
-                    // This we do in order to allow one to load
-                    // the examples from chrome.
-                    // XXX: This shall be gone!
-                    var nsiuri = stringTonsIURI(uri);
-                    if (nsiuri.scheme == "chrome") { uri = chromeURLtoFileURLnsIURI(nsiuri).spec }
-
                     var nsource_decoded = /^file:(\/\/)?(.*)$/.exec(uri);
                     if (!nsource_decoded) {
                         throw new Error("Failed to add notation source I because of missing/unsupported URI: " + uri);
