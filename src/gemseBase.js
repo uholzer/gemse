@@ -1604,20 +1604,10 @@ GemsePEditor.prototype = {
      * @Returns document storage
      */
     newDocStorageByURI: function(uriString) {
-        var ios;
-        ios = Components.classes["@mozilla.org/network/io-service;1"].
-                        getService(Components.interfaces.nsIIOService);
-
         var uri = new URL(uriString);
-        var protocol = uri.scheme;
-        
-        if (protocol == "http") {
+
+        if (uri.protocol == "http:") {
             return new XMLHttpRequestDocStorage(uriString);
-        }
-        else if (protocol == "file") {
-            // Create an nsIFile from the uri
-            var file = uri.QueryInterface(Components.interfaces.nsIFileURL).file;
-            return new FileDocStorage(file);
         }
         else {
             // Use XMLHttpRequest for loading and do not allow saving
