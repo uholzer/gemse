@@ -859,32 +859,8 @@ function editModeCommand_printWorkingDirectory(mode, instance) {
 }
 
 function editModeCommand_changeWorkingDirectory(mode, instance) {
-    if (!instance.argument) {
-        // Change to user's home directory
-        mode.editor.workingDirectory = null;
-        return true;
-    }
-
-    var absolute = new URL(instance.argument, mode.editor.workingDirectory);
+    var absolute = new URL(instance.argument || document.URL, mode.editor.workingDirectory);
     if (absolute[absolute.length-1]!="/") { absolute += "/" }
-
-    // If it is a file URL, check whether the file exists and is a
-    // directory
-    var ios;
-    ios = Components.classes["@mozilla.org/network/io-service;1"].
-                    getService(Components.interfaces.nsIIOService);
-    var uri = new URL(absolute);
-    if (uri.scheme == "file") {
-        file = uri.QueryInterface(Components.interfaces.nsIFileURL).file
-        if (!file.exists()) {
-            throw new Error("Directory " + absolute + " does not exist.");
-        }
-        else if (!file.isDirectory()) {
-            throw new Error(absolute + " is not a directory.");
-        }
-    }
-
-    // Set directory
     mode.editor.workingDirectory = absolute;
     return true;
 }
