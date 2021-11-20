@@ -1,6 +1,6 @@
 /* Configuration */
 
-var inputSubstitutionActive = true;
+export const inputSubstitutionActive = true;
 
 var inputSubstitutionStartSign = "&";
 var inputSubstitutionEndSign = ";";
@@ -41,7 +41,7 @@ function inputSubstitution_loadTables() {
 
 /* Functionality */
 
-function inputSubstitution() {
+export function inputSubstitution() {
     // This function has to be used as member of the editor object.
 
     // Scans the inputBuffer for the substitution sign and does

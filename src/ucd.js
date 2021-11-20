@@ -220,6 +220,5 @@ UCD4Gemse.prototype = {
 
 }
 
-var ucd = new UCD4Gemse();
+export const ucd = new UCD4Gemse();
 ucd.load();
-

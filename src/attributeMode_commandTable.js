@@ -1,79 +1,81 @@
-var attributeModeCommandOptions = {
+import { commands } from "./attributeMode.js";
+
+export const attributeModeCommandOptions = {
     repeating: true,
 }
-var attributeModeCommands = {
+export const attributeModeCommands = {
     "j": {
         type: "command",
         repeating: "external",
         argument: "none",
-        implementation: attributeModeCommand_down
+        implementation: commands.down
     },
     "k": {
         type: "command",
         repeating: "external",
         argument: "none",
-        implementation: attributeModeCommand_up
+        implementation: commands.up
     },
     "x": {
         type: "command",
         repeating: "external",
         argument: "none",
-        implementation: attributeModeCommand_kill
+        implementation: commands.kill
     },
     "c": {
         type: "command",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: attributeModeCommand_changeValue
+        implementation: commands.changeValue
     },
     "C": {
         type: "command",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: attributeModeCommand_changeName
+        implementation: commands.changeName
     },
     "n": {
         type: "command",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: attributeModeCommand_changeNS
+        implementation: commands.changeNS
     },
     "i": {
         type: "command",
         repeating: "prevent",
         argument: "newlineTerminated",
         argumentLineCount: 2,
-        implementation: attributeModeCommand_insertDefault
+        implementation: commands.insertDefault
     },
     "I": {
         type: "command",
         repeating: "prevent",
         argument: "newlineTerminated",
         argumentLineCount: 3,
-        implementation: attributeModeCommand_insertForeign
+        implementation: commands.insertForeign
     },
     "!": {
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: attributeModeCommand_setDefaultForMissing
+        implementation: commands.setDefaultForMissing
     },
     "-": {
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: attributeModeCommand_clearAll
+        implementation: commands.clearAll
     },
     "=": {
         type: "command",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: attributeModeCommand_setFromDictionary
+        implementation: commands.setFromDictionary
     },
     [String.fromCharCode(0x1b)]: { // Escape
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: attributeModeCommand_exit
+        implementation: commands.exit
     },
 }

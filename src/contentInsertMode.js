@@ -2,6 +2,11 @@
     This is an insert mode tailored to Content MathML
 */
 
+import { NS, standardNSResolver } from "./namespace.js";
+import { CommandHandler } from "./command.js";
+import * as DOM from "./dom.js";
+import { ucd } from "./ucd.js";
+
 function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
     // This insert mode inserts children into inElement, before the
     // silbing beforeElement. If beforeElement is null, it adds
@@ -15,7 +20,7 @@ function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
         numberOfElementsToSurround: 0
     };
     this.cursorStack = [];
-    this.commandHandler = new CommandHandler(this,contentInsertModeCommandOptions,contentInsertModeCommands);
+    this.commandHandler = new CommandHandler(this,window.contentInsertModeCommandOptions,window.contentInsertModeCommands);
     /** Set to true if the next character must not be added to the
      * content of the preceding element. This is useful if the user
      * wants to insert two mn elements behind each other.
@@ -48,14 +53,14 @@ ContentInsertMode.prototype = {
         // TODO: Clean up attribute mess
         this.hideCursor();
         var newEditCursor;
-        if (this.cursor.beforeElement && mml_previousSibling(this.cursor.beforeElement)) {
-            newEditCursor = mml_previousSibling(this.cursor.beforeElement);
+        if (this.cursor.beforeElement && DOM.mml_previousSibling(this.cursor.beforeElement)) {
+            newEditCursor = DOM.mml_previousSibling(this.cursor.beforeElement);
         }
         else if (this.cursor.beforeElement) {
             newEditCursor = this.cursor.beforeElement;
         }
-        else if (mml_lastChild(this.cursor.inElement)) {
-            newEditCursor = mml_lastChild(this.cursor.inElement);
+        else if (DOM.mml_lastChild(this.cursor.inElement)) {
+            newEditCursor = DOM.mml_lastChild(this.cursor.inElement);
         }
         else {
             newEditCursor = this.cursor.inElement;
@@ -68,46 +73,46 @@ ContentInsertMode.prototype = {
         this.cursor.inElement.removeAttributeNS(NS.internal,"selected");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.removeAttributeNS(NS.internal,"selected");
-            if (mml_previousSibling(this.cursor.beforeElement)) {
-                mml_previousSibling(this.cursor.beforeElement).removeAttributeNS(NS.internal,"selected");
+            if (DOM.mml_previousSibling(this.cursor.beforeElement)) {
+                DOM.mml_previousSibling(this.cursor.beforeElement).removeAttributeNS(NS.internal,"selected");
             }
         }
-        else if (mml_lastChild(this.cursor.inElement)) {
-            mml_lastChild(this.cursor.inElement).removeAttributeNS(NS.internal,"selected");
+        else if (DOM.mml_lastChild(this.cursor.inElement)) {
+            DOM.mml_lastChild(this.cursor.inElement).removeAttributeNS(NS.internal,"selected");
         }
         // remove selected="userSelection" attributes on preceding siblings
         var sibling;
         if (this.cursor.beforeElement) { 
-            sibling = mml_previousSibling(this.cursor.beforeElement);
+            sibling = DOM.mml_previousSibling(this.cursor.beforeElement);
         }
         else {
-            sibling = mml_lastChild(this.cursor.inElement);
+            sibling = DOM.mml_lastChild(this.cursor.inElement);
         }
         while (sibling) {
             sibling.removeAttributeNS(NS.internal,"selected");
-            sibling = mml_previousSibling(sibling);
+            sibling = DOM.mml_previousSibling(sibling);
         }
     },
     showCursor: function() {
         this.cursor.inElement.setAttributeNS(NS.internal,"selected","insertCursorIn");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.setAttributeNS(NS.internal,"selected","insertCursorBefore");
-            if (mml_previousSibling(this.cursor.beforeElement)) {
-                mml_previousSibling(this.cursor.beforeElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
+            if (DOM.mml_previousSibling(this.cursor.beforeElement)) {
+                DOM.mml_previousSibling(this.cursor.beforeElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
             }
         }
-        else if (mml_lastChild(this.cursor.inElement)) {
-            mml_lastChild(this.cursor.inElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
+        else if (DOM.mml_lastChild(this.cursor.inElement)) {
+            DOM.mml_lastChild(this.cursor.inElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
         }
         // Put selected="userSelection" for sorrounded elements
         var sibling;
         if (this.cursor.beforeElement) { 
-            sibling = mml_previousSibling(this.cursor.beforeElement);
+            sibling = DOM.mml_previousSibling(this.cursor.beforeElement);
         }
         else {
-            sibling = mml_lastChild(this.cursor.inElement);
+            sibling = DOM.mml_lastChild(this.cursor.inElement);
         }
-        for (var i=0; i < this.cursor.numberOfElementsToSurround; ++i, sibling=mml_previousSibling(sibling)) {
+        for (var i=0; i < this.cursor.numberOfElementsToSurround; ++i, sibling=DOM.mml_previousSibling(sibling)) {
             sibling.setAttributeNS(NS.internal,"selected","userSelection");
         }
     },
@@ -144,7 +149,7 @@ ContentInsertMode.prototype = {
                 // wants to have two consecutive mn elements. This is
                 // not good, since for example in a subsup element,
                 // both children can be mn.
-                var precedingElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
+                var precedingElement = this.cursor.beforeElement ? DOM.mml_previousSibling(this.cursor.beforeElement) : DOM.mml_lastChild(this.cursor.inElement);
                 if (this.is_cn_integer(precedingElement) && !this.forceNewElement) {
                     precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities, whitespace or similar?
                 }
@@ -182,7 +187,7 @@ ContentInsertMode.prototype = {
             this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
             for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
                 newElement.insertBefore(
-                    mml_previousSibling(newElement),
+                    DOM.mml_previousSibling(newElement),
                     newElement.firstChild
                 );
             }
@@ -367,353 +372,354 @@ ContentInsertMode.prototype = {
     }
 }
 
-function contentInsertModeCommand_symbol(mode, instance, cd, name, pragmatic) {
-    // If cd is given, don't look for cd argument in the instance, if name is given as well,
-    // don't look for name argument either.
-    var argumentLines;
-    if (instance.argument) {
-        argumentLines = instance.argument.split("\n");
-    }
-    if (!cd) { cd = argumentLines[0] }
-    if (!name) { name = argumentLines[1] }
+export const commands = {
+    symbol(mode, instance, cd, name, pragmatic) {
+        // If cd is given, don't look for cd argument in the instance, if name is given as well,
+        // don't look for name argument either.
+        var argumentLines;
+        if (instance.argument) {
+            argumentLines = instance.argument.split("\n");
+        }
+        if (!cd) { cd = argumentLines[0] }
+        if (!name) { name = argumentLines[1] }
 
-    var newElement = mode.new_csymbol(null, cd, name, pragmatic);
-    mode.putElement(newElement, false, true);
-    return true;
-}
+        var newElement = mode.new_csymbol(null, cd, name, pragmatic);
+        mode.putElement(newElement, false, true);
+        return true;
+    },
 
-function contentInsertModeCommand_ci(mode, instance) {
-    mode.putElement(mode.new_ci(instance.argument), false);
-    return true;
-}
+    ci(mode, instance) {
+        mode.putElement(mode.new_ci(instance.argument), false);
+        return true;
+    },
 
-function contentInsertModeCommand_cn(mode, instance) {
-    mode.putElement(mode.new_cn(instance.argument), false);
-    return true;
-}
+    cn(mode, instance) {
+        mode.putElement(mode.new_cn(instance.argument), false);
+        return true;
+    },
 
-function contentInsertModeCommand_apply(mode, instance) {
-    mode.putElement(mode.new_apply(), true);
-    return true;
-}
+    apply(mode, instance) {
+        mode.putElement(mode.new_apply(), true);
+        return true;
+    },
 
-function contentInsertModeCommand_arbitraryOperator(mode, instance) {
-    var namespace = (mode.cursor.inElement.namespaceURI == OpenMath) ? NS.OpenMath : NS.MathML;
-    var newElement = mode.d.createElementNS(namespace, instance.argument);
-    mode.putElement(newElement, false, true);
-    return true;
-}
+    arbitraryOperator(mode, instance) {
+        var namespace = (mode.cursor.inElement.namespaceURI == OpenMath) ? NS.OpenMath : NS.MathML;
+        var newElement = mode.d.createElementNS(namespace, instance.argument);
+        mode.putElement(newElement, false, true);
+        return true;
+    },
 
-function contentInsertModeCommand_arbitraryElement(mode, instance) {
-    var namespace = (mode.currentLang() == mode.langs.OpenMath) ? NS.OpenMath : NS.MathML;
-    var newElement = mode.d.createElementNS(namespace, instance.argument);
-    mode.putElement(newElement, false, false);
-    return true;
-}
+    arbitraryElement(mode, instance) {
+        var namespace = (mode.currentLang() == mode.langs.OpenMath) ? NS.OpenMath : NS.MathML;
+        var newElement = mode.d.createElementNS(namespace, instance.argument);
+        mode.putElement(newElement, false, false);
+        return true;
+    },
 
-function contentInsertModeCommand_bind(mode, instance) {
-    mode.putElement(mode.new_bind(), true);
-    return true;
-}
+    bind(mode, instance) {
+        mode.putElement(mode.new_bind(), true);
+        return true;
+    },
 
-function contentInsertModeCommand_bvar(mode, instance) {
-    // If OpenMath, place the cursor inside the OMBVAR if one already
-    // exists. If MathML, create a new bvar.
-    if (mode.currentLang() == mode.langs.OpenMath) {
-        if (mode.cursor.inElement.localName == "OMBIND" && mode.cursor.inElement.namespaceURI == NS.OpenMath) {
-            // Place cursor inside existing OMBVAR if one is already
-            // present
-            var xpathResult = mode.d.evaluate(
-                "./openmath:OMBVAR", 
-                mode.cursor.inElement, 
-                standardNSResolver, 
-                XPathResult.FIRST_ORDERED_NODE_TYPE,
-                null
-            );
-            if (xpathResult.singleNodeValue) {
-                // Place cursor inside it
-                mode.moveCursor({
-                    beforeElement: null,
-                    inElement: xpathResult.singleNodeValue,
-                });
-                // XXX: Should we put old position on the cursor stack?
+    bvar(mode, instance) {
+        // If OpenMath, place the cursor inside the OMBVAR if one already
+        // exists. If MathML, create a new bvar.
+        if (mode.currentLang() == mode.langs.OpenMath) {
+            if (mode.cursor.inElement.localName == "OMBIND" && mode.cursor.inElement.namespaceURI == NS.OpenMath) {
+                // Place cursor inside existing OMBVAR if one is already
+                // present
+                var xpathResult = mode.d.evaluate(
+                    "./openmath:OMBVAR", 
+                    mode.cursor.inElement, 
+                    standardNSResolver, 
+                    XPathResult.FIRST_ORDERED_NODE_TYPE,
+                    null
+                );
+                if (xpathResult.singleNodeValue) {
+                    // Place cursor inside it
+                    mode.moveCursor({
+                        beforeElement: null,
+                        inElement: xpathResult.singleNodeValue,
+                    });
+                    // XXX: Should we put old position on the cursor stack?
+                }
+                else {
+                    // Create a new one
+                    mode.putElement(mode.new_bvar(), true);
+                }
+            }
+            else if (mode.cursor.inElement.localName == "OMBVAR" && mode.cursor.inElement.namespaceURI == NS.OpenMath) {
+                // Do nothing
             }
             else {
-                // Create a new one
                 mode.putElement(mode.new_bvar(), true);
             }
         }
-        else if (mode.cursor.inElement.localName == "OMBVAR" && mode.cursor.inElement.namespaceURI == NS.OpenMath) {
-            // Do nothing
-        }
         else {
-            mode.putElement(mode.new_bvar(), true);
-        }
-    }
-    else {
-        if (mode.cursor.inElement.localName == "bind" && mode.cursor.inElement.namespaceURI == NS.MathML) {
-            // Place new bvar
-            mode.putElement(mode.new_bvar(), true);
-        }
-        else if (mode.cursor.inElement.localName == "bvar" && mode.cursor.inElement.namespaceURI == NS.MathML) {
-            // Place new bvar behind this one
-            mode.moveCursor({
-                beforeElement: mml_nextSibling(mode.cursor.inElement),
-                inElement: mml_parent(mode.cursor.inElement),
-            });
-            mode.putElement(mode.new_bvar(), true);
-        }
-        else {
-            mode.putElement(mode.new_bvar(), true);
-        }
-
-    }
-    return true;
-}
-
-function contentInsertModeCommand_semantics(mode, instance) {
-    mode.putElement(mode.new_semantics(), true);
-
-    return true;
-}
-
-function contentInsertModeCommand_omatp(mode, instance) {
-    var newElement = mode.d.createElementNS(NS.OpenMath, "OMATP");
-    mode.putElement(newElement, true);
-
-    return true;
-}
-
-function contentInsertModeCommand_annotationxml_cmml(mode, instance) {
-    var argumentLines = instance.argument.split("\n");
-    var newElement = mode.d.createElementNS(NS.MathML, "annotation-xml");
-    newElement.setAttribute("cd", argumentLines[0]);
-    newElement.setAttribute("name", argumentLines[1]);
-    newElement.setAttribute("encoding", "MathML-Content");
-    mode.putElement(newElement, true);
-
-    return true;
-}
-
-function contentInsertModeCommand_annotationxml_pmml(mode, instance) {
-    var argumentLines = instance.argument.split("\n");
-    var newElement = mode.d.createElementNS(NS.MathML, "annotation-xml");
-    newElement.setAttribute("cd", argumentLines[0]);
-    newElement.setAttribute("name", argumentLines[1]);
-    newElement.setAttribute("encoding", "MathML-Presentation");
-    mode.putElement(newElement, true);
-
-    return true;
-}
-
-function contentInsertModeCommand_annotationxml_om(mode, instance) {
-    var argumentLines = instance.argument.split("\n");
-    var newElement = mode.d.createElementNS(NS.MathML, "annotation-xml");
-    newElement.setAttribute("cd", argumentLines[0]);
-    newElement.setAttribute("name", argumentLines[1]);
-    newElement.setAttribute("encoding", "application/openmath+xml");
-    mode.putElement(newElement, true);
-
-    // TODO: Should we automatically force the language to OpenMath
-    // here?
-
-    return true;
-}
-
-function contentInsertModeCommand_annotation_arbitrary(mode, instance) {
-    var argumentLines = instance.argument.split("\n");
-    var newElement = mode.d.createElementNS(NS.MathML, "annotation");
-    newElement.setAttribute("cd", argumentLines[0]);
-    newElement.setAttribute("name", argumentLines[1]);
-    newElement.setAttribute("encoding", argumentLines[2]);
-    mode.putElement(newElement, true);
-
-    return true;
-}
-
-function contentInsertModeCommand_annotationxml_arbitrary(mode, instance) {
-    var argumentLines = instance.argument.split("\n");
-    var newElement = mode.d.createElementNS(NS.MathML, "annotation-xml");
-    newElement.setAttribute("cd", argumentLines[0]);
-    newElement.setAttribute("name", argumentLines[1]);
-    newElement.setAttribute("encoding", argumentLines[2]);
-    mode.putElement(newElement, true);
-
-    return true;
-}
-
-function contentInsertModeCommand_notation_prototype(mode, instance) {
-    var newElement = mode.d.createElementNS(NS.OMDoc, "prototype");
-    mode.putElement(newElement, true);
-
-    return true;
-}
-
-function contentInsertModeCommand_notation_rendering(mode, instance) {
-    var newElement = mode.d.createElementNS(NS.OMDoc, "rendering");
-    mode.putElement(newElement, true);
-
-    return true;
-}
-
-function contentInsertModeCommand_notation_expr(mode, instance) {
-    var newElement = mode.d.createElementNS(NS.OMDoc, "expr");
-    newElement.setAttribute("name", instance.argument);
-    mode.putElement(newElement, false);
-
-    return true;
-}
-
-function contentInsertModeCommand_notation_exprlist(mode, instance) {
-    var newElement = mode.d.createElementNS(NS.OMDoc, "exprlist");
-    newElement.setAttribute("name", instance.argument);
-    mode.putElement(newElement, true);
-
-    return true;
-}
-
-function contentInsertModeCommand_lambda(mode, instance) {
-    // Build our lambda construct
-    var lambdaConstruct = mode.new_bind();
-    var csymbol = mode.new_csymbol(null, "fns1", "lambda");
-    lambdaConstruct.appendChild(csymbol);
-    var bvar = mode.new_bvar();
-    lambdaConstruct.appendChild(bvar);
-    var apply = mode.new_apply();
-    lambdaConstruct.appendChild(apply);
-
-    // Insert the construct
-    mode.cursor.inElement.insertBefore(lambdaConstruct, mode.cursor.beforeElement);
-
-    // Put the usual cursor after the whole construct on the stack
-    mode.cursorStack.push({
-        beforeElement: mode.cursor.beforeElement,
-        inElement: mode.cursor.inElement
-    });
-
-    // We put a cursor placed inside the apply on the stack, so the
-    // user can work on there by hitting enter after having finished
-    // with the content of the bvar.
-    mode.cursorStack.push({
-        beforeElement: null,
-        inElement: apply
-    });
-
-    // The cursor is placed inside the bvar element
-    mode.moveCursor({
-        beforeElement: null,
-        inElement: bvar
-    });
-
-    return true;
-}
-
-function contentInsertModeCommand_mathElement(mode,instance) {
-    mode.putElement(mode.d.createElementNS(NS.MathML, "math"), true);
-    return true;
-}
-
-function contentInsertModeCommand_omobjElement(mode,instance) {
-    var element = mode.d.createElementNS(NS.OpenMath, "OMOBJ");
-    element.setAttribute("version", "2.0");
-    mode.putElement(element, true);
-    return true;
-}
-
-function contentInsertModeCommand_forceNewElement(mode) {
-    mode.forceNewElement = true;
-    return true;
-}
-
-function contentInsertModeCommand_forceMathMLForNext(mode) {
-    mode.forceLang(mode.langs.MathML);
-    return true;
-}
-
-function contentInsertModeCommand_forceOpenMathForNext(mode) {
-    mode.forceLang(mode.langs.OpenMath);
-    return true;
-}
-
-function contentInsertModeCommand_forceAutoForNext(mode) {
-    mode.forceLang(mode.langs.AUTO);
-    return true;
-}
-
-function contentInsertModeCommand_oneMoreToSurround(mode) {
-    // TODO: Count preceding siblings and prevent to select too many
-        mode.moveCursor({ 
-            beforeElement: mode.cursor.beforeElement,
-            inElement: mode.cursor.inElement,
-            numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) + 1
-        });
-    return true;
-}
-
-function contentInsertModeCommand_oneLessToSurround(mode) {
-    if (mode.cursor.numberOfElementsToSurround > 0) {
-        mode.moveCursor({ 
-            beforeElement: mode.cursor.beforeElement,
-            inElement: mode.cursor.inElement,
-            numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) - 1
-        });
-    }
-    return true;
-}
-
-function contentInsertModeCommand_cursorJump(mode,instance) {
-    if (mode.cursorStack.length<1) { 
-        // If the stack is empty, the user is done with inserting, so exit
-        return contentInsertModeCommand_exit(mode,instance);
-    }
-    mode.moveCursor(mode.cursorStack.pop());
-    return true;
-}
-
-function contentInsertModeCommand_killPrevious(mode) {
-    var toRemove = [];
-    var precedingElement;
-    if (mode.cursor.beforeElement) {
-        precedingElement = mml_previousSibling(mode.cursor.beforeElement);
-    }
-    else {
-        precedingElement = mml_lastChild(mode.cursor.inElement);
-    }
-
-    if (precedingElement) {
-        if (mode.cursor.numberOfElementsToSurround > 0) {
-            // If the user has surrounded any elements, he wants to
-            // kill them all
-            var pos = precedingElement;
-            for (var i=1; i <= mode.cursor.numberOfElementsToSurround; i++) {
-                toRemove.push(pos);
-                pos = mml_previousSibling(pos); // Exists for shure
+            if (mode.cursor.inElement.localName == "bind" && mode.cursor.inElement.namespaceURI == NS.MathML) {
+                // Place new bvar
+                mode.putElement(mode.new_bvar(), true);
             }
+            else if (mode.cursor.inElement.localName == "bvar" && mode.cursor.inElement.namespaceURI == NS.MathML) {
+                // Place new bvar behind this one
+                mode.moveCursor({
+                    beforeElement: DOM.mml_nextSibling(mode.cursor.inElement),
+                    inElement: DOM.mml_parent(mode.cursor.inElement),
+                });
+                mode.putElement(mode.new_bvar(), true);
+            }
+            else {
+                mode.putElement(mode.new_bvar(), true);
+            }
+
+        }
+        return true;
+    },
+
+    semantics(mode, instance) {
+        mode.putElement(mode.new_semantics(), true);
+
+        return true;
+    },
+
+    omatp(mode, instance) {
+        var newElement = mode.d.createElementNS(NS.OpenMath, "OMATP");
+        mode.putElement(newElement, true);
+
+        return true;
+    },
+
+    annotationxml_cmml(mode, instance) {
+        var argumentLines = instance.argument.split("\n");
+        var newElement = mode.d.createElementNS(NS.MathML, "annotation-xml");
+        newElement.setAttribute("cd", argumentLines[0]);
+        newElement.setAttribute("name", argumentLines[1]);
+        newElement.setAttribute("encoding", "MathML-Content");
+        mode.putElement(newElement, true);
+
+        return true;
+    },
+
+    annotationxml_pmml(mode, instance) {
+        var argumentLines = instance.argument.split("\n");
+        var newElement = mode.d.createElementNS(NS.MathML, "annotation-xml");
+        newElement.setAttribute("cd", argumentLines[0]);
+        newElement.setAttribute("name", argumentLines[1]);
+        newElement.setAttribute("encoding", "MathML-Presentation");
+        mode.putElement(newElement, true);
+
+        return true;
+    },
+
+    annotationxml_om(mode, instance) {
+        var argumentLines = instance.argument.split("\n");
+        var newElement = mode.d.createElementNS(NS.MathML, "annotation-xml");
+        newElement.setAttribute("cd", argumentLines[0]);
+        newElement.setAttribute("name", argumentLines[1]);
+        newElement.setAttribute("encoding", "application/openmath+xml");
+        mode.putElement(newElement, true);
+
+        // TODO: Should we automatically force the language to OpenMath
+        // here?
+
+        return true;
+    },
+
+    annotation_arbitrary(mode, instance) {
+        var argumentLines = instance.argument.split("\n");
+        var newElement = mode.d.createElementNS(NS.MathML, "annotation");
+        newElement.setAttribute("cd", argumentLines[0]);
+        newElement.setAttribute("name", argumentLines[1]);
+        newElement.setAttribute("encoding", argumentLines[2]);
+        mode.putElement(newElement, true);
+
+        return true;
+    },
+
+    annotationxml_arbitrary(mode, instance) {
+        var argumentLines = instance.argument.split("\n");
+        var newElement = mode.d.createElementNS(NS.MathML, "annotation-xml");
+        newElement.setAttribute("cd", argumentLines[0]);
+        newElement.setAttribute("name", argumentLines[1]);
+        newElement.setAttribute("encoding", argumentLines[2]);
+        mode.putElement(newElement, true);
+
+        return true;
+    },
+
+    notation_prototype(mode, instance) {
+        var newElement = mode.d.createElementNS(NS.OMDoc, "prototype");
+        mode.putElement(newElement, true);
+
+        return true;
+    },
+
+    notation_rendering(mode, instance) {
+        var newElement = mode.d.createElementNS(NS.OMDoc, "rendering");
+        mode.putElement(newElement, true);
+
+        return true;
+    },
+
+    notation_expr(mode, instance) {
+        var newElement = mode.d.createElementNS(NS.OMDoc, "expr");
+        newElement.setAttribute("name", instance.argument);
+        mode.putElement(newElement, false);
+
+        return true;
+    },
+
+    notation_exprlist(mode, instance) {
+        var newElement = mode.d.createElementNS(NS.OMDoc, "exprlist");
+        newElement.setAttribute("name", instance.argument);
+        mode.putElement(newElement, true);
+
+        return true;
+    },
+
+    lambda(mode, instance) {
+        // Build our lambda construct
+        var lambdaConstruct = mode.new_bind();
+        var csymbol = mode.new_csymbol(null, "fns1", "lambda");
+        lambdaConstruct.appendChild(csymbol);
+        var bvar = mode.new_bvar();
+        lambdaConstruct.appendChild(bvar);
+        var apply = mode.new_apply();
+        lambdaConstruct.appendChild(apply);
+
+        // Insert the construct
+        mode.cursor.inElement.insertBefore(lambdaConstruct, mode.cursor.beforeElement);
+
+        // Put the usual cursor after the whole construct on the stack
+        mode.cursorStack.push({
+            beforeElement: mode.cursor.beforeElement,
+            inElement: mode.cursor.inElement
+        });
+
+        // We put a cursor placed inside the apply on the stack, so the
+        // user can work on there by hitting enter after having finished
+        // with the content of the bvar.
+        mode.cursorStack.push({
+            beforeElement: null,
+            inElement: apply
+        });
+
+        // The cursor is placed inside the bvar element
+        mode.moveCursor({
+            beforeElement: null,
+            inElement: bvar
+        });
+
+        return true;
+    },
+
+    mathElement(mode,instance) {
+        mode.putElement(mode.d.createElementNS(NS.MathML, "math"), true);
+        return true;
+    },
+
+    omobjElement(mode,instance) {
+        var element = mode.d.createElementNS(NS.OpenMath, "OMOBJ");
+        element.setAttribute("version", "2.0");
+        mode.putElement(element, true);
+        return true;
+    },
+
+    forceNewElement(mode) {
+        mode.forceNewElement = true;
+        return true;
+    },
+
+    forceMathMLForNext(mode) {
+        mode.forceLang(mode.langs.MathML);
+        return true;
+    },
+
+    forceOpenMathForNext(mode) {
+        mode.forceLang(mode.langs.OpenMath);
+        return true;
+    },
+
+    forceAutoForNext(mode) {
+        mode.forceLang(mode.langs.AUTO);
+        return true;
+    },
+
+    oneMoreToSurround(mode) {
+        // TODO: Count preceding siblings and prevent to select too many
+            mode.moveCursor({ 
+                beforeElement: mode.cursor.beforeElement,
+                inElement: mode.cursor.inElement,
+                numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) + 1
+            });
+        return true;
+    },
+
+    oneLessToSurround(mode) {
+        if (mode.cursor.numberOfElementsToSurround > 0) {
+            mode.moveCursor({ 
+                beforeElement: mode.cursor.beforeElement,
+                inElement: mode.cursor.inElement,
+                numberOfElementsToSurround: (mode.cursor.numberOfElementsToSurround||0) - 1
+            });
+        }
+        return true;
+    },
+
+    cursorJump(mode,instance) {
+        if (mode.cursorStack.length<1) { 
+            // If the stack is empty, the user is done with inserting, so exit
+            return exit(mode,instance);
+        }
+        mode.moveCursor(mode.cursorStack.pop());
+        return true;
+    },
+
+    killPrevious(mode) {
+        var toRemove = [];
+        var precedingElement;
+        if (mode.cursor.beforeElement) {
+            precedingElement = DOM.mml_previousSibling(mode.cursor.beforeElement);
         }
         else {
-            toRemove.push(precedingElement);
+            precedingElement = DOM.mml_lastChild(mode.cursor.inElement);
         }
-        mode.moveCursor({
-            beforeElement: mode.cursor.beforeElement,
-            inElement: mode.cursor.inElement,
-            numberOfElementsToSurround: 0
-        });
-    }
-    else {
-        toRemove.push(mode.cursor.inElement);
-        mode.moveCursor({
-            beforeElement: mml_nextSibling(mode.cursor.inElement),
-            inElement: mml_parent(mode.cursor.inElement),
-            numberOfElementsToSurround: 0
-        });
-    }
-    toRemove.forEach(function (e) { e.parentNode.removeChild(e) });
-    return true;
-}
+
+        if (precedingElement) {
+            if (mode.cursor.numberOfElementsToSurround > 0) {
+                // If the user has surrounded any elements, he wants to
+                // kill them all
+                var pos = precedingElement;
+                for (var i=1; i <= mode.cursor.numberOfElementsToSurround; i++) {
+                    toRemove.push(pos);
+                    pos = DOM.mml_previousSibling(pos); // Exists for shure
+                }
+            }
+            else {
+                toRemove.push(precedingElement);
+            }
+            mode.moveCursor({
+                beforeElement: mode.cursor.beforeElement,
+                inElement: mode.cursor.inElement,
+                numberOfElementsToSurround: 0
+            });
+        }
+        else {
+            toRemove.push(mode.cursor.inElement);
+            mode.moveCursor({
+                beforeElement: DOM.mml_nextSibling(mode.cursor.inElement),
+                inElement: DOM.mml_parent(mode.cursor.inElement),
+                numberOfElementsToSurround: 0
+            });
+        }
+        toRemove.forEach(function (e) { e.parentNode.removeChild(e) });
+        return true;
+    },
 
 
-function contentInsertModeCommand_exit(mode) {
-    mode.finish();
-    return true;
-}
-
+    exit(mode) {
+        mode.finish();
+        return true;
+    },
+};

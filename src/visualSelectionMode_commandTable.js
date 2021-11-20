@@ -1,11 +1,14 @@
-var visualSelectionModeCommandOptions = {
+import { commands, visualSelectionModeExecutionHandler_movement } from "./visualSelectionMode.js";
+import { editModeCommands } from "./editMode_commandTable.js";
+
+export const visualSelectionModeCommandOptions = {
     repeating: true,
 }
 
 // We construct the command table for the visual mode using the table
 // of the edit mode. Afterwards we add some additional commands.
 
-var visualSelectionModeCommands = {};
+export const visualSelectionModeCommands = {};
 
 // Get all movement commands from the edit mode but use our own
 // execution handler
@@ -36,13 +39,13 @@ visualSelectionModeCommands["o"] = {
     type: "command",
     repeating: "prevent",
     argument: "none",
-    implementation: visualSelectionModeCommand_switchMoving
+    implementation: commands.switchMoving
 }
 visualSelectionModeCommands[String.fromCharCode(0x1b)] = { // Escape
     category: "action",
     type: "command",
     repeating: "prevent",
     argument: "none",
-    implementation: visualSelectionModeCommand_cancel
+    implementation: commands.cancel
 }
 

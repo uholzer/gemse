@@ -8,38 +8,15 @@
     xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
     title="Gemse">
     <head>
-        <script src="namespace.js"/>
-        <script src="key.js"/>
-        <script src="UString.js"/>
-        <script src="dom.js"/>
-        <script src="command.js"/>
-        <script src="gemseBase.js"/>
-        <script src="views.js"/>
-        <script src="storage.js"/>
-        <script src="elementDescriptors.js"/>
-        <script src="ucd.js"/>
-        <script src="editMode.js"/>
-        <script src="editMode_commandTable.js"/>
-        <script src="attributeMode.js"/>
-        <script src="attributeMode_commandTable.js"/>
-        <script src="trivialInsertMode.js"/>
-        <script src="trivialInsertMode_commandTable.js"/>
-        <script src="ucdInsertMode.js"/>
-        <script src="ucdInsertMode_commandTable.js"/>
-        <script src="contentInsertMode.js"/>
-        <script src="contentInsertMode_commandTable.js"/>
-        <script src="visualSelectionMode.js"/>
-        <script src="visualSelectionMode_commandTable.js"/>
-        <script src="operatorDictionary.js"/>
-        <script src="inputSubstitution/core.js"/>
-        <script src="globalOptions.js"/>
-        <script><![CDATA[
+        <script type="module"><![CDATA[
+            import { GemsePEditor } from "./gemseBase.js";
+
             var editor;
 
-            function start() {
+            window.start = function () {
                 editor = new GemsePEditor(editorsetup);
             }
-            function editorsetup(editor) {
+            window.editorsetup = function (editor) {
                 editor.inputElement.focus();
 
                 // Give the window a name:
@@ -78,11 +55,11 @@
             // The curent event processing is completely broken. Perhaps I
             // should use XUL right away to clean up the mess?
 
-            function processKey(event) {
+            window.processKey = function (event) {
                 editor.keyEvent(event);
             }
 
-            function processInput() {
+            window.processInput = function () {
                 editor.inputEvent();
             }
 

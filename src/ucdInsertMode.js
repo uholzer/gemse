@@ -4,7 +4,13 @@
     or a number. 
 */
 
-function UCDInsertMode(editor, equationEnv, inElement, beforeElement) {
+import { NS } from "./namespace.js";
+import { CommandHandler } from "./command.js";
+import * as DOM from "./dom.js";
+import { elementDescriptions } from "./elementDescriptors.js";
+import { ucd } from "./ucd.js";
+
+export function UCDInsertMode(editor, equationEnv, inElement, beforeElement) {
     // This insert mode inserts children into inElement, before the
     // silbing beforeElement. If beforeElement is null, it adds
     // children to the end of the inElement.
@@ -17,7 +23,7 @@ function UCDInsertMode(editor, equationEnv, inElement, beforeElement) {
         numberOfElementsToSurround: 0
     };
     this.cursorStack = [];
-    this.commandHandler = new CommandHandler(this,ucdInsertModeCommandOptions,ucdInsertModeCommands);
+    this.commandHandler = new CommandHandler(this,window.ucdInsertModeCommandOptions,window.ucdInsertModeCommands);
     /** Set to true if the next character must not be added to the
      * content of the preceding element. This is useful if the user
      * wants to insert two mn elements behind each other.
@@ -33,14 +39,14 @@ UCDInsertMode.prototype = {
         // TODO: Clean up attribute mess
         this.hideCursor();
         var newEditCursor;
-        if (this.cursor.beforeElement && mml_previousSibling(this.cursor.beforeElement)) {
-            newEditCursor = mml_previousSibling(this.cursor.beforeElement);
+        if (this.cursor.beforeElement && DOM.mml_previousSibling(this.cursor.beforeElement)) {
+            newEditCursor = DOM.mml_previousSibling(this.cursor.beforeElement);
         }
         else if (this.cursor.beforeElement) {
             newEditCursor = this.cursor.beforeElement;
         }
-        else if (mml_lastChild(this.cursor.inElement)) {
-            newEditCursor = mml_lastChild(this.cursor.inElement);
+        else if (DOM.mml_lastChild(this.cursor.inElement)) {
+            newEditCursor = DOM.mml_lastChild(this.cursor.inElement);
         }
         else {
             newEditCursor = this.cursor.inElement;
@@ -53,46 +59,46 @@ UCDInsertMode.prototype = {
         this.cursor.inElement.removeAttributeNS(NS.internal,"selected");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.removeAttributeNS(NS.internal,"selected");
-            if (mml_previousSibling(this.cursor.beforeElement)) {
-                mml_previousSibling(this.cursor.beforeElement).removeAttributeNS(NS.internal,"selected");
+            if (DOM.mml_previousSibling(this.cursor.beforeElement)) {
+                DOM.mml_previousSibling(this.cursor.beforeElement).removeAttributeNS(NS.internal,"selected");
             }
         }
-        else if (mml_lastChild(this.cursor.inElement)) {
-            mml_lastChild(this.cursor.inElement).removeAttributeNS(NS.internal,"selected");
+        else if (DOM.mml_lastChild(this.cursor.inElement)) {
+            DOM.mml_lastChild(this.cursor.inElement).removeAttributeNS(NS.internal,"selected");
         }
         // remove selected="userSelection" attributes on preceding siblings
         var sibling;
         if (this.cursor.beforeElement) { 
-            sibling = mml_previousSibling(this.cursor.beforeElement);
+            sibling = DOM.mml_previousSibling(this.cursor.beforeElement);
         }
         else {
-            sibling = mml_lastChild(this.cursor.inElement);
+            sibling = DOM.mml_lastChild(this.cursor.inElement);
         }
         while (sibling) {
             sibling.removeAttributeNS(NS.internal,"selected");
-            sibling = mml_previousSibling(sibling);
+            sibling = DOM.mml_previousSibling(sibling);
         }
     },
     showCursor: function() {
         this.cursor.inElement.setAttributeNS(NS.internal,"selected","insertCursorIn");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.setAttributeNS(NS.internal,"selected","insertCursorBefore");
-            if (mml_previousSibling(this.cursor.beforeElement)) {
-                mml_previousSibling(this.cursor.beforeElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
+            if (DOM.mml_previousSibling(this.cursor.beforeElement)) {
+                DOM.mml_previousSibling(this.cursor.beforeElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
             }
         }
-        else if (mml_lastChild(this.cursor.inElement)) {
-            mml_lastChild(this.cursor.inElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
+        else if (DOM.mml_lastChild(this.cursor.inElement)) {
+            DOM.mml_lastChild(this.cursor.inElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
         }
         // Put selected="userSelection" for sorrounded elements
         var sibling;
         if (this.cursor.beforeElement) { 
-            sibling = mml_previousSibling(this.cursor.beforeElement);
+            sibling = DOM.mml_previousSibling(this.cursor.beforeElement);
         }
         else {
-            sibling = mml_lastChild(this.cursor.inElement);
+            sibling = DOM.mml_lastChild(this.cursor.inElement);
         }
-        for (var i=0; i < this.cursor.numberOfElementsToSurround; ++i, sibling=mml_previousSibling(sibling)) {
+        for (var i=0; i < this.cursor.numberOfElementsToSurround; ++i, sibling=DOM.mml_previousSibling(sibling)) {
             sibling.setAttributeNS(NS.internal,"selected","userSelection");
         }
     },
@@ -138,7 +144,7 @@ UCDInsertMode.prototype = {
                     // Or do we have to use 0x0020 or nothing at all?
                 }
                 var parentElement = this.cursor.inElement;
-                var baseElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
+                var baseElement = this.cursor.beforeElement ? DOM.mml_previousSibling(this.cursor.beforeElement) : DOM.mml_lastChild(this.cursor.inElement);
                 if (!baseElement) { throw new Error("No element before the cursor, so don't know what to do with the combining mark.") }
                 var standaloneTextNode = this.d.createTextNode(standalone);
                 var standaloneElement = this.d.createElementNS(NS.MathML, "mo");      //TODO!
@@ -176,7 +182,7 @@ UCDInsertMode.prototype = {
                 // wants to have two consecutive mn elements. This is
                 // not good, since for example in a subsup element,
                 // both children can be mn.
-                var precedingElement = this.cursor.beforeElement ? mml_previousSibling(this.cursor.beforeElement) : mml_lastChild(this.cursor.inElement);
+                var precedingElement = this.cursor.beforeElement ? DOM.mml_previousSibling(this.cursor.beforeElement) : DOM.mml_lastChild(this.cursor.inElement);
                 if (precedingElement && precedingElement.namespaceURI == NS.MathML && precedingElement.localName == "mn" && !this.forceNewElement) {
                     precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities or similar?
                 }
@@ -214,7 +220,7 @@ UCDInsertMode.prototype = {
         if (this.cursor.beforeElement && this.cursor.beforeElement.getAttributeNS(NS.internal, "missing")) {
             var elementToBeDeleted = this.cursor.beforeElement;
             this.moveCursor({ 
-                beforeElement: mml_nextSibling(elementToBeDeleted), 
+                beforeElement: DOM.mml_nextSibling(elementToBeDeleted), 
                 inElement: this.cursor.inElement 
             });
             elementToBeDeleted.parentNode.removeChild(elementToBeDeleted);
@@ -248,15 +254,15 @@ UCDInsertMode.prototype = {
                 // But clean at most as many elements as are selected
                 for (var i=0; 
                     i<this.cursor.numberOfElementsToSurround 
-                    && mml_firstChild(newElement)
-                    && mml_firstChild(newElement).getAttributeNS(NS.internal, "missing");
+                    && DOM.mml_firstChild(newElement)
+                    && DOM.mml_firstChild(newElement).getAttributeNS(NS.internal, "missing");
                     ++i) {
-                    newElement.removeChild(mml_firstChild(newElement)) 
+                    newElement.removeChild(DOM.mml_firstChild(newElement)) 
                 }
                 // Put selected elements into the new one
                 for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
                     newElement.insertBefore(
-                        mml_previousSibling(newElement),
+                        DOM.mml_previousSibling(newElement),
                         newElement.firstChild
                     );
                 }
@@ -265,11 +271,11 @@ UCDInsertMode.prototype = {
                 var surroundingMrow = this.d.createElementNS(NS.MathML,"mrow");
                 for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
                     surroundingMrow.insertBefore(
-                        mml_previousSibling(newElement),
+                        DOM.mml_previousSibling(newElement),
                         surroundingMrow.firstChild
                     );
                 }
-                newElement.removeChild(mml_firstChild(newElement));
+                newElement.removeChild(DOM.mml_firstChild(newElement));
                 newElement.insertBefore(surroundingMrow,newElement.firstChild);
             }
             else {
@@ -277,9 +283,9 @@ UCDInsertMode.prototype = {
             }
         }
         // Position the cursor
-        var firstMissing = mml_firstChild(newElement);
+        var firstMissing = DOM.mml_firstChild(newElement);
         while (firstMissing && !firstMissing.getAttributeNS(NS.internal, "missing")) {
-            firstMissing = mml_nextSibling(firstMissing);
+            firstMissing = DOM.mml_nextSibling(firstMissing);
         }
         if (firstMissing) {
             // If the element contains a "missing element" marker, put the 
@@ -306,15 +312,14 @@ UCDInsertMode.prototype = {
     },
 }
 
-function ucdInsertModeCommand_forceNewElement(mode) {
-    mode.forceNewElement = true;
-    return true;
-}
+export const commands = {
+    forceNewElement(mode) {
+        mode.forceNewElement = true;
+        return true;
+    },
 
-function ucdInsertModeCommand_exit(mode) {
-    mode.finish();
-    return true;
-}
-
-
-
+    exit(mode) {
+        mode.finish();
+        return true;
+    },
+};

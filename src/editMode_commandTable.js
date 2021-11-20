@@ -1,13 +1,16 @@
-var editModeCommandOptions = {
+import { KeyMod } from "./key.js";
+import { commands, editModeExecutionHandler_movement } from "./editMode.js";
+
+export const editModeCommandOptions = {
     repeating: true,
 }
-var editModeCommands = {
+export const editModeCommands = {
     "\n": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_doNothing,
+        implementation: commands.doNothing,
     },
     '"': {
         type: "singleCharacterPreArgumentPrefix",
@@ -21,7 +24,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveDown,
+        implementation: commands.moveDown,
     },
     "J": {
         category: "movement",
@@ -29,7 +32,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveDownLast
+        implementation: commands.moveDownLast
     },
     "k": {
         category: "movement",
@@ -37,7 +40,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveUp
+        implementation: commands.moveUp
     },
     "h": {
         category: "movement",
@@ -45,7 +48,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveLeft
+        implementation: commands.moveLeft
     },
     "l": {
         category: "movement",
@@ -53,7 +56,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveRight
+        implementation: commands.moveRight
     },
     "0": {
         category: "movement",
@@ -61,7 +64,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveToFirstSibling
+        implementation: commands.moveToFirstSibling
     },
     "$": {
         category: "movement",
@@ -69,7 +72,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveToLastSibling
+        implementation: commands.moveToLastSibling
     },
     "gg": {
         category: "movement",
@@ -77,7 +80,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveToRoot
+        implementation: commands.moveToRoot
     },
     "L": {
         category: "movement",
@@ -85,7 +88,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveToNextLeaf
+        implementation: commands.moveToNextLeaf
     },
     "H": {
         category: "movement",
@@ -93,7 +96,7 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_moveToPreviousLeaf
+        implementation: commands.moveToPreviousLeaf
     },
     "f": {
         category: "movement",
@@ -101,133 +104,133 @@ var editModeCommands = {
         repeating: "external",
         argument: "none",
         executionHandler: editModeExecutionHandler_movement,
-        implementation: editModeCommand_followRef
+        implementation: commands.followRef
     },
     "ga": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_contentInfo
+        implementation: commands.contentInfo
     },
     "x": {
         category: "action",
         type: "command",
         repeating: "external",
         argument: "none",
-        implementation: editModeCommand_kill,
+        implementation: commands.kill,
     },
     "d": {
         category: "operator",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_delete
+        implementation: commands.delete
     },
     "c": {
         category: "operator",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_change
+        implementation: commands.change
     },
     "u": {
         category: "action",
         type: "command",
         repeating: "external",
         argument: "none",
-        implementation: editModeCommand_undo
+        implementation: commands.undo
     },
     "@": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_attributeMode
+        implementation: commands.attributeMode
     },
     "i": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_insertBefore
+        implementation: commands.insertBefore
     },
     "a": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_insertAfter
+        implementation: commands.insertAfter
     },
     "I": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_insertAtBeginning
+        implementation: commands.insertAtBeginning
     },
     "A": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_insertAtEnd
+        implementation: commands.insertAtEnd
     },
     "v": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_visualMode
+        implementation: commands.visualMode
     },
     "y": {
         category: "operator",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_copyToRegister
+        implementation: commands.copyToRegister
     },
     "p": {
         category: "action",
         type: "command",
         repeating: "external",
         argument: "none",
-        implementation: editModeCommand_putAfter
+        implementation: commands.putAfter
     },
     "P": {
         category: "action",
         type: "command",
         repeating: "external",
         argument: "none",
-        implementation: editModeCommand_putBefore
+        implementation: commands.putBefore
     },
     /*"q": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_startstopUserRecording
+        implementation: commands.startstopUserRecording
     },*/
     "w": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_unwrap
+        implementation: commands.unwrap
     },
     " ": {
         category: "operator",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_mrowEnvelop
+        implementation: commands.mrowEnvelop
     },
     "\t": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_cycleInsertMode
+        implementation: commands.cycleInsertMode
     },
     "Z": {
         type: "disamb",
@@ -237,14 +240,14 @@ var editModeCommands = {
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_saveclose
+        implementation: commands.saveclose
     },
     "ZA": {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_savecloseAll
+        implementation: commands.savecloseAll
     },
     ":": {
         type: "longPrefix",
@@ -254,56 +257,56 @@ var editModeCommands = {
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_set
+        implementation: commands.set
     },
     ":pwd": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_printWorkingDirectory
+        implementation: commands.printWorkingDirectory
     },
     ":cwd": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_changeWorkingDirectory
+        implementation: commands.changeWorkingDirectory
     },
     ":cd": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_changeWorkingDirectory
+        implementation: commands.changeWorkingDirectory
     },
     ":hideview": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_hideView
+        implementation: commands.hideView
     },
     ":showview": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_showView
+        implementation: commands.showView
     },
     ":viewset": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_chooseViewset
+        implementation: commands.chooseViewset
     },
     ":viewsetconf": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_viewsetconfWindow
+        implementation: commands.viewsetconfWindow
     },
 
     ":serialize": {
@@ -311,154 +314,154 @@ var editModeCommands = {
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_serialize
+        implementation: commands.serialize
     },
     ":export": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_export
+        implementation: commands.export
     },
     ":new": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_newEquation
+        implementation: commands.newEquation
     },
     ":next": {
         category: "action",
         type: "long",
         argument: "none",
         repeating: "external",
-        implementation: editModeCommand_nextEquation
+        implementation: commands.nextEquation
     },
     ":previous": {
         category: "action",
         type: "long",
         argument: "none",
         repeating: "external",
-        implementation: editModeCommand_previousEquation
+        implementation: commands.previousEquation
     },
     ":goto": {
         category: "action",
         type: "long",
         argument: "newlineTerminated",
         repeating: "prevent",
-        implementation: editModeCommand_gotoEquation
+        implementation: commands.gotoEquation
     },
     ":load": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_load
+        implementation: commands.load
     },
     ":loadid": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_loadById
+        implementation: commands.loadById
     },
     ":loadxpath": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_loadByXPath
+        implementation: commands.loadByXPath
     },
     ":loadall": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_loadAll
+        implementation: commands.loadAll
     },
     ":save": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_save
+        implementation: commands.save
     },
     ":write": { // synonym for :save
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_save
+        implementation: commands.save
     },
     ":saveall": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_saveAll
+        implementation: commands.saveAll
     },
     ":writeall": { // synonym for :saveall
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_saveAll
+        implementation: commands.saveAll
     },
     ":close": {
         category: "action",
         type: "long",
         repeating: "external",
         argument: "none",
-        implementation: editModeCommand_close
+        implementation: commands.close
     },
     ":closeall": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_closeAll
+        implementation: commands.closeAll
     },
     ":quit": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_closeAll
+        implementation: commands.closeAll
     },
     ":q": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "none",
-        implementation: editModeCommand_closeAll
+        implementation: commands.closeAll
     },
     ":document": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_printDocumentInformation
+        implementation: commands.printDocumentInformation
     },
     ":documents": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_printAllDocumentInformation
+        implementation: commands.printAllDocumentInformation
     },
     ":help": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_help
+        implementation: commands.help
     },
     ":example": {
         category: "action",
         type: "long",
         repeating: "prevent",
         argument: "newlineTerminated",
-        implementation: editModeCommand_example
+        implementation: commands.example
     },
     [KeyMod.control]: {
             type: "disamb",
@@ -468,28 +471,28 @@ var editModeCommands = {
             type: "command",
             repeating: "prevent",
             argument: "none",
-            implementation: editModeCommand_insertIn
+            implementation: commands.insertIn
     },
     [KeyMod.control + "r"]: {
             category: "action",
             type: "command",
             repeating: "external",
             argument: "none",
-            implementation: editModeCommand_redo
+            implementation: commands.redo
     },
     [KeyMod.control + "l"]: {
             category: "action",
             type: "command",
             repeating: "prevent",
             argument: "none",
-            implementation: editModeCommand_redisplay
+            implementation: commands.redisplay
     },
     [KeyMod.control + "p"]: {
             category: "action",
             type: "command",
             repeating: "prevent",
             argument: "none",
-            implementation: editModeCommand_putIn
+            implementation: commands.putIn
     },
 }
 

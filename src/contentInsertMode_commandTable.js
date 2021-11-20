@@ -1,64 +1,67 @@
-var contentInsertModeCommandOptions = {
+import { commands } from "./contentInsertMode.js";
+import { KeyMod } from "./key.js";
+
+export const contentInsertModeCommandOptions = {
     repeating: false, // Must be false, since digits have to be treated as tokens!
 }
 
-var contentInsertModeCommands = {
+export const contentInsertModeCommands = {
     "+": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_plus (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","plus","plus") }
+        implementation: function plus (mode,instance) { return commands.symbol(mode,instance,"arith1","plus","plus") }
     },
     "-": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_minus (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","minus","minus") }
+        implementation: function minus (mode,instance) { return commands.symbol(mode,instance,"arith1","minus","minus") }
     },
     "^": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_power (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","power","power") }
+        implementation: function power (mode,instance) { return commands.symbol(mode,instance,"arith1","power","power") }
     },
     "*": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_times (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","times","times") }
+        implementation: function times (mode,instance) { return commands.symbol(mode,instance,"arith1","times","times") }
     },
     "/": {
         type: "command",
         argument: "none",
-        implementation: function contentInsertModeCommand_divide (mode,instance) { return contentInsertModeCommand_symbol(mode,instance,"arith1","divide","divide") }
+        implementation: function divide (mode,instance) { return commands.symbol(mode,instance,"arith1","divide","divide") }
     },
     "(": {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_lambda
+        implementation: commands.lambda
     },
     "$": { // Inserts an arbitrary csymbol
         type: "command",
         argument: "newlineTerminated",
         argumentLineCount: 2,
-        implementation: contentInsertModeCommand_symbol
+        implementation: commands.symbol
     },
     " ": {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_apply
+        implementation: commands.apply
     },
     "<": {
         type: "command",
         argument: "newlineTerminated",
-        implementation: contentInsertModeCommand_arbitraryElement
+        implementation: commands.arbitraryElement
     },
     "#": {
         type: "command",
         argument: "newlineTerminated",
-        implementation: contentInsertModeCommand_arbitraryOperator
+        implementation: commands.arbitraryOperator
     },
     "\n": {
         type: "command",
         repeating: "external",
         argument: "none",
-        implementation: contentInsertModeCommand_cursorJump
+        implementation: commands.cursorJump
     },
     [KeyMod.control]: {
         type: "disamb",
@@ -69,32 +72,32 @@ var contentInsertModeCommands = {
     [KeyMod.control + "i"]: {
         type: "command",
         argument: "newlineTerminated",
-        implementation: contentInsertModeCommand_ci
+        implementation: commands.ci
     },
     [KeyMod.control + "n"]: {
         type: "command",
         argument: "newlineTerminated",
-        implementation: contentInsertModeCommand_cn
+        implementation: commands.cn
     },
     [KeyMod.control + "b"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_bind
+        implementation: commands.bind
     },
     [KeyMod.control + "v"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_bvar
+        implementation: commands.bvar
     },
     [KeyMod.control + "s"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_semantics
+        implementation: commands.semantics
     },
     [KeyMod.control + "p"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_omatp
+        implementation: commands.omatp
     },
     [KeyMod.control + "a"]: {
         type: "disamb",
@@ -103,31 +106,31 @@ var contentInsertModeCommands = {
         type: "command",
         argument: "newlineTerminated",
         argumentLineCount: 2,
-        implementation: contentInsertModeCommand_annotationxml_cmml
+        implementation: commands.annotationxml_cmml
     },
     [KeyMod.control + "ap"]: {
         type: "command",
         argument: "newlineTerminated",
         argumentLineCount: 2,
-        implementation: contentInsertModeCommand_annotationxml_pmml
+        implementation: commands.annotationxml_pmml
     },
     [KeyMod.control + "ao"]: {
         type: "command",
         argument: "newlineTerminated",
         argumentLineCount: 2,
-        implementation: contentInsertModeCommand_annotationxml_om
+        implementation: commands.annotationxml_om
     },
     [KeyMod.control + "aa"]: {
         type: "command",
         argument: "newlineTerminated",
         argumentLineCount: 3,
-        implementation: contentInsertModeCommand_annotation_arbitrary
+        implementation: commands.annotation_arbitrary
     },
     [KeyMod.control + "ax"]: {
         type: "command",
         argument: "newlineTerminated",
         argumentLineCount: 3,
-        implementation: contentInsertModeCommand_annotationxml_arbitrary
+        implementation: commands.annotationxml_arbitrary
     },
     [KeyMod.alt + "n"]: {
         type: "disamb",
@@ -135,32 +138,32 @@ var contentInsertModeCommands = {
     [KeyMod.alt + "nP"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_notation_prototype
+        implementation: commands.notation_prototype
     },
     [KeyMod.alt + "nR"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_notation_rendering
+        implementation: commands.notation_rendering
     },
     [KeyMod.alt + "ne"]: {
         type: "command",
         argument: "newlineTerminated",
-        implementation: contentInsertModeCommand_notation_expr
+        implementation: commands.notation_expr
     },
     [KeyMod.alt + "nl"]: {
         type: "command",
         argument: "newlineTerminated",
-        implementation: contentInsertModeCommand_notation_exprlist
+        implementation: commands.notation_exprlist
     },
     [KeyMod.control + "h"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_oneMoreToSurround
+        implementation: commands.oneMoreToSurround
     },
     [KeyMod.control + "l"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_oneLessToSurround
+        implementation: commands.oneLessToSurround
     },
     [KeyMod.control + "f"]: {
         type: "disamb",
@@ -168,31 +171,31 @@ var contentInsertModeCommands = {
     [KeyMod.control + "fm"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_forceMathMLForNext
+        implementation: commands.forceMathMLForNext
     },
     [KeyMod.control + "fo"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_forceOpenMathForNext
+        implementation: commands.forceOpenMathForNext
     },
     [KeyMod.control + "fa"]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_forceAutoForNext
+        implementation: commands.forceAutoForNext
     },
     [KeyMod.control + ","]: {
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_forceNewElement
+        implementation: commands.forceNewElement
     },
     [String.fromCharCode(0x08)]: { // Backspace
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_killPrevious
+        implementation: commands.killPrevious
     },
     [String.fromCharCode(0x1b)]: { // Escape
         type: "command",
         argument: "none",
-        implementation: contentInsertModeCommand_exit
+        implementation: commands.exit
     },
 }

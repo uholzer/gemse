@@ -3,7 +3,9 @@
 // This data is from http://www.w3.org/TR/2009/WD-MathML3-20090604/
 // It has been extracted by hand, so mistakes are likely
 
-var elementDescriptions = {
+import { NS } from "./namespace.js";
+
+export const elementDescriptions = {
 
 mi: {
     name: "mi",

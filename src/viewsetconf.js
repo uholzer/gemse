@@ -1,3 +1,6 @@
+import { NS } from "./namespace.js";
+import * as DOM from "./dom.js";
+
 configurator = {
     editor: null,
     editorWindow: null,
@@ -35,7 +38,7 @@ configurator = {
             // Different viewset than before, reset selection.
             this.viewsetNumber = this.viewsetManager.globalViewsetNumber;
             this.viewset = this.viewsetManager.viewsets[this.viewsetNumber];
-            this.select(this.editorWindow.mml_firstChild(this.viewset));
+            this.select(this.editorWindow.DOM.mml_firstChild(this.viewset));
         }
         else {
             // The viewset is still the same. For safety, check
@@ -44,7 +47,7 @@ configurator = {
             var p = this.selected;
             while (p && p != this.viewset) { p = p.parentNode }
             if (!p) {
-                this.select(this.editorWindow.mml_firstChild(this.viewset));
+                this.select(this.editorWindow.DOM.mml_firstChild(this.viewset));
             }
         }
 

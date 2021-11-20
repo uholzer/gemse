@@ -1,4 +1,4 @@
-const KeyMod = {
+export const KeyMod = {
     /** 
      * The character Gemse uses to represent the ALT key. When the user
      * presses a key while holding ALT, this character followed by the
@@ -18,7 +18,7 @@ const KeyMod = {
  * The characters Gemse uses to represent various keys.
  * @constant
  */
-const KeyRepresentation = {
+export const KeyRepresentation = {
     Backspace: String.fromCodePoint(0x08),
     Enter: "\n",
     Escape: String.fromCodePoint(0x1b),
@@ -26,4 +26,4 @@ const KeyRepresentation = {
 /**
  * Quote character surrounding key names.
  */
-const KeynameQuote = '`';
+export const KeynameQuote = '`';

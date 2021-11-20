@@ -4,11 +4,15 @@
  * name. They can be used in all parts of Gemse.
  */
 
+import { standardNSResolver } from "./namespace.js";
+import { OptionsAssistant } from "./optionsAssistant.js";
+import { UCDInsertMode } from "./ucdInsertMode.js";
+
 /**
  * @const Global Options. This object defines the options that can be
  * used globally
  */
-var gemseGlobalOptions = {
+export const gemseGlobalOptions = {
     "pragmaticContent": {
         defaultValue: "no",
         validator: OptionsAssistant.validators.truthVal,

@@ -1,4 +1,8 @@
-function VisualSelectionMode(editor, equationEnv, startElement) {
+import { NS } from "./namespace.js";
+import { CommandHandler } from "./command.js";
+import * as DOM from "./dom.js";
+
+export function VisualSelectionMode(editor, equationEnv, startElement) {
     // This insert mode inserts children into inElement, before the
     // silbing beforeElement. If beforeElement is null, it adds
     // children to the end of the inElement.
@@ -10,7 +14,7 @@ function VisualSelectionMode(editor, equationEnv, startElement) {
         endElement:   startElement,
         moving:       this.END,
     };
-    this.commandHandler = new CommandHandler(this,visualSelectionModeCommandOptions,visualSelectionModeCommands);
+    this.commandHandler = new CommandHandler(this,window.visualSelectionModeCommandOptions,window.visualSelectionModeCommands);
 }
 VisualSelectionMode.prototype = {
     name: "visual",
@@ -31,7 +35,7 @@ VisualSelectionMode.prototype = {
         var current = this.cursor.startElement;
         while (current != this.cursor.endElement) {
             current.removeAttributeNS(NS.internal, "selected");
-            current = mml_nextSibling(current);
+            current = DOM.mml_nextSibling(current);
         }
         current.removeAttributeNS(NS.internal, "selected");
     },
@@ -44,7 +48,7 @@ VisualSelectionMode.prototype = {
         var current = this.cursor.startElement;
         while (current != this.cursor.endElement) {
             current.setAttributeNS(NS.internal, "selected", "userSelection");
-            current = mml_nextSibling(current);
+            current = DOM.mml_nextSibling(current);
         }
         current.setAttributeNS(NS.internal, "selected", "userSelection");
         if (this.cursor.moving == this.START) {
@@ -142,7 +146,7 @@ VisualSelectionMode.prototype = {
     },
 }
 
-function visualSelectionModeExecutionHandler_movement(mode,instance) {
+export function visualSelectionModeExecutionHandler_movement(mode,instance) {
     var newCursor = mode.createCursor();
     var destNode = instance.implementation(
         mode,
@@ -176,19 +180,19 @@ function visualSelectionModeExecutionHandler_movement(mode,instance) {
     return true;
 }
 
+export const commands = {
+    switchMoving(mode) {
+        var newCursor = mode.createCursor();
+        if (mode.cursor.moving == mode.START) {
+            newCursor.moving = mode.END;
+        }
+        else {
+            newCursor.moving = mode.START;
+        }
+        mode.moveCursor(newCursor);
+    },
 
-function visualSelectionModeCommand_switchMoving(mode) {
-    var newCursor = mode.createCursor();
-    if (mode.cursor.moving == mode.START) {
-        newCursor.moving = mode.END;
-    }
-    else {
-        newCursor.moving = mode.START;
-    }
-    mode.moveCursor(newCursor);
-}
-
-function visualSelectionModeCommand_cancel(mode) {
-    mode.cancel();
-}
-
+    cancel(mode) {
+        mode.cancel();
+    },
+};

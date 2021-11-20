@@ -1,3 +1,13 @@
+import { NS, standardNSResolver } from "./namespace.js";
+import { xml_flushElement } from "./dom.js";
+import { OptionsAssistant } from "./optionsAssistant.js";
+import * as DOM from "./dom.js";
+import { elementDescriptions } from "./elementDescriptors.js";
+import { operatorDictionary } from "./operatorDictionary.js";
+
+
+export const viewClasses = [];
+
 function createDefaultViewport(className, elementNS, elementName) {
     var viewport = document.createElementNS(elementNS, elementName);
     viewport.setAttributeNS(NS.internal, "function", "viewport");
@@ -30,7 +40,7 @@ DirectView.prototype = {
     }
 }
 DirectView.createViewport = function(d) { return createDefaultViewport("DirectView", NS.HTML, "div"); };
-ViewsetManager.viewClasses["DirectView"] = DirectView;
+viewClasses["DirectView"] = DirectView;
 
 /**
  * @class This view shows the last message to the user.
@@ -58,7 +68,7 @@ MessageView.prototype = {
     }
 }
 MessageView.createViewport = function(d) { var viewport = createDefaultViewport("MessageView", NS.XUL, "vbox"); };
-ViewsetManager.viewClasses["MessageView"] = MessageView;
+viewClasses["MessageView"] = MessageView;
 
 
 /**
@@ -128,7 +138,7 @@ TreeView.prototype = {
     },
 }
 TreeView.createViewport = function(d) { return createDefaultViewport("TreeView", NS.HTML, "div"); };
-ViewsetManager.viewClasses["TreeView"] = TreeView;
+viewClasses["TreeView"] = TreeView;
 
 /**
  * @class source view
@@ -204,13 +214,13 @@ SourceView.prototype = {
 
         // Now fill in the contents of elementSpan:
 
-        if (!mml_firstChild(src) && !src.firstChild) {
+        if (!DOM.mml_firstChild(src) && !src.firstChild) {
             // src is empty
             elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_BOTH,src));
             elementSpan.appendChild(document.createTextNode("\n"));
         }
-        else if (!mml_firstChild(src)) {
+        else if (!DOM.mml_firstChild(src)) {
             // src contains text but no elements
             elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_START,src));
@@ -222,12 +232,12 @@ SourceView.prototype = {
             // Element contains children
             elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_START,src));
-            var child = mml_firstChild(src);
+            var child = DOM.mml_firstChild(src);
             if (foldingLevel != 0) {
                 elementSpan.appendChild(document.createTextNode("\n"));
                 while (child) {
                     this.writeSourceOfElement(child,elementSpan,indentMoreString,foldingLevel-1);
-                    child = mml_nextSibling(child);
+                    child = DOM.mml_nextSibling(child);
                 }
                 elementSpan.appendChild(document.createTextNode(indentString));
             }
@@ -413,8 +423,7 @@ SourceView.gemseOptions = {
     },
 }
 SourceView.createViewport = function(d) { return createDefaultViewport("SourceView", NS.HTML, "div"); };
-ViewsetManager.viewClasses["SourceView"] = SourceView;
-GemsePEditor.knownClasses.push(SourceView);
+viewClasses["SourceView"] = SourceView;
 
 /**
  * @class More advanced view of rendered equation
@@ -516,7 +525,7 @@ EquationView.prototype = {
     },
 }
 EquationView.createViewport = function(d) { return createDefaultViewport("EquationView", NS.HTML, "div"); };
-ViewsetManager.viewClasses["EquationView"] = EquationView;
+viewClasses["EquationView"] = EquationView;
 
 /**
  * @class attribute view
@@ -616,7 +625,7 @@ AttributeView.prototype = {
     },
 }
 AttributeView.createViewport = function(d) { return createDefaultViewport("AttributeView", NS.HTML, "div"); };
-ViewsetManager.viewClasses["AttributeView"] = AttributeView;
+viewClasses["AttributeView"] = AttributeView;
 
 /**
  * @class dictionary view
@@ -721,7 +730,7 @@ DictionaryView.prototype = {
     },
 }
 DictionaryView.createViewport = function(d) { return createDefaultViewport("DictionaryView", NS.XUL, "box"); };
-ViewsetManager.viewClasses["DictionaryView"] = DictionaryView;
+viewClasses["DictionaryView"] = DictionaryView;
 
 /**
  * @class Others view, shows the other open equations.
@@ -788,7 +797,7 @@ OthersView.prototype = {
     },
 };
 OthersView.createViewport = function(d) { return createDefaultViewport("OthersView", NS.XUL, "box"); };
-ViewsetManager.viewClasses["OthersView"] = OthersView;
+viewClasses["OthersView"] = OthersView;
 
 /**
  * @class Statusbar view, shows various information
@@ -813,7 +822,7 @@ StatusbarView.prototype = {
     },
 }
 StatusbarView.createViewport = function(d) { return createDefaultViewport("StatusbarView", NS.XUL, "box"); };
-ViewsetManager.viewClasses["StatusbarView"] = StatusbarView;
+viewClasses["StatusbarView"] = StatusbarView;
 
 /**
  * @class Transforms content MathML to presentation MathML using
@@ -1287,9 +1296,9 @@ NTNView.prototype = {
      */
     updateInternals: function(oldResult, newEquation) {
         if (!oldResult) { return false; }
-        var semanticsEl = mml_firstChild(oldResult);
+        var semanticsEl = DOM.mml_firstChild(oldResult);
         if (!semanticsEl) { return false; }
-        var annotationxmlEl = mml_lastChild(semanticsEl);
+        var annotationxmlEl = DOM.mml_lastChild(semanticsEl);
         if (!annotationxmlEl) { return false; }
         
         // We do not compare the math element and the annotationxmlEl
@@ -1298,14 +1307,14 @@ NTNView.prototype = {
         
         // Compare children using updateInternalsOfElement
         // (We only look at elements, not at text nodes)
-        var oldChild = mml_firstChild(annotationxmlEl);
-        var newChild = mml_firstChild(newEquation);
+        var oldChild = DOM.mml_firstChild(annotationxmlEl);
+        var newChild = DOM.mml_firstChild(newEquation);
         while (oldChild || newChild) {
             if (!this.updateInternalsOfElement(oldChild, newChild)) {
                 return false;
             }
-            oldChild = mml_nextSibling(oldChild);
-            newChild = mml_nextSibling(newChild);
+            oldChild = DOM.mml_nextSibling(oldChild);
+            newChild = DOM.mml_nextSibling(newChild);
         }
         
         return true;
@@ -1494,5 +1503,4 @@ NTNView.gemseOptions = {
     },
 }
 NTNView.createViewport = function(d) { return createDefaultViewport("NTNView", NS.HTML, "div"); };
-ViewsetManager.viewClasses["NTNView"] = NTNView;
-GemsePEditor.knownClasses.push(NTNView);
+viewClasses["NTNView"] = NTNView;

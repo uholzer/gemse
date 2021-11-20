@@ -31,7 +31,9 @@ The best way would be to put them in one file and the user defined
 ones in another.
 */
 
-var operatorDictionary = new OperatorDictionary();
+import { elementDescriptions } from "./elementDescriptors.js";
+
+export const operatorDictionary = new OperatorDictionary();
 
 function OperatorDictionary() {
     this.db = {}

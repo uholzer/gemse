@@ -1,10 +1,12 @@
 /* Functions for navigating the DOM, specially tailored to MathML */
 
+import { NS } from "./namespace.js";
+
 /**
  * Returns the element following the given one, null if the given one
  * is the last sibling element.
  */
-function mml_nextSibling(element) {
+export function mml_nextSibling(element) {
     while (element = element.nextSibling) {
         if (element.nodeType == Node.ELEMENT_NODE) {
             return element;
@@ -17,7 +19,7 @@ function mml_nextSibling(element) {
  * Returns the element before the given one or null if no preceding
  * siblings exist.
  */
-function mml_previousSibling(element) {
+export function mml_previousSibling(element) {
     while (element = element.previousSibling) {
         if (element.nodeType == Node.ELEMENT_NODE) {
             return element;
@@ -29,7 +31,7 @@ function mml_previousSibling(element) {
 /**
  * Returns the first element with the same parent
  */
-function mml_firstSibling(element) {
+export function mml_firstSibling(element) {
     var next;
     while (next = mml_previousSibling(element)) {
         element = next;
@@ -40,7 +42,7 @@ function mml_firstSibling(element) {
 /**
  * Returns the last element with the same parent
  */
-function mml_lastSibling(element) {
+export function mml_lastSibling(element) {
     var next;
     while (next = mml_nextSibling(element)) {
         element = next;
@@ -51,7 +53,7 @@ function mml_lastSibling(element) {
 /**
  * Returns the first child element.
  */
-function mml_firstChild(element) {
+export function mml_firstChild(element) {
     var candidates = element.childNodes;
     for (var i = 0; i < candidates.length; i++) {
         if (candidates[i].nodeType == Node.ELEMENT_NODE) {
@@ -64,7 +66,7 @@ function mml_firstChild(element) {
 /**
  * Returns the last child element
  */
-function mml_lastChild(element) {
+export function mml_lastChild(element) {
     var candidates = element.childNodes;
     for (var i = candidates.length-1; i >= 0; i--) {
         if (candidates[i].nodeType == Node.ELEMENT_NODE) {
@@ -81,7 +83,7 @@ function mml_lastChild(element) {
  * not an element, null is returned)
  * @param element A DOM element
  */
-function mml_parent(element) {
+export function mml_parent(element) {
     return (element.parentNode.nodeType==1) ? element.parentNode : null;
 }
 
@@ -89,7 +91,7 @@ function mml_parent(element) {
  * Returns the next leaf element in document order. A leaf element is
  * an element that has no child elements.
  */
-function mml_nextLeaf(element) {
+export function mml_nextLeaf(element) {
     var nextLeaf = null;
     var nextSibling = mml_nextSibling(element);
     if (!nextSibling) {
@@ -124,7 +126,7 @@ function mml_nextLeaf(element) {
  * Returns the previous leaf element in document order. A leaf element is
  * an element that has no child elements.
  */
-function mml_previousLeaf(element) {
+export function mml_previousLeaf(element) {
     var previousLeaf = null;
     var previousSibling = mml_previousSibling(element);
     if (!previousSibling) {
@@ -158,6 +160,6 @@ function mml_previousLeaf(element) {
 /**
  * Removes all child nodes of the element
  */
-function xml_flushElement(element) {
+export function xml_flushElement(element) {
     while (element.hasChildNodes()) { element.removeChild(element.firstChild); }
 }

@@ -2,7 +2,7 @@
 /**
  * @class Links an equation to the document it is saved in.
  */
-function StorageLink(storage, node) {
+export function StorageLink(storage, node) {
     this.storage = storage;
     this.node = node;
 }
@@ -85,7 +85,7 @@ var DocStoragePrototype = {
  * @class Storage for local files
  * @param file an nsIFile
  */
-function FileDocStorage(file) {
+export function FileDocStorage(file) {
     this.document = document.implementation.createDocument(null,null,null);
     this.file = file;
     var ios = Components.classes["@mozilla.org/network/io-service;1"].  
@@ -136,7 +136,7 @@ FileDocStorage.prototype = {
  * PUT.
  * @param uri URI of the document to be loaded as string. 
  */
-function XMLHttpRequestDocStorage(uri) {
+export function XMLHttpRequestDocStorage(uri) {
     this.document = document.implementation.createDocument(null,null,null);
     this.uri = uri;
     this.contentTypeHeader = "application/mathml+xml";
@@ -173,7 +173,7 @@ XMLHttpRequestDocStorage.prototype = {
  * @param uri URI of the document to be loaded as string. All schemes supported
  *            by XMLHttpRequest can be used.
  */
-function ReadOnlyXMLHttpRequestDocStorage(uri) {
+export function ReadOnlyXMLHttpRequestDocStorage(uri) {
     this.document = document.implementation.createDocument(null,null,null);
     this.uri = uri;
 }
@@ -201,7 +201,7 @@ ReadOnlyXMLHttpRequestDocStorage.prototype = {
  * document. read and write do nothing at all, i.e. the document is
  * never saved to disk or put to some URI.
  */
-function InMemoryDocStorage(document) {
+export function InMemoryDocStorage(document) {
     this.document = document;
     this.idObject = document;
 }

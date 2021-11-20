@@ -50,7 +50,7 @@
  *        <dd>function(mode,data,commandInfo)</dd>
  *        </dl>
  */
-function CommandHandler(mode,options,commandTable) {
+export function CommandHandler(mode,options,commandTable) {
     this.editor = mode.editor;
     this.mode = mode;
     this.options = options;

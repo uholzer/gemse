@@ -1,4 +1,4 @@
-const NS = {
+export const NS = {
     /** 
      * The namespace used by Gemse for internal purposes 
      * @constant
@@ -40,7 +40,7 @@ const NS = {
  * code of Gemse. Thus, already present prefixes should not be
  * removed.
  */
-function standardNSResolver(prefix) {
+export function standardNSResolver(prefix) {
     // The code of Gemse relies on this resolver, so don't remove
     // already defined prefixes!
     if (prefix == "internal") { return NS.internal }
