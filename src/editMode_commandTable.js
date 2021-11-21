@@ -461,31 +461,31 @@ var editModeCommands = {
         implementation: editModeCommand_example
     },
 };
-editModeCommands[KEYMOD_CONTROL] = {
+editModeCommands[KeyMod.control] = {
         type: "disamb",
 };
-editModeCommands[KEYMOD_CONTROL + "i"] = {
+editModeCommands[KeyMod.control + "i"] = {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
         implementation: editModeCommand_insertIn
 };
-editModeCommands[KEYMOD_CONTROL + "r"] = {
+editModeCommands[KeyMod.control + "r"] = {
         category: "action",
         type: "command",
         repeating: "external",
         argument: "none",
         implementation: editModeCommand_redo
 };
-editModeCommands[KEYMOD_CONTROL + "l"] = {
+editModeCommands[KeyMod.control + "l"] = {
         category: "action",
         type: "command",
         repeating: "prevent",
         argument: "none",
         implementation: editModeCommand_redisplay
 };
-editModeCommands[KEYMOD_CONTROL + "p"] = {
+editModeCommands[KeyMod.control + "p"] = {
         category: "action",
         type: "command",
         repeating: "prevent",

@@ -7,7 +7,7 @@ var elementDescriptions = {
 
 mi: {
     name: "mi",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "token",
     attributes: {
         mathvariant: {
@@ -19,14 +19,14 @@ mi: {
 
 mn: {
     name: "mn",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "token",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mn",
 },
 
 mo: {
     name: "mo",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "token",
     attributes: {
         // The default attribute values of a given mo element are
@@ -156,14 +156,14 @@ mo: {
 
 mtext: {
     name: "mtext",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "token",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mtext",
 },
 
 mspace: {
     name: "mspace",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "token",
     attributes: {
         width: {
@@ -188,7 +188,7 @@ mspace: {
 
 ms: {
     name: "ms",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "token",
     attributes: {
         lquote: {
@@ -205,7 +205,7 @@ ms: {
 
 mglyph: {
     name: "mglyph",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "token",
     attributes: {
         src: {
@@ -230,14 +230,14 @@ mglyph: {
 
 mrow: {
     name: "mrow",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "mrow",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mrow",
 },
 
 mfrac: {
     name: "mfrac",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "fixedChildren",
     childCount: 2,
     attributes: {
@@ -263,14 +263,14 @@ mfrac: {
 
 msqrt: {
     name: "msqrt",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "inferred_mrow",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mroot", // also contains documentation for msqrt
 },
 
 mroot: {
     name: "mroot",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "fixedChildren",
     childCount: 2,
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mroot",
@@ -278,7 +278,7 @@ mroot: {
 
 mstyle: {
     name: "mstyle",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "inferred_mrow",
     attributes: {
         scriptlevel: {
@@ -315,14 +315,14 @@ mstyle: {
 
 merror: {
     name: "merror",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "inferred_mrow",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.merror",
 },
 
 mpadded: {
     name: "mpadded",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "inferred_mrow",
     attributes: {
         width: {
@@ -343,14 +343,14 @@ mpadded: {
 
 mphantom: {
     name: "mphantom",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "inferred_mrow",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mphantom",
 },
 
 mfenced: {
     name: "mfenced",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         open: {
@@ -371,7 +371,7 @@ mfenced: {
 
 menclose: {
     name: "menclose",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "inferred_mrow",
     attributes: {
         notation: {
@@ -384,7 +384,7 @@ menclose: {
 
 msub: {
     name: "msub",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "fixedChildren",
     childCount: 2,
     attributes: {
@@ -398,7 +398,7 @@ msub: {
 
 msup: {
     name: "msup",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "fixedChildren",
     childCount: 2,
     attributes: {
@@ -412,7 +412,7 @@ msup: {
 
 msubsup: {
     name: "msubsup",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "fixedChildren",
     childCount: 3,
     attributes: {
@@ -430,7 +430,7 @@ msubsup: {
 
 munder: {
     name: "munder",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "fixedChildren",
     childCount: 2,
     attributes: {
@@ -448,7 +448,7 @@ munder: {
 
 mover: {
     name: "mover",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "fixedChildren",
     childCount: 2,
     attributes: {
@@ -466,7 +466,7 @@ mover: {
 
 munderover: {
     name: "munderover",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "fixedChildren",
     childCount: 3,
     attributes: {
@@ -488,7 +488,7 @@ munderover: {
 
 mmultiscripts: {
     name: "mmultiscripts",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         subscriptshift: {
@@ -505,21 +505,21 @@ mmultiscripts: {
 
 mprescripts: {
     name: "mprescripts",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "empty",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mmultiscripts", // belongs to mmultiscripts
 },
 
 none: {
     name: "none", // Indeed, it is called "none", not "mnone".
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "empty",
     help: "http://www.w3.org/TR/MathML3/chapter3.html#presm.mmultiscripts", // belongs to mmultiscripts
 },
 
 mtable: {
     name: "mtable",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         align: {
@@ -600,7 +600,7 @@ mtable: {
 
 mtr: {
     name: "mtr",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         rowalign: {
@@ -621,7 +621,7 @@ mtr: {
 
 mlabeledtr: {
     name: "mlabeledtr",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         rowalign: {
@@ -642,7 +642,7 @@ mlabeledtr: {
 
 mtd: {
     name: "mtd",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "inferred_mrow",
     attributes: {
         rowspan: {
@@ -671,7 +671,7 @@ mtd: {
 
 maligngroup: {
     name: "maligngroup",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "empty",
     attributes: {
         groupalign: {
@@ -684,7 +684,7 @@ maligngroup: {
 
 malignmark: {
     name: "malignmark",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "empty",
     attributes: {
         edge: {
@@ -697,7 +697,7 @@ malignmark: {
 
 mstack: {
     name: "mstack",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         align: {
@@ -722,7 +722,7 @@ mstack: {
 
 mlongdiv: {
     name: "mlongdiv",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         longdivstyle: {
@@ -735,7 +735,7 @@ mlongdiv: {
 
 msgroup: {
     name: "msgroup",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         position: {
@@ -752,7 +752,7 @@ msgroup: {
 
 msrow: {
     name: "msrow",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         position: {
@@ -769,7 +769,7 @@ msrow: {
 
 mscarries: {
     name: "mscarries",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         position: {
@@ -794,7 +794,7 @@ mscarries: {
 
 mscarry: {
     name: "mscarry",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "inferred_mrow",
     attributes: {
         location: {
@@ -811,7 +811,7 @@ mscarry: {
 
 msline: {
     name: "msline",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "empty",
     attributes: {
         position: {
@@ -844,7 +844,7 @@ msline: {
 
 maction: {
     name: "maction",
-    namespace: NS_MathML,
+    namespace: NS.MathML,
     type: "childList",
     attributes: {
         actiontype: {
@@ -860,7 +860,7 @@ maction: {
 
 /*notations: {
     name: "notations",
-    namespace: NS_OMDoc,
+    namespace: NS.OMDoc,
     type: "childList",
     attributes: {
         : {
@@ -873,7 +873,7 @@ maction: {
 
 notation: {
     name: "notation",
-    namespace: NS_OMDoc,
+    namespace: NS.OMDoc,
     type: "childList",
     attributes: {
         : {
@@ -886,7 +886,7 @@ notation: {
 
 prototype: {
     name: "prototype",
-    namespace: NS_OMDoc,
+    namespace: NS.OMDoc,
     type: "childList",
     attributes: {
     },
@@ -895,7 +895,7 @@ prototype: {
 
 rendering: {
     name: "rendering",
-    namespace: NS_OMDoc,
+    namespace: NS.OMDoc,
     type: "inferred_mrow",
     attributes: {
     },
@@ -904,7 +904,7 @@ rendering: {
 
 iterate: {
     name: "iterate",
-    namespace: NS_OMDoc,
+    namespace: NS.OMDoc,
     type: "childList",
     attributes: {
         name: {
@@ -917,7 +917,7 @@ iterate: {
 
 separator: {
     name: "separator",
-    namespace: NS_OMDoc,
+    namespace: NS.OMDoc,
     type: "childList",
     attributes: {
     },
@@ -926,7 +926,7 @@ separator: {
 
 render: {
     name: "render",
-    namespace: NS_OMDoc,
+    namespace: NS.OMDoc,
     type: "empty",
     attributes: {
         name: {
@@ -939,7 +939,7 @@ render: {
 
 /*exprlist: {
     name: "exprlist",
-    namespace: NS_OMDoc,
+    namespace: NS.OMDoc,
     type: "childList",
     attributes: {
         : {
@@ -952,7 +952,7 @@ render: {
 
 expr: {
     name: "expr",
-    namespace: NS_OMDoc,
+    namespace: NS.OMDoc,
     type: "childList",
     attributes: {
         : {

@@ -65,8 +65,8 @@ EditMode.prototype = {
      * Puts "selected" attributes for the cursor into the equation.
      */
     showCursor: function() {
-        this.cursor.setAttributeNS(NS_internal, "selected", "editcursor");
-        if (this.cursor != this.equationEnv.equation) { this.cursor.parentNode.setAttributeNS(NS_internal, "selected", "parent"); }
+        this.cursor.setAttributeNS(NS.internal, "selected", "editcursor");
+        if (this.cursor != this.equationEnv.equation) { this.cursor.parentNode.setAttributeNS(NS.internal, "selected", "parent"); }
     },
     /**
      * Removes "selected" attributes for the current cursor.
@@ -78,8 +78,8 @@ EditMode.prototype = {
      */
     hideCursor: function() {
         if (this.cursor) {
-            this.cursor.removeAttributeNS(NS_internal, "selected");
-            if (this.cursor != this.equationEnv.equation) { this.cursor.parentNode.removeAttributeNS(NS_internal, "selected"); }
+            this.cursor.removeAttributeNS(NS.internal, "selected");
+            if (this.cursor != this.equationEnv.equation) { this.cursor.parentNode.removeAttributeNS(NS.internal, "selected"); }
         }
     },
     /**
@@ -280,7 +280,7 @@ function editModeCommand_followRef(mode, currentElement) {
     if (destID = currentElement.getAttribute("xref")) {
         destElement = mode.d.evaluate(".//.[@id='"+destID+"' or @xml:id='"+destID+"']", mode.equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
     }
-    else if (destID = (currentElement.getAttribute("id")||currentElement.getAttributeNS(NS_XML,"id"))) {
+    else if (destID = (currentElement.getAttribute("id")||currentElement.getAttributeNS(NS.XML,"id"))) {
         // Follow backwards
         destElement = mode.d.evaluate(".//.[@xref='"+destID+"']", mode.equationEnv.equation, standardNSResolver, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
     }
@@ -448,7 +448,7 @@ function editModeCommand_serialize(mode, instance) {
         var xmlString = serializer.serializeToString(rootNode);
     }
 
-    var pre = document.createElementNS(NS_HTML,"pre");
+    var pre = document.createElementNS(NS.HTML,"pre");
     pre.appendChild(document.createTextNode(xmlString));
     mode.editor.showMessage(pre);
     return true;
@@ -497,7 +497,7 @@ function editModeCommand_export(mode, instance) {
         serialized = serializer.serializeToString(resultDoc);
     }
 
-    var pre = document.createElementNS(NS_HTML,"pre");
+    var pre = document.createElementNS(NS.HTML,"pre");
     pre.appendChild(document.createTextNode(serialized));
     mode.editor.showMessage(pre);
     return true;
@@ -512,16 +512,16 @@ function editModeCommand_newEquation(mode, instance) {
         root = document.createElementNS(ns, name);
     }
     else if (instance.argument == "m") {
-        root = document.createElementNS(NS_MathML, "math");
+        root = document.createElementNS(NS.MathML, "math");
     }
     else if (instance.argument == "om") {
-        root = document.createElementNS(NS_OpenMath, "OMOBJ");
+        root = document.createElementNS(NS.OpenMath, "OMOBJ");
         root.setAttribute("version", "2.0");
     }
     else if (instance.argument == "ntn") {
-        root = document.createElementNS(NS_OMDoc, "notation");
-        root.appendChild(document.createElementNS(NS_OMDoc, "prototype"));
-        root.appendChild(document.createElementNS(NS_OMDoc, "rendering"));
+        root = document.createElementNS(NS.OMDoc, "notation");
+        root.appendChild(document.createElementNS(NS.OMDoc, "prototype"));
+        root.appendChild(document.createElementNS(NS.OMDoc, "rendering"));
     }
     else {
         root = null;
@@ -728,14 +728,14 @@ function editModeCommand_mrowEnvelop(mode,instance) {
     // sometimes, but is completely wrong other times. It is important to
     // be careful that Presentation MathML support does not break.
     var newMrow;
-    if (instance.selection.startElement.namespaceURI == NS_OpenMath) {
-        newMrow = mode.d.createElementNS(NS_OpenMath, "OMA");
+    if (instance.selection.startElement.namespaceURI == NS.OpenMath) {
+        newMrow = mode.d.createElementNS(NS.OpenMath, "OMA");
     }
     else if (instance.selection.startElement.localName[1]=="m" || elementDescriptions[instance.selection.startElement.localName]) {
-        newMrow = mode.d.createElementNS(NS_MathML, "mrow");
+        newMrow = mode.d.createElementNS(NS.MathML, "mrow");
     }
     else {
-        newMrow = mode.d.createElementNS(NS_MathML, "apply");
+        newMrow = mode.d.createElementNS(NS.MathML, "apply");
     }
     
     // Fill the new mrow
@@ -787,7 +787,7 @@ function editModeCommand_contentInfo(mode) {
         s += ucd.lookupName(content.uCharAt(i));
     }
     s += ">";
-    var code = document.createElementNS(NS_HTML, "code");
+    var code = document.createElementNS(NS.HTML, "code");
     code.appendChild(document.createTextNode(s));
     mode.editor.showMessage(code);
     return true;
@@ -814,25 +814,25 @@ function editModeCommand_chooseViewset(mode, instance) {
     }
     else {
         // Present an overview of the available viewsets
-        var table = document.createElementNS(NS_HTML, "table");
-        var caption = document.createElementNS(NS_HTML, "caption");
+        var table = document.createElementNS(NS.HTML, "table");
+        var caption = document.createElementNS(NS.HTML, "caption");
         caption.appendChild(document.createTextNode("available viewsets"));
         table.appendChild(caption);
-        var head = document.createElementNS(NS_HTML, "tr");
-        var th = document.createElementNS(NS_HTML, "th");
+        var head = document.createElementNS(NS.HTML, "tr");
+        var th = document.createElementNS(NS.HTML, "th");
         th.appendChild(document.createTextNode("name"));
         head.appendChild(th);
-        var th = document.createElementNS(NS_HTML, "th");
+        var th = document.createElementNS(NS.HTML, "th");
         th.appendChild(document.createTextNode("description"));
         head.appendChild(th);
         table.appendChild(head);
         
         mode.editor.viewsetManager.viewsets.forEach(function (viewset) {
-            var tr = document.createElementNS(NS_HTML, "tr");
-            var td = document.createElementNS(NS_HTML, "td");
+            var tr = document.createElementNS(NS.HTML, "tr");
+            var td = document.createElementNS(NS.HTML, "td");
             td.appendChild(document.createTextNode(viewset.getAttribute("name")));
             tr.appendChild(td);
-            var td = document.createElementNS(NS_HTML, "td");
+            var td = document.createElementNS(NS.HTML, "td");
             td.appendChild(document.createTextNode(viewset.getAttribute("description")));
             tr.appendChild(td);
             table.appendChild(tr);
@@ -895,13 +895,13 @@ function editModeCommand_printDocumentInformation(mode, instance) {
 }
 
 function editModeCommand_printAllDocumentInformation(mode, instance) {
-    var mainDiv = document.createElementNS(NS_HTML, "div");
-    var equationTable = document.createElementNS(NS_HTML, "table");
-    var equationTableCaption = document.createElementNS(NS_HTML, "caption");
+    var mainDiv = document.createElementNS(NS.HTML, "div");
+    var equationTable = document.createElementNS(NS.HTML, "table");
+    var equationTableCaption = document.createElementNS(NS.HTML, "caption");
     equationTableCaption.appendChild(document.createTextNode("Equations"));
     equationTable.appendChild(equationTableCaption);
-    var storageTable = document.createElementNS(NS_HTML, "table");
-    var storageTableCaption = document.createElementNS(NS_HTML, "caption");
+    var storageTable = document.createElementNS(NS.HTML, "table");
+    var storageTableCaption = document.createElementNS(NS.HTML, "caption");
     storageTableCaption.appendChild(document.createTextNode("Documents"));
     storageTable.appendChild(storageTableCaption);
     mainDiv.appendChild(equationTable);
@@ -911,44 +911,44 @@ function editModeCommand_printAllDocumentInformation(mode, instance) {
     var th;
     var td;
 
-    tr = document.createElementNS(NS_HTML, "tr");
-    th = document.createElementNS(NS_HTML, "th");
+    tr = document.createElementNS(NS.HTML, "tr");
+    th = document.createElementNS(NS.HTML, "th");
     th.appendChild(document.createTextNode("number"));
     tr.appendChild(th);
-    th = document.createElementNS(NS_HTML, "th");
+    th = document.createElementNS(NS.HTML, "th");
     th.appendChild(document.createTextNode("unsaved changes"));
     tr.appendChild(th);
-    th = document.createElementNS(NS_HTML, "th");
+    th = document.createElementNS(NS.HTML, "th");
     th.appendChild(document.createTextNode("read only"));
     tr.appendChild(th);
-    th = document.createElementNS(NS_HTML, "th");
+    th = document.createElementNS(NS.HTML, "th");
     th.appendChild(document.createTextNode("document"));
     tr.appendChild(th);
     equationTable.appendChild(tr);
 
     for (var i=0; i<mode.editor.equations.length; ++i) {
         var eq = mode.editor.equations[i];
-        tr = document.createElementNS(NS_HTML, "tr");
-        td = document.createElementNS(NS_HTML, "td");
+        tr = document.createElementNS(NS.HTML, "tr");
+        td = document.createElementNS(NS.HTML, "td");
         td.appendChild(document.createTextNode(i));
         tr.appendChild(td);
-        td = document.createElementNS(NS_HTML, "td");
+        td = document.createElementNS(NS.HTML, "td");
         td.appendChild(document.createTextNode(eq.history.hasChanges() ? "yes" : ""));
         tr.appendChild(td);
-        td = document.createElementNS(NS_HTML, "td");
+        td = document.createElementNS(NS.HTML, "td");
         td.appendChild(document.createTextNode(eq.readOnly ? "yes" : ""));
         tr.appendChild(td);
-        td = document.createElementNS(NS_HTML, "td");
+        td = document.createElementNS(NS.HTML, "td");
         td.appendChild(document.createTextNode(eq.origin ?  eq.origin.storage.toString() : ""));
         tr.appendChild(td);
         equationTable.appendChild(tr);
     }
 
-    tr = document.createElementNS(NS_HTML, "tr");
-    th = document.createElementNS(NS_HTML, "th");
+    tr = document.createElementNS(NS.HTML, "tr");
+    th = document.createElementNS(NS.HTML, "th");
     th.appendChild(document.createTextNode("document"));
     tr.appendChild(th);
-    th = document.createElementNS(NS_HTML, "th");
+    th = document.createElementNS(NS.HTML, "th");
     th.appendChild(document.createTextNode("used by equations"));
     tr.appendChild(th);
     storageTable.appendChild(tr);
@@ -962,11 +962,11 @@ function editModeCommand_printAllDocumentInformation(mode, instance) {
                 usedBy.push(eqn);
             }
         }
-        tr = document.createElementNS(NS_HTML, "tr");
-        td = document.createElementNS(NS_HTML, "td");
+        tr = document.createElementNS(NS.HTML, "tr");
+        td = document.createElementNS(NS.HTML, "td");
         td.appendChild(document.createTextNode(storage.toString()));
         tr.appendChild(td);
-        td = document.createElementNS(NS_HTML, "td");
+        td = document.createElementNS(NS.HTML, "td");
         td.appendChild(document.createTextNode(usedBy.join(", ")));
         tr.appendChild(td);
         storageTable.appendChild(tr);

@@ -20,7 +20,7 @@ AttributeMode.prototype = {
         }
 
         // Sort the array (and filter out internal attributes)
-        this.attributes = this.attributes.filter(function (a) { return a.namespaceURI != NS_internal });
+        this.attributes = this.attributes.filter(function (a) { return a.namespaceURI != NS.internal });
         this.attributes = this.attributes.sort(
             function (a, b) { 
                 if (a.namespaceURI < b.namespaceURI) return -1
@@ -33,10 +33,10 @@ AttributeMode.prototype = {
 
         // The attribute selectedAttributes stores the list of the
         // full names of the selected attributes
-        this.element.setAttributeNS(NS_internal, "selectedAttributes", "");
+        this.element.setAttributeNS(NS.internal, "selectedAttributes", "");
         // attributeCursor contains the full name of the attribute the
         // cursor is located on
-        this.element.setAttributeNS(NS_internal, "attributeCursor", "");
+        this.element.setAttributeNS(NS.internal, "attributeCursor", "");
 
         if (this.attributes.length > 0) {
             this.moveCursor(0);
@@ -48,13 +48,13 @@ AttributeMode.prototype = {
     reInit: function() { this.init() },
     finish: function() {
         // Clean up attribute mess
-        this.element.removeAttributeNS(NS_internal, "selectedAttributes");
-        this.element.setAttributeNS(NS_internal, "attributeCursor", "");
+        this.element.removeAttributeNS(NS.internal, "selectedAttributes");
+        this.element.setAttributeNS(NS.internal, "attributeCursor", "");
         this.equationEnv.finishMode();
     },
     moveCursor: function(index) {
         this.cursor = index; // index may be undef if there are no attributes present
-        this.element.setAttributeNS(NS_internal, "attributeCursor", (index!=null) ? this.attributes[index].nodeName : "");
+        this.element.setAttributeNS(NS.internal, "attributeCursor", (index!=null) ? this.attributes[index].nodeName : "");
     },
     get contextNode() { return this.element }, // XXX: good like this?
     inputHandler: function() {
@@ -184,7 +184,7 @@ function attributeModeCommand_setFromDictionary(mode,instance) {
     // Looks up the entries for this element in the dictionary and sets
     // the attributes accordingly. Up to now, this only works for mo
     // elements.
-    if (! (mode.element.namespaceURI==NS_MathML && mode.element.localName=="mo")) { return false }
+    if (! (mode.element.namespaceURI==NS.MathML && mode.element.localName=="mo")) { return false }
 
     var applyEntry = function(entry,element) {
         for (var name in entry.attributes) {

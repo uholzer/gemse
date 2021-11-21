@@ -146,7 +146,7 @@ EquationEnv.prototype = {
                 // objects are sometimes undefined in firefox. That's
                 // the reason for this if.
                 for (var i=0; i < attrs.length; ++i) {
-                    if (attrs[i].namespaceURI == NS_internal) { n.removeAttributeNode(attrs[i]) }
+                    if (attrs[i].namespaceURI == NS.internal) { n.removeAttributeNode(attrs[i]) }
                 }
             }
             n =  iterator.nextNode();
@@ -306,7 +306,7 @@ RegisterManager.prototype = {
             throw new Error("An error occured while parsing the clipboard content:\n"
                         + clipboardDOM.documentElement.textContent);
         }
-        else if (clipboardDOM.documentElement.localName == "math" && clipboardDOM.documentElement.namespaceURI == NS_MathML) {
+        else if (clipboardDOM.documentElement.localName == "math" && clipboardDOM.documentElement.namespaceURI == NS.MathML) {
             // Put the child elements into an array
             var arrayOfElements = [];
             for (var i=0; i < clipboardDOM.documentElement.childNodes.length; ++i) {
@@ -332,8 +332,8 @@ RegisterManager.prototype = {
         // Serialize data.content[0]
         var doc = document.implementation.createDocument(null, null, null);
         var rootNode;
-        if (data.content.length != 1 || data.content[0].localName != "math" || data.content[0].namespaceURI != NS_MathML) {
-            rootNode = doc.createElementNS(NS_MathML, "math");
+        if (data.content.length != 1 || data.content[0].localName != "math" || data.content[0].namespaceURI != NS.MathML) {
+            rootNode = doc.createElementNS(NS.MathML, "math");
             data.content.forEach(function(e) {
                 rootNode.appendChild(doc.importNode(e, true));
             });
@@ -497,7 +497,7 @@ History.prototype.__proto__ = new Array();
 function Change() {
     // The equation element (or its descendants) is supposed
     // to carry the whole significant mode state, given as
-    // attributes in the namespace NS_internal.
+    // attributes in the namespace NS.internal.
     // The method reInit of the mode is called after the
     // change so that the mode can update its data structures
     /**
@@ -758,7 +758,7 @@ ViewsetManager.prototype = {
         // Create view objects
         for (var i=0;i<viewports.length;++i) {
             // Find out the class
-            var className = viewports[i].getAttributeNS(NS_internal, "viewClass");
+            var className = viewports[i].getAttributeNS(NS.internal, "viewClass");
             var constructor = this.viewClasses[className];
             if (!constructor) {
                 throw new Error("There is no view with the name " + className);
@@ -776,8 +776,8 @@ ViewsetManager.prototype = {
      */
     readOptionsFromViewport: function(view, viewport) {
         // Read in options from internal:options attribute of the Element element
-        if (viewport.hasAttributeNS(NS_internal, "options")) {
-            var options = this.parseOptionsString(viewport.getAttributeNS(NS_internal, "options"));
+        if (viewport.hasAttributeNS(NS.internal, "options")) {
+            var options = this.parseOptionsString(viewport.getAttributeNS(NS.internal, "options"));
             for (var option of options) {
                 try {
                     this.editor.optionsAssistant.set(option[0],option[1],null,view);
@@ -1337,7 +1337,7 @@ function GemsePEditor(callback) {
      * @private
      */
     newEditor.viewsetManager = new ViewsetManager(newEditor,document.getElementById("viewsetDock"));
-    var viewsets = document.getElementsByTagNameNS(NS_internal, "viewsets")[0];
+    var viewsets = document.getElementsByTagNameNS(NS.internal, "viewsets")[0];
     newEditor.viewsetManager.loadViewsets(viewsets);
     viewsets.parentNode.removeChild(viewsets);
     /**
@@ -1452,7 +1452,7 @@ GemsePEditor.prototype = {
             "OS", // Firefox Bug, should be Meta. https://bugzilla.mozilla.org/show_bug.cgi?id=1232918
         ];
 
-        const modifierPrefix = [["Alt", KEYMOD_ALT], ["Control", KEYMOD_CONTROL]]
+        const modifierPrefix = [["Alt", KeyMod.alt], ["Control", KeyMod.control]]
             .filter(([modifier, _]) => event.getModifierState(modifier))
             .map(([_, prefix]) => prefix)
             .join("");
@@ -1467,7 +1467,7 @@ GemsePEditor.prototype = {
             // this modifier is active.
         }
         else if (event.key.length > 1) {
-            editor.inputBuffer += modifierPrefix + (KeyRepresentation[event.key] || KEYNAME_QUOTE + event.key + KEYNAME_QUOTE);
+            editor.inputBuffer += modifierPrefix + (KeyRepresentation[event.key] || KeynameQuote + event.key + KeynameQuote);
             stopDefaultBehaviour();
         }
         else if (modifierPrefix) {
@@ -1772,9 +1772,9 @@ GemsePEditor.prototype = {
 
                 // Only allow math elements except the option
                 // loadAnyAsRoot is set to true
-                var is_math = (m.localName == "math" && m.namespaceURI == NS_MathML);
-                var is_OMOBJ = (m.localName == "OMOBJ" && m.namespaceURI == NS_OpenMath);
-                var is_notation = (m.localName == "notation" && m.namespaceURI == NS_OMDoc);
+                var is_math = (m.localName == "math" && m.namespaceURI == NS.MathML);
+                var is_OMOBJ = (m.localName == "OMOBJ" && m.namespaceURI == NS.OpenMath);
+                var is_notation = (m.localName == "notation" && m.namespaceURI == NS.OMDoc);
                 if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ && !is_notation) {
                     //XXX: Maybe we should not throw here, but just skip this equation
                     throw new Error("The element you load must be a math element " + 
@@ -1829,9 +1829,9 @@ GemsePEditor.prototype = {
     loadFromOpenDocument: function(doc, element, inMemory) {
         // Only allow math elements except the option
         // loadAnyAsRoot is set to true
-        var is_math = (element.localName == "math" && element.namespaceURI == NS_MathML);
-        var is_OMOBJ = (element.localName == "OMOBJ" && element.namespaceURI == NS_OpenMath);
-        var is_notation = (element.localName == "notation" && element.namespaceURI == NS_OMDoc);
+        var is_math = (element.localName == "math" && element.namespaceURI == NS.MathML);
+        var is_OMOBJ = (element.localName == "OMOBJ" && element.namespaceURI == NS.OpenMath);
+        var is_notation = (element.localName == "notation" && element.namespaceURI == NS.OMDoc);
         if (!this.o.loadAnyAsRoot && !is_math && !is_OMOBJ && !is_notation) {
             throw new Error("The element you load must be a math element " + 
                             "in the MathML namespace, an OMOBJ element " + 
@@ -1911,11 +1911,11 @@ GemsePEditor.prototype = {
     showMessage: function(message) {
         if (message instanceof Error) {
             // Message is an Error object, which we present nicely
-            var errorElement = document.createElementNS(NS_HTML, "div");
+            var errorElement = document.createElementNS(NS.HTML, "div");
             errorElement.setAttribute("class", "error");
             errorElement.appendChild(document.createTextNode(message.name + ": " + message.message));
             if (this.o.detailedErrors) {
-                var stackBacktrace = document.createElementNS(NS_HTML, "pre");
+                var stackBacktrace = document.createElementNS(NS.HTML, "pre");
                 stackBacktrace.appendChild(document.createTextNode(message.stack));
                 errorElement.appendChild(stackBacktrace);
             }
@@ -1928,7 +1928,7 @@ GemsePEditor.prototype = {
         else {
             // message is a String or something that should be
             // presented as such, using its toString method
-            var newMessage = document.createElementNS(NS_HTML,"div");
+            var newMessage = document.createElementNS(NS.HTML,"div");
             newMessage.appendChild(document.createTextNode(message.toString()));
             this.messages.push(newMessage);
         }
@@ -2508,7 +2508,7 @@ function mml_nextLeaf(element) {
         while (!nextSibling) {
             element = element.parentNode;
             nextSibling = mml_nextSibling(element);
-            if (element.localName=="math" && element.namespaceURI == NS_MathML) { return null }
+            if (element.localName=="math" && element.namespaceURI == NS.MathML) { return null }
         }
         // Here we reached a point where nextSibling is defined.
         // It may be however, that it is not a leaf but an
@@ -2543,7 +2543,7 @@ function mml_previousLeaf(element) {
         while (!previousSibling) {
             element = element.parentNode;
             previousSibling = mml_previousSibling(element);
-            if (element.localName=="math" && element.namespaceURI == NS_MathML) { return null }
+            if (element.localName=="math" && element.namespaceURI == NS.MathML) { return null }
         }
         // Here we reached a point where nextSibling is defined.
         // It may be however, that it is not a leaf but an

@@ -39,15 +39,15 @@ TrivialInsertMode.prototype = {
         });
     },
     hideCursor: function() {
-        this.cursor.inElement.removeAttributeNS(NS_internal,"selected");
+        this.cursor.inElement.removeAttributeNS(NS.internal,"selected");
         if (this.cursor.beforeElement) {
-            this.cursor.beforeElement.removeAttributeNS(NS_internal,"selected");
+            this.cursor.beforeElement.removeAttributeNS(NS.internal,"selected");
             if (mml_previousSibling(this.cursor.beforeElement)) {
-                mml_previousSibling(this.cursor.beforeElement).removeAttributeNS(NS_internal,"selected");
+                mml_previousSibling(this.cursor.beforeElement).removeAttributeNS(NS.internal,"selected");
             }
         }
         else if (mml_lastChild(this.cursor.inElement)) {
-            mml_lastChild(this.cursor.inElement).removeAttributeNS(NS_internal,"selected");
+            mml_lastChild(this.cursor.inElement).removeAttributeNS(NS.internal,"selected");
         }
         // remove selected="userSelection" attributes on preceding siblings
         var sibling;
@@ -58,20 +58,20 @@ TrivialInsertMode.prototype = {
             sibling = mml_lastChild(this.cursor.inElement);
         }
         while (sibling) {
-            sibling.removeAttributeNS(NS_internal,"selected");
+            sibling.removeAttributeNS(NS.internal,"selected");
             sibling = mml_previousSibling(sibling);
         }
     },
     showCursor: function() {
-        this.cursor.inElement.setAttributeNS(NS_internal,"selected","insertCursorIn");
+        this.cursor.inElement.setAttributeNS(NS.internal,"selected","insertCursorIn");
         if (this.cursor.beforeElement) {
-            this.cursor.beforeElement.setAttributeNS(NS_internal,"selected","insertCursorBefore");
+            this.cursor.beforeElement.setAttributeNS(NS.internal,"selected","insertCursorBefore");
             if (mml_previousSibling(this.cursor.beforeElement)) {
-                mml_previousSibling(this.cursor.beforeElement).setAttributeNS(NS_internal,"selected","insertCursorAfter");
+                mml_previousSibling(this.cursor.beforeElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
             }
         }
         else if (mml_lastChild(this.cursor.inElement)) {
-            mml_lastChild(this.cursor.inElement).setAttributeNS(NS_internal,"selected","insertCursorAfter");
+            mml_lastChild(this.cursor.inElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
         }
         // Put selected="userSelection" for sorrounded elements
         var sibling;
@@ -82,7 +82,7 @@ TrivialInsertMode.prototype = {
             sibling = mml_lastChild(this.cursor.inElement);
         }
         for (var i=0; i < this.cursor.numberOfElementsToSurround; ++i, sibling=mml_previousSibling(sibling)) {
-            sibling.setAttributeNS(NS_internal,"selected","userSelection");
+            sibling.setAttributeNS(NS.internal,"selected","userSelection");
         }
     },
     moveCursor: function(newCursor) {
@@ -98,8 +98,8 @@ TrivialInsertMode.prototype = {
         return true;
     },
     getNewPlaceholderElement: function() {
-        var placeholder = this.d.createElementNS(NS_MathML, "mi");
-        placeholder.setAttributeNS(NS_internal, "missing", "1")
+        var placeholder = this.d.createElementNS(NS.MathML, "mi");
+        placeholder.setAttributeNS(NS.internal, "missing", "1")
         placeholder.appendChild(this.d.createTextNode("□"));
         return placeholder;
     },
@@ -110,7 +110,7 @@ TrivialInsertMode.prototype = {
 
         // First delete a possibly present element with attribute
         // missing
-        if (this.cursor.beforeElement && this.cursor.beforeElement.getAttributeNS(NS_internal, "missing")) {
+        if (this.cursor.beforeElement && this.cursor.beforeElement.getAttributeNS(NS.internal, "missing")) {
             var elementToBeDeleted = this.cursor.beforeElement;
             this.moveCursor({ 
                 beforeElement: mml_nextSibling(elementToBeDeleted), 
@@ -124,7 +124,7 @@ TrivialInsertMode.prototype = {
         if (arguments.length > 1) {
             var ns = arguments[0];
             var name = arguments[1];
-            if (ns==null) { ns = NS_MathML }
+            if (ns==null) { ns = NS.MathML }
             // Hide cursor
             this.hideCursor();
             // Create the new element
@@ -148,7 +148,7 @@ TrivialInsertMode.prototype = {
                 for (var i=0; 
                     i<this.cursor.numberOfElementsToSurround 
                     && mml_firstChild(newElement)
-                    && mml_firstChild(newElement).getAttributeNS(NS_internal, "missing");
+                    && mml_firstChild(newElement).getAttributeNS(NS.internal, "missing");
                     ++i) {
                     newElement.removeChild(mml_firstChild(newElement)) 
                 }
@@ -161,7 +161,7 @@ TrivialInsertMode.prototype = {
                 }
             }
             else if (description.type=="fixedChildren" || description.type=="childList") {
-                var surroundingMrow = this.d.createElementNS(NS_MathML,"mrow");
+                var surroundingMrow = this.d.createElementNS(NS.MathML,"mrow");
                 for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
                     surroundingMrow.insertBefore(
                         mml_previousSibling(newElement),
@@ -177,7 +177,7 @@ TrivialInsertMode.prototype = {
         }
         // Position the cursor
         var firstMissing = mml_firstChild(newElement);
-        while (firstMissing && !firstMissing.getAttributeNS(NS_internal, "missing")) {
+        while (firstMissing && !firstMissing.getAttributeNS(NS.internal, "missing")) {
             firstMissing = mml_nextSibling(firstMissing);
         }
         if (firstMissing) {
@@ -265,7 +265,7 @@ function trivialInsertModeCommand_insertDescribedElement(mode, instance, element
 }
 
 function trivialInsertModeCommand_notation_iterate(mode, instance) {
-    var newElement = mode.d.createElementNS(NS_OMDoc, "iterate");
+    var newElement = mode.d.createElementNS(NS.OMDoc, "iterate");
     newElement.setAttribute("name", instance.argument);
     newElement.appendChild(mode.getNewPlaceholderElement());
     mode.putElement(newElement);
@@ -273,7 +273,7 @@ function trivialInsertModeCommand_notation_iterate(mode, instance) {
 }
 
 function trivialInsertModeCommand_notation_render(mode, instance) {
-    var newElement = mode.d.createElementNS(NS_OMDoc, "render");
+    var newElement = mode.d.createElementNS(NS.OMDoc, "render");
     newElement.setAttribute("name", instance.argument);
     mode.putElement(newElement);
     return true;

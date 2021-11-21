@@ -71,7 +71,7 @@ function OperatorDictionary() {
         for (var i = 0; i < siblingList.length; i++) {
             var sibling = siblingList[i];
             if (sibling.nodeType==Node.ELEMENT_NODE) {
-                if (!(sibling.namespaceURI==NS_MathML&&sibling.localName=="mspace")) {
+                if (!(sibling.namespaceURI==NS.MathML&&sibling.localName=="mspace")) {
                     ++parentLength;
                 }
                 if (sibling==element) { position = parentLength-1 }

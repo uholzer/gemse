@@ -30,10 +30,10 @@ VisualSelectionMode.prototype = {
         // Remove all "selected" attributes on selected nodes
         var current = this.cursor.startElement;
         while (current != this.cursor.endElement) {
-            current.removeAttributeNS(NS_internal, "selected");
+            current.removeAttributeNS(NS.internal, "selected");
             current = mml_nextSibling(current);
         }
-        current.removeAttributeNS(NS_internal, "selected");
+        current.removeAttributeNS(NS.internal, "selected");
     },
     showCursor: function() {
         // Put selected="userSelection" attributes on all selected
@@ -43,15 +43,15 @@ VisualSelectionMode.prototype = {
         // marked
         var current = this.cursor.startElement;
         while (current != this.cursor.endElement) {
-            current.setAttributeNS(NS_internal, "selected", "userSelection");
+            current.setAttributeNS(NS.internal, "selected", "userSelection");
             current = mml_nextSibling(current);
         }
-        current.setAttributeNS(NS_internal, "selected", "userSelection");
+        current.setAttributeNS(NS.internal, "selected", "userSelection");
         if (this.cursor.moving == this.START) {
-            this.cursor.startElement.setAttributeNS(NS_internal, "selected", "userSelectionCursor");
+            this.cursor.startElement.setAttributeNS(NS.internal, "selected", "userSelectionCursor");
         }
         else {
-            this.cursor.endElement.setAttributeNS(NS_internal, "selected", "userSelectionCursor");
+            this.cursor.endElement.setAttributeNS(NS.internal, "selected", "userSelectionCursor");
         }
     },
     moveCursor: function(newCursor) {

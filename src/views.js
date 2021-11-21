@@ -1,7 +1,7 @@
 function createDefaultViewport(className, elementNS, elementName) {
     var viewport = document.createElementNS(elementNS, elementName);
-    viewport.setAttributeNS(NS_internal, "function", "viewport");
-    viewport.setAttributeNS(NS_internal, "viewClass", className);
+    viewport.setAttributeNS(NS.internal, "function", "viewport");
+    viewport.setAttributeNS(NS.internal, "viewClass", className);
     return viewport;
 }
 
@@ -29,7 +29,7 @@ DirectView.prototype = {
         this.viewport.appendChild(document.importNode(this.equationEnv.equation, true));
     }
 }
-DirectView.createViewport = function(d) { return createDefaultViewport("DirectView", NS_HTML, "div"); };
+DirectView.createViewport = function(d) { return createDefaultViewport("DirectView", NS.HTML, "div"); };
 ViewsetManager.viewClasses["DirectView"] = DirectView;
 
 /**
@@ -57,7 +57,7 @@ MessageView.prototype = {
         }, this);
     }
 }
-MessageView.createViewport = function(d) { var viewport = createDefaultViewport("MessageView", NS_XUL, "vbox"); };
+MessageView.createViewport = function(d) { var viewport = createDefaultViewport("MessageView", NS.XUL, "vbox"); };
 ViewsetManager.viewClasses["MessageView"] = MessageView;
 
 
@@ -87,13 +87,13 @@ TreeView.prototype = {
             false
         );
         xml_flushElement(this.viewport);
-        var root = document.createElementNS(NS_HTML,"div");
+        var root = document.createElementNS(NS.HTML,"div");
         this.viewport.appendChild(root);
         var pos = root;
         var reachedEnd = false;
         while (!reachedEnd) {
             // Create node
-            var node = document.createElementNS(NS_HTML,"div");
+            var node = document.createElementNS(NS.HTML,"div");
             pos.appendChild(node);
             if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE) {
                 node.setAttribute("class", "element");
@@ -103,8 +103,8 @@ TreeView.prototype = {
                 node.setAttribute("class", "nodeValue");
                 node.appendChild(document.createTextNode(treeWalker.currentNode.nodeValue));
             }
-            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE && treeWalker.currentNode.getAttributeNS(NS_internal, "selected")) {
-                node.setAttributeNS(NS_internal, "selected", treeWalker.currentNode.getAttributeNS(NS_internal, "selected"));
+            if (treeWalker.currentNode.nodeType == Node.ELEMENT_NODE && treeWalker.currentNode.getAttributeNS(NS.internal, "selected")) {
+                node.setAttributeNS(NS.internal, "selected", treeWalker.currentNode.getAttributeNS(NS.internal, "selected"));
             }
             // Move to next node
             if (treeWalker.firstChild()) {
@@ -127,7 +127,7 @@ TreeView.prototype = {
         }
     },
 }
-TreeView.createViewport = function(d) { return createDefaultViewport("TreeView", NS_HTML, "div"); };
+TreeView.createViewport = function(d) { return createDefaultViewport("TreeView", NS.HTML, "div"); };
 ViewsetManager.viewClasses["TreeView"] = TreeView;
 
 /**
@@ -154,7 +154,7 @@ SourceView.prototype = {
      */
     build: function() {
         xml_flushElement(this.viewport);
-        var pre = document.createElementNS(NS_HTML,"pre");
+        var pre = document.createElementNS(NS.HTML,"pre");
         this.viewport.appendChild(pre);
         var root = this.equationEnv.equation;
         var startIndentation = "";
@@ -193,11 +193,11 @@ SourceView.prototype = {
         const TAGTYPE_END   = 2;
 
         // Take a new span for this element
-        var elementSpan = document.createElementNS(NS_HTML,"span");
+        var elementSpan = document.createElementNS(NS.HTML,"span");
         elementSpan.setAttribute("class","element");
         // Put internal:selected attribute if present
-        if (src.getAttributeNS(NS_internal, "selected")) {
-            elementSpan.setAttributeNS(NS_internal, "selected", src.getAttributeNS(NS_internal, "selected"));
+        if (src.getAttributeNS(NS.internal, "selected")) {
+            elementSpan.setAttributeNS(NS.internal, "selected", src.getAttributeNS(NS.internal, "selected"));
         }
         // Add it to dest
         dest.appendChild(elementSpan);
@@ -240,7 +240,7 @@ SourceView.prototype = {
 
         function contentText(element) {
             if (highlight) {
-                var span = document.createElementNS(NS_HTML,"span");
+                var span = document.createElementNS(NS.HTML,"span");
                 span.setAttribute("class","contentText");
                 span.appendChild(document.createTextNode(element.textContent));
                 return span;
@@ -251,7 +251,7 @@ SourceView.prototype = {
         }
         function contentPlaceholder(element) {
             if (highlight) {
-                var placeholder = document.createElementNS(NS_HTML,"span");
+                var placeholder = document.createElementNS(NS.HTML,"span");
                 placeholder.setAttribute("class","contentPlaceholder");
                 placeholder.appendChild(document.createTextNode("..."));
                 return placeholder;
@@ -262,13 +262,13 @@ SourceView.prototype = {
         }
         function tag(type,element) {
             if (highlight) {
-                var span = document.createElementNS(NS_HTML,"span");
+                var span = document.createElementNS(NS.HTML,"span");
                 span.setAttribute("class","tag");
                 span.appendChild(syntax("<"));
                 if (type==TAGTYPE_END) {
                     span.appendChild(syntax("/"));
                 }
-                var tagName = document.createElementNS(NS_HTML,"span");
+                var tagName = document.createElementNS(NS.HTML,"span");
                 tagName.setAttribute("class","tagName");
                 tagName.appendChild(document.createTextNode(element.tagName));
                 span.appendChild(tagName);
@@ -282,7 +282,7 @@ SourceView.prototype = {
             }
             else {
                 if (!(type==TAGTYPE_END) && showAttributes) {
-                    var span = document.createElementNS(NS_HTML,"span");
+                    var span = document.createElementNS(NS.HTML,"span");
                     span.appendChild(document.createTextNode("<" + element.tagName));
                     for (var attr of attributeslist(element)) {
                         span.appendChild(attribute(attr));
@@ -308,7 +308,7 @@ SourceView.prototype = {
                 // Do not show attributes whose names begin with a dash
                 // (Firefox shows them in the DOM although it should not.)
                 // Also, do not show attributes in the internal namespace.
-                if (attrs[i].namespaceURI != NS_internal && attrs[i].name[0]!='-') {
+                if (attrs[i].namespaceURI != NS.internal && attrs[i].name[0]!='-') {
                     attrs_array.push(attrs[i]);
                 }
             }
@@ -318,15 +318,15 @@ SourceView.prototype = {
         }
         function attribute(attr) {
             if (highlight) {
-                var span = document.createElementNS(NS_HTML,"span");
+                var span = document.createElementNS(NS.HTML,"span");
                 span.appendChild(document.createTextNode(" "));
-                var name = document.createElementNS(NS_HTML,"span");
+                var name = document.createElementNS(NS.HTML,"span");
                 name.setAttribute("class","attributeName");
                 name.appendChild(document.createTextNode(attr.localName));
                 span.appendChild(name);
                 span.appendChild(syntax("="));
                 span.appendChild(syntax("\""));
-                var value = document.createElementNS(NS_HTML,"span");
+                var value = document.createElementNS(NS.HTML,"span");
                 value.setAttribute("class","attributeValue");
                 value.appendChild(document.createTextNode(attr.nodeValue));
                 span.appendChild(value);
@@ -339,7 +339,7 @@ SourceView.prototype = {
         }
         function syntax(s) {
             if (highlight) {
-                var span = document.createElementNS(NS_HTML,"span");
+                var span = document.createElementNS(NS.HTML,"span");
                 span.appendChild(document.createTextNode(s));
                 span.setAttribute("class","syntax");
                 return span;
@@ -412,7 +412,7 @@ SourceView.gemseOptions = {
         remover: function(o) { delete o.foldingKeepIndentation }
     },
 }
-SourceView.createViewport = function(d) { return createDefaultViewport("SourceView", NS_HTML, "div"); };
+SourceView.createViewport = function(d) { return createDefaultViewport("SourceView", NS.HTML, "div"); };
 ViewsetManager.viewClasses["SourceView"] = SourceView;
 GemsePEditor.knownClasses.push(SourceView);
 
@@ -439,7 +439,7 @@ EquationView.prototype = {
         var context_id;
         if (context) {
             context_xref = context.getAttribute("xref");
-            context_id = context.getAttribute("id") || context.getAttributeNS(NS_XML, "id");
+            context_id = context.getAttribute("id") || context.getAttributeNS(NS.XML, "id");
         }
 
         var copy = this.equationEnv.equation.cloneNode(true);
@@ -454,14 +454,14 @@ EquationView.prototype = {
         var contentElements = [];
         while (treeWalker.nextNode()) {
             var node = treeWalker.currentNode;
-            if (context_xref && (node.getAttribute("id") == context_xref || node.getAttributeNS(NS_XML, "id") == context_xref)) {
+            if (context_xref && (node.getAttribute("id") == context_xref || node.getAttributeNS(NS.XML, "id") == context_xref)) {
                 if (!node.getAttribute("selected")) {
-                    node.setAttributeNS(NS_internal, "selected", "referenced");
+                    node.setAttributeNS(NS.internal, "selected", "referenced");
                 }
             }
             else if (context_id && node.getAttribute("xref")==context_id) {
                 if (!node.getAttribute("selected")) {
-                    node.setAttributeNS(NS_internal, "selected", "referenced");
+                    node.setAttributeNS(NS.internal, "selected", "referenced");
                 }
             }
             if (!elementDescriptions[node.localName]) { //XXX: Will break in the future
@@ -473,29 +473,29 @@ EquationView.prototype = {
         // (Handle semtics elements in a special way.)
         contentElements.forEach(function(node) {
             var replacement;
-            if (node.localName=="csymbol" && node.namespaceURI==NS_MathML) {
-                replacement = document.createElementNS(NS_MathML, "mi");
+            if (node.localName=="csymbol" && node.namespaceURI==NS.MathML) {
+                replacement = document.createElementNS(NS.MathML, "mi");
                 replacement.appendChild(document.createTextNode(
                     node.getAttribute("cd") + "#" + node.textContent
                 ));
             }
-            else if (node.localName=="semantics" && node.namespaceURI==NS_MathML) {
-                replacement = document.createElementNS(NS_MathML, "mtable");
+            else if (node.localName=="semantics" && node.namespaceURI==NS.MathML) {
+                replacement = document.createElementNS(NS.MathML, "mtable");
                 while (node.hasChildNodes()) {
                     // Move first child to mfenced element
-                    var row = document.createElementNS(NS_MathML, "mtr");
+                    var row = document.createElementNS(NS.MathML, "mtr");
                     replacement.appendChild(row);
-                    var cell = document.createElementNS(NS_MathML, "mtd");
+                    var cell = document.createElementNS(NS.MathML, "mtd");
                     row.appendChild(cell);
                     cell.appendChild(node.firstChild);
                 }
             }
             else if (node.hasChildNodes()) {
-                replacement = document.createElementNS(NS_MathML, "mrow");
-                var prefix = document.createElementNS(NS_MathML, "mi");
+                replacement = document.createElementNS(NS.MathML, "mrow");
+                var prefix = document.createElementNS(NS.MathML, "mi");
                 prefix.appendChild(document.createTextNode(node.localName));
                 replacement.appendChild(prefix);
-                var fence = document.createElementNS(NS_MathML, "mfenced");
+                var fence = document.createElementNS(NS.MathML, "mfenced");
                 while (node.hasChildNodes()) {
                     // Move first child to mfenced element
                     fence.appendChild(node.firstChild);
@@ -503,19 +503,19 @@ EquationView.prototype = {
                 replacement.appendChild(fence);
             }
             else { // node is empty
-                replacement = document.createElementNS(NS_MathML, "mi");
+                replacement = document.createElementNS(NS.MathML, "mi");
                 replacement.appendChild(document.createTextNode(node.localName));
             }
             // Copy internal:selected attribute
-            var attributeSelected = node.getAttributeNS(NS_internal,"selected");
+            var attributeSelected = node.getAttributeNS(NS.internal,"selected");
             if (attributeSelected) {
-                replacement.setAttributeNS(NS_internal,"selected",attributeSelected);
+                replacement.setAttributeNS(NS.internal,"selected",attributeSelected);
             }
             node.parentNode.replaceChild(replacement, node);
         });
     },
 }
-EquationView.createViewport = function(d) { return createDefaultViewport("EquationView", NS_HTML, "div"); };
+EquationView.createViewport = function(d) { return createDefaultViewport("EquationView", NS.HTML, "div"); };
 ViewsetManager.viewClasses["EquationView"] = EquationView;
 
 /**
@@ -546,7 +546,7 @@ AttributeView.prototype = {
         }
 
         // Sort the array (and filter out internal attributes)
-        attributes = attributes.filter(function (a) { return a.namespaceURI != NS_internal });
+        attributes = attributes.filter(function (a) { return a.namespaceURI != NS.internal });
         attributes = attributes.sort(
             function (a, b) { 
                 if (a.namespaceURI < b.namespaceURI) return -1
@@ -558,16 +558,16 @@ AttributeView.prototype = {
         );
 
         generateRow = function (ns, name, value, cursor, selected) {
-            var t_ns = document.createElementNS(NS_HTML,"td");
+            var t_ns = document.createElementNS(NS.HTML,"td");
             t_ns.appendChild(document.createTextNode(ns));
-            var t_name = document.createElementNS(NS_HTML,"td");
+            var t_name = document.createElementNS(NS.HTML,"td");
             t_name.appendChild(document.createTextNode(name));
-            var t_value = document.createElementNS(NS_HTML,"td");
+            var t_value = document.createElementNS(NS.HTML,"td");
             t_value.appendChild(document.createTextNode(value));
-            var row = document.createElementNS(NS_HTML,"tr");
-            if (cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor") }
-            if (selected) { row.setAttributeNS(NS_internal, "selected", "selection") }
-            if (selected && cursor) { row.setAttributeNS(NS_internal, "selected", "attributeCursor selection") }
+            var row = document.createElementNS(NS.HTML,"tr");
+            if (cursor) { row.setAttributeNS(NS.internal, "selected", "attributeCursor") }
+            if (selected) { row.setAttributeNS(NS.internal, "selected", "selection") }
+            if (selected && cursor) { row.setAttributeNS(NS.internal, "selected", "attributeCursor selection") }
             row.appendChild(t_ns);
             row.appendChild(t_name);
             row.appendChild(t_value);
@@ -575,8 +575,8 @@ AttributeView.prototype = {
         }
 
         // Generate table
-        var table = document.createElementNS(NS_HTML,"table");
-        var caption = document.createElementNS(NS_HTML,"caption");
+        var table = document.createElementNS(NS.HTML,"table");
+        var caption = document.createElementNS(NS.HTML,"caption");
         caption.appendChild(document.createTextNode("attributes"));
         table.appendChild(caption);
         for (var i = 0; i < attributes.length; i++) {
@@ -584,17 +584,17 @@ AttributeView.prototype = {
                 attributes[i].namespaceURI,
                 attributes[i].localName,
                 attributes[i].nodeValue,
-                attributes[i].nodeName == forElement.getAttributeNS(NS_internal, "attributeCursor"),
-                (forElement.getAttributeNS(NS_internal, "selectedAttributes") || "").split(' ').indexOf(attributes[i].nodeName) != -1
+                attributes[i].nodeName == forElement.getAttributeNS(NS.internal, "attributeCursor"),
+                (forElement.getAttributeNS(NS.internal, "selectedAttributes") || "").split(' ').indexOf(attributes[i].nodeName) != -1
             ));
         }
         this.viewport.appendChild(table);
 
         // Generate table of default attributes
         if (elementDescriptions[forElement.localName] && elementDescriptions[forElement.localName].attributes) {
-            table = document.createElementNS(NS_HTML,"table");
+            table = document.createElementNS(NS.HTML,"table");
             table.setAttribute("class", "defaultAttribute");
-            var caption = document.createElementNS(NS_HTML,"caption");
+            var caption = document.createElementNS(NS.HTML,"caption");
             caption.appendChild(document.createTextNode("default attributes"));
             table.appendChild(caption);
             var defaultAttributesHash = elementDescriptions[forElement.localName].attributes;
@@ -615,7 +615,7 @@ AttributeView.prototype = {
         }
     },
 }
-AttributeView.createViewport = function(d) { return createDefaultViewport("AttributeView", NS_HTML, "div"); };
+AttributeView.createViewport = function(d) { return createDefaultViewport("AttributeView", NS.HTML, "div"); };
 ViewsetManager.viewClasses["AttributeView"] = AttributeView;
 
 /**
@@ -639,25 +639,25 @@ DictionaryView.prototype = {
         if (!forElement) { return }
 
         // Return immediately if we are not on an mo element
-        if (! (forElement.namespaceURI==NS_MathML && forElement.localName=="mo")) { return }
+        if (! (forElement.namespaceURI==NS.MathML && forElement.localName=="mo")) { return }
 
-        var table = document.createElementNS(NS_HTML,"table");
-        var caption = document.createElementNS(NS_HTML,"caption");
+        var table = document.createElementNS(NS.HTML,"table");
+        var caption = document.createElementNS(NS.HTML,"caption");
         caption.appendChild(document.createTextNode("dictionary entries"));
         table.appendChild(caption);
-        var titleRow = document.createElementNS(NS_HTML,"tr");
-        var th = document.createElementNS(NS_HTML,"th");
+        var titleRow = document.createElementNS(NS.HTML,"tr");
+        var th = document.createElementNS(NS.HTML,"th");
         th.appendChild(document.createTextNode("name"));
         th.setAttribute("colspan", "3");
         titleRow.appendChild(th);
-        var th = document.createElementNS(NS_HTML,"th");
+        var th = document.createElementNS(NS.HTML,"th");
         th.appendChild(document.createTextNode("comments"));
         th.setAttribute("colspan", "3");
         titleRow.appendChild(th);
-        var th = document.createElementNS(NS_HTML,"th");
+        var th = document.createElementNS(NS.HTML,"th");
         th.appendChild(document.createTextNode("attributes"));
         titleRow.appendChild(th);
-        var th = document.createElementNS(NS_HTML,"th");
+        var th = document.createElementNS(NS.HTML,"th");
         th.appendChild(document.createTextNode("other"));
         th.setAttribute("colspan", "2");
         titleRow.appendChild(th);
@@ -666,41 +666,41 @@ DictionaryView.prototype = {
         // XXX: Do we need to remove whitespacve at beginning and end?
         var entries = operatorDictionary.entriesByContent(forElement.textContent);
         entries.forEach(function (entry) {
-            var tr = document.createElementNS(NS_HTML,"tr");
+            var tr = document.createElementNS(NS.HTML,"tr");
             
-            var td = document.createElementNS(NS_HTML,"td");
+            var td = document.createElementNS(NS.HTML,"td");
             td.appendChild(document.createTextNode(entry.content));
             tr.appendChild(td);
-            var td = document.createElementNS(NS_HTML,"td");
+            var td = document.createElementNS(NS.HTML,"td");
             td.appendChild(document.createTextNode(entry.form));
             tr.appendChild(td);
-            var td = document.createElementNS(NS_HTML,"td");
+            var td = document.createElementNS(NS.HTML,"td");
             td.appendChild(document.createTextNode(entry.disamb));
             tr.appendChild(td);
-            var td = document.createElementNS(NS_HTML,"td");
+            var td = document.createElementNS(NS.HTML,"td");
             td.appendChild(document.createTextNode(entry.contentComment));
             tr.appendChild(td);
-            var td = document.createElementNS(NS_HTML,"td");
+            var td = document.createElementNS(NS.HTML,"td");
             td.appendChild(document.createTextNode(entry.comment));
             tr.appendChild(td);
-            var td = document.createElementNS(NS_HTML,"td");
+            var td = document.createElementNS(NS.HTML,"td");
             td.appendChild(document.createTextNode(entry.description));
             tr.appendChild(td);
             
-            var td = document.createElementNS(NS_HTML,"td");
+            var td = document.createElementNS(NS.HTML,"td");
             for (var a in entry.attributes) {
                 var text = document.createTextNode(
                     a + " = " + entry.attributes[a]
                 );
                 td.appendChild(text);
-                td.appendChild(document.createElementNS(NS_HTML,"br"));
+                td.appendChild(document.createElementNS(NS.HTML,"br"));
             }
             tr.appendChild(td);
 
-            var td = document.createElementNS(NS_HTML,"td");
+            var td = document.createElementNS(NS.HTML,"td");
             td.appendChild(document.createTextNode(entry.groupingPrecedence));
             tr.appendChild(td);
-            var td = document.createElementNS(NS_HTML,"td");
+            var td = document.createElementNS(NS.HTML,"td");
             td.appendChild(document.createTextNode(entry.isSpec ? "spec" : "user"));
             tr.appendChild(td);
 
@@ -720,7 +720,7 @@ DictionaryView.prototype = {
         this.viewport.appendChild(table);
     },
 }
-DictionaryView.createViewport = function(d) { return createDefaultViewport("DictionaryView", NS_XUL, "box"); };
+DictionaryView.createViewport = function(d) { return createDefaultViewport("DictionaryView", NS.XUL, "box"); };
 ViewsetManager.viewClasses["DictionaryView"] = DictionaryView;
 
 /**
@@ -740,14 +740,14 @@ function OthersView(editor,equationEnv,viewport) {
     // XXX: Is this save?
     for (var i=0;i<editor.equations.length;++i) {
         var copy = editor.equations[i].equation.cloneNode(true);
-        var containment = document.createElementNS(NS_HTML,"div");
+        var containment = document.createElementNS(NS.HTML,"div");
         containment.appendChild(document.createTextNode(i + ": "));
         containment.appendChild(copy);
         this.viewport.appendChild(containment);
         copy.removeAttribute("display");
         this.equationEnv.cleanSubtreeOfDocument(document,copy);
         if (this.equationEnv == editor.equations[i]) {
-            containment.setAttributeNS(NS_internal,"selected","editcursor"); //XXX: Good?
+            containment.setAttributeNS(NS.internal,"selected","editcursor"); //XXX: Good?
         }
         // Event handling
         // We are careful not to create cyclic references (DOM Node -> Listener -> DOM Node) 
@@ -787,7 +787,7 @@ OthersView.prototype = {
         };
     },
 };
-OthersView.createViewport = function(d) { return createDefaultViewport("OthersView", NS_XUL, "box"); };
+OthersView.createViewport = function(d) { return createDefaultViewport("OthersView", NS.XUL, "box"); };
 ViewsetManager.viewClasses["OthersView"] = OthersView;
 
 /**
@@ -807,12 +807,12 @@ StatusbarView.prototype = {
      */
     build: function () {
         xml_flushElement(this.viewport);
-        modeNameLabel = document.createElementNS(NS_HTML,"div");
+        modeNameLabel = document.createElementNS(NS.HTML,"div");
         modeNameLabel.appendChild(document.createTextNode(this.equationEnv.mode.name));
         this.viewport.appendChild(modeNameLabel);
     },
 }
-StatusbarView.createViewport = function(d) { return createDefaultViewport("StatusbarView", NS_XUL, "box"); };
+StatusbarView.createViewport = function(d) { return createDefaultViewport("StatusbarView", NS.XUL, "box"); };
 ViewsetManager.viewClasses["StatusbarView"] = StatusbarView;
 
 /**
@@ -1046,7 +1046,7 @@ NTNView.prototype = {
                         var e = this.equationEnv.origin.node;
                         while (e = e.parentNode) {
                             if (e.localName=="theory") {
-                                this.o.theoryName = e.getAttributeNS(NS_XML, "id");
+                                this.o.theoryName = e.getAttributeNS(NS.XML, "id");
                                 break;
                             }
                         }
@@ -1164,7 +1164,7 @@ NTNView.prototype = {
                 if (xref && xref.charAt(0) == "#") {
                     var target = document.getElementById(xref.substring(1));
                     if (target) {
-                        target.setAttributeNS(NS_internal, "selected", selectedNode.getAttributeNS(NS_internal, "selected"));
+                        target.setAttributeNS(NS.internal, "selected", selectedNode.getAttributeNS(NS.internal, "selected"));
                     }
                 }
             }
@@ -1363,7 +1363,7 @@ NTNView.prototype = {
         var newAtts = newEl.attributes;
         for (var i=0; i<newAtts.length; i++) {
             var newAtt = newAtts[i];
-            if (newAtt.namespaceURI == NS_internal) {
+            if (newAtt.namespaceURI == NS.internal) {
                 oldEl.setAttributeNodeNS(newAtt.cloneNode(true));
             }
             else if (newAtt.nodeValue !== oldEl.getAttributeNS(newAtt.namespaceURI, newAtt.localName)) {
@@ -1380,7 +1380,7 @@ NTNView.prototype = {
         for (var i=0; i<oldAtts.length; i++) {
             var oldAtt = oldAtts[i];
             if (!fixed[oldAtt.localName]) {
-                if (oldAtt.namespaceURI == NS_internal) {
+                if (oldAtt.namespaceURI == NS.internal) {
                     toDelete.push(oldAtt);
                 }
                 else {
@@ -1493,6 +1493,6 @@ NTNView.gemseOptions = {
         },
     },
 }
-NTNView.createViewport = function(d) { return createDefaultViewport("NTNView", NS_HTML, "div"); };
+NTNView.createViewport = function(d) { return createDefaultViewport("NTNView", NS.HTML, "div"); };
 ViewsetManager.viewClasses["NTNView"] = NTNView;
 GemsePEditor.knownClasses.push(NTNView);

@@ -70,7 +70,7 @@ configurator = {
         var newel = document.createElement("box");
         var insertPos = document.getElementById("insertPosRadiogroup").selectedItem.id;
         var parentNode = this.selected.parentNode;
-        if (parentNode.localName=="viewset" && parentNode.namespaceURI==NS_internal) {
+        if (parentNode.localName=="viewset" && parentNode.namespaceURI==NS.internal) {
             return;
         }
         if (insertPos=="insertBefore") {
@@ -89,7 +89,7 @@ configurator = {
         var newel = viewClass.createViewport(document);
         var insertPos = document.getElementById("insertPosRadiogroup").selectedItem.id;
         var parentNode = this.selected.parentNode;
-        if (parentNode.localName=="viewset" && parentNode.namespaceURI==NS_internal) {
+        if (parentNode.localName=="viewset" && parentNode.namespaceURI==NS.internal) {
             return;
         }
         if (insertPos=="insertBefore") {
@@ -106,7 +106,7 @@ configurator = {
 
     remove: function() {
         var parentNode = this.selected.parentNode;
-        if (parentNode.localName=="viewset" && parentNode.namespaceURI==NS_internal) {
+        if (parentNode.localName=="viewset" && parentNode.namespaceURI==NS.internal) {
             return;
         }
         parentNode.removeChild(this.selected);
@@ -129,7 +129,7 @@ configurator = {
         // Ask for new name
         var newName = window.prompt("Name of new viewset?");
         // Make a copy of current viewset
-        var viewsetsContainer = this.editorWindow.document.createElementNS(NS_internal, "viewsets");
+        var viewsetsContainer = this.editorWindow.document.createElementNS(NS.internal, "viewsets");
         var viewsetClone = this.viewset.cloneNode(true);
         viewsetClone.setAttribute("name", newName);
         viewsetsContainer.appendChild(viewsetClone);
@@ -184,12 +184,12 @@ configurator = {
         destination.appendChild(box);
 
         box.setAttribute("flex", e.getAttribute("flex"));
-        box.setAttributeNS(NS_internal, "function", e.getAttributeNS(NS_internal,"function"));
+        box.setAttributeNS(NS.internal, "function", e.getAttributeNS(NS.internal,"function"));
 
-        if (e.localName=="hbox" && e.namespaceURI==NS_XUL) {
+        if (e.localName=="hbox" && e.namespaceURI==NS.XUL) {
             box.setAttribute("orient", "horizontal");
         }
-        else if (e.localName=="vbox" && e.namespaceURI==NS_XUL) {
+        else if (e.localName=="vbox" && e.namespaceURI==NS.XUL) {
             box.setAttribute("orient", "vertical");
         }
         else {
@@ -200,9 +200,9 @@ configurator = {
             box.setAttribute("class", "selected");
         }
 
-        if (e.getAttributeNS(NS_internal, "function") == "viewport") {
+        if (e.getAttributeNS(NS.internal, "function") == "viewport") {
             var desc = document.createElement("description");
-            desc.appendChild(document.createTextNode(e.getAttributeNS(NS_internal, "viewClass")));
+            desc.appendChild(document.createTextNode(e.getAttributeNS(NS.internal, "viewClass")));
             box.appendChild(desc);
         }
 
@@ -243,8 +243,8 @@ AttributesTreeView.prototype = {
                 else return 0;
             }
         );
-        var optionsAttribute = this.attributes.getNamedItemNS(NS_internal, "options");
-        if (this.attributes.getNamedItemNS(NS_internal, "function") && optionsAttribute) {
+        var optionsAttribute = this.attributes.getNamedItemNS(NS.internal, "options");
+        if (this.attributes.getNamedItemNS(NS.internal, "function") && optionsAttribute) {
             var options = configurator.viewsetManager.parseOptionsString(optionsAttribute.nodeValue);
             //var options = options.sort();
             this.includesOptions = true;
@@ -290,10 +290,10 @@ AttributesTreeView.prototype = {
         // to the robustness of the OptionsAssistant
 
         // Reencode options
-        var optionsatt = this.attributes.getNamedItemNS(NS_internal, "options");
-        if (optionsatt) { this.attributes.removeNamedItemNS(NS_internal, "options"); }
+        var optionsatt = this.attributes.getNamedItemNS(NS.internal, "options");
+        if (optionsatt) { this.attributes.removeNamedItemNS(NS.internal, "options"); }
         if (!optionsatt) { 
-            optionsatt = configurator.editorWindow.document.createAttributeNS(NS_internal, "options");
+            optionsatt = configurator.editorWindow.document.createAttributeNS(NS.internal, "options");
         }
         if (this.includesOptions) {
             optionsatt.nodeValue = configurator.viewsetManager.encodeOptionsString(
@@ -330,7 +330,7 @@ AttributesTreeView.prototype = {
         }
         // Regenerate options attribute in case we deleted any options
         if (this.includesOptions) {
-            var optionsatt = this.attributes.getNamedItemNS(NS_internal, "options");
+            var optionsatt = this.attributes.getNamedItemNS(NS.internal, "options");
             optionsatt.nodeValue = configurator.viewsetManager.encodeOptionsString(
                 this.sorted.slice(this.optionsStart).filter(function(e) { return e })
             );
@@ -424,9 +424,9 @@ AttributesTreeView.prototype = {
         else if (row >= this.optionsStart && (col.id=="nameCol" || col.id=="valueCol")) {
             // Reencode options
             this.sorted[row][col.id=="nameCol" ? 0 : 1] = value;
-            var optionsatt = this.attributes.getNamedItemNS(NS_internal, "options");
+            var optionsatt = this.attributes.getNamedItemNS(NS.internal, "options");
             if (!optionsatt) { 
-                optionsatt = configurator.editorWindow.document.createAttributeNS(NS_internal, "options");
+                optionsatt = configurator.editorWindow.document.createAttributeNS(NS.internal, "options");
                 this.attributes.setNamedItemNS(optionsatt);
             }
             optionsatt.nodeValue = configurator.viewsetManager.encodeOptionsString(this.sorted.slice(this.optionsStart));

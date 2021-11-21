@@ -195,37 +195,37 @@ var trivialInsertModeCommands = {
         implementation: trivialInsertModeCommand_oneLessToSurround
     },
 }
-trivialInsertModeCommands[KEYMOD_ALT] = {
+trivialInsertModeCommands[KeyMod.alt] = {
     type: "disamb",
 }
-trivialInsertModeCommands[KEYMOD_ALT + "n"] = {
+trivialInsertModeCommands[KeyMod.alt + "n"] = {
     type: "disamb",
 }
-trivialInsertModeCommands[KEYMOD_ALT + "nR"] = {
+trivialInsertModeCommands[KeyMod.alt + "nR"] = {
     type: "command",
     repeating: "external",
     argument: "none",
     implementation: function trivialInsertModeCommand_notation_rendering (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"rendering") }
 }
-trivialInsertModeCommands[KEYMOD_ALT + "nP"] = {
+trivialInsertModeCommands[KeyMod.alt + "nP"] = {
     type: "command",
     repeating: "external",
     argument: "none",
     implementation: function trivialInsertModeCommand_notation_prototype (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"prototype") }
 }
-trivialInsertModeCommands[KEYMOD_ALT + "ni"] = {
+trivialInsertModeCommands[KeyMod.alt + "ni"] = {
     type: "command",
     repeating: "external",
     argument: "newlineTerminated",
     implementation: trivialInsertModeCommand_notation_iterate
 }
-trivialInsertModeCommands[KEYMOD_ALT + "ns"] = {
+trivialInsertModeCommands[KeyMod.alt + "ns"] = {
     type: "command",
     repeating: "external",
     argument: "none",
     implementation: function trivialInsertModeCommand_notation_separator (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"separator") }
 }
-trivialInsertModeCommands[KEYMOD_ALT + "nr"] = {
+trivialInsertModeCommands[KeyMod.alt + "nr"] = {
     type: "command",
     repeating: "external",
     argument: "newlineTerminated",

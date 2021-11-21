@@ -34,151 +34,151 @@ var ucdInsertModeCommands = {
         implementation: trivialInsertModeCommand_cursorJump
     },
 }
-ucdInsertModeCommands[KEYMOD_CONTROL] = {
+ucdInsertModeCommands[KeyMod.control] = {
     type: "disamb",
 }
-ucdInsertModeCommands[KEYMOD_ALT] = {
+ucdInsertModeCommands[KeyMod.alt] = {
     type: "disamb",
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "i"] = {
+ucdInsertModeCommands[KeyMod.control + "i"] = {
     type: "command",
     argument: "newlineTerminated",
     implementation: function ucdInsertModeCommand_mi (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mi") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "o"] = {
+ucdInsertModeCommands[KeyMod.control + "o"] = {
     type: "command",
     argument: "newlineTerminated",
     implementation: function ucdInsertModeCommand_mo (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mo") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "n"] = {
+ucdInsertModeCommands[KeyMod.control + "n"] = {
     type: "command",
     argument: "newlineTerminated",
     implementation: function ucdInsertModeCommand_mn (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mn") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "s"] = {
+ucdInsertModeCommands[KeyMod.control + "s"] = {
     type: "command",
     argument: "newlineTerminated",
     implementation: function ucdInsertModeCommand_mtext (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mtext") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "e"] = {
+ucdInsertModeCommands[KeyMod.control + "e"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_menclose (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"menclose") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "r"] = {
+ucdInsertModeCommands[KeyMod.control + "r"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_msqrt (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msqrt") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "R"] = {
+ucdInsertModeCommands[KeyMod.control + "R"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_mroot (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mroot") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "f"] = {
+ucdInsertModeCommands[KeyMod.control + "f"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_mfenced (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mfenced") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "^"] = {
+ucdInsertModeCommands[KeyMod.control + "^"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_msubsup (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"msubsup") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "u"] = {
+ucdInsertModeCommands[KeyMod.control + "u"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_munder (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munder") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "v"] = {
+ucdInsertModeCommands[KeyMod.control + "v"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_mover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mover") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "U"] = {
+ucdInsertModeCommands[KeyMod.control + "U"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_munderover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munderover") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "V"] = {
+ucdInsertModeCommands[KeyMod.control + "V"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_munderover (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"munderover") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "m"] = {
+ucdInsertModeCommands[KeyMod.control + "m"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_mmultiscripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mmultiscripts") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "."] = {
+ucdInsertModeCommands[KeyMod.control + "."] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_none (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"none") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "p"] = {
+ucdInsertModeCommands[KeyMod.control + "p"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_mprescripts (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mprescripts") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "P"] = {
+ucdInsertModeCommands[KeyMod.control + "P"] = {
     type: "command",
     argument: "none",
     implementation: function ucdInsertModeCommand_mphantom (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"mphantom") }
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "t"] = {
+ucdInsertModeCommands[KeyMod.control + "t"] = {
     type: "command",
     argument: "none",
     implementation: trivialInsertModeCommand_table // For inserting table, tr or td elements
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "T"] = {
+ucdInsertModeCommands[KeyMod.control + "T"] = {
     type: "command",
     argument: "none",
     implementation: trivialInsertModeCommand_mlabeledtr
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "h"] = {
+ucdInsertModeCommands[KeyMod.control + "h"] = {
     type: "command",
     argument: "none",
     implementation: trivialInsertModeCommand_oneMoreToSurround
 }
-ucdInsertModeCommands[KEYMOD_ALT + "n"] = {
+ucdInsertModeCommands[KeyMod.alt + "n"] = {
     type: "disamb",
 }
-ucdInsertModeCommands[KEYMOD_ALT + "nR"] = {
+ucdInsertModeCommands[KeyMod.alt + "nR"] = {
     type: "command",
     repeating: "external",
     argument: "none",
     implementation: function ucdInsertModeCommand_notation_rendering (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"rendering") }
 }
-ucdInsertModeCommands[KEYMOD_ALT + "nP"] = {
+ucdInsertModeCommands[KeyMod.alt + "nP"] = {
     type: "command",
     repeating: "external",
     argument: "none",
     implementation: function ucdInsertModeCommand_notation_prototype (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"prototype") }
 }
-ucdInsertModeCommands[KEYMOD_ALT + "ni"] = {
+ucdInsertModeCommands[KeyMod.alt + "ni"] = {
     type: "command",
     repeating: "external",
     argument: "newlineTerminated",
     implementation: trivialInsertModeCommand_notation_iterate
 }
-ucdInsertModeCommands[KEYMOD_ALT + "ns"] = {
+ucdInsertModeCommands[KeyMod.alt + "ns"] = {
     type: "command",
     repeating: "external",
     argument: "none",
     implementation: function ucdInsertModeCommand_notation_separator (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"separator") }
 }
-ucdInsertModeCommands[KEYMOD_ALT + "nr"] = {
+ucdInsertModeCommands[KeyMod.alt + "nr"] = {
     type: "command",
     repeating: "external",
     argument: "newlineTerminated",
     implementation: trivialInsertModeCommand_notation_render
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + "l"] = {
+ucdInsertModeCommands[KeyMod.control + "l"] = {
     type: "command",
     argument: "none",
     implementation: trivialInsertModeCommand_oneLessToSurround
 }
-ucdInsertModeCommands[KEYMOD_CONTROL + ","] = {
+ucdInsertModeCommands[KeyMod.control + ","] = {
     type: "command",
     argument: "none",
     implementation: ucdInsertModeCommand_forceNewElement

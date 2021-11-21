@@ -13,7 +13,8 @@
     onunload="configurator.unload()"
     onfocus="configurator.restart()">
     <script src="viewsetconf.js"/>
-    <script src="const.js"/>
+    <script src="namespace.js"/>
+    <script src="key.js"/>
 
 <hbox>
     <textbox id="viewsetName" onchange="configurator.changeMetaInfo()" flex="1"/> 
