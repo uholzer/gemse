@@ -46,7 +46,7 @@ function doc_collectCommandInfo() {
     }
 
     // Go through all bindings
-    for (b in modeCommands) {
+    for (var b in modeCommands) {
         if (modeCommands[b].implementation) {
             // Command is implemented
             // Look for its documentation (if already present)
@@ -125,7 +125,7 @@ function doc_putCommandsIntoDocumentation() {
                 // select. This string is supposed to be a expression
                 // generating a boolean, using the object b for its
                 // decision.
-                for (s in info.bindings) {
+                for (var s in info.bindings) {
                     var b = info.bindings[s];
                     if (eval(select)) { bindingString = s }
                 }
@@ -206,8 +206,8 @@ function doc_createCommandTable(sortedBy) {
 }
 
 function doc_formattedCommandList(bindings, container) {
-    listOfCommandStrings = [];
-    for (s in bindings) { listOfCommandStrings.push(s); }
+    var listOfCommandStrings = [];
+    for (var s in bindings) { listOfCommandStrings.push(s); }
     listOfCommandStrings = listOfCommandStrings.sort();
     if (listOfCommandStrings.length > 0) {
         listOfCommandStrings.forEach(function (cs) {
@@ -240,7 +240,7 @@ function doc_commandDetailTable(info) {
     th4.appendChild(document.createTextNode("argument"));
     headtr.appendChild(th4);
     table.appendChild(headtr);
-    for (s in info.bindings) {
+    for (var s in info.bindings) {
         table.appendChild(doc_commandDetailTableRow(s, info.bindings[s]));
     }
     return table;

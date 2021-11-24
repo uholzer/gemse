@@ -98,7 +98,7 @@ FileDocStorage.prototype = {
         var serializer = new XMLSerializer();
         var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
                                  .createInstance(Components.interfaces.nsIFileOutputStream);
-        foStream.init(this.file, 0x02 | 0x08 | 0x20, 0664, 0);
+        foStream.init(this.file, 0x02 | 0x08 | 0x20, 0o664, 0);
         serializer.serializeToStream(this.document, foStream, "");
         this.lastModifiedTimeOfLastSync = this.file.lastModifiedTime;
     },

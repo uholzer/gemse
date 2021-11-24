@@ -9,31 +9,28 @@
 
 /** The length of the string counting Unicode characters */
 String.prototype.__defineGetter__("uLength", function() {
-    // This getter has runtime o(n) when it is first called and O(1)
-    // if it has already been called at least once for this object.
-    if (this.uLength_alreadyKnown === undefined) {
-        this.uLength_alreadyKnown = 0;
-        for (var i=0; i<this.length; ++i) {
-            if (String.isSurrogate(this[i])==2) {
-                // This is a high surrogate, so a low one must follow
-                if (String.isSurrogate(this[i+1])!=1) {
-                    throw new Error("Malformed string: A low surrogate must follow a high one");
-                }
-                ++this.uLength_alreadyKnown;
+    // This getter has runtime o(n).
+    var length = 0;
+    for (var i=0; i<this.length; ++i) {
+        if (String.isSurrogate(this[i])==2) {
+            // This is a high surrogate, so a low one must follow
+            if (String.isSurrogate(this[i+1])!=1) {
+                throw new Error("Malformed string: A low surrogate must follow a high one");
             }
-            else if (String.isSurrogate(this[i])==1) {
-                // This is a low surrogate, so a hogh one must precede
-                if (String.isSurrogate(this[i-1])!=2) {
-                    throw new Error("Malformed string: A high surrogate must precede a low one");
-                }
-                // Do not increase length here!
+            ++length;
+        }
+        else if (String.isSurrogate(this[i])==1) {
+            // This is a low surrogate, so a hogh one must precede
+            if (String.isSurrogate(this[i-1])!=2) {
+                throw new Error("Malformed string: A high surrogate must precede a low one");
             }
-            else {
-                ++this.uLength_alreadyKnown;
-            }
+            // Do not increase length here!
+        }
+        else {
+            ++length;
         }
     }
-    return this.uLength_alreadyKnown;
+    return length;
 });
 /** 
  * Like charAt but operates on unicode characters as opposed to UTF16

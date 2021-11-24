@@ -140,7 +140,7 @@ UCD4Gemse.prototype = {
         request.overrideMimeType("text/plain");
         request.send(null);
         var dataLines = request.responseText.split("\n");
-        delete request;
+        request = null;
 
         var lineRegex = /^([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);/;
                        //  ^^^^^ code point
@@ -201,7 +201,7 @@ UCD4Gemse.prototype = {
         request.overrideMimeType("text/plain");
         request.send(null);
         var dataLines = request.responseText.split("\n");
-        delete request;
+        request = null;
 
         var lineRegex = /^([^;]*);([^;]*);([^;]*)/;
         for (var i=0; i<dataLines.length; ++i) {

@@ -30,7 +30,7 @@ function inputSubstitution_loadTables() {
     // later on in the while loop causes huge memory usage while this
     // function executes, around one gigabyte. So make a copy.)
     var lines = request.responseText.split("\n");
-    delete request;
+    request = null;
 
     // Parse entity declarations
     lines.forEach(function(line) {

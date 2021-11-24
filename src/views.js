@@ -557,7 +557,7 @@ AttributeView.prototype = {
             }
         );
 
-        generateRow = function (ns, name, value, cursor, selected) {
+        function generateRow(ns, name, value, cursor, selected) {
             var t_ns = document.createElementNS(NS.HTML,"td");
             t_ns.appendChild(document.createTextNode(ns));
             var t_name = document.createElementNS(NS.HTML,"td");
@@ -807,7 +807,7 @@ StatusbarView.prototype = {
      */
     build: function () {
         xml_flushElement(this.viewport);
-        modeNameLabel = document.createElementNS(NS.HTML,"div");
+        const modeNameLabel = document.createElementNS(NS.HTML,"div");
         modeNameLabel.appendChild(document.createTextNode(this.equationEnv.mode.name));
         this.viewport.appendChild(modeNameLabel);
     },

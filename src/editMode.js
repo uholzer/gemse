@@ -464,7 +464,7 @@ function editModeCommand_export(mode, instance) {
         request.open("GET", "exporters/xsltml/mmltex.xsl", false);
         request.send(null);
         stylesheet = request.responseXML;
-        delete request;
+        request = null;
     }
     else {
         throw new Error("Unknown exporter: " + instance.argument);
