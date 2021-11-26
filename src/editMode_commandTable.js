@@ -460,36 +460,36 @@ var editModeCommands = {
         argument: "newlineTerminated",
         implementation: editModeCommand_example
     },
-};
-editModeCommands[KeyMod.control] = {
-        type: "disamb",
-};
-editModeCommands[KeyMod.control + "i"] = {
-        category: "action",
-        type: "command",
-        repeating: "prevent",
-        argument: "none",
-        implementation: editModeCommand_insertIn
-};
-editModeCommands[KeyMod.control + "r"] = {
-        category: "action",
-        type: "command",
-        repeating: "external",
-        argument: "none",
-        implementation: editModeCommand_redo
-};
-editModeCommands[KeyMod.control + "l"] = {
-        category: "action",
-        type: "command",
-        repeating: "prevent",
-        argument: "none",
-        implementation: editModeCommand_redisplay
-};
-editModeCommands[KeyMod.control + "p"] = {
-        category: "action",
-        type: "command",
-        repeating: "prevent",
-        argument: "none",
-        implementation: editModeCommand_putIn
-};
+    [KeyMod.control]: {
+            type: "disamb",
+    },
+    [KeyMod.control + "i"]: {
+            category: "action",
+            type: "command",
+            repeating: "prevent",
+            argument: "none",
+            implementation: editModeCommand_insertIn
+    },
+    [KeyMod.control + "r"]: {
+            category: "action",
+            type: "command",
+            repeating: "external",
+            argument: "none",
+            implementation: editModeCommand_redo
+    },
+    [KeyMod.control + "l"]: {
+            category: "action",
+            type: "command",
+            repeating: "prevent",
+            argument: "none",
+            implementation: editModeCommand_redisplay
+    },
+    [KeyMod.control + "p"]: {
+            category: "action",
+            type: "command",
+            repeating: "prevent",
+            argument: "none",
+            implementation: editModeCommand_putIn
+    },
+}
 

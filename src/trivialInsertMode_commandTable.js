@@ -194,53 +194,52 @@ var trivialInsertModeCommands = {
         argument: "none",
         implementation: trivialInsertModeCommand_oneLessToSurround
     },
+    [KeyMod.alt]: {
+        type: "disamb",
+    },
+    [KeyMod.alt + "n"]: {
+        type: "disamb",
+    },
+    [KeyMod.alt + "nR"]: {
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_notation_rendering (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"rendering") }
+    },
+    [KeyMod.alt + "nP"]: {
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_notation_prototype (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"prototype") }
+    },
+    [KeyMod.alt + "ni"]: {
+        type: "command",
+        repeating: "external",
+        argument: "newlineTerminated",
+        implementation: trivialInsertModeCommand_notation_iterate
+    },
+    [KeyMod.alt + "ns"]: {
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: function trivialInsertModeCommand_notation_separator (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"separator") }
+    },
+    [KeyMod.alt + "nr"]: {
+        type: "command",
+        repeating: "external",
+        argument: "newlineTerminated",
+        implementation: trivialInsertModeCommand_notation_render
+    },
+    [String.fromCharCode(0x08)]: { // Backspace
+        type: "command",
+        repeating: "external",
+        argument: "none",
+        implementation: trivialInsertModeCommand_killPrevious
+    },
+    [String.fromCharCode(0x1b)]: { // Escape
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: trivialInsertModeCommand_exit
+    },
 }
-trivialInsertModeCommands[KeyMod.alt] = {
-    type: "disamb",
-}
-trivialInsertModeCommands[KeyMod.alt + "n"] = {
-    type: "disamb",
-}
-trivialInsertModeCommands[KeyMod.alt + "nR"] = {
-    type: "command",
-    repeating: "external",
-    argument: "none",
-    implementation: function trivialInsertModeCommand_notation_rendering (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"rendering") }
-}
-trivialInsertModeCommands[KeyMod.alt + "nP"] = {
-    type: "command",
-    repeating: "external",
-    argument: "none",
-    implementation: function trivialInsertModeCommand_notation_prototype (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"prototype") }
-}
-trivialInsertModeCommands[KeyMod.alt + "ni"] = {
-    type: "command",
-    repeating: "external",
-    argument: "newlineTerminated",
-    implementation: trivialInsertModeCommand_notation_iterate
-}
-trivialInsertModeCommands[KeyMod.alt + "ns"] = {
-    type: "command",
-    repeating: "external",
-    argument: "none",
-    implementation: function trivialInsertModeCommand_notation_separator (mode,instance) { return trivialInsertModeCommand_insertDescribedElement(mode,instance,"separator") }
-}
-trivialInsertModeCommands[KeyMod.alt + "nr"] = {
-    type: "command",
-    repeating: "external",
-    argument: "newlineTerminated",
-    implementation: trivialInsertModeCommand_notation_render
-}
-trivialInsertModeCommands[String.fromCharCode(0x08)] = { // Backspace
-    type: "command",
-    repeating: "external",
-    argument: "none",
-    implementation: trivialInsertModeCommand_killPrevious
-}
-trivialInsertModeCommands[String.fromCharCode(0x1b)] = { // Escape
-    type: "command",
-    repeating: "prevent",
-    argument: "none",
-    implementation: trivialInsertModeCommand_exit
-}
-

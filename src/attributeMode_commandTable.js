@@ -70,11 +70,10 @@ var attributeModeCommands = {
         argument: "newlineTerminated",
         implementation: attributeModeCommand_setFromDictionary
     },
+    [String.fromCharCode(0x1b)]: { // Escape
+        type: "command",
+        repeating: "prevent",
+        argument: "none",
+        implementation: attributeModeCommand_exit
+    },
 }
-attributeModeCommands[String.fromCharCode(0x1b)] = { // Escape
-    type: "command",
-    repeating: "prevent",
-    argument: "none",
-    implementation: attributeModeCommand_exit
-}
-
