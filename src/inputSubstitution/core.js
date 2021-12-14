@@ -4,13 +4,14 @@ var inputSubstitutionActive = true;
 
 var inputSubstitutionStartSign = "&";
 var inputSubstitutionEndSign = ";";
+var inputSubstitutionTable = {};
 
 /* Loading of tables */
 
 if (inputSubstitutionActive) { inputSubstitution_loadTables(); }
 
 function inputSubstitution_loadTables() {
-    var inputSubstitutionTable = {
+    inputSubstitutionTable = {
         // Here you can add additional entries to the input substitution
         // table. They have to look like
         //   name: "character",
