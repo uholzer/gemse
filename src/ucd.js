@@ -139,7 +139,7 @@ UCD4Gemse.prototype = {
         request.open("GET", "UCD/UnicodeData.txt", false);
         request.overrideMimeType("text/plain");
         request.send(null);
-        var dataLines = request.responseText.split("\n");
+        var dataLines = request.status < 300 ? request.responseText.split("\n") : [];
         request = null;
 
         var lineRegex = /^([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);/;
@@ -200,7 +200,7 @@ UCD4Gemse.prototype = {
         request.open("GET", "UCD/Gemse_Combining.txt", false);
         request.overrideMimeType("text/plain");
         request.send(null);
-        var dataLines = request.responseText.split("\n");
+        var dataLines = request.status < 300 ? request.responseText.split("\n") : [];
         request = null;
 
         var lineRegex = /^([^;]*);([^;]*);([^;]*)/;
