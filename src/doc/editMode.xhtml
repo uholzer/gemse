@@ -19,14 +19,15 @@
 <head>
     <title>Edit Mode</title>
     <link rel="stylesheet" href="../gemse.css" type="text/css" />
-    <script src="../namespace.js"/>
-    <script src="../key.js"/>
-    <script src="../editMode.js"/>
-    <script src="../editMode_commandTable.js"/>
-    <script src="commandListProcessing.js"/>
+    <script type="module"><![CDATA[
+        import { editModeCommands } from "../editMode_commandTable.js";
+        import { commands } from "../editMode.js";
+        import { doc_init } from "./commandListProcessing.js"
+        window.init = doc_init(editModeCommands, commands);
+    ]]></script>
 </head>
 
-<body onload="modeCommands = editModeCommands; doc_init()">
+<body onload="init()">
 
 <h1>Edit Mode</h1>
 
@@ -64,7 +65,7 @@
 <div id="help">
 <h3>Help</h3>
 
-<div class="commandDocumentation" id="editModeCommand_help">
+<div class="commandDocumentation" id="help">
     <h4 class="commandTitle">Help</h4>
 
     <p>Without any arguments, this command opens the index of the
@@ -80,58 +81,58 @@
 <div id="movements">
 <h3>Movements</h3>
 
-<div class="commandDocumentation" id="editModeCommand_moveLeft">
+<div class="commandDocumentation" id="moveLeft">
     <h4 class="commandTitle">Move left</h4>
 
     <p>Moves the cursor to the previous sibling.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_moveRight">
+<div class="commandDocumentation" id="moveRight">
     <h4 class="commandTitle">Move right</h4>
 
     <p>Moves the cursor to the next sibling.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_moveUp">
+<div class="commandDocumentation" id="moveUp">
     <h4 class="commandTitle">Move to parent</h4>
 
     <p>Moves the cursor to the parent the current element.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_moveDown">
+<div class="commandDocumentation" id="moveDown">
     <h4 class="commandTitle">Move to first child</h4>
 
     <p>Moves the cursor to the first child of the current one.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_moveDownLast">
+<div class="commandDocumentation" id="moveDownLast">
     <h4 class="commandTitle">Move to last child</h4>
 
     <p>Moves the cursor to the last child of the current one.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_moveToRoot">
+<div class="commandDocumentation" id="moveToRoot">
     <h4 class="commandTitle">Move to root</h4>
 
     <p>Moves the cursor to the root element, i.e. to the math
     element.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_moveToFirstSibling">
+<div class="commandDocumentation" id="moveToFirstSibling">
     <h4 class="commandTitle">Move to first sibling</h4>
 
     <p>Moves the cursor to the first sibling of the current
     element.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_moveToLastSibling">
+<div class="commandDocumentation" id="moveToLastSibling">
     <h4 class="commandTitle">Move to last sibling</h4>
 
     <p>Moves the cursor to the last sibling of the current
     element.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_moveToNextLeaf">
+<div class="commandDocumentation" id="moveToNextLeaf">
     <h4 class="commandTitle">Move to next leaf</h4>
 
     <p>Moves the cursor to the next leaf.</p>
@@ -143,13 +144,13 @@
     formula.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_moveToPreviousLeaf">
+<div class="commandDocumentation" id="moveToPreviousLeaf">
     <h4 class="commandTitle">Move to previous leaf</h4>
 
     <p>Moves the cursor to the previous leaf.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_followRef">
+<div class="commandDocumentation" id="followRef">
     <h4 class="commandTitle">Follows an xref attribute</h4>
 
     <p>Jumps to the element referenced by an xref attribute on the
@@ -163,7 +164,7 @@
 <div id="loadsave">
 <h3>Loading, saving and exporting</h3>
 
-<div class="commandDocumentation" id="editModeCommand_printWorkingDirectory">
+<div class="commandDocumentation" id="printWorkingDirectory">
     <h4 class="commandTitle">Print working directory</h4>
 
     <p>Tells the URL of the current working directory. Load/save
@@ -171,7 +172,7 @@
     URL.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_changeWorkingDirectory">
+<div class="commandDocumentation" id="changeWorkingDirectory">
     <h4 class="commandTitle">Change working directory</h4>
 
     <p>Sets the current working directory. It can be any URL (/ is
@@ -181,13 +182,13 @@
     directory is assumed.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_printDocumentInformation">
+<div class="commandDocumentation" id="printDocumentInformation">
     <h4 class="commandTitle">Print information on document</h4>
 
     <p>Tells which document the current equation belongs to.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_printAllDocumentInformation">
+<div class="commandDocumentation" id="printAllDocumentInformation">
     <h4 class="commandTitle">Print information on all documents</h4>
 
     <p>Prints a list of all currently loaded documents and open
@@ -195,14 +196,14 @@
     relationship between documents and equations.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_load">
+<div class="commandDocumentation" id="load">
     <h4 class="commandTitle">Load</h4>
 
     <p>Load the document at the given URL. It must contain a MathML
     formula as root element.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_loadById">
+<div class="commandDocumentation" id="loadById">
     <h4 class="commandTitle">Load by Id</h4>
 
     <p>Two arguments must be given, seperated by a space: An URL and
@@ -213,7 +214,7 @@
     and including the fragment identifier directly in the URL.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_loadByXPath">
+<div class="commandDocumentation" id="loadByXPath">
     <h4 class="commandTitle">Load</h4>
 
     <p>Two arguments must be provided: An URL and an XPath 1.0
@@ -225,21 +226,21 @@
     URI.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_loadAll">
+<div class="commandDocumentation" id="loadAll">
     <h4 class="commandTitle">Load</h4>
 
     <p>Loads all MathML formulas found in the document at the given
     URL.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_save">
+<div class="commandDocumentation" id="save">
     <h4 class="commandTitle">Save all</h4>
 
     <p>Saves the current equation. You can provide an URL or filename as parameter
     which causes the equation to be saved there.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_close">
+<div class="commandDocumentation" id="close">
     <h4 class="commandTitle">Close</h4>
 
     <p>Closes the current equation. Closing of an equation with
@@ -247,46 +248,46 @@
     circumvent this protection.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_saveAll">
+<div class="commandDocumentation" id="saveAll">
     <h4 class="commandTitle">Save all</h4>
 
     <p>Saves all equations.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_closeAll">
+<div class="commandDocumentation" id="closeAll">
     <h4 class="commandTitle">Close all</h4>
 
     <p>Closes all equations which do not have unsaved changes.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_saveclose">
+<div class="commandDocumentation" id="saveclose">
     <h4 class="commandTitle">Save and close</h4>
 
     <p>Saves and closes the equation.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_savecloseAll">
+<div class="commandDocumentation" id="savecloseAll">
     <h4 class="commandTitle">Save and close all</h4>
 
     <p>Saves and closes all equations.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_example">
+<div class="commandDocumentation" id="example">
     <h4 class="commandTitle">Load an example</h4>
 
     <p>If you want to load an example from the Gemse documentation,
     you can use this command. So, instead of doing something like
-    <kbd><internal:cmdph ref="editModeCommand_load" select="b.argument=='newlineTerminated'"/> chrome://gemse/content/doc/examples/pres01.xml&enter;</kbd>,
+    <kbd><internal:cmdph ref="load" select="b.argument=='newlineTerminated'"/> chrome://gemse/content/doc/examples/pres01.xml&enter;</kbd>,
     you can use
     <kbd><internal:cmdph select="b.argument=='newlineTerminated'"/> pres01.xml&enter;</kbd>.
     (Note that depending on whether you run Gemse from the chrome or
     not, you have to use a different URI with 
-    <kbd><internal:cmdph ref="editModeCommand_load" select="b.argument=='newlineTerminated'"/></kbd>. When using
-    <kbd><internal:cmdph ref="editModeCommand_example" select="b.argument=='newlineTerminated'"/></kbd>,
+    <kbd><internal:cmdph ref="load" select="b.argument=='newlineTerminated'"/></kbd>. When using
+    <kbd><internal:cmdph ref="example" select="b.argument=='newlineTerminated'"/></kbd>,
     this distinction is done by Gemse itself.)</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_export">
+<div class="commandDocumentation" id="export">
     <h4 class="commandTitle">Export</h4>
 
     <p>Exports the equation into another format. At the moment, only
@@ -306,28 +307,28 @@
 <div id="multipleeq">
 <h3>Working with multiple equations</h3>
 
-<div class="commandDocumentation" id="editModeCommand_nextEquation">
+<div class="commandDocumentation" id="nextEquation">
     <h4 class="commandTitle">Go to next equation</h4>
 
     <p>If you have opened more than one equation, you can use this
     command to switch to the next equation.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_previousEquation">
+<div class="commandDocumentation" id="previousEquation">
     <h4 class="commandTitle">go to previous equation</h4>
 
     <p>If you have opened more than one equation, you can use this
     command to switch to the previous equation.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_gotoEquation">
+<div class="commandDocumentation" id="gotoEquation">
     <h4 class="commandTitle">go to equation</h4>
 
     <p>Jumps to the equation with the given number. Note that the
     equations are numbered beginning with 0.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_newEquation">
+<div class="commandDocumentation" id="newEquation">
     <h4 class="commandTitle">Create a new equation</h4>
 
     <p>Creates a new empty equation. When you give no argument, a
@@ -358,7 +359,7 @@
 <div id="views">
 <h3>Views and viewsets</h3>
 
-<div class="commandDocumentation" id="editModeCommand_hideView">
+<div class="commandDocumentation" id="hideView">
     <h4 class="commandTitle">hides a view</h4>
 
     <p>Hides a view of the current viewset. The argument must be the
@@ -367,7 +368,7 @@
     and hidden views are always counted as well.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_showView">
+<div class="commandDocumentation" id="showView">
     <h4 class="commandTitle">show a view</h4>
 
     <p>Shows a previously hidden view. The argument must be the number
@@ -375,7 +376,7 @@
     views are shown again.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_chooseViewset">
+<div class="commandDocumentation" id="chooseViewset">
     <h4 class="commandTitle">choose a viewset</h4>
 
     <p>Changes the viewset. The argument is the number or the name of the viewset.
@@ -386,7 +387,7 @@
     them.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_redisplay">
+<div class="commandDocumentation" id="redisplay">
     <h4 class="commandTitle">Update display</h4>
 
     <p>In rare cases it may happen (perhaps because of a bug) that the
@@ -394,7 +395,7 @@
     to force an update of the display.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_viewsetconfWindow">
+<div class="commandDocumentation" id="viewsetconfWindow">
     <h4 class="commandTitle">Open/close viewset configuration window</h4>
 
     <p>Opens a window which allows you to configure viewsets. The
@@ -408,42 +409,42 @@
 <div id="callinginsertmode">
 <h3>Calling insert mode</h3>
 
-<div class="commandDocumentation" id="editModeCommand_insertBefore">
+<div class="commandDocumentation" id="insertBefore">
     <h4 class="commandTitle">insert before</h4>
 
     <p>Open the insert mode such that the cursor is placed before the
     current element.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_insertAfter">
+<div class="commandDocumentation" id="insertAfter">
     <h4 class="commandTitle">insert after</h4>
 
     <p>Open the insert mode such that the cursor is placed after the
     current element.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_insertAtEnd">
+<div class="commandDocumentation" id="insertAtEnd">
     <h4 class="commandTitle">insert at end</h4>
 
     <p>Open the insert mode such that the cursor is placed after the
     last sibling of the curent element.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_insertAtBeginning">
+<div class="commandDocumentation" id="insertAtBeginning">
     <h4 class="commandTitle">insert at beginning</h4>
 
     <p>Open the insert mode such that the cursor is placed before the
     first sibling</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_insertIn">
+<div class="commandDocumentation" id="insertIn">
     <h4 class="commandTitle">insert after</h4>
 
     <p>Open the insert mode such that the cursor is placed into the
     current empty element. <em>The current element must be empty!</em></p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_cycleInsertMode">
+<div class="commandDocumentation" id="cycleInsertMode">
     <h4 class="commandTitle">Cycle through insert modes</h4>
 
     <p>Selects the insert mode that will be used for the next
@@ -454,14 +455,14 @@
 <div id="othermodes">
 <h3>Other modes</h3>
 
-<div class="commandDocumentation" id="editModeCommand_visualMode">
+<div class="commandDocumentation" id="visualMode">
     <h4 class="commandTitle">Visual</h4>
 
     <p>Opens the visual mode so you can make a selection and execute
     an edit mode command on it.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_attributeMode">
+<div class="commandDocumentation" id="attributeMode">
     <h4 class="commandTitle">Attribute mode</h4>
 
     <p>Opens the attribute mode so you can change the attributes of
@@ -472,19 +473,19 @@
 <div id="delete">
 <h3>Delete and change</h3>
 
-<div class="commandDocumentation" id="editModeCommand_kill">
+<div class="commandDocumentation" id="kill">
     <h4 class="commandTitle">Delete Element</h4>
 
     <p>Deletes the element the cursor is on.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_delete">
+<div class="commandDocumentation" id="delete">
     <h4 class="commandTitle">Delete selection</h4>
 
     <p>Deletes all (by visual mode) selected elements.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_change">
+<div class="commandDocumentation" id="change">
     <h4 class="commandTitle">Change selection</h4>
 
     <p>Deletes all (by visual mode) selected elements and opens the
@@ -495,15 +496,15 @@
 <div id="undo">
 <h3>Undo and redo</h3>
 
-<div class="commandDocumentation" id="editModeCommand_undo">
+<div class="commandDocumentation" id="undo">
     <h4 class="commandTitle">Undo</h4>
 
     <p>Makes your last change undone. You can undo multiple changes.
-    The <a href="#editModeCommand_redoc">redo</a> command can be 
+    The <a href="#redoc">redo</a> command can be 
     used to apply them again, to undo the undo, so to say.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_redo">
+<div class="commandDocumentation" id="redo">
     <h4 class="commandTitle">Redo</h4>
 
     <p>Reapplies the last undone change. This is only possible if you
@@ -514,13 +515,13 @@
 <div id="struct">
 <h3>Structural changes</h3>
 
-<div class="commandDocumentation" id="editModeCommand_mrowEnvelop">
+<div class="commandDocumentation" id="mrowEnvelop">
     <h4 class="commandTitle">Put mrow around selection</h4>
 
     <p>Places an mrow element around the selected elements.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_unwrap">
+<div class="commandDocumentation" id="unwrap">
     <h4 class="commandTitle">Unwrap</h4>
 
     <p>Removes the element and places its children at its former
@@ -531,7 +532,7 @@
 <div id="copy">
 <h3>Copy and paste</h3>
 
-<div class="commandDocumentation" id="editModeCommand_copyToRegister">
+<div class="commandDocumentation" id="copyToRegister">
     <h4 class="commandTitle">yank</h4>
 
     <p>Copies the selection into a register. If there is no selection,
@@ -541,7 +542,7 @@
     the register which is always one unicode character.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_putBefore">
+<div class="commandDocumentation" id="putBefore">
     <h4 class="commandTitle">Put before</h4>
 
     <p>Puts the contents of a register before the current element. 
@@ -551,7 +552,7 @@
     the register which is always one unicode character.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_putAfter">
+<div class="commandDocumentation" id="putAfter">
     <h4 class="commandTitle">Put after</h4>
 
     <p>Puts the contents of a register after the current element. 
@@ -561,7 +562,7 @@
     the register which is always one unicode character.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_putIn">
+<div class="commandDocumentation" id="putIn">
     <h4 class="commandTitle">Put in</h4>
 
     <p>Puts the contents of a register into the current element. 
@@ -576,7 +577,7 @@
 <div id="options">
 <h3>Options</h3>
 
-<div class="commandDocumentation" id="editModeCommand_set">
+<div class="commandDocumentation" id="set">
     <h4 class="commandTitle">set an option</h4>
 
     <p>When you call this command with just the name of an option as
@@ -615,7 +616,7 @@
 <div id="others">
 <h3>Others</h3>
 
-<div class="commandDocumentation" id="editModeCommand_contentInfo">
+<div class="commandDocumentation" id="contentInfo">
     <h4 class="commandTitle">Show information about the current element</h4>
 
     <p>Displays the unicode codepoint and the name from the unicode
@@ -623,7 +624,7 @@
     element.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_doNothing">
+<div class="commandDocumentation" id="doNothing">
     <h4 class="commandTitle">do nothing</h4>
 
     <p>Does absolutely nothing except wasting your time and
@@ -631,7 +632,7 @@
     accidentally in this mode.</p>
 </div>
 
-<div class="commandDocumentation" id="editModeCommand_serialize">
+<div class="commandDocumentation" id="serialize">
     <h4 class="commandTitle">Serialize to Message View</h4>
 
     <p>Serializes the equation and prints the result to the message

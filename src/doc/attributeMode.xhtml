@@ -19,14 +19,15 @@
 <head>
     <title>Attribute Mode</title>
     <link rel="stylesheet" href="../gemse.css" type="text/css" />
-    <script src="../Namespace.js"/>
-    <script src="../Key.js"/>
-    <script src="../attributeMode.js"/>
-    <script src="../attributeMode_commandTable.js"/>
-    <script src="commandListProcessing.js"/>
+    <script type="module"><![CDATA[
+        import { attributeModeCommands } from "../attributeMode_commandTable.js";
+        import { commands } from "../editMode.js";
+        import { doc_init } from "./commandListProcessing.js"
+        window.init = doc_init(attributeModeCommands, commands);
+    ]]></script>
 </head>
 
-<body onload="modeCommands = attributeModeCommands; doc_init()">
+<body onload="init()">
 
 <h1>Attribute Mode</h1>
 
@@ -40,25 +41,25 @@
 </tbody>
 </table>
 
-<div class="commandDocumentation" id="attributeModeCommand_down">
+<div class="commandDocumentation" id="down">
     <h3 class="commandTitle">Move to next attribute</h3>
 
     <p>Moves the cursor to the next attribute.</p>
 </div>
 
-<div class="commandDocumentation" id="attributeModeCommand_up">
+<div class="commandDocumentation" id="up">
     <h3 class="commandTitle">Move to previous attribute</h3>
 
     <p>Moves the cursor to the previous attribute.</p>
 </div>
 
-<div class="commandDocumentation" id="attributeModeCommand_kill">
+<div class="commandDocumentation" id="kill">
     <h3 class="commandTitle">Delete attribute</h3>
 
     <p>Deletes an attribute.</p>
 </div>
 
-<div class="commandDocumentation" id="attributeModeCommand_insertDefault">
+<div class="commandDocumentation" id="insertDefault">
     <h3 class="commandTitle">Inserts an attribute using the default namespace</h3>
 
     <p>Use this command to insert an attribute that is in the default
@@ -67,7 +68,7 @@
     value and hit enter again.</p>
 </div>
 
-<div class="commandDocumentation" id="attributeModeCommand_insertForeign">
+<div class="commandDocumentation" id="insertForeign">
     <h3 class="commandTitle">Inserts an attribute using the given namespace</h3>
 
     <p>Use this command to insert an attribute that is not in the
@@ -77,20 +78,20 @@
     value and hit enter a third time.</p>
 </div>
 
-<div class="commandDocumentation" id="attributeModeCommand_changeValue">
+<div class="commandDocumentation" id="changeValue">
     <h3 class="commandTitle">Change Value</h3>
 
     <p>Changes the value of the attribute selected by the cursor.
     Simply write the new value behind the command and hit enter.</p>
 </div>
 
-<div class="commandDocumentation" id="attributeModeCommand_clearAll">
+<div class="commandDocumentation" id="clearAll">
     <h3 class="commandTitle">Delete all</h3>
 
     <p>Deletes all attributes</p>
 </div>
 
-<div class="commandDocumentation" id="attributeModeCommand_setFromDictionary">
+<div class="commandDocumentation" id="setFromDictionary">
     <h3 class="commandTitle">Set attributes according to dictionary</h3>
 
     <p>On an <code>mo</code> element, you can use
@@ -103,7 +104,7 @@
     the command, before hitting enter.</p>
 </div>
 
-<div class="commandDocumentation" id="attributeModeCommand_exit">
+<div class="commandDocumentation" id="exit">
     <h3 class="commandTitle">Exit</h3>
 
     <p>Terminates attribute mode.</p>

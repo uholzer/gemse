@@ -1,11 +1,19 @@
+import { standardNSResolver } from "../namespace.js";
+import { KeyMod } from "../key.js";
+
 var doc_commands = [];
 var doc_commandsByImplementationNameOrId = {};
 var modeCommands;
+var modeImplementations;
 
-function doc_init() {
-    doc_collectCommandInfo();
-    doc_createCommandTable("command");
-    doc_putCommandsIntoDocumentation();
+export function doc_init(commands, implementations) {
+    return function () {
+        modeCommands = commands;
+        modeImplementations = implementations;
+        doc_collectCommandInfo();
+        doc_createCommandTable("command");
+        doc_putCommandsIntoDocumentation();
+    };
 }
 
 function doc_collectCommandInfo() {
@@ -38,7 +46,7 @@ function doc_collectCommandInfo() {
         // global object (the window object). Those will be discovered
         // when processing bindings if they have a binding.
         if (window[commandEntry.id]) {
-            commandEntry.implementation = window[commandEntry.id];
+            commandEntry.implementation = modeImplementations[commandEntry.id];
         }
         commandEntry.bindings = {};
         doc_commands.push(commandEntry);
@@ -281,8 +289,8 @@ function doc_formattedCommandString(cs) {
     cs = cs.replace(/ /gm,  "␣");
     cs = cs.replace(/\n/gm, "↵");
     cs = cs.replace(/\u0008/gm, "⌫");
-    cs = cs.replace((new RegExp("\\" + KEYMOD_CONTROL, "gm")), "CTRL+");
-    cs = cs.replace((new RegExp("\\" + KEYMOD_ALT, "gm")), "ALT+");
+    cs = cs.replace((new RegExp("\\" + KeyMod.control, "gm")), "CTRL+");
+    cs = cs.replace((new RegExp("\\" + KeyMod.alt, "gm")), "ALT+");
     cs = cs.replace(/\u0009/gm, "TAB");
     cs = cs.replace(/\u001b/gm, "ESC");
     return cs;

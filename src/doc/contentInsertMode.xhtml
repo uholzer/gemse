@@ -19,14 +19,15 @@
 <head>
     <title>Content Insert Mode</title>
     <link rel="stylesheet" href="../gemse.css" type="text/css" />
-    <script src="../namespace.js"/>
-    <script src="../key.js"/>
-    <script src="../contentInsertMode.js"/>
-    <script src="../contentInsertMode_commandTable.js"/>
-    <script src="commandListProcessing.js"/>
+    <script type="module"><![CDATA[
+        import { contentInsertModeCommands } from "../contentInsertMode_commandTable.js";
+        import { commands } from "../contentInsertMode.js";
+        import { doc_init } from "./commandListProcessing.js"
+        window.init = doc_init(contentInsertModeCommands, commands);
+    ]]></script>
 </head>
 
-<body onload="modeCommands = contentInsertModeCommands; doc_init()">
+<body onload="init()">
 
 <h1>Content Insert Mode</h1>
 
@@ -46,7 +47,7 @@ digit, a <code>cn</code> or a <code>OMI</code> element is
 generated. Various commands let you insert elements. If such an
 element can contain further elements, the cursor is placed inside it instead of
 after it. But the position after the new element gets remembered. When
-you hit <kbd><internal:cmdph ref="contentInsertModeCommand_cursorJump"/></kbd>
+you hit <kbd><internal:cmdph ref="cursorJump"/></kbd>
 the cursor will jump there.</p>
 
 
@@ -60,47 +61,47 @@ the cursor will jump there.</p>
 </tbody>
 </table>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_exit">
+<div class="commandDocumentation" id="exit">
     <h3 class="commandTitle">Exit mode</h3>
 
     <p>Terminates the mode.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_killPrevious">
+<div class="commandDocumentation" id="killPrevious">
     <h3 class="commandTitle">Remove previously inserted element</h3>
 
     <p></p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_apply">
+<div class="commandDocumentation" id="apply">
     <h3 class="commandTitle">Application</h3>
 
     <p>Inserts an <code>apply</code> or <code>OMA</code> element 
     and positions the cursor inside it.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_ci">
+<div class="commandDocumentation" id="ci">
     <h3 class="commandTitle">Identifier</h3>
 
     <p>Creates an Identifier (<code>ci</code> or <code>OMV</code>) 
     with the given content.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_cn">
+<div class="commandDocumentation" id="cn">
     <h3 class="commandTitle">Number</h3>
 
     <p>Creates a number (<code>cn</code> or <code>OMI</code>) 
     with given content. At the moment, only integers are supported.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_bind">
+<div class="commandDocumentation" id="bind">
     <h3 class="commandTitle">Binding</h3>
 
     <p>Inserts a <code>bind</code> or <code>OMBIND</code> element and places the cursor
     inside it.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_bvar">
+<div class="commandDocumentation" id="bvar">
     <h3 class="commandTitle">Bound variable</h3>
 
     <p>Creates a <code>bvar</code> or <code>OMBVAR</code> element and places the cursor
@@ -124,7 +125,7 @@ the cursor will jump there.</p>
     insert the bound variables by doing the following for every variable:
     Hit this command and then insert the variable itself. For example the
     following can be achieved by 
-    <kbd><internal:cmdph ref="contentInsertModeCommand_bind"/><internal:cmdph/>x<internal:cmdph/>y<internal:cmdph/>z</kbd>:</p>
+    <kbd><internal:cmdph ref="bind"/><internal:cmdph/>x<internal:cmdph/>y<internal:cmdph/>z</kbd>:</p>
 
     <pre><![CDATA[<bind>
     <bvar>
@@ -147,14 +148,14 @@ the cursor will jump there.</p>
 </OMBIND>]]></pre>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_semantics">
+<div class="commandDocumentation" id="semantics">
     <h3 class="commandTitle">Attribution</h3>
 
     <p>Creates a <code>semantics</code> or <code>OMATTR</code> element
     and places the cursor inside it.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_omatp">
+<div class="commandDocumentation" id="omatp">
     <h3 class="commandTitle">OMATP</h3>
 
     <p>Creates an <code>OMATP</code> element. This command is only
@@ -165,7 +166,7 @@ the cursor will jump there.</p>
     element, which has to be its first child. The <code>OMATP</code>
     element then contains one or more key/value pairs of elements.</p>
 </div>
-<div class="commandDocumentation" id="contentInsertModeCommand_annotationxml_cmml">
+<div class="commandDocumentation" id="annotationxml_cmml">
     <h3 class="commandTitle">Annotation: Content MathML</h3>
 
     <p>Inserts an <code>annotation-xml</code> element with encoding
@@ -174,7 +175,7 @@ the cursor will jump there.</p>
 
     <p>This command is only useful if you write MathML.</p>
 </div>
-<div class="commandDocumentation" id="contentInsertModeCommand_annotationxml_pmml">
+<div class="commandDocumentation" id="annotationxml_pmml">
     <h3 class="commandTitle">Annotation: Presentation MathML</h3>
 
     <p>Inserts an <code>annotation-xml</code> element with encoding
@@ -183,7 +184,7 @@ the cursor will jump there.</p>
 
     <p>This command is only useful if you write MathML.</p>
 </div>
-<div class="commandDocumentation" id="contentInsertModeCommand_annotationxml_om">
+<div class="commandDocumentation" id="annotationxml_om">
     <h3 class="commandTitle">Annotation: OpenMath</h3>
 
     <p>Inserts an <code>annotation-xml</code> element with encoding
@@ -192,7 +193,7 @@ the cursor will jump there.</p>
 
     <p>This command is only useful if you write MathML.</p>
 </div>
-<div class="commandDocumentation" id="contentInsertModeCommand_annotation_arbitrary">
+<div class="commandDocumentation" id="annotation_arbitrary">
     <h3 class="commandTitle">Annotation: Arbitrary</h3>
 
     <p>Inserts an <code>annotation</code> element.
@@ -202,7 +203,7 @@ the cursor will jump there.</p>
 
     <p>This command is only useful if you write MathML.</p>
 </div>
-<div class="commandDocumentation" id="contentInsertModeCommand_annotationxml_arbitrary">
+<div class="commandDocumentation" id="annotationxml_arbitrary">
     <h3 class="commandTitle">Annotation: Arbitrary XML</h3>
 
     <p>Inserts an <code>annotation-xml</code> element with encoding.
@@ -213,7 +214,7 @@ the cursor will jump there.</p>
     <p>This command is only useful if you write MathML.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_lambda">
+<div class="commandDocumentation" id="lambda">
     <h3 class="commandTitle">Lambda</h3>
 
     <p>Shorthand for creating a lambda expression. It inserts a bind
@@ -225,8 +226,8 @@ the cursor will jump there.</p>
     The <code>apply</code> or <code>OMA</code> is remembered as a cursor location. This
     means that when you are done with the bound variables of
     the first one, do 
-    <kbd><internal:cmdph ref="contentInsertModeCommand_cursorJump"/></kbd> 
-    (<a href="#contentInsertModeCommand_cursorJump">cursor jump</a>)
+    <kbd><internal:cmdph ref="cursorJump"/></kbd> 
+    (<a href="#cursorJump">cursor jump</a>)
     and the cursor jumps into the <code>apply</code> or <code>OMA</code> element.</p>
 
     <p>In the case of MathML, it looks like this:</p>
@@ -259,7 +260,7 @@ the cursor will jump there.</p>
 
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_notation_prototype">
+<div class="commandDocumentation" id="notation_prototype">
     <h3 class="commandTitle">Notation: prototype</h3>
 
     <p>Inserts a <code>prototype</code> element in the OMDoc
@@ -268,7 +269,7 @@ the cursor will jump there.</p>
     expression.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_notation_rendering">
+<div class="commandDocumentation" id="notation_rendering">
     <h3 class="commandTitle">Notation: rendering</h3>
 
     <p>Inserts a <code>rendering</code> element in the OMDoc
@@ -277,7 +278,7 @@ the cursor will jump there.</p>
     definition is applied has to be rendered.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_notation_exprlist">
+<div class="commandDocumentation" id="notation_exprlist">
     <h3 class="commandTitle">Notation: exprlist</h3>
 
     <p>Inserts an <code>exprlist</code> element in the OMDoc
@@ -289,7 +290,7 @@ the cursor will jump there.</p>
     has to be provided.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_notation_expr">
+<div class="commandDocumentation" id="notation_expr">
     <h3 class="commandTitle">Notation: expr</h3>
 
     <p>Inserts an <code>expr</code> element in the OMDoc
@@ -300,7 +301,7 @@ the cursor will jump there.</p>
     has to be provided.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_oneMoreToSurround">
+<div class="commandDocumentation" id="oneMoreToSurround">
     <h3 class="commandTitle">one more to surround</h3>
 
     <p>Selects one more element to the left. The next time, you insert
@@ -312,13 +313,13 @@ the cursor will jump there.</p>
     content of the newly inserted element.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_oneLessToSurround">
+<div class="commandDocumentation" id="oneLessToSurround">
     <h3 class="commandTitle">one less to surround</h3>
 
     <p>Removes the leftmost element from the selection.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_forceNewElement">
+<div class="commandDocumentation" id="forceNewElement">
     <h3 class="commandTitle">Begin new element</h3>
 
     <p>Forces the creation of a new element for the next character
@@ -327,31 +328,31 @@ the cursor will jump there.</p>
     <code>mn</code> or <code>OMI</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_forceMathMLForNext">
+<div class="commandDocumentation" id="forceMathMLForNext">
     <h3 class="commandTitle">Next element as MathML</h3>
 
     <p>Forces the next command to produce MathML.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_forceOpenMathForNext">
+<div class="commandDocumentation" id="forceOpenMathForNext">
     <h3 class="commandTitle">Next element as OpenMath</h3>
 
     <p>Forces the next command to produce OpenMath.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_forceAutoForNext">
+<div class="commandDocumentation" id="forceAutoForNext">
     <h3 class="commandTitle">Chose language automatically</h3>
 
     <p>Makes shure that the language the next command will produce is
     determined automatically.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_cursorJump">
+<div class="commandDocumentation" id="cursorJump">
     <h3 class="commandTitle">Jump to remembered cursor position</h3>
 </div>
 
 
-<div class="commandDocumentation" id="contentInsertModeCommand_symbol">
+<div class="commandDocumentation" id="symbol">
     <h3 class="commandTitle">Symbol</h3>
 
     <p>Inserts a <code>csymbol</code> or <code>OMS</code>. For the <code>cd</code>
@@ -359,7 +360,7 @@ the cursor will jump there.</p>
     content of the element, the second line is use.</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_arbitraryOperator">
+<div class="commandDocumentation" id="arbitraryOperator">
     <h3 class="commandTitle">Arbitrary operator</h3>
 
     <p>Inserts an arbitrary empty element in the MathML or OpenMath namespace. You
@@ -368,7 +369,7 @@ the cursor will jump there.</p>
     operator.)</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_arbitraryElement">
+<div class="commandDocumentation" id="arbitraryElement">
     <h3 class="commandTitle">Arbitrary element</h3>
 
     <p>Inserts an arbitrary empty element in the MathML or OpenMath namespace.
@@ -377,35 +378,35 @@ the cursor will jump there.</p>
     operator.)</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_plus">
+<div class="commandDocumentation" id="plus">
     <h3 class="commandTitle">plus symbol</h3>
 
     <p>Inserts a <code>arith1#plus</code> symbol or <code>plus</code> element. (Depending
     whether you want to use pragmatic or strict ContentMathML)</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_minus">
+<div class="commandDocumentation" id="minus">
     <h3 class="commandTitle">minus symbol</h3>
 
     <p>Inserts a <code>arith1#minus</code> symbol or <code>minus</code> element. (Depending
     whether you want to use pragmatic or strict ContentMathML)</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_times">
+<div class="commandDocumentation" id="times">
     <h3 class="commandTitle">times symbol</h3>
 
     <p>Inserts a <code>arith1#times</code> symbol or <code>times</code> element. (Depending
     whether you want to use pragmatic or strict ContentMathML)</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_divide">
+<div class="commandDocumentation" id="divide">
     <h3 class="commandTitle">divide symbol</h3>
 
     <p>Inserts a <code>arith1#divide</code> symbol or <code>divide</code> element. (Depending
     whether you want to use pragmatic or strict ContentMathML)</p>
 </div>
 
-<div class="commandDocumentation" id="contentInsertModeCommand_power">
+<div class="commandDocumentation" id="power">
     <h3 class="commandTitle">power symbol</h3>
 
     <p>Inserts a <code>power#divide</code> symbol or <code>power</code> element. (Depending

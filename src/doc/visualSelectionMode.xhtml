@@ -19,16 +19,15 @@
 <head>
     <title>Visual Selection Mode</title>
     <link rel="stylesheet" href="../gemse.css" type="text/css" />
-    <script src="../namespace.js"/>
-    <script src="../key.js"/>
-    <script src="../editMode.js"/>
-    <script src="../editMode_commandTable.js"/>
-    <script src="../visualSelectionMode.js"/>
-    <script src="../visualSelectionMode_commandTable.js"/>
-    <script src="commandListProcessing.js"/>
+    <script type="module"><![CDATA[
+        import { visualSelectionModeCommands } from "../visualSelectionMode_commandTable.js";
+        import { commands } from "../visualSelectionMode.js";
+        import { doc_init } from "./commandListProcessing.js"
+        window.init = doc_init(visualSelectionModeCommands, commands);
+    ]]></script>
 </head>
 
-<body onload="modeCommands = visualSelectionModeCommands; doc_init()">
+<body onload="init()">
 
 <h1>Visual Selection Mode</h1>
 
@@ -47,14 +46,14 @@ are not documented here. You use them to move around, that is, to
 change the selection. However, such a command only has an effect if it
 moves to a sibling of the current position.</p>
 
-<div class="commandDocumentation" id="visualSelectionModeCommand_switchMoving">
+<div class="commandDocumentation" id="switchMoving">
     <h3 class="commandTitle">Move the other end of the selection</h3>
 
     <p>After issuing this command, the next movement commands will
     move the other end of the selection.</p>
 </div>
 
-<div class="commandDocumentation" id="visualSelectionModeCommand_cancel">
+<div class="commandDocumentation" id="cancel">
     <h3 class="commandTitle">Cancel</h3>
 
     <p>Closes the visual mode and drops the selection</p>

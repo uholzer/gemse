@@ -19,15 +19,15 @@
 <head>
     <title>UCD Insert Mode</title>
     <link rel="stylesheet" href="../gemse.css" type="text/css" />
-    <script src="../namespace.js"/>
-    <script src="../key.js"/>
-    <script src="../trivialInsertMode.js"/> <!-- Needed since ucd steals commands from trivial -->
-    <script src="../ucdInsertMode.js"/>
-    <script src="../ucdInsertMode_commandTable.js"/>
-    <script src="commandListProcessing.js"/>
+    <script type="module"><![CDATA[
+        import { ucdInsertModeCommands } from "../ucdInsertMode_commandTable.js";
+        import { commands } from "../ucdInsertMode.js";
+        import { doc_init } from "./commandListProcessing.js"
+        window.init = doc_init(ucdInsertModeCommands, commands);
+    ]]></script>
 </head>
 
-<body onload="modeCommands = ucdInsertModeCommands; doc_init()">
+<body onload="init()">
 
 <h1>UCD Insert Mode</h1>
 
@@ -58,7 +58,7 @@ identifier <code>c</code>.</p>
 </tbody>
 </table>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mi">
+<div class="commandDocumentation" id="mi">
     <h3 class="commandTitle">explicit mi</h3>
 
     <p>Inserts an <code>mi</code> element. Use this command when you
@@ -66,7 +66,7 @@ identifier <code>c</code>.</p>
     character or of a character that is not treated as identifier by
     default.</p>
 </div>
-<div class="commandDocumentation" id="ucdInsertModeCommand_mo">
+<div class="commandDocumentation" id="mo">
     <h3 class="commandTitle">explicit mo</h3>
 
     <p>Inserts an <code>mo</code> element. Use this command when you
@@ -74,7 +74,7 @@ identifier <code>c</code>.</p>
     character or of a character that is not treated as operator by
     default.</p>
 </div>
-<div class="commandDocumentation" id="ucdInsertModeCommand_mn">
+<div class="commandDocumentation" id="mn">
     <h3 class="commandTitle">explicit mn</h3>
 
     <p>Inserts an <code>mn</code> element. Use this command when you
@@ -83,19 +83,19 @@ identifier <code>c</code>.</p>
     default.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mtext">
+<div class="commandDocumentation" id="mtext">
     <h3 class="commandTitle">mtext</h3>
 
     <p>Inserts an <code>mtext</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mrow">
+<div class="commandDocumentation" id="mrow">
     <h3 class="commandTitle">mrow</h3>
 
     <p>Inserts an <code>mrow</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_none">
+<div class="commandDocumentation" id="none">
     <h3 class="commandTitle">none</h3>
 
     <p>Inserts a <code>none</code> element. This is used only inside
@@ -103,79 +103,79 @@ identifier <code>c</code>.</p>
     script.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mfrac">
+<div class="commandDocumentation" id="mfrac">
     <h3 class="commandTitle">mfrac</h3>
 
     <p>Inserts an <code>mfrac</code> element, a fraction.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_msub">
+<div class="commandDocumentation" id="msub">
     <h3 class="commandTitle">msub</h3>
 
     <p>Inserts an <code>msub</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_msup">
+<div class="commandDocumentation" id="msup">
     <h3 class="commandTitle">msup</h3>
 
     <p>Inserts an <code>msup</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_msubsup">
+<div class="commandDocumentation" id="msubsup">
     <h3 class="commandTitle">msubsup</h3>
 
     <p>Inserts an <code>msubsup</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_msqrt">
+<div class="commandDocumentation" id="msqrt">
     <h3 class="commandTitle">msqrt</h3>
 
     <p>Inserts a <code>msqrt</code> element, a square root.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mroot">
+<div class="commandDocumentation" id="mroot">
     <h3 class="commandTitle">mroot</h3>
 
     <p>Inserts a <code>mroot</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_munder">
+<div class="commandDocumentation" id="munder">
     <h3 class="commandTitle">munder</h3>
 
     <p>Inserts a <code>munder</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mover">
+<div class="commandDocumentation" id="mover">
     <h3 class="commandTitle">mover</h3>
 
     <p>Inserts a <code>mover</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_munderover">
+<div class="commandDocumentation" id="munderover">
     <h3 class="commandTitle">munderover</h3>
 
     <p>Inserts a <code>munderover</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_menclose">
+<div class="commandDocumentation" id="menclose">
     <h3 class="commandTitle">menclose</h3>
 
     <p>Inserts a <code>menclose</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mfenced">
+<div class="commandDocumentation" id="mfenced">
     <h3 class="commandTitle">mfenced</h3>
 
     <p>Inserts a <code>mfenced</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mmultiscripts">
+<div class="commandDocumentation" id="mmultiscripts">
     <h3 class="commandTitle">mmultiscripts</h3>
 
     <p>Inserts a <code>mmultiscripts</code> element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mprescripts">
+<div class="commandDocumentation" id="mprescripts">
     <h3 class="commandTitle">mprescripts</h3>
 
     <p>Inserts a <code>mprescripts</code> element. This element is
@@ -184,30 +184,30 @@ identifier <code>c</code>.</p>
     as prescripts.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_mphantom">
+<div class="commandDocumentation" id="mphantom">
     <h3 class="commandTitle">mphantom</h3>
 
     <p>Inserts a <code>mphantom</code> element. This element hides its
     contents but uses the space anyway.</p>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_table">
+<div class="commandDocumentation" id="table">
     <h3 class="commandTitle">table</h3>
 
     <p>Please read the 
-    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_table">description 
+    <a href="trivialInsertMode.xhtml#table">description 
     of this command in the documentation of the trivial insert mode</a>.</p>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_mlabeledtr">
+<div class="commandDocumentation" id="mlabeledtr">
     <h3 class="commandTitle">mlabeledtr</h3>
 
     <p>Please read the 
-    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_mlabeledtr">description 
+    <a href="trivialInsertMode.xhtml#mlabeledtr">description 
     of this command in the documentation of the trivial insert mode</a>.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_notation_prototype">
+<div class="commandDocumentation" id="notation_prototype">
     <h3 class="commandTitle">Notation: prototype</h3>
 
     <p>Inserts a <code>prototype</code> element in the OMDoc
@@ -216,7 +216,7 @@ identifier <code>c</code>.</p>
     expression.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_notation_rendering">
+<div class="commandDocumentation" id="notation_rendering">
     <h3 class="commandTitle">Notation: rendering</h3>
 
     <p>Inserts a <code>rendering</code> element in the OMDoc
@@ -225,7 +225,7 @@ identifier <code>c</code>.</p>
     definition is applied has to be rendered.</p>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_notation_iterate">
+<div class="commandDocumentation" id="notation_iterate">
     <h3 class="commandTitle">Notation: iterate</h3>
 
     <p>Inserts an <code>iterate</code> element in the OMDoc
@@ -236,14 +236,14 @@ identifier <code>c</code>.</p>
     prototype has to be provided.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_notation_separator">
+<div class="commandDocumentation" id="notation_separator">
     <h3 class="commandTitle">Notation: separator</h3>
 
     <p>Inserts a <code>separator</code> element in the OMDoc
     namespace. It is used inside an <code>iterate</code>.</p>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_notation_render">
+<div class="commandDocumentation" id="notation_render">
     <h3 class="commandTitle">Notation: render</h3>
 
     <p>Inserts a <code>render</code> element in the OMDoc
@@ -256,31 +256,31 @@ identifier <code>c</code>.</p>
 </div>
 
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_oneMoreToSurround">
+<div class="commandDocumentation" id="oneMoreToSurround">
     <h3 class="commandTitle">one more to surround</h3>
 
     <p>Please read the 
-    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_oneMoreToSurround">description 
+    <a href="trivialInsertMode.xhtml#oneMoreToSurround">description 
     of this command in the documentation of the trivial insert mode</a>.</p>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_oneLessToSurround">
+<div class="commandDocumentation" id="oneLessToSurround">
     <h3 class="commandTitle">one less to surround</h3>
 
     <p>Please read the 
-    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_oneLessToSurround">description 
+    <a href="trivialInsertMode.xhtml#oneLessToSurround">description 
     of this command in the documentation of the trivial insert mode</a>.</p>
 </div>
 
-<div class="commandDocumentation" id="trivialInsertModeCommand_cursorJump">
+<div class="commandDocumentation" id="cursorJump">
     <h3 class="commandTitle">Let cursor jump</h3>
 
     <p>Please read the 
-    <a href="trivialInsertMode.xhtml#trivialInsertModeCommand_cursorJump">description 
+    <a href="trivialInsertMode.xhtml#cursorJump">description 
     of this command in the documentation of the trivial insert mode</a>.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_forceNewElement">
+<div class="commandDocumentation" id="forceNewElement">
     <h3 class="commandTitle">Begin new element</h3>
 
     <p>If you enter digits and the element before the cursor is a
@@ -291,7 +291,7 @@ identifier <code>c</code>.</p>
     afterwards insert the digits of the new element.</p>
 </div>
 
-<div class="commandDocumentation" id="ucdInsertModeCommand_exit">
+<div class="commandDocumentation" id="exit">
     <h3 class="commandTitle">Exit mode</h3>
 
     <p>Terminates the insert mode.</p>
