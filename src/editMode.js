@@ -5,6 +5,7 @@ import { elementDescriptions } from "./elementDescriptors.js";
 import { ucd } from "./ucd.js";
 import { VisualSelectionMode } from "./visualSelectionMode.js";
 import { AttributeMode } from "./attributeMode.js";
+import { RegisterData } from "./register.js";
 
 /**
  * After creation of the object, its init method must be called.
