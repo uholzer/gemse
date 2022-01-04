@@ -25,19 +25,12 @@
  *        <dt>type</dt>
  *        <dd>disamb,singleCharacterPreArgumentPrefix,command,longPrefix</dd>
  *        <dt>argument</dt>
- *        <dd>none,parameters,characters,newlineTerminated,manual,regex,selection</dd>
+ *        <dd>none,parameters,characters,newlineTerminated,number,regex,selection</dd>
  *        <dt>argumentLineCount</dt>
  *        <dd>number of lines (only if argument=newlineTerminated,
  *        default is 1)</dd>
  *        <dt>argumentCharacterCount (only if argument=characters)</dt>
  *        <dd>unsigned integer</dd>
- *        <dt>extractArgument (only if argument=manual)</dt>
- *        <dd>function(commandHandler), returns undefined if not
- *        complete. (null is a valid argument!) This procedure must
- *        update commandHandler.pos! argument=manual is not
- *        recommended, since it tampers with the internals of the
- *        CommandHandler, so use it only if the other possiblilities
- *        for argument fail.</dd>
  *        <dt>argumentRegex (only if argument=regex)</dt>
  *        <dd>RegExp object, TODO</dd>
  *        <dt>repeating</dt>
@@ -323,12 +316,16 @@ function scanArgument(commandInfo, selection, buffer) {
         parameters = null;
         pos += ccount;
     }
-    else if (commandInfo.argument=="manual") {
-        argument = commandInfo.extractArgument(this);
-        if (argument === undefined) {
-            // Command is incomplete
+    else if (commandInfo.argument=="number") {
+        // The following regex is intentionally made such that it
+        // does not much if and only if the argument is not known
+        // to be complete.
+        var res = /^([+-]?[0-9.]*)[^0-9.]/.exec(buffer);
+        if (!res) {
             return [null, null, null];
         }
+        pos = res[1].length;
+        argument = res[1];
         parameters = null;
     }
     else if (commandInfo.argument=="regex") {

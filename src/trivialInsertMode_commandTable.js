@@ -22,22 +22,7 @@ export const trivialInsertModeCommands = {
     "n": {
         type: "command",
         repeating: "external",
-        argument: "manual",
-        extractArgument: function(commandHandler) {
-            var s = commandHandler.buffer.slice(commandHandler.pos);
-            // The following regex is intentionally made such that it
-            // does not much if and only if the argument is not known
-            // to be complete.
-            var res = /^([+-]?[0-9.]*)[^0-9.]/.exec(s);
-            if (res) {
-                commandHandler.pos += res[1].length;
-                return res[1];
-            }
-            else { 
-                // Command is not complete
-                return undefined;
-            }
-        },
+        argument: "number",
         implementation: function mn (mode,instance) { return commands.insertDescribedElement(mode,instance,"mn") }
     },
     "N": {
