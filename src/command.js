@@ -73,43 +73,18 @@ CommandHandler.prototype = {
         this.pos = 0;
         // The command instance we are going to populate
         this.instance = new CommandInstance();
-        // How often to repeat
-        this.instance.repeat = 1; // will be deleted after parsing
 
-        /* Repeating */
-        const [newPos, repeat] = this.options.repeating ? scanRepeating(buffer) : [0, null];
-        if (repeat !== null) {
-            this.instance.repeat = repeat;
-        }
-        if (newPos === null) { return this.instance }
+        var remainder;
+        [remainder, this.instance] = combineParsers(buffer, this.instance, [
+            this.options.repeating ? scanRepeating : scanNothing,
+            scanSingleCharacterPreArguments.bind(null, this.commandTable),
+            scanCommand.bind(null, this.commandTable),
+            scanArgument
+        ]);
 
-        /* single character arguments */
-        const [newPos1, preArguments] = scanSingleCharacterPreArguments(this.commandTable, buffer.slice(newPos));
-        if (newPos1 === null) { return this.instance }
-        this.instance.singleCharacterPreArguments = preArguments;
-
-        /* The command itself */
-        const [newPos2, command, commandInfo, forceFlag] = scanCommand(this.commandTable, buffer.slice(newPos + newPos1));
-        if (newPos2 === null) {
+        if (this.instance.bufferIncomplete|| this.instance.notFound) {
             return this.instance;
         }
-        if (command === null) {
-            this.instance.notFound = true;
-            return this.instance;
-        }
-
-        this.instance.command = command;
-        this.instance.commandInfo = commandInfo;
-        this.instance.forceFlag = forceFlag;
-
-        /* Argument */
-
-        const [newPos3, argument, parameters] = scanArgument(this.instance.commandInfo, this.selection, buffer.slice(newPos + newPos1 + newPos2));
-
-        if (newPos3 === null) { return this.instance }
-
-        this.instance.argument = argument;
-        this.instance.parameters = parameters;
 
         /* Complete instance object */
         if (this.instance.commandInfo.repeating=="internal") {
@@ -119,10 +94,9 @@ CommandHandler.prototype = {
             this.instance.externalRepeat = this.instance.repeat;
         }
         //else if (this.instance.commandInfo.repeating=="prevent") { /* noop */ }
-        delete this.instance.repeat;
         this.instance.mode = this.mode;
         this.instance.category = this.instance.commandInfo.category;
-        this.instance.fullCommand = buffer.uSlice(0,newPos + newPos1 + newPos2 + newPos3);
+        this.instance.fullCommand = buffer.uSlice(0, buffer.uLength - remainder.uLength);
         this.instance.selection = this.selection;
         this.instance.implementation = this.instance.commandInfo.implementation;
         this.instance.executionHandler = this.instance.commandInfo.executionHandler;
@@ -131,10 +105,10 @@ CommandHandler.prototype = {
         this.instance.isComplete = true;
 
         /* Eat */
-        if (newPos + newPos1 + newPos2 + newPos3 < 1) {
-            throw new Error("Sum of positions must be at least 1 here");
+        if (buffer.length === remainder.length) {
+            throw new Error("No input has been processed.");
         }
-        this.editor.eatInput(newPos + newPos1 + newPos2 + newPos3);
+        this.editor.eatInput(buffer.uLength - remainder.uLength);
 
         return this.instance; // Success!
     },
@@ -143,19 +117,37 @@ CommandHandler.prototype = {
 const repeatingRegex = /^([1-9][0-9]*)/;
 const longRegex = /^([^\s!]+)(!?)((\s+)(.*))?\n/;
 
-function scanRepeating(buffer) {
+function combineParsers(buffer, instance, [p, ...parsers]) {
+    const [remainder, newInstance] = p(buffer, instance);
+    if (newInstance.bufferIncomplete || newInstance.notFound || parsers.length === 0) {
+        return [remainder, newInstance];
+    }
+    else {
+        return combineParsers(remainder, newInstance, parsers);
+    }
+}
+
+function scanNothing(buffer, instance) {
+    return [buffer, instance];
+}
+
+function scanRepeating(buffer, instance) {
     // Fetch digits at the beginning. The first digit must not
     // be a 0.
     var matchRes = buffer.match(repeatingRegex);
     if (matchRes) {
-        return [matchRes[1].uLength, parseInt(matchRes[1])];
+        return [buffer.slice(matchRes[1].length), instance.set({repeating: parseInt(matchRes[1])})];
     }
     else {
-        return [0, null];
+        return [buffer, instance];
     }
 }
 
-function scanSingleCharacterPreArguments(commandTable, buffer) {
+function incomplete(instance) {
+    return ["", instance.set({bufferIncomplete: true})];
+}
+
+function scanSingleCharacterPreArguments(commandTable, buffer, instance) {
     var firstChar = buffer.uCharAt(0);
     var firstCharInfo = commandTable[firstChar];
     var pos = 0;
@@ -167,7 +159,7 @@ function scanSingleCharacterPreArguments(commandTable, buffer) {
             // The user started to enter a single
             // characterPreArgument by entering the prefix, but
             // the argument is still missing
-            return [null, null];
+            return incomplete(instance);
         }
         singleCharacterPreArguments.push(buffer.uCharAt(pos));
         ++pos;
@@ -179,13 +171,13 @@ function scanSingleCharacterPreArguments(commandTable, buffer) {
     // since otherweise 0 would have already been returned by the
     // loop. firstChar holds this character and firstCharInfo
     // information about it from the command table.
-    return [pos, singleCharacterPreArguments];
+    return [buffer.slice(pos), instance.set({singleCharacterPreArguments})];
 }
 
-function scanCommand(commandTable, buffer) {
+function scanCommand(commandTable, buffer, instance) {
     var pos = 0;
     // Assure that there is at least one character
-    if (buffer.uLength === 0) { return [null, null, null, null]; }
+    if (buffer.uLength === 0) { return incomplete(instance); }
     var command = "";
     var commandInfo = null;
     // The mainloop. It terminates on its only if the command
@@ -197,11 +189,11 @@ function scanCommand(commandTable, buffer) {
         commandInfo = commandTable[command];
         if (!commandInfo) {
             // command does not exist
-            return [pos, null, null, null];
+            return [buffer.slice(pos), instance.set({notFound: true})];
         }
         else if (commandInfo.type == "command") {
             // normal command
-            return [pos, command, commandInfo, false];
+            return [buffer.slice(pos), instance.set({command, commandInfo, forceFlag: false})];
         }
         else if (commandInfo.type == "disamb") {
             // Command is not yet complete, so read more
@@ -216,13 +208,14 @@ function scanCommand(commandTable, buffer) {
             // do that?)
             pos -= command.length;
             var matchRes = buffer.slice(pos).match(longRegex);
+            var forceFlag = false;
             if (matchRes) {
                 // The command seems to be complete
                 command = matchRes[1];
                 commandInfo = commandTable[command];
                 if (!commandInfo) {
                     // command does not exist
-                    return [pos, null, null, null];
+                    return [buffer.slice(pos), instance.set({notFound: true})];
                 }
                 // Is the force flag set?
                 if (matchRes[2]) { forceFlag = true }
@@ -249,10 +242,10 @@ function scanCommand(commandTable, buffer) {
                 else if (commandInfo.argument!="newlineTerminated" && commandInfo.argument!="parameters") {
                     throw new Error("Error in command table")
                 }
-                return [pos, command, commandInfo, forceFlag];
+                return [buffer.slice(pos), instance.set({command, commandInfo, forceFlag})];
             }
             else {
-                return [null, null, null, null];
+                return incomplete(instance);
             }
         }
         else {
@@ -261,10 +254,12 @@ function scanCommand(commandTable, buffer) {
     }
     // Since the loop terminated, command is not yet complete
     // entered by the user at this point.
-    return [null, null, null, null];
+    return incomplete(instance);
 }
 
-function scanArgument(commandInfo, selection, buffer) {
+function scanArgument(buffer, instance) {
+    const commandInfo = instance.commandInfo;
+    const selection = instance.selection;
     var pos = 0;
     var argument;
     var parameters;
@@ -277,7 +272,7 @@ function scanArgument(commandInfo, selection, buffer) {
         var end = buffer.uIndexOf("\n",pos);
         if (end==-1) {
             // Command is incomplete
-            return [null, null, null];
+            return incomplete(instance);
         }
         var paramterStringList = buffer.uSlice(pos,end).split(" ");
         parameters = {};
@@ -300,7 +295,7 @@ function scanArgument(commandInfo, selection, buffer) {
         }
         if (end==-1) {
             // Command is incomplete
-            return [null, null, null];
+            return incomplete(instance);
         }
         parameters = null;
         argument = buffer.slice(pos,end);
@@ -310,7 +305,7 @@ function scanArgument(commandInfo, selection, buffer) {
         var ccount = commandInfo.argumentCharacterCount
         if (buffer.uLength < pos + ccount) {
             // Command is incomplete
-            return [null, null, null];
+            return incomplete(instance);
         }
         argument = buffer.uSlice(pos,pos+ccount);
         parameters = null;
@@ -322,7 +317,7 @@ function scanArgument(commandInfo, selection, buffer) {
         // to be complete.
         var res = /^([+-]?[0-9.]*)[^0-9.]/.exec(buffer);
         if (!res) {
-            return [null, null, null];
+            return incomplete(instance);
         }
         pos = res[1].length;
         argument = res[1];
@@ -343,7 +338,7 @@ function scanArgument(commandInfo, selection, buffer) {
         throw new Error("Unknown argument type: " + this.instance.commandInfo.argument);
     }
 
-    return [pos, argument, parameters];
+    return [buffer.slice(pos), instance.set({argument, parameters})];
 }
 
 /** 
@@ -358,6 +353,10 @@ function CommandInstance() {
      * Array containing the single character pre-arguments.
      */
     this.singleCharacterPreArguments = [];
+    /**
+     * The number of times the command shall be repeated.
+     */
+    this.repeat = 1;
     /**
      * Parameters provided by the user.
      */
@@ -424,6 +423,11 @@ function CommandInstance() {
      */
     this.implementation = null;
     /**
+     * True if the command input buffer used during parsing did not contain a
+     * complete command.
+     */
+    this.bufferIncomplete = false;
+    /**
      * True if the command is complete, otherwise false.
      */
     this.isComplete = false;
@@ -438,8 +442,17 @@ function CommandInstance() {
      * its syntax is wrong.
      */
     this.isInvalid = false;
+
+    // Detects typos when assigning properties
+    Object.seal(this);
 }
 CommandInstance.prototype = {
+    /**
+     * Create a new instance with the given properties set.
+     */
+    set: function (newValues) {
+        return Object.assign(new CommandInstance(), this, newValues);
+    },
     /**
      * Whether the instance can be executed. If not, it is maybe an
      * invalid command.
