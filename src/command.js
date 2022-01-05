@@ -354,8 +354,6 @@ function scanArgument(commandInfo, selection, buffer) {
  * The method execute() can be used to execute the command.
  */
 function CommandInstance() {
-    // Must create these objects for every object, since otherwise, the
-    // array of the prototype could be modified accidentally
     /**
      * Array containing the single character pre-arguments.
      */
@@ -364,89 +362,89 @@ function CommandInstance() {
      * Parameters provided by the user.
      */
     this.parameters = {};
-}
-CommandInstance.prototype = {
     /**
      * Mode object this instance is bound to.
      */
-    mode: null,
+    this.mode = null;
     /**
      * Name of the command, as the user entered it.
      */
-    command: null,
+    this.command = null;
     /**
      * The full command, including digits for repeating, single
      * character arguments, arguments, termination string and so on.
      */
-    fullCommand: null,
+    this.fullCommand = null;
     /**
      * The class of the command, as defined in the command table. The
      * CommandHandler and CommandInstance objects do not look at this
      * value.
      */
-    category: null,
+    this.category = null;
     /**
      * The entry of the command table associated to this command
      * instance.
      */
-    commandInfo: null,
+    this.commandInfo = null;
     /**
      * Long commands can have a force flag
      */
-    forceFlag: false,
+    this.forceFlag = false;
     /**
      * Argument as string
      */
-    argument: null,
+    this.argument = null;
     /**
      * Selection
      */
-    selection: null,
+    this.selection = null;
     /**
      * How many times the command should be repeated by the implementation itself
      */
-    internalRepeat: 1,
+    this.internalRepeat = 1;
     /**
      * How many times the execution mechanism has to call the
      * implementation
      */
-    externalRepeat: 1,
+    this.externalRepeat = 1;
     /**
      * Function that should be used to execute the command, instead of
      * executing it directly
      */
-    executionHandler: null,
+    this.executionHandler = null;
     /**
      * Function that has to be used to handle the result.
      */
-    resultHandler: null,
+    this.resultHandler = null;
     /**
      * The function that implements the command.
      * This function is caled by the execution mechanism, that is, by
      * the execute method of this object. The mode is given as first
      * parameter and this object as the second.
      */
-    implementation: null,
-    /**
-     * Whether the instance can be executed. If not, it is maybe an
-     * invalid command.
-     */
-    get isReadyToExecute() { return this.isComplete && !this.notFound && !this.isInvalid },
+    this.implementation = null;
     /**
      * True if the command is complete, otherwise false.
      */
-    isComplete: false,
+    this.isComplete = false;
     /**
      * True if the command does not exist. (In this case, the command
      * is still in the input buffer, since there is no way to find its
      * end.)
      */
-    notFound: false,
+    this.notFound = false;
     /**
      * True if the command has been found but can not be parsed since
      * its syntax is wrong.
      */
-    isInvalid: false,
+    this.isInvalid = false;
+}
+CommandInstance.prototype = {
+    /**
+     * Whether the instance can be executed. If not, it is maybe an
+     * invalid command.
+     */
+    get isReadyToExecute() { return this.isComplete && !this.notFound && !this.isInvalid },
     /**
      * Executes the command
      */
