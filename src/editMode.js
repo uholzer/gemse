@@ -1,5 +1,5 @@
 import { NS, standardNSResolver } from "./namespace.js";
-import { CommandHandler } from "./command.js";
+import { parseCommand } from "./command.js";
 import * as DOM from "./dom.js";
 import { elementDescriptions } from "./elementDescriptors.js";
 import { ucd } from "./ucd.js";
@@ -32,7 +32,6 @@ export function EditMode(editor, equationEnv) {
      */
     this.equationEnv = equationEnv;
     this.d = this.equationEnv.document;
-    this.commandHandler = new CommandHandler(this,window.editModeCommandOptions,window.editModeCommands);
     /**
      * The selection (as returned by the visual mode) the next command
      * will operate on. This is set after the visual mode terminates
@@ -103,9 +102,15 @@ EditMode.prototype = {
      *          complete command, false is returned.
      */
     inputHandler: function() {
-        this.commandHandler.selection = 
-            this.userSelectionForNextCommand || { startElement: this.cursor, endElement: this.cursor };
-        var instance = this.commandHandler.parse();
+        if (window.editModeCommandOptions.backspace == "removeLast") {
+            this.editor.applyBackspaceInInput();
+        }
+        const selection = this.userSelectionForNextCommand || { startElement: this.cursor, endElement: this.cursor };
+        const instance = parseCommand(
+            this, window.editModeCommands, selection, window.editModeCommandOptions.repeating,
+            this.editor.inputBuffer
+        );
+        if (instance.isComplete) { this.editor.eatInput(instance.fullCommand.uLength) };
         if (!instance.isReadyToExecute) { return false }
         this.userSelectionForNextCommand = null;
         instance.execute();

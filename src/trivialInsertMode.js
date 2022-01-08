@@ -1,5 +1,5 @@
 import { NS } from "./namespace.js";
-import { CommandHandler } from "./command.js";
+import { parseCommand } from "./command.js";
 import * as DOM from "./dom.js";
 import { elementDescriptions } from "./elementDescriptors.js";
 
@@ -16,7 +16,6 @@ function TrivialInsertMode(editor, equationEnv, inElement, beforeElement) {
         numberOfElementsToSurround: 0
     };
     this.cursorStack = [];
-    this.commandHandler = new CommandHandler(this,window.trivialInsertModeCommandOptions,window.trivialInsertModeCommands);
 }
 TrivialInsertMode.prototype = {
     name: "insert (trivial)",
@@ -97,7 +96,14 @@ TrivialInsertMode.prototype = {
     },
     get contextNode() { return null }, // TODO
     inputHandler: function() {
-        var instance = this.commandHandler.parse();
+        if (window.trivialInsertModeCommandOptions.backspace == "removeLast") {
+            this.editor.applyBackspaceInInput();
+        }
+        const instance = parseCommand(
+            this, window.trivialInsertModeCommands, null, window.trivialInsertModeCommandOptions.repeating,
+            this.editor.inputBuffer
+        );
+        if (instance.isComplete) { this.editor.eatInput(instance.fullCommand.uLength) };
         if (!instance.isReadyToExecute) { return false }
         instance.execute();
         return true;

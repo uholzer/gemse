@@ -1,20 +1,7 @@
 /** 
- * @class Highly configurable command handler.
+ * Parse the next command from the input buffer
+ *
  * @param mode
- * @param options Options controlling the behaviour
- *        This has to be an object having the following
- *        fields:
- *        <dl>
- *        <dt>onNotExistingCommand (not implemented)</dt>
- *        <dd>forget,throw,inform,handBack</dd>
- *        <dt>onExistingButMalformedCommand (not implemented)</dt>
- *        <dd>forget,throw,inform,handBack</dd>
- *        <dt>backspace</dt>
- *        <dd>removeLast,asCommand</dd>
- *        <dt>repeating</dt>
- *        <dd>Boolean. When true, commands are not allowed to
- *        begin with a digit, except the command 0.</dd>
- *        </dl>
  * @param commandTable A table of all known commands
  *        For every command c, commandTable[c] must be an object
  *        holding the following fields:
@@ -42,76 +29,49 @@
  *        <dt>implementation</dt>
  *        <dd>function(mode,data,commandInfo)</dd>
  *        </dl>
+ * @param selection The selection the command is to be applied to.
+ * @param {boolean} repeating When true, commands are not allowed to
+ *        begin with a digit, except the command 0.
+ * @param buffer The input buffer which may contain nothing, a prtial command,
+ *        a complete command, or a complete command followed by additional
+ *        characters.
+ * @returns {CommandInstance} A CommandInstance containing all
+ * information needed to execute the command. If an error has been
+ * encountered or the command is incomplete, a CommandInstance is
+ * returned as well and holds all information about the problem.
  */
-export function CommandHandler(mode,options,commandTable) {
-    this.editor = mode.editor;
-    this.mode = mode;
-    this.options = options;
-    this.commandTable = commandTable;
-    this.selection = null;
-}
-CommandHandler.prototype = {
-    pos: null,     // parsing state information
-    buffer: null,  // parsing state information
-    instance: null,// parsing state information
-    /**
-     * Parses the next command from the input buffer
-     * @returns {CommandInstance} A CommandInstance containing all
-     * information needed to execute the command. If an error has been
-     * encountered or the command is incomplete, a CommandInstance is
-     * returned as well and holds all information about the problem.
-     */
-    parse: function() {
-        // Check handling of backspaces before copying the input
-        // buffer
-        if (this.options.backspace == "removeLast") {
-            this.editor.applyBackspaceInInput();
-        }
-        const buffer = this.editor.inputBuffer;
-        // Track where the next unprocessed character is  
-        // in the input buffer, counting unicode characters
-        this.pos = 0;
-        // The command instance we are going to populate
-        this.instance = new CommandInstance();
+export function parseCommand(mode, commandTable, selection, repeating, buffer) {
+    const initialInstance = new CommandInstance();
 
-        var remainder;
-        [remainder, this.instance] = combineParsers(buffer, this.instance, [
-            this.options.repeating ? scanRepeating : scanNothing,
-            scanSingleCharacterPreArguments.bind(null, this.commandTable),
-            scanCommand.bind(null, this.commandTable),
-            scanArgument
-        ]);
+    const [remainder, instance] = combineParsers(buffer, initialInstance, [
+        repeating ? scanRepeating : scanNothing,
+        scanSingleCharacterPreArguments.bind(null, commandTable),
+        scanCommand.bind(null, commandTable),
+        scanArgument
+    ]);
 
-        if (this.instance.bufferIncomplete|| this.instance.notFound) {
-            return this.instance;
-        }
+    if (instance.bufferIncomplete || instance.notFound) {
+        return instance;
+    }
 
-        /* Complete instance object */
-        if (this.instance.commandInfo.repeating=="internal") {
-            this.instance.internalRepeat = this.instance.repeat;
-        }
-        else if (this.instance.commandInfo.repeating=="external") {
-            this.instance.externalRepeat = this.instance.repeat;
-        }
-        //else if (this.instance.commandInfo.repeating=="prevent") { /* noop */ }
-        this.instance.mode = this.mode;
-        this.instance.category = this.instance.commandInfo.category;
-        this.instance.fullCommand = buffer.uSlice(0, buffer.uLength - remainder.uLength);
-        this.instance.selection = this.selection;
-        this.instance.implementation = this.instance.commandInfo.implementation;
-        this.instance.executionHandler = this.instance.commandInfo.executionHandler;
-        this.instance.resultHandler = this.instance.commandInfo.resultHandler;
+    const finalInstance = instance.set({
+        internalRepeat: instance.commandInfo.repeating === "internal" ? instance.repeat : 1,
+        externalRepeat: instance.commandInfo.repeating === "external" ? instance.repeat : 1,
+        mode: mode,
+        category: instance.commandInfo.category,
+        fullCommand: buffer.uSlice(0, buffer.uLength - remainder.uLength),
+        selection: selection,
+        implementation: instance.commandInfo.implementation,
+        executionHandler: instance.commandInfo.executionHandler,
+        resultHandler: instance.commandInfo.resultHandler,
+        isComplete: true,
+    });
 
-        this.instance.isComplete = true;
+    if (finalInstance.fullCommand.length === 0) {
+        throw new Error("No input has been processed.");
+    }
 
-        /* Eat */
-        if (buffer.length === remainder.length) {
-            throw new Error("No input has been processed.");
-        }
-        this.editor.eatInput(buffer.uLength - remainder.uLength);
-
-        return this.instance; // Success!
-    },
+    return finalInstance;
 }
 
 const repeatingRegex = /^([1-9][0-9]*)/;
@@ -260,68 +220,58 @@ function scanCommand(commandTable, buffer, instance) {
 function scanArgument(buffer, instance) {
     const commandInfo = instance.commandInfo;
     const selection = instance.selection;
-    var pos = 0;
-    var argument;
-    var parameters;
     if (commandInfo.argument=="none") {
-        argument = null;
-        parameters = null;
+        return [buffer, instance.set({argument: null, parameters: []})];
     }
     else if (commandInfo.argument=="paramters") {
-        // TODO: Parsing of paramters should be improved
-        var end = buffer.uIndexOf("\n",pos);
-        if (end==-1) {
-            // Command is incomplete
+        var end = buffer.uIndexOf("\n");
+        if (end >= 0) {
+            const parameters = Object.fromEntries(
+                buffer.uSlice(0, end).split(" ").map(
+                    s => s.match(/^([^=]*)(?:=(.*))?$/)
+                ).map(
+                    ([, key, value=""]) => [key, value]
+                )
+            );
+            return [buffer.slice(end + 1), instance.set({argument: null, parameters})];
+        }
+        else {
             return incomplete(instance);
         }
-        var paramterStringList = buffer.uSlice(pos,end).split(" ");
-        parameters = {};
-        parameterStringList.forEach(function(s) {
-            var equalSignIndex = s.indexOf("="); // Counting UTF16 characters
-            if (equalSignIndex == -1) {
-                throw new Error("Invalid parameter syntax");
-            }
-            parameters[s.slice(0,equalSignIndex)] = s.slice(equalSign+1);
-        });
-        argument = null;
-        pos = end+1;
     }
     else if (commandInfo.argument=="newlineTerminated") {
-        var end = buffer.uIndexOf("\n",pos);
-        if (commandInfo.argumentLineCount) {
-            for (var i=1; end!=-1 && i<commandInfo.argumentLineCount; ++i) {
-                end = buffer.uIndexOf("\n",end+1);
-            }
+        const lineCount = commandInfo.argumentLineCount || 1;
+        var end = buffer.uIndexOf("\n");
+        for (var i=1; end!=-1 && i<commandInfo.argumentLineCount; ++i) {
+            end = buffer.uIndexOf("\n",end+1);
         }
-        if (end==-1) {
-            // Command is incomplete
+        if (end >= 0) {
+            return [buffer.slice(end + 1), instance.set({argument: buffer.uSlice(0, end), parameters: []})];
+        }
+        else {
             return incomplete(instance);
         }
-        parameters = null;
-        argument = buffer.slice(pos,end);
-        pos = end+1;
     }
     else if (commandInfo.argument=="characters") {
-        var ccount = commandInfo.argumentCharacterCount
-        if (buffer.uLength < pos + ccount) {
-            // Command is incomplete
+        const ccount = commandInfo.argumentCharacterCount;
+        if (buffer.uLength >= ccount) {
+            return [buffer.slice(ccount), instance.set({argument: buffer.uSlice(0, ccount), parameters: []})];
+        }
+        else {
             return incomplete(instance);
         }
-        argument = buffer.uSlice(pos,pos+ccount);
-        parameters = null;
-        pos += ccount;
     }
     else if (commandInfo.argument=="number") {
-        // The following regex is intentionally made such that it
-        // does not much if and only if the argument is not known
-        // to be complete.
-        var res = /^([+-]?[0-9.]*)[^0-9.]/.exec(buffer);
-        if (!res) {
+        // The command is only considered complete if there is a character that
+        // cannot be part of a number. Therefore, another command must always
+        // follow before this one is accepted as complete.
+        const res = /^([+-]?[0-9.]*)[^0-9.]/.exec(buffer);
+        if (res) {
+            return [buffer.slice(res[1].length), instance.set({argument: res[1], parameters: []})];
+        }
+        else  {
             return incomplete(instance);
         }
-        pos = res[1].length;
-        argument = res[1];
-        parameters = null;
     }
     else if (commandInfo.argument=="regex") {
         // TODO
@@ -329,16 +279,17 @@ function scanArgument(buffer, instance) {
     }
     else if (commandInfo.argument=="selection") {
         // If selection is aleady set, we are done
+        if (selection) {
+            return [buffer, instance.set({argument: null, parameters: []})];
+        }
         if (!selection) {
             // TODO
             throw new Error("Selection by argument is not yet supported");
         }
     }
     else {
-        throw new Error("Unknown argument type: " + this.instance.commandInfo.argument);
+        throw new Error("Unknown argument type: " + instance.commandInfo.argument);
     }
-
-    return [buffer.slice(pos), instance.set({argument, parameters})];
 }
 
 /** 

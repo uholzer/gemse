@@ -1,5 +1,5 @@
 import { NS } from "./namespace.js";
-import { CommandHandler } from "./command.js";
+import { parseCommand } from "./command.js";
 import * as DOM from "./dom.js";
 
 export function VisualSelectionMode(editor, equationEnv, startElement) {
@@ -14,7 +14,6 @@ export function VisualSelectionMode(editor, equationEnv, startElement) {
         endElement:   startElement,
         moving:       this.END,
     };
-    this.commandHandler = new CommandHandler(this,window.visualSelectionModeCommandOptions,window.visualSelectionModeCommands);
 }
 VisualSelectionMode.prototype = {
     name: "visual",
@@ -86,7 +85,14 @@ VisualSelectionMode.prototype = {
         throw new Error("Never reached!");
     },
     inputHandler: function() {
-        var instance = this.commandHandler.parse();
+        if (window.visualSelectionModeCommandOptions.backspace == "removeLast") {
+            this.editor.applyBackspaceInInput();
+        }
+        const instance = parseCommand(
+            this, window.visualSelectionModeCommands, null, window.visualSelectionModeCommandOptions.repeating,
+            this.editor.inputBuffer
+        );
+        if (instance.isComplete) { this.editor.eatInput(instance.fullCommand.uLength) };
         if (instance.isReadyToExecute) {
             instance.execute();
             return true;

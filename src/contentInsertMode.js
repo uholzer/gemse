@@ -3,7 +3,7 @@
 */
 
 import { NS, standardNSResolver } from "./namespace.js";
-import { CommandHandler } from "./command.js";
+import { parseCommand } from "./command.js";
 import * as DOM from "./dom.js";
 import { ucd } from "./ucd.js";
 
@@ -20,7 +20,6 @@ function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
         numberOfElementsToSurround: 0
     };
     this.cursorStack = [];
-    this.commandHandler = new CommandHandler(this,window.contentInsertModeCommandOptions,window.contentInsertModeCommands);
     /** Set to true if the next character must not be added to the
      * content of the preceding element. This is useful if the user
      * wants to insert two mn elements behind each other.
@@ -123,7 +122,14 @@ ContentInsertMode.prototype = {
     },
     get contextNode() { return null }, // TODO
     inputHandler: function() {
-        var instance = this.commandHandler.parse();
+        if (window.contentInsertModeCommandOptions.backspace == "removeLast") {
+            this.editor.applyBackspaceInInput();
+        }
+        const instance = parseCommand(
+            this, window.contentInsertModeCommands, null, window.contentInsertModeCommandOptions.repeating,
+            this.editor.inputBuffer
+        );
+        if (instance.isComplete) { this.editor.eatInput(instance.fullCommand.uLength) };
         if (instance.isReadyToExecute) {
             instance.execute();
             // Do not do

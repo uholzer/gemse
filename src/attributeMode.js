@@ -1,5 +1,5 @@
 import { NS } from "./namespace.js";
-import { CommandHandler } from "./command.js";
+import { parseCommand } from "./command.js";
 import { elementDescriptions } from "./elementDescriptors.js";
 
 export function AttributeMode(editor, equationEnv, element) {
@@ -10,7 +10,6 @@ export function AttributeMode(editor, equationEnv, element) {
     this.element = element;
     this.attributes = [];
     this.cursor = null;
-    this.commandHandler = new CommandHandler(this,window.attributeModeCommandOptions,window.attributeModeCommands);
 }
 AttributeMode.prototype = {
     name: "attribute",
@@ -62,7 +61,14 @@ AttributeMode.prototype = {
     },
     get contextNode() { return this.element }, // XXX: good like this?
     inputHandler: function() {
-        var instance = this.commandHandler.parse();
+        if (window.attributeModeCommandOptions.backspace == "removeLast") {
+            this.editor.applyBackspaceInInput();
+        }
+        const instance = parseCommand(
+            this, window.attributeModeCommands, null, window.attributeModeCommandOptions.repeating,
+            this.editor.inputBuffer
+        );
+        if (instance.isComplete) { this.editor.eatInput(instance.fullCommand.uLength) };
         if (!instance.isReadyToExecute) { return false }
         instance.execute();
         return true;
