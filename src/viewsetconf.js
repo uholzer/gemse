@@ -1,5 +1,4 @@
 import { NS } from "./namespace.js";
-import * as DOM from "./dom.js";
 
 configurator = {
     editor: null,
@@ -38,7 +37,7 @@ configurator = {
             // Different viewset than before, reset selection.
             this.viewsetNumber = this.viewsetManager.globalViewsetNumber;
             this.viewset = this.viewsetManager.viewsets[this.viewsetNumber];
-            this.select(this.editorWindow.DOM.mml_firstChild(this.viewset));
+            this.select(this.viewset.firstElementChild);
         }
         else {
             // The viewset is still the same. For safety, check
@@ -47,7 +46,7 @@ configurator = {
             var p = this.selected;
             while (p && p != this.viewset) { p = p.parentNode }
             if (!p) {
-                this.select(this.editorWindow.DOM.mml_firstChild(this.viewset));
+                this.select(this.viewset.firstElementChild);
             }
         }
 
@@ -144,7 +143,7 @@ configurator = {
 
     fillViewsetsMenupopup: function() {
         var menu = document.getElementById("viewsetsMenupopup");
-        this.editorWindow.xml_flushElement(menu);
+        menu.replaceChildren();
         this.viewsetManager.viewsets.forEach(function (v, index) {
             var menuitem = document.createElement("menuitem");
             menuitem.setAttribute("label", v.getAttribute("name"));
@@ -173,7 +172,7 @@ configurator = {
         this.viewsetManager.chooseViewset(this.viewsetNumber);
     },
     buildSchematics: function() {
-        this.editorWindow.xml_flushElement(this.schematicsContainer);
+        this.schematicsContainer.replaceChildren();
         var e = this.viewset;
         
         var child = e.firstChild;

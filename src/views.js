@@ -1,7 +1,5 @@
 import { NS, standardNSResolver } from "./namespace.js";
-import { xml_flushElement } from "./dom.js";
 import { OptionsAssistant } from "./optionsAssistant.js";
-import * as DOM from "./dom.js";
 import { elementDescriptions } from "./elementDescriptors.js";
 import { operatorDictionary } from "./operatorDictionary.js";
 
@@ -35,7 +33,7 @@ DirectView.prototype = {
      * Builds the direct view. 
      */
     build: function() {
-        xml_flushElement(this.viewport);
+        this.viewport.replaceChildren();
         this.viewport.appendChild(document.importNode(this.equationEnv.equation, true));
     }
 }
@@ -61,7 +59,7 @@ MessageView.prototype = {
      */
     build: function() {
         // Put the editor.lastMessage as only child into the viewport.
-        xml_flushElement(this.viewport);
+        this.viewport.replaceChildren();
         this.editor.messages.forEach(function(m) {
             this.viewport.appendChild(m);
         }, this);
@@ -96,7 +94,7 @@ TreeView.prototype = {
             { acceptNode: function(node) { return (node.nodeType == Node.ELEMENT_NODE || !(/^\s*$/.test(node.nodeValue))) ?  NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } },
             false
         );
-        xml_flushElement(this.viewport);
+        this.viewport.replaceChildren();
         var root = document.createElementNS(NS.HTML,"div");
         this.viewport.appendChild(root);
         var pos = root;
@@ -163,7 +161,7 @@ SourceView.prototype = {
      * in some way.
      */
     build: function() {
-        xml_flushElement(this.viewport);
+        this.viewport.replaceChildren();
         var pre = document.createElementNS(NS.HTML,"pre");
         this.viewport.appendChild(pre);
         var root = this.equationEnv.equation;
@@ -214,13 +212,13 @@ SourceView.prototype = {
 
         // Now fill in the contents of elementSpan:
 
-        if (!DOM.mml_firstChild(src) && !src.firstChild) {
+        if (!src.firstChild) {
             // src is empty
             elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_BOTH,src));
             elementSpan.appendChild(document.createTextNode("\n"));
         }
-        else if (!DOM.mml_firstChild(src)) {
+        else if (!src.firstElementChild) {
             // src contains text but no elements
             elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_START,src));
@@ -229,15 +227,15 @@ SourceView.prototype = {
             elementSpan.appendChild(document.createTextNode("\n"));
         }
         else {
-            // Element contains children
+            // Element contains element children
             elementSpan.appendChild(document.createTextNode(indentString));
             elementSpan.appendChild(tag(TAGTYPE_START,src));
-            var child = DOM.mml_firstChild(src);
+            var child = src.firstElementChild;
             if (foldingLevel != 0) {
                 elementSpan.appendChild(document.createTextNode("\n"));
                 while (child) {
                     this.writeSourceOfElement(child,elementSpan,indentMoreString,foldingLevel-1);
-                    child = DOM.mml_nextSibling(child);
+                    child = child.nextElementSibling;
                 }
                 elementSpan.appendChild(document.createTextNode(indentString));
             }
@@ -441,7 +439,7 @@ EquationView.prototype = {
      * Builds the view.
      */
     build: function() {
-        xml_flushElement(this.viewport);
+        this.viewport.replaceChildren();
 
         var context = this.equationEnv.mode.contextNode;
         var context_xref;
@@ -544,7 +542,7 @@ AttributeView.prototype = {
      */
     build: function () {
         var forElement = this.equationEnv.mode.contextNode;
-        xml_flushElement(this.viewport);
+        this.viewport.replaceChildren();
         if (!forElement) { return }
 
         // Place attribute information inside an Array
@@ -644,7 +642,7 @@ DictionaryView.prototype = {
      */
     build: function() {
         var forElement = this.equationEnv.mode.contextNode;
-        xml_flushElement(this.viewport);
+        this.viewport.replaceChildren();
         if (!forElement) { return }
 
         // Return immediately if we are not on an mo element
@@ -815,7 +813,7 @@ StatusbarView.prototype = {
      * Builds the view
      */
     build: function () {
-        xml_flushElement(this.viewport);
+        this.viewport.replaceChildren();
         const modeNameLabel = document.createElementNS(NS.HTML,"div");
         modeNameLabel.appendChild(document.createTextNode(this.equationEnv.mode.name));
         this.viewport.appendChild(modeNameLabel);
@@ -1127,7 +1125,7 @@ NTNView.prototype = {
             
             var domRoot;
             if (rerenderRequired) {
-                xml_flushElement(this.viewport);
+                this.viewport.replaceChildren();
 
                 // Build representation of the equation using XOM
                 var xomRoot = this.dom2xom(this.o.equation ? this.editor.equations[this.o.equation].equation : this.equationEnv.equation);
@@ -1296,9 +1294,9 @@ NTNView.prototype = {
      */
     updateInternals: function(oldResult, newEquation) {
         if (!oldResult) { return false; }
-        var semanticsEl = DOM.mml_firstChild(oldResult);
+        var semanticsEl = oldResult.firstElementChild;
         if (!semanticsEl) { return false; }
-        var annotationxmlEl = DOM.mml_lastChild(semanticsEl);
+        var annotationxmlEl = semanticsEl.lastElementChild;
         if (!annotationxmlEl) { return false; }
         
         // We do not compare the math element and the annotationxmlEl
@@ -1307,14 +1305,14 @@ NTNView.prototype = {
         
         // Compare children using updateInternalsOfElement
         // (We only look at elements, not at text nodes)
-        var oldChild = DOM.mml_firstChild(annotationxmlEl);
-        var newChild = DOM.mml_firstChild(newEquation);
+        var oldChild = annotationxmlEl.firstElementChild;
+        var newChild = newEquation.firstElementChild;
         while (oldChild || newChild) {
             if (!this.updateInternalsOfElement(oldChild, newChild)) {
                 return false;
             }
-            oldChild = DOM.mml_nextSibling(oldChild);
-            newChild = DOM.mml_nextSibling(newChild);
+            oldChild = oldChild.nextElementSibling;
+            newChild = newChild.nextElementSibling;
         }
         
         return true;

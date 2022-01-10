@@ -3,102 +3,17 @@
 import { NS } from "./namespace.js";
 
 /**
- * Returns the element following the given one, null if the given one
- * is the last sibling element.
- */
-export function mml_nextSibling(element) {
-    while (element = element.nextSibling) {
-        if (element.nodeType == Node.ELEMENT_NODE) {
-            return element;
-        }
-    }
-    return null;
-}
-
-/**
- * Returns the element before the given one or null if no preceding
- * siblings exist.
- */
-export function mml_previousSibling(element) {
-    while (element = element.previousSibling) {
-        if (element.nodeType == Node.ELEMENT_NODE) {
-            return element;
-        }
-    }
-    return null;
-}
-
-/**
- * Returns the first element with the same parent
- */
-export function mml_firstSibling(element) {
-    var next;
-    while (next = mml_previousSibling(element)) {
-        element = next;
-    }
-    return element;
-}
-
-/**
- * Returns the last element with the same parent
- */
-export function mml_lastSibling(element) {
-    var next;
-    while (next = mml_nextSibling(element)) {
-        element = next;
-    }
-    return element;
-}
-
-/**
- * Returns the first child element.
- */
-export function mml_firstChild(element) {
-    var candidates = element.childNodes;
-    for (var i = 0; i < candidates.length; i++) {
-        if (candidates[i].nodeType == Node.ELEMENT_NODE) {
-            return candidates[i];
-        }
-    }
-    return null;
-}
-
-/**
- * Returns the last child element
- */
-export function mml_lastChild(element) {
-    var candidates = element.childNodes;
-    for (var i = candidates.length-1; i >= 0; i--) {
-        if (candidates[i].nodeType == Node.ELEMENT_NODE) {
-            return candidates[i];
-        }
-    }
-    return null;
-}
-
-/**
- * Returns the parent element. If the parent element is a document
- * node, null is returned, since this means that the given element
- * already is the root element. (More precisely: If the parent node is
- * not an element, null is returned)
- * @param element A DOM element
- */
-export function mml_parent(element) {
-    return (element.parentNode.nodeType==1) ? element.parentNode : null;
-}
-
-/**
  * Returns the next leaf element in document order. A leaf element is
  * an element that has no child elements.
  */
 export function mml_nextLeaf(element) {
     var nextLeaf = null;
-    var nextSibling = mml_nextSibling(element);
+    var nextSibling = element.nextElementSibling;
     if (!nextSibling) {
         // No next sibling, so we have to go up
         while (!nextSibling) {
             element = element.parentNode;
-            nextSibling = mml_nextSibling(element);
+            nextSibling = element.nextElementSibling;
             if (element.localName=="math" && element.namespaceURI == NS.MathML) { return null }
         }
         // Here we reached a point where nextSibling is defined.
@@ -106,12 +21,12 @@ export function mml_nextLeaf(element) {
         // ancestor of a leaf. So it may be that we have to
         // go down later.
     }
-    if (mml_firstChild(nextSibling)) {
+    if (nextSibling.firstElementChild) {
         // Next sibling is not a leaf but contains children.
         // So we have to go down.
         nextLeaf = nextSibling;
         var next;
-        while (next = mml_firstChild(nextLeaf)) {
+        while (next = nextLeaf.firstElementChild) {
             nextLeaf = next;
         }
     }
@@ -128,12 +43,12 @@ export function mml_nextLeaf(element) {
  */
 export function mml_previousLeaf(element) {
     var previousLeaf = null;
-    var previousSibling = mml_previousSibling(element);
+    var previousSibling = element.previousElementSibling;
     if (!previousSibling) {
         // No next sibling, so we have to go up
         while (!previousSibling) {
             element = element.parentNode;
-            previousSibling = mml_previousSibling(element);
+            previousSibling = element.previousElementSibling;
             if (element.localName=="math" && element.namespaceURI == NS.MathML) { return null }
         }
         // Here we reached a point where nextSibling is defined.
@@ -141,12 +56,12 @@ export function mml_previousLeaf(element) {
         // ancestor of a leaf. So it may be that we have to
         // go down later.
     }
-    if (mml_lastChild(previousSibling)) {
+    if (previousSibling.lastElementChild) {
         // Next sibling is not a leaf but contains children.
         // So we have to go down.
         previousLeaf = previousSibling;
         var next;
-        while (next = mml_lastChild(previousLeaf)) {
+        while (next = previousLeaf.lastElementChild) {
             previousLeaf = next;
         }
     }
@@ -155,11 +70,4 @@ export function mml_previousLeaf(element) {
         previousLeaf = previousSibling;
     }
     return previousLeaf;
-}
-
-/**
- * Removes all child nodes of the element
- */
-export function xml_flushElement(element) {
-    while (element.hasChildNodes()) { element.removeChild(element.firstChild); }
 }

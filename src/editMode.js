@@ -224,7 +224,7 @@ function editModeTool_copySelectedElementsToRegister(mode,selection,registerName
     mode.hideCursor();
     while (from != to) {
         registerContent.push(from.cloneNode(true));
-        from = DOM.mml_nextSibling(from);
+        from = from.nextElementSibling;
     }
     registerContent.push(to.cloneNode(true));
     if (registerName) { // If an explicit register is given
@@ -248,31 +248,31 @@ export function editModeExecutionHandler_movement(mode,instance) {
 
 export const commands = {
     moveLeft(mode,currentElement) {
-        return DOM.mml_previousSibling(currentElement);
+        return currentElement.previousElementSibling;
     },
 
     moveRight(mode,currentElement) {
-        return DOM.mml_nextSibling(currentElement);
+        return currentElement.nextElementSibling;
     },
 
     moveUp(mode,currentElement) {
-        return DOM.mml_parent(currentElement);
+        return currentElement.parentElement;
     },
 
     moveDown(mode,currentElement) {
-        return DOM.mml_firstChild(currentElement);
+        return currentElement.firstElementChild;
     },
 
     moveDownLast(mode,currentElement) {
-        return DOM.mml_lastChild(currentElement);
+        return currentElement.lastElementChild;
     },
 
     moveToFirstSibling(mode,currentElement) {
-        return DOM.mml_firstSibling(currentElement);
+        return currentElement.parentNode.firstElementChild;
     },
 
     moveToLastSibling(mode,currentElement) {
-        return DOM.mml_lastSibling(currentElement);
+        return currentElement.parentNode.lastElementChild;
     },
 
     moveToRoot(mode, currentElelment) {
@@ -330,7 +330,7 @@ export const commands = {
         // Delete element under the cursor
         var change = mode.equationEnv.history.createChange();
         change.recordBefore(mode.equationEnv.equation,parentOfTarget);
-        mode.moveCursor(DOM.mml_nextSibling(target) || DOM.mml_previousSibling(target) || parentOfTarget);
+        mode.moveCursor(target.nextElementSibling || target.previousElementSibling || parentOfTarget);
         target.parentNode.removeChild(target);
         change.recordAfter(mode.equationEnv.equation,parentOfTarget);
         mode.equationEnv.history.reportChange(change);
@@ -349,9 +349,9 @@ export const commands = {
         // Remove the elements
         var change = mode.equationEnv.history.createChange();
         change.recordBefore(mode.equationEnv.equation,parentOfTargets);
-        mode.moveCursor(DOM.mml_nextSibling(to) || DOM.mml_previousSibling(from) || parentOfTargets);
+        mode.moveCursor(to.nextElementSibling || from.previousElementSibling || parentOfTargets);
         while (from != to) {
-            var nextFrom = DOM.mml_nextSibling(from);
+            var nextFrom = from.nextElementSibling;
             parentOfTargets.removeChild(from);
             from = nextFrom;
         }
@@ -373,10 +373,10 @@ export const commands = {
         // Make the change
         var change = mode.equationEnv.history.createChange();
         change.recordBefore(mode.equationEnv.equation,parentOfTargets);
-        var cursorBefore = DOM.mml_nextSibling(to);
-        mode.moveCursor(DOM.mml_nextSibling(to) || DOM.mml_previousSibling(from) || parentOfTargets);
+        var cursorBefore = to.nextElementSibling;
+        mode.moveCursor(to.nextElementSibling || from.previousElementSibling || parentOfTargets);
         while (from != to) {
-            var nextFrom = DOM.mml_nextSibling(from);
+            var nextFrom = from.nextElementSibling;
             parentOfTargets.removeChild(from);
             from = nextFrom;
         }
@@ -417,7 +417,7 @@ export const commands = {
     },
 
     insertAfter(mode) {
-        return mode.callInsertMode(mode.cursor.parentNode, DOM.mml_nextSibling(mode.cursor));
+        return mode.callInsertMode(mode.cursor.parentNode, mode.cursor.nextElementSibling);
     },
 
     insertIn(mode) {
@@ -426,12 +426,12 @@ export const commands = {
     },
 
     insertAtBeginning(mode) {
-        mode.moveCursor(DOM.mml_firstSibling(mode.cursor));
+        mode.moveCursor(mode.cursor.parentNode.firstElementChild);
         return insertBefore(mode);
     },
 
     insertAtEnd(mode) {
-        mode.moveCursor(DOM.mml_lastSibling(mode.cursor));
+        mode.moveCursor(mode.cursor.parentNode.lastElementChild);
         return insertAfter(mode);
     },
 
@@ -664,7 +664,7 @@ export const commands = {
 
     putAfter(mode,instance) {
         var registerName = instance.singleCharacterPreArguments[0] || '"';
-        var position = DOM.mml_nextSibling(mode.cursor);
+        var position = mode.cursor.nextElementSibling;
         var change = mode.equationEnv.history.createChange();
         change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
         mode.editor.registerManager.get(registerName).content.forEach(function (e) {
@@ -673,7 +673,7 @@ export const commands = {
         change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
         mode.equationEnv.history.reportChange(change);
         // Put cursor on the last inserted element
-        mode.moveCursor(position ? DOM.mml_previousSibling(position) : DOM.mml_lastChild(mode.cursor.parentNode));
+        mode.moveCursor(position ? position.previousElementSibling : mode.cursor.parentNode.lastElementChild);
         return true;
     },
 
@@ -688,7 +688,7 @@ export const commands = {
         change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
         mode.equationEnv.history.reportChange(change);
         // Put cursor on the last inserted element
-        mode.moveCursor(position ? DOM.mml_previousSibling(position) : DOM.mml_lastChild(mode.cursor.parentNode));
+        mode.moveCursor(position ? position.previousElementSibling : mode.cursor.parentNode.lastElementChild);
         return true;
     },
 
@@ -704,7 +704,7 @@ export const commands = {
         change.recordAfter(mode.equationEnv.equation,mode.cursor);
         mode.equationEnv.history.reportChange(change);
         // Put cursor on the last inserted element
-        mode.moveCursor(DOM.mml_lastChild(mode.cursor));
+        mode.moveCursor(mode.cursor.lastElementChild);
         return true;
     },
 
@@ -716,7 +716,7 @@ export const commands = {
         var parentNode = toBeRemoved.parentNode;
         var change = mode.equationEnv.history.createChange();
         change.recordBefore(mode.equationEnv.equation,parentNode);
-        mode.moveCursor(DOM.mml_firstChild(toBeRemoved) || parentNode);
+        mode.moveCursor(toBeRemoved.firstElementChild || parentNode);
 
         while (toBeRemoved.hasChildNodes()) {
             parentNode.insertBefore(toBeRemoved.firstChild, toBeRemoved);
@@ -754,7 +754,7 @@ export const commands = {
         // Fill the new mrow
         var pos = instance.selection.startElement;
         while (pos != instance.selection.endElement) {
-            var nextPos = DOM.mml_nextSibling(pos);
+            var nextPos = pos.nextElementSibling;
             newMrow.appendChild(pos);
             pos = nextPos;
         }

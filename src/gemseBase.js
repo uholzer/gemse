@@ -4,7 +4,6 @@ import "./UString.js";
 
 import { NS, standardNSResolver } from "./namespace.js";
 import { KeyMod, KeyRepresentation, KeynameQuote } from "./key.js";
-import { xml_flushElement } from "./dom.js";
 import { gemseGlobalOptions } from "./globalOptions.js";
 import { OptionsAssistant } from "./optionsAssistant.js";
 import { inputSubstitution, inputSubstitutionActive } from "./inputSubstitution/core.js";
@@ -611,7 +610,7 @@ ViewsetManager.prototype = {
         // Get rid of current views
         this.views = [];
         // Clear the dock
-        xml_flushElement(this.dock);
+        this.dock.replaceChildren();
         // Make deep copy of the viewset
         var newViewset = this.viewsets[viewsetNumber].cloneNode(true);
         // Fill the dock

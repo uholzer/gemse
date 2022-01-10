@@ -4,7 +4,6 @@
 
 import { NS, standardNSResolver } from "./namespace.js";
 import { parseCommand } from "./command.js";
-import * as DOM from "./dom.js";
 import { ucd } from "./ucd.js";
 
 function ContentInsertMode(editor, equationEnv, inElement, beforeElement) {
@@ -52,14 +51,14 @@ ContentInsertMode.prototype = {
         // TODO: Clean up attribute mess
         this.hideCursor();
         var newEditCursor;
-        if (this.cursor.beforeElement && DOM.mml_previousSibling(this.cursor.beforeElement)) {
-            newEditCursor = DOM.mml_previousSibling(this.cursor.beforeElement);
+        if (this.cursor.beforeElement && this.cursor.beforeElement.previousElementSibling) {
+            newEditCursor = this.cursor.beforeElement.previousElementSibling;
         }
         else if (this.cursor.beforeElement) {
             newEditCursor = this.cursor.beforeElement;
         }
-        else if (DOM.mml_lastChild(this.cursor.inElement)) {
-            newEditCursor = DOM.mml_lastChild(this.cursor.inElement);
+        else if (this.cursor.inElement.lastElementChild) {
+            newEditCursor = this.cursor.inElement.lastElementChild;
         }
         else {
             newEditCursor = this.cursor.inElement;
@@ -72,46 +71,46 @@ ContentInsertMode.prototype = {
         this.cursor.inElement.removeAttributeNS(NS.internal,"selected");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.removeAttributeNS(NS.internal,"selected");
-            if (DOM.mml_previousSibling(this.cursor.beforeElement)) {
-                DOM.mml_previousSibling(this.cursor.beforeElement).removeAttributeNS(NS.internal,"selected");
+            if (this.cursor.beforeElement.previousElementSibling) {
+                this.cursor.beforeElement.previousElementSibling.removeAttributeNS(NS.internal,"selected");
             }
         }
-        else if (DOM.mml_lastChild(this.cursor.inElement)) {
-            DOM.mml_lastChild(this.cursor.inElement).removeAttributeNS(NS.internal,"selected");
+        else if (this.cursor.inElement.lastElementChild) {
+            this.cursor.inElement.lastElementChild.removeAttributeNS(NS.internal,"selected");
         }
         // remove selected="userSelection" attributes on preceding siblings
         var sibling;
         if (this.cursor.beforeElement) { 
-            sibling = DOM.mml_previousSibling(this.cursor.beforeElement);
+            sibling = this.cursor.beforeElement.previousElementSibling;
         }
         else {
-            sibling = DOM.mml_lastChild(this.cursor.inElement);
+            sibling = this.cursor.inElement.lastElementChild;
         }
         while (sibling) {
             sibling.removeAttributeNS(NS.internal,"selected");
-            sibling = DOM.mml_previousSibling(sibling);
+            sibling = sibling.previousElementSibling;
         }
     },
     showCursor: function() {
         this.cursor.inElement.setAttributeNS(NS.internal,"selected","insertCursorIn");
         if (this.cursor.beforeElement) {
             this.cursor.beforeElement.setAttributeNS(NS.internal,"selected","insertCursorBefore");
-            if (DOM.mml_previousSibling(this.cursor.beforeElement)) {
-                DOM.mml_previousSibling(this.cursor.beforeElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
+            if (this.cursor.beforeElement.previousElementSibling) {
+                this.cursor.beforeElement.previousElementSibling.setAttributeNS(NS.internal,"selected","insertCursorAfter");
             }
         }
-        else if (DOM.mml_lastChild(this.cursor.inElement)) {
-            DOM.mml_lastChild(this.cursor.inElement).setAttributeNS(NS.internal,"selected","insertCursorAfter");
+        else if (this.cursor.inElement.lastElementChild) {
+            this.cursor.inElement.lastElementChild.setAttributeNS(NS.internal,"selected","insertCursorAfter");
         }
         // Put selected="userSelection" for sorrounded elements
         var sibling;
         if (this.cursor.beforeElement) { 
-            sibling = DOM.mml_previousSibling(this.cursor.beforeElement);
+            sibling = this.cursor.beforeElement.parentNode.previousElementSibling;
         }
         else {
-            sibling = DOM.mml_lastChild(this.cursor.inElement);
+            sibling = this.cursor.inElement.lastElementChild;
         }
-        for (var i=0; i < this.cursor.numberOfElementsToSurround; ++i, sibling=DOM.mml_previousSibling(sibling)) {
+        for (var i=0; i < this.cursor.numberOfElementsToSurround; ++i, sibling=sibling.previousElementSibling) {
             sibling.setAttributeNS(NS.internal,"selected","userSelection");
         }
     },
@@ -155,7 +154,7 @@ ContentInsertMode.prototype = {
                 // wants to have two consecutive mn elements. This is
                 // not good, since for example in a subsup element,
                 // both children can be mn.
-                var precedingElement = this.cursor.beforeElement ? DOM.mml_previousSibling(this.cursor.beforeElement) : DOM.mml_lastChild(this.cursor.inElement);
+                var precedingElement = this.cursor.beforeElement ? this.cursor.beforeElement.previousElementSibling : this.cursor.inElement.lastElementChild;
                 if (this.is_cn_integer(precedingElement) && !this.forceNewElement) {
                     precedingElement.lastChild.nodeValue += c; //XXX: Is that good in case of entities, whitespace or similar?
                 }
@@ -193,7 +192,7 @@ ContentInsertMode.prototype = {
             this.cursor.inElement.insertBefore(newElement, this.cursor.beforeElement);
             for (var i=0; i<this.cursor.numberOfElementsToSurround; ++i) {
                 newElement.insertBefore(
-                    DOM.mml_previousSibling(newElement),
+                    newElement.previousElementSibling,
                     newElement.firstChild
                 );
             }
@@ -470,8 +469,8 @@ export const commands = {
             else if (mode.cursor.inElement.localName == "bvar" && mode.cursor.inElement.namespaceURI == NS.MathML) {
                 // Place new bvar behind this one
                 mode.moveCursor({
-                    beforeElement: DOM.mml_nextSibling(mode.cursor.inElement),
-                    inElement: DOM.mml_parent(mode.cursor.inElement),
+                    beforeElement: mode.cursor.inElement.nextElementSibling,
+                    inElement: mode.cursor.inElement.parentElement,
                 });
                 mode.putElement(mode.new_bvar(), true);
             }
@@ -686,10 +685,10 @@ export const commands = {
         var toRemove = [];
         var precedingElement;
         if (mode.cursor.beforeElement) {
-            precedingElement = DOM.mml_previousSibling(mode.cursor.beforeElement);
+            precedingElement = mode.cursor.beforeElement.previousElementSibling;
         }
         else {
-            precedingElement = DOM.mml_lastChild(mode.cursor.inElement);
+            precedingElement = mode.cursor.inElement.parentNode.lastElementChild;
         }
 
         if (precedingElement) {
@@ -699,7 +698,7 @@ export const commands = {
                 var pos = precedingElement;
                 for (var i=1; i <= mode.cursor.numberOfElementsToSurround; i++) {
                     toRemove.push(pos);
-                    pos = DOM.mml_previousSibling(pos); // Exists for shure
+                    pos = pos.previousElementSibling; // Exists for shure
                 }
             }
             else {
@@ -714,8 +713,8 @@ export const commands = {
         else {
             toRemove.push(mode.cursor.inElement);
             mode.moveCursor({
-                beforeElement: DOM.mml_nextSibling(mode.cursor.inElement),
-                inElement: DOM.mml_parent(mode.cursor.inElement),
+                beforeElement: mode.cursor.inElement.nextElementSibling,
+                inElement: mode.cursor.inElement.parentElement,
                 numberOfElementsToSurround: 0
             });
         }

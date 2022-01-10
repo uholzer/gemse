@@ -1,6 +1,5 @@
 import { NS } from "./namespace.js";
 import { parseCommand } from "./command.js";
-import * as DOM from "./dom.js";
 
 export function VisualSelectionMode(editor, equationEnv, startElement) {
     // This insert mode inserts children into inElement, before the
@@ -34,7 +33,7 @@ VisualSelectionMode.prototype = {
         var current = this.cursor.startElement;
         while (current != this.cursor.endElement) {
             current.removeAttributeNS(NS.internal, "selected");
-            current = DOM.mml_nextSibling(current);
+            current = current.nextElementSibling;
         }
         current.removeAttributeNS(NS.internal, "selected");
     },
@@ -47,7 +46,7 @@ VisualSelectionMode.prototype = {
         var current = this.cursor.startElement;
         while (current != this.cursor.endElement) {
             current.setAttributeNS(NS.internal, "selected", "userSelection");
-            current = DOM.mml_nextSibling(current);
+            current = current.nextElementSibling;
         }
         current.setAttributeNS(NS.internal, "selected", "userSelection");
         if (this.cursor.moving == this.START) {
