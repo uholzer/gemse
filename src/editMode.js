@@ -280,11 +280,11 @@ export const commands = {
     },
 
     moveToNextLeaf(mode, currentElement) {
-        return DOM.mml_nextLeaf(currentElement);
+        return DOM.nextElementLeaf(currentElement);
     },
 
     moveToPreviousLeaf(mode, currentElement) {
-        return DOM.mml_previousLeaf(currentElement);
+        return DOM.previousElementLeaf(currentElement);
     },
 
     followRef(mode, currentElement) {

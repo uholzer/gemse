@@ -4,70 +4,52 @@ import { NS } from "./namespace.js";
 
 /**
  * Returns the next leaf element in document order. A leaf element is
- * an element that has no child elements.
+ * an element that has no child elements. Returns null if there is no such
+ * element.
  */
-export function mml_nextLeaf(element) {
-    var nextLeaf = null;
-    var nextSibling = element.nextElementSibling;
-    if (!nextSibling) {
-        // No next sibling, so we have to go up
-        while (!nextSibling) {
-            element = element.parentNode;
-            nextSibling = element.nextElementSibling;
-            if (element.localName=="math" && element.namespaceURI == NS.MathML) { return null }
-        }
-        // Here we reached a point where nextSibling is defined.
-        // It may be however, that it is not a leaf but an
-        // ancestor of a leaf. So it may be that we have to
-        // go down later.
+export function nextElementLeaf(element) {
+    if (element.nextElementSibling) {
+        return firstElementLeafDescendantOrSelf(element.nextElementSibling);
     }
-    if (nextSibling.firstElementChild) {
-        // Next sibling is not a leaf but contains children.
-        // So we have to go down.
-        nextLeaf = nextSibling;
-        var next;
-        while (next = nextLeaf.firstElementChild) {
-            nextLeaf = next;
-        }
+    else if (element.parentElement) {
+        return nextElementLeaf(element.parentElement);
     }
-    else if (nextSibling) {
-        // Next sibling exists and is a leaf
-        nextLeaf = nextSibling;
+    else {
+        return null;
     }
-    return nextLeaf;
 }
 
 /**
  * Returns the previous leaf element in document order. A leaf element is
- * an element that has no child elements.
+ * an element that has no child elements. Returns null if there is no such
+ * element.
  */
-export function mml_previousLeaf(element) {
-    var previousLeaf = null;
-    var previousSibling = element.previousElementSibling;
-    if (!previousSibling) {
-        // No next sibling, so we have to go up
-        while (!previousSibling) {
-            element = element.parentNode;
-            previousSibling = element.previousElementSibling;
-            if (element.localName=="math" && element.namespaceURI == NS.MathML) { return null }
-        }
-        // Here we reached a point where nextSibling is defined.
-        // It may be however, that it is not a leaf but an
-        // ancestor of a leaf. So it may be that we have to
-        // go down later.
+export function previousElementLeaf(element) {
+    if (element.previousElementSibling) {
+        return lastElementLeafDescendantOrSelf(element.previousElementSibling);
     }
-    if (previousSibling.lastElementChild) {
-        // Next sibling is not a leaf but contains children.
-        // So we have to go down.
-        previousLeaf = previousSibling;
-        var next;
-        while (next = previousLeaf.lastElementChild) {
-            previousLeaf = next;
-        }
+    else if (element.parentElement) {
+        return previousElementLeaf(element.parentElement);
     }
-    else if (previousSibling) {
-        // Next sibling exists and is a leaf
-        previousLeaf = previousSibling;
+    else {
+        return null;
     }
-    return previousLeaf;
+}
+
+function firstElementLeafDescendantOrSelf(element) {
+    if (element.firstElementChild) {
+        return firstElementLeafDescendantOrSelf(element.firstElementChild);
+    }
+    else {
+        return element;
+    }
+}
+
+function lastElementLeafDescendantOrSelf(element) {
+    if (element.lastElementChild) {
+        return lastElementLeafDescendantOrSelf(element.lastElementChild);
+    }
+    else {
+        return element;
+    }
 }
