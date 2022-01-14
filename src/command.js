@@ -422,7 +422,7 @@ CommandInstance.prototype = {
                 result = this.executionHandler(this.mode,this);
             }
             else {
-                var result = this.implementation(this.mode,this);
+                result = this.implementation(this.mode,this);
                 if (this.resultHandler) {
                     result = this.resultHandler(this.mode,this,result);
                 }
