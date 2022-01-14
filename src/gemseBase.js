@@ -903,6 +903,17 @@ function GemsePEditor(callback) {
      * @private
      */
     newEditor.inputSubstitution = inputSubstitution;
+    /**
+     * The input Promise. The input handler promise loop registers to this
+     * promise when no further commands need to be executed. Like this,
+     * executing of commands restarts once new input leads to this promise
+     * being resolved.
+     * @private
+     */
+    newEditor.inputPromise = new Promise(resolve => {
+        newEditor.resolveInputPromise = resolve;
+    });
+    newEditor.inputPromise.then(newEditor.inputLoopIteration.bind(newEditor));
 
     nextstep();
     }; // end of step2
@@ -931,51 +942,62 @@ GemsePEditor.prototype = {
     },
 
     /**
+     * One iteration of the input loop.
+     * Calls the input handler of the respective mode. The input handler may or
+     * may bot be asynchronous. Once the input handler completes and has
+     * processed a command, this method schedules itself to be run again
+     * immediately to process the next command. If the input handler has not
+     * processed any commands, this method schedules itself again on the input
+     * promise, such that it is run again when the user makes an input.
+     */
+    inputLoopIteration: function () {
+        Promise.resolve().then(
+            () => this.equations[this.focus].mode.inputHandler() // Can return a promise or a value
+        ).then(
+            result => {
+                if (result) {
+                    this.inputLoopIteration();
+                }
+                else {
+                    this.inputPromise.then(this.inputLoopIteration.bind(this));
+                    // Now, if there is still something in the buffer, it is
+                    // either an incomplete command or an invalid command. So,
+                    // if the remaining string ends with ESCAPE, the user
+                    // wants to clear the input buffer.
+                    if (this.inputBuffer[this.inputBuffer.length-1] == KeyRepresentation.Escape) {
+                        this.inputBuffer = "";
+                    }
+                    this.viewsetManager.build();
+                }
+            }
+        ).catch(
+            error => {
+                this.inputPromise.then(this.inputLoopIteration.bind(this));
+                this.showMessage(error);
+                // Since we stopped processing of input, we must remove
+                // all remaining input. (This is problably no good
+                // solution, see #13.)
+                this.inputBuffer = "";
+                this.viewsetManager.build();
+            }
+        );
+    },
+    /**
      * Handle new input. This is called by the input box event
      * handler, when the input buffer supposedly changed. That is, it
-     * is callend in editor.xhtml. It basically calls the input
-     * handler of the current mode of the focused equation. It does
-     * that repeatedly until it returns false, so that all complete
-     * commands are executed.
+     * is callend in editor.xhtml.
      */
     inputEvent: function () {
         // Is called when the input buffer supposedly changed
         this.messages = [];
-        var updateOfViewsNeeded = false;
         if (inputSubstitutionActive) { 
             var allowPropagation = this.inputSubstitution();
             if (!allowPropagation) { return };
         }
-        try {
-            // Call the input handler as long as it finds commands.
-            // (If the inputBuffer is empty, it can not find one, so,
-            // for efficiency, do not call it)
-            // This can cause an endless loop, so all modes must
-            // correctly implement their inputHandler. The
-            // inputHandler must return true if it found a command. In
-            // this case, it must remove the command from the input
-            // buffer. It must not remove following commands.
-            while (this.inputBuffer && this.equations[this.focus].mode.inputHandler()) { updateOfViewsNeeded = true };
-        }
-        catch (e) {
-            this.showMessage(e);
-            updateOfViewsNeeded = true;
-            // Since we stopped processing of input, we must remove
-            // all remaining input. (This is problably no good
-            // solution, see #13.)
-            this.inputBuffer = "";
-        }
-        finally {
-            // Now, if there is still something in the buffer, it is
-            // either an incomplete command or an invalid command. So,
-            // if the remaining string ends with ESCAPE, the user
-            // wants to clear the input buffer.
-            if (this.inputBuffer[this.inputBuffer.length-1] == KeyRepresentation.Escape) {
-                this.inputBuffer = "";
-            }
-            // Update the views
-            if (updateOfViewsNeeded) { this.viewsetManager.build(); }
-        }
+        this.resolveInputPromise();
+        this.inputPromise = new Promise((resolve) => {
+            this.resolveInputPromise = resolve;
+        });
     },
     /**
      * Handle key event. This is called by editor.xhtml when the user hits a

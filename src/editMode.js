@@ -111,10 +111,9 @@ EditMode.prototype = {
             this.editor.inputBuffer
         );
         if (instance.isComplete) { this.editor.eatInput(instance.fullCommand.uLength) };
-        if (!instance.isReadyToExecute) { return false }
+        if (!instance.isReadyToExecute) { return Promise.resolve(false) }
         this.userSelectionForNextCommand = null;
-        instance.execute();
-        return true;
+        return instance.execute() || Promise.resolve(true);
     },
     /** 
      * Starts insert mode. This is useful for commands that open the
