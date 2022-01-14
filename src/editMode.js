@@ -226,13 +226,16 @@ function editModeTool_copySelectedElementsToRegister(mode,selection,registerName
         from = from.nextElementSibling;
     }
     registerContent.push(to.cloneNode(true));
-    if (registerName) { // If an explicit register is given
-        mode.editor.registerManager.set(registerName, new RegisterData(registerName, registerContent));
-    }
-    // Always fill the default register, like vim does
-    mode.editor.registerManager.set('"', new RegisterData('"', registerContent));
-    mode.showCursor();
-    return true;
+    return Promise.all([
+        registerName ?  mode.editor.registerManager.set(
+            registerName,
+            new RegisterData(registerName, registerContent)
+        ) : Promise.resolve(),
+        // Always fill the default register, like vim does
+        mode.editor.registerManager.set('"', new RegisterData('"', registerContent))
+    ]).finally(
+        () => mode.showCursor()
+    );
 }
 
 /* Execution handler for movement commands */
@@ -325,15 +328,18 @@ export const commands = {
         var target = mode.cursor;
         var parentOfTarget = target.parentNode;
         // Copy element to default register
-        editModeTool_copySelectedElementsToRegister(mode,{startElement: mode.cursor, endElement: mode.cursor},instance.singleCharacterPreArguments[0]);
-        // Delete element under the cursor
-        var change = mode.equationEnv.history.createChange();
-        change.recordBefore(mode.equationEnv.equation,parentOfTarget);
-        mode.moveCursor(target.nextElementSibling || target.previousElementSibling || parentOfTarget);
-        target.parentNode.removeChild(target);
-        change.recordAfter(mode.equationEnv.equation,parentOfTarget);
-        mode.equationEnv.history.reportChange(change);
-        return true;
+        return editModeTool_copySelectedElementsToRegister(
+            mode,{startElement: mode.cursor, endElement: mode.cursor},instance.singleCharacterPreArguments[0]
+        ).then(function() {
+            // Delete element under the cursor
+            var change = mode.equationEnv.history.createChange();
+            change.recordBefore(mode.equationEnv.equation,parentOfTarget);
+            mode.moveCursor(target.nextElementSibling || target.previousElementSibling || parentOfTarget);
+            target.parentNode.removeChild(target);
+            change.recordAfter(mode.equationEnv.equation,parentOfTarget);
+            mode.equationEnv.history.reportChange(change);
+            return true;
+        });
     },
 
     delete(mode,instance) {
@@ -344,20 +350,23 @@ export const commands = {
         }
         var parentOfTargets = instance.selection.startElement.parentNode;
         // Copy the elements we are going to delete
-        editModeTool_copySelectedElementsToRegister(mode,instance.selection,instance.singleCharacterPreArguments[0]);
-        // Remove the elements
-        var change = mode.equationEnv.history.createChange();
-        change.recordBefore(mode.equationEnv.equation,parentOfTargets);
-        mode.moveCursor(to.nextElementSibling || from.previousElementSibling || parentOfTargets);
-        while (from != to) {
-            var nextFrom = from.nextElementSibling;
-            parentOfTargets.removeChild(from);
-            from = nextFrom;
-        }
-        parentOfTargets.removeChild(to);
-        change.recordAfter(mode.equationEnv.equation,parentOfTargets);
-        mode.equationEnv.history.reportChange(change);
-        return true;
+        return editModeTool_copySelectedElementsToRegister(
+            mode, instance.selection,instance.singleCharacterPreArguments[0]
+        ).then(function () {
+            // Remove the elements
+            var change = mode.equationEnv.history.createChange();
+            change.recordBefore(mode.equationEnv.equation,parentOfTargets);
+            mode.moveCursor(to.nextElementSibling || from.previousElementSibling || parentOfTargets);
+            while (from != to) {
+                var nextFrom = from.nextElementSibling;
+                parentOfTargets.removeChild(from);
+                from = nextFrom;
+            }
+            parentOfTargets.removeChild(to);
+            change.recordAfter(mode.equationEnv.equation,parentOfTargets);
+            mode.equationEnv.history.reportChange(change);
+            return true;
+        });
     },
 
     change(mode,instance) {
@@ -368,21 +377,24 @@ export const commands = {
         }
         var parentOfTargets = instance.selection.startElement.parentNode;
         // Copy elements to be changed to register
-        editModeTool_copySelectedElementsToRegister(mode,instance.selection,instance.singleCharacterPreArguments[0]);
-        // Make the change
-        var change = mode.equationEnv.history.createChange();
-        change.recordBefore(mode.equationEnv.equation,parentOfTargets);
-        var cursorBefore = to.nextElementSibling;
-        mode.moveCursor(to.nextElementSibling || from.previousElementSibling || parentOfTargets);
-        while (from != to) {
-            var nextFrom = from.nextElementSibling;
-            parentOfTargets.removeChild(from);
-            from = nextFrom;
-        }
-        parentOfTargets.removeChild(to);
+        return editModeTool_copySelectedElementsToRegister(
+            mode, instance.selection,instance.singleCharacterPreArguments[0]
+        ).then(function () {
+            // Make the change
+            var change = mode.equationEnv.history.createChange();
+            change.recordBefore(mode.equationEnv.equation,parentOfTargets);
+            var cursorBefore = to.nextElementSibling;
+            mode.moveCursor(to.nextElementSibling || from.previousElementSibling || parentOfTargets);
+            while (from != to) {
+                var nextFrom = from.nextElementSibling;
+                parentOfTargets.removeChild(from);
+                from = nextFrom;
+            }
+            parentOfTargets.removeChild(to);
 
-        // Start the insert mode
-        return mode.callInsertMode(parentOfTargets, cursorBefore, change, parentOfTargets);
+            // Start the insert mode
+            return mode.callInsertMode(parentOfTargets, cursorBefore, change, parentOfTargets);
+        });
     },
 
     attributeMode(mode,instance) {
@@ -666,14 +678,16 @@ export const commands = {
         var position = mode.cursor.nextElementSibling;
         var change = mode.equationEnv.history.createChange();
         change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
-        mode.editor.registerManager.get(registerName).content.forEach(function (e) {
-            mode.cursor.parentNode.insertBefore(e.cloneNode(true), position);
+        return mode.editor.registerManager.get(registerName).then(function (getResult) {
+            getResult.content.forEach(
+                e => mode.cursor.parentNode.insertBefore(e.cloneNode(true), position)
+            );
+            change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
+            mode.equationEnv.history.reportChange(change);
+            // Put cursor on the last inserted element
+            mode.moveCursor(position ? position.previousElementSibling : mode.cursor.parentNode.lastElementChild);
+            return true;
         });
-        change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
-        mode.equationEnv.history.reportChange(change);
-        // Put cursor on the last inserted element
-        mode.moveCursor(position ? position.previousElementSibling : mode.cursor.parentNode.lastElementChild);
-        return true;
     },
 
     putBefore(mode,instance) {
@@ -681,14 +695,16 @@ export const commands = {
         var position = mode.cursor;
         var change = mode.equationEnv.history.createChange();
         change.recordBefore(mode.equationEnv.equation,mode.cursor.parentNode);
-        mode.editor.registerManager.get(registerName).content.forEach(function (e) {
-            mode.cursor.parentNode.insertBefore(e.cloneNode(true), position);
+        return mode.editor.registerManager.get(registerName).then(function (getResult) {
+            getResult.content.forEach(
+                e => mode.cursor.parentNode.insertBefore(e.cloneNode(true), position)
+            );
+            change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
+            mode.equationEnv.history.reportChange(change);
+            // Put cursor on the last inserted element
+            mode.moveCursor(position ? position.previousElementSibling : mode.cursor.parentNode.lastElementChild);
+            return true;
         });
-        change.recordAfter(mode.equationEnv.equation,mode.cursor.parentNode);
-        mode.equationEnv.history.reportChange(change);
-        // Put cursor on the last inserted element
-        mode.moveCursor(position ? position.previousElementSibling : mode.cursor.parentNode.lastElementChild);
-        return true;
     },
 
     putIn(mode,instance) {
@@ -697,14 +713,16 @@ export const commands = {
         var position = null;
         var change = mode.equationEnv.history.createChange();
         change.recordBefore(mode.equationEnv.equation,mode.cursor);
-        mode.editor.registerManager.get(registerName).content.forEach(function (e) {
-            mode.cursor.insertBefore(e.cloneNode(true), position);
+        return mode.editor.registerManager.get(registerName).then(function (getResult) {
+            getResult.content.forEach(
+                e => mode.cursor.insertBefore(e.cloneNode(true), position)
+            );
+            change.recordAfter(mode.equationEnv.equation,mode.cursor);
+            mode.equationEnv.history.reportChange(change);
+            // Put cursor on the last inserted element
+            mode.moveCursor(mode.cursor.lastElementChild);
+            return true;
         });
-        change.recordAfter(mode.equationEnv.equation,mode.cursor);
-        mode.equationEnv.history.reportChange(change);
-        // Put cursor on the last inserted element
-        mode.moveCursor(mode.cursor.lastElementChild);
-        return true;
     },
 
     unwrap(mode,instance) {
@@ -770,7 +788,9 @@ export const commands = {
     },
 
     copyToRegister(mode,instance) {
-        return editModeTool_copySelectedElementsToRegister(mode,instance.selection,instance.singleCharacterPreArguments[0]);
+        return editModeTool_copySelectedElementsToRegister(
+            mode, instance.selection,instance.singleCharacterPreArguments[0]
+        );
     },
 
     startstopUserRecording(mode,instance) {

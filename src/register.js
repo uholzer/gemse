@@ -17,10 +17,11 @@ export function RegisterManager() {
 RegisterManager.prototype = {
     set: function(name, data) {
         if (name == "*") {
-            this.setSystemClipboard(data);
+            return this.setSystemClipboard(data);
         }
         else {
             this.internal[name] = data;
+            return Promise.resolve();
         }
     },
     get: function(name) {
@@ -28,7 +29,7 @@ RegisterManager.prototype = {
             return this.getSystemClipboard();
         }
         else {
-            return this.internal[name];
+            return Promise.resolve(this.internal[name]);
         }
     },
     /**
@@ -39,40 +40,19 @@ RegisterManager.prototype = {
      * @private
      */
     getSystemClipboard: function() {
-        var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(Components.interfaces.nsIClipboard);
-        if (!clip) throw new Error("Error while obtaining clipboard component");
-        var trans = Components.classes["@mozilla.org/widget/transferable;1"].createInstance(Components.interfaces.nsITransferable);
-        if (!trans) throw new Error("Error while obtaining transferable component");
-        trans.addDataFlavor("text/unicode"); //XXX: Should be application/mathml+xml
-
-        clip.getData(trans, clip.kGlobalClipboard);
-        var str       = new Object();
-        var strLength = new Object();
-        trans.getTransferData("text/unicode", str, strLength);
-        str = str.value.QueryInterface(Components.interfaces.nsISupportsString);
-        var dataString = str.data.substring(0, strLength.value / 2);
-
-        var parser = new DOMParser();
-        var clipboardDOM = parser.parseFromString(dataString, "text/xml");
-
-        var registerData;
-        if (clipboardDOM.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml") {
-            throw new Error("An error occured while parsing the clipboard content:\n"
-                        + clipboardDOM.documentElement.textContent);
-        }
-        else if (clipboardDOM.documentElement.localName == "math" && clipboardDOM.documentElement.namespaceURI == NS.MathML) {
-            // Put the child elements into an array
-            var arrayOfElements = [];
-            for (var i=0; i < clipboardDOM.documentElement.childNodes.length; ++i) {
-                arrayOfElements.push(clipboardDOM.documentElement.childNodes[i]);
+        return navigator.clipboard.readText().then(function (clipboardText) {
+            const clipboardDOM = (new DOMParser()).parseFromString(clipboardText, "application/xml");
+            if (clipboardDOM.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml") {
+                throw new Error("An error occured while parsing the clipboard content:\n"
+                            + clipboardDOM.documentElement.textContent);
             }
-            registerData = new RegisterData('*',arrayOfElements);
-        }
-        else {
-            registerData = new RegisterData('*',[clipboardDOM.documentElement]);
-        }
-
-        return registerData;
+            else if (clipboardDOM.documentElement.localName == "math" && clipboardDOM.documentElement.namespaceURI == NS.MathML) {
+                return new RegisterData('*', Array.from(clipboardDOM.documentElement.childNodes));
+            }
+            else {
+                return new RegisterData('*',[clipboardDOM.documentElement]);
+            }
+        });
     },
     /**
      * Put data on system clipboard from a RegisterData object.
@@ -100,26 +80,7 @@ RegisterManager.prototype = {
         var serializer = new XMLSerializer();
         var xmlString = serializer.serializeToString(doc);
 
-        var str = Components.classes["@mozilla.org/supports-string;1"].  
-        createInstance(Components.interfaces.nsISupportsString);  
-        if (!str) throw new Error("Error while obtaining String component");
-          
-        str.data = xmlString;  
-          
-        var trans = Components.classes["@mozilla.org/widget/transferable;1"].  
-        createInstance(Components.interfaces.nsITransferable);  
-        if (!trans) throw new Error("Error while obtaining transferable component");
-          
-        trans.addDataFlavor("application/mathml+xml");  
-        trans.setTransferData("application/mathml+xml", str, xmlString.length * 2);  
-        trans.addDataFlavor("text/unicode");  
-        trans.setTransferData("text/unicode", str, xmlString.length * 2);  
-          
-        var clipid = Components.interfaces.nsIClipboard;  
-        var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(clipid);  
-        if (!clip) throw new Error("Error while obtaining clipboard component");
-          
-        clip.setData(trans, null, clipid.kGlobalClipboard);  
+        return navigator.clipboard.writeText(xmlString);
     },
 }
 
