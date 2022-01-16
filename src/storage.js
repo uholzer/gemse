@@ -15,7 +15,8 @@ StorageLink.prototype = {
 var DocStoragePrototype = {
     /**
      * Read the resource
-     * @returns root element of the equation
+     * @returns {Promise} A Promise going to be resolved when loading has
+     *                    completed.
      */
     read: function() {
         throw new Error("Reading this resource is not implemented");
@@ -23,6 +24,7 @@ var DocStoragePrototype = {
     /**
      * Write the resource
      * @param root Root element of the equation
+     * @returns {Promise} A Promise going to be resolved on completion.
      */
     write: function() {
         throw new Error("Writing this resource is not implemented");
@@ -101,6 +103,7 @@ FileDocStorage.prototype = {
         foStream.init(this.file, 0x02 | 0x08 | 0x20, 0o664, 0);
         serializer.serializeToStream(this.document, foStream, "");
         this.lastModifiedTimeOfLastSync = this.file.lastModifiedTime;
+        return Promise.resolve();
     },
     read: function() {
         //XXX: Maybe we should not use XMLHttpRequest here?
@@ -109,6 +112,7 @@ FileDocStorage.prototype = {
         request.send(null);
         this.document = request.responseXML;
         this.lastModifiedTimeOfLastSync = this.file.lastModifiedTime;
+        return Promise.resolve();
     },
     adoptDocument: function(doc) {
         this.document = doc;
@@ -148,6 +152,7 @@ XMLHttpRequestDocStorage.prototype = {
         request.send(null);
         this.document = request.responseXML;
         this.contentTypeHeader = request.getResponseHeader("Content-type");
+        return Promise.resolve();
     },
     write: function() {
         var serializer = new XMLSerializer();
@@ -157,6 +162,7 @@ XMLHttpRequestDocStorage.prototype = {
         request.open("PUT", this.uri, false);
         request.setRequestHeader("Content-type", this.contentTypeHeader);
         request.send(xmlString);
+        return Promise.resolve();
     },
     adoptDocument: function(doc) {
         this.document = doc;
@@ -183,6 +189,7 @@ ReadOnlyXMLHttpRequestDocStorage.prototype = {
         request.open("GET", this.uri, false);
         request.send(null);
         this.document = request.responseXML;
+        return Promise.resolve();
     },
     readOlny: function() {
         return 1;
@@ -208,9 +215,11 @@ export function InMemoryDocStorage(document) {
 InMemoryDocStorage.prototype = {
     read: function() {
         // Is always in sync, so do nothing
+        return Promise.resolve();
     },
     write: function() {
         // Is always in sync, so do nothing
+        return Promise.resolve();
     },
     adoptDocument: function(doc) {
         throw new Error("InMemoryDocStorage does not support adoption of documents");

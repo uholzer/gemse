@@ -555,40 +555,38 @@ export const commands = {
     },
 
     load(mode, instance) {
-        mode.editor.loadURI(instance.argument);
-        return true;
+        return mode.editor.loadURI(instance.argument);
     },
     loadById(mode, instance) {
         var inf = instance.argument.match(/^(\S+)\s(.*)$/);
         if (!inf) { throw new Error("Wrong argument format") }
         var uri = inf[1];
         var id = inf[2];
-        mode.editor.loadURI(uri, id);
-        return true;
+        return mode.editor.loadURI(uri, id);
     },
     loadByXPath(mode, instance) {
         var inf = instance.argument.match(/^(\S+)\s(.*)$/);
         if (!inf) { throw new Error("Wrong argument format") }
         var uri = inf[1];
         var xpathString = inf[2];
-        mode.editor.loadURI(uri,null,xpathString);
-        return true;
+        return mode.editor.loadURI(uri,null,xpathString);
     },
     loadAll(mode, instance) {
-        mode.editor.loadAll(instance.argument);
-        return true;
+        return mode.editor.loadAll(instance.argument);
     },
 
     save(mode, instance) {
-        mode.equationEnv.save(instance.argument, instance.forceFlag); // instance.argument may be null
-        return true;
+        return mode.equationEnv.save(instance.argument, instance.forceFlag); // instance.argument may be null
     },
 
     saveAll(mode, instance) {
-        mode.editor.equations.forEach(function (e) {
-            e.save(null,instance.forceFlag);
-        });
-        return true;
+        // Avoid saving equations in parallel, as they might originate from the
+        // same storage, causing multiple asynchronous save operations to run
+        // on the same storage at the same time.
+        return mode.editor.equations.reduce(
+            (promise, e) => promise.then(() => e.save(null,instance.forceFlag)),
+            Promise.resolve()
+        );
     },
 
     close(mode, instance) {
@@ -604,11 +602,11 @@ export const commands = {
     },
 
     saveclose(mode, instance) {
-        return save(mode, instance) && commands.close(mode, instance);
+        return save(mode, instance).then(() => commands.close(mode, instance));
     },
 
     savecloseAll(mode,instance) {
-        return saveAll(mode, instance) && commands.closeAll(mode, instance);
+        return saveAll(mode, instance).then(() => commands.closeAll(mode, instance));
     },
 
     nextEquation(mode) {
@@ -670,7 +668,7 @@ export const commands = {
     example(mode, instance) {
         var base = window.document.documentURI.substring(0, window.document.documentURI.lastIndexOf("/")) + "/";
         var exampleBase = base + "doc/examples/";
-        mode.editor.loadURI(exampleBase + instance.argument);
+        return mode.editor.loadURI(exampleBase + instance.argument);
     },
 
     putAfter(mode,instance) {

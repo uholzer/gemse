@@ -226,6 +226,7 @@ EquationEnv.prototype = {
             this.readOnly = false;
         }
 
+        var writeTo;
         if (destinationURIString) {
             destinationURIString = new URL(destinationURIString, this.workingDirectory);
 
@@ -238,7 +239,7 @@ EquationEnv.prototype = {
             this.origin = new StorageLink(storage, root);
             this.editor.storages.push(storage);
             this.editor.freeUnusedDocStorage();
-            storage.write();
+            writeTo = storage;
         }
         else {
             if (!this.origin) {
@@ -253,13 +254,17 @@ EquationEnv.prototype = {
             root = this.origin.storage.document.adoptNode(root);
             this.origin.node.parentNode.replaceChild(root, this.origin.node);
             this.origin.node = root;
-            this.origin.storage.write();
+            writeTo = this.origin.storage;
         }
 
-        // Tell the history object that we saved the current state
-        this.history.reportSaving();
+        return writeTo.write().then(
+            () => {
+                // Tell the history object that we saved the current state
+                this.history.reportSaving();
 
-        this.editor.showMessage("Successfully saved in " + this.origin.storage.toString());
+                this.editor.showMessage("Successfully saved in " + this.origin.storage.toString());
+            }
+        );
     },
     /**
      * Closes this equation if there are no unsaved changes or if
@@ -1309,38 +1314,56 @@ GemsePEditor.prototype = {
 
         // If its a new storage, try to load the file
         this.showMessage("Using storage " + newStorage.toString());
-        if (!eqStorage) {
-            this.showMessage("Read storage " + newStorage.toString());
-            newStorage.read();
-        }
-
-        // Find the math elements
-        var mathElements = [];
-        if (fragmentId) {
-            mathElements[0] = newStorage.document.getElementById(fragmentId);
-            if (!mathElements[0]) {
-                mathElements.pop();
-            }
-        }
-        else if (xpath) {
-            var xpathResult = newStorage.document.evaluate(xpath, newStorage.document, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-            var resultNode;
-            var i=0;
-            while ((resultNode = xpathResult.iterateNext())) { 
-                mathElements.push(resultNode);
-                ++i;
-            }
+        if (eqStorage) {
+            return Promise.resolve().then(
+                () => loadEquationsFromStorage.call(this)
+            ).catch(
+                e => {
+                    this.freeUnusedDocStorage(newStorage);
+                    return Promise.reject(e);
+                }
+            );
         }
         else {
-            mathElements[0] = newStorage.document.documentElement;
-            if (!mathElements[0]) {
-                throw new Error("Can not open an empty document");
-            }
+            this.showMessage("Read storage " + newStorage.toString());
+            this.storages.push(newStorage)
+            return newStorage.read().then(
+                () => loadEquationsFromStorage.call(this)
+            ).catch(
+                e => {
+                    this.freeUnusedDocStorage(newStorage);
+                    return Promise.reject(e);
+                }
+            );
         }
 
-        if (!eqStorage) { this.storages.push(newStorage) }
+        function loadEquationsFromStorage() {
+            // Find the math elements
+            var mathElements = [];
+            if (fragmentId) {
+                mathElements[0] = newStorage.document.getElementById(fragmentId);
+                if (!mathElements[0]) {
+                    mathElements.pop();
+                }
+            }
+            else if (xpath) {
+                var xpathResult = newStorage.document.evaluate(xpath, newStorage.document, standardNSResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+                var resultNode;
+                var i=0;
+                while ((resultNode = xpathResult.iterateNext())) { 
+                    mathElements.push(resultNode);
+                    ++i;
+                }
+            }
+            else {
+                mathElements[0] = newStorage.document.documentElement;
+                if (!mathElements[0]) {
+                    throw new Error("Can not open an empty document");
+                }
+            }
 
-        try {
+            if (!eqStorage) { this.storages.push(newStorage) }
+
             //loop over all significant math elements
             mathElements.forEach(function(m) {
                 // Check whether this equation is already open
@@ -1385,10 +1408,6 @@ GemsePEditor.prototype = {
                 this.showMessage("No equation(s) found");
                 this.freeUnusedDocStorage(newStorage);
             }
-        }
-        catch (e) {
-            this.freeUnusedDocStorage(newStorage)
-            throw e;
         }
     },
     /**
@@ -1463,7 +1482,7 @@ GemsePEditor.prototype = {
      * @param {String} uri
      */
     loadAll: function(uri) {
-        this.loadURI(uri,null,"(//m:math|//om:OMOBJ|//o:notation)[not(ancestor::m:math|ancestor::om:OMOBJ|ancestor::o:notation)]");
+        return this.loadURI(uri,null,"(//m:math|//om:OMOBJ|//o:notation)[not(ancestor::m:math|ancestor::om:OMOBJ|ancestor::o:notation)]");
     },
     /**
      * Moves the focus to another equation.
