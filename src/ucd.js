@@ -7,6 +7,7 @@
  * but one should use the global object ucd instead.
  */
 
+import * as HTTP from "./http.js";
 
 /**
  * @class Querying the Unicode Character Database.
@@ -118,8 +119,6 @@ UCD4Gemse.prototype = {
         return this.db[c][3];
     },
 
-
-
     /**
      * Fetches all database files and parses them.
      */
@@ -135,87 +134,89 @@ UCD4Gemse.prototype = {
         var standalones = [];
 
         // Create request for UnicodeData.txt
-        var request = new XMLHttpRequest();
-        request.open("GET", "UCD/UnicodeData.txt", false);
-        request.overrideMimeType("text/plain");
-        request.send(null);
-        var dataLines = request.status < 300 ? request.responseText.split("\n") : [];
-        request = null;
+        return HTTP.send(HTTP.open("GET", "UCD/UnicodeData.txt")).then(
+            HTTP.only2xx
+        ).then(
+            request => request.responseText.split("\n")
+        ).then(
+            dataLines => {
+                var lineRegex = /^([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);/;
+                               //  ^^^^^ code point
+                               //          ^^^^^ Unicode name
+                               //                  ^^^^^ general category
+                               //                          ^^^^^ combining class
+                               //                                  ^^^^^ bidi class
+                               //                                          ^^^^^  decomposition
+                var standaloneRegex = /0020 (\S+)$/;
+                for (var i=0; i<dataLines.length; ++i) {
+                    var l = dataLines[i];
+                    if (!l) { continue }
+                    var res = lineRegex.exec(l);
+                    if (!res) { throw new Error("Error in UnicodeData.txt? " + l) }
+                    var codepoint = parseInt(res[1],16);
+                    // We have to use the advanced fromCharCode shipped with
+                    // gemse, String.fromCharCode can not handle characters
+                    // from upper planes, unfortunately
+                    var character = String.uFromCharCode(codepoint);
+                    var mpos;
+                    switch (parseInt(res[4],10)) {
+                        case 0:
+                            mpos = this.MPOS_NOTCOMBINING;
+                            break;
+                        case 1:
+                            mpos = this.MPOS_SUPERIMPOSED;
+                            break;
+                        case 220:
+                            mpos = this.MPOS_UNDER;
+                            break;
+                        case 230:
+                            mpos = this.MPOS_OVER;
+                            break;
+                        //TODO: There are more of them!
+                        default:
+                            mpos = this.MPOS_UNKNOWN;
+                    }
+                    db[character] = [res[2],res[3],mpos,null];
+                    // If this is the standalone version of some combining
+                    // mark, remember that:
+                    if (res[6]) {
+                        var standaloneRes = standaloneRegex.exec(res[6]);
+                        if (standaloneRes && standaloneRes[1]) {
+                            standalones.push([String.uFromCharCode(parseInt(standaloneRes[1],16)), character]);
+                        }
+                    }
+                }
 
-        var lineRegex = /^([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);/;
-                       //  ^^^^^ code point
-                       //          ^^^^^ Unicode name
-                       //                  ^^^^^ general category
-                       //                          ^^^^^ combining class
-                       //                                  ^^^^^ bidi class
-                       //                                          ^^^^^  decomposition
-        var standaloneRegex = /0020 (\S+)$/;
-        for (var i=0; i<dataLines.length; ++i) {
-            var l = dataLines[i];
-            if (!l) { continue }
-            var res = lineRegex.exec(l);
-            if (!res) { throw new Error("Error in UnicodeData.txt? " + l) }
-            var codepoint = parseInt(res[1],16);
-            // We have to use the advanced fromCharCode shipped with
-            // gemse, String.fromCharCode can not handle characters
-            // from upper planes, unfortunately
-            var character = String.uFromCharCode(codepoint);
-            var mpos;
-            switch (parseInt(res[4],10)) {
-                case 0:
-                    mpos = this.MPOS_NOTCOMBINING;
-                    break;
-                case 1:
-                    mpos = this.MPOS_SUPERIMPOSED;
-                    break;
-                case 220:
-                    mpos = this.MPOS_UNDER;
-                    break;
-                case 230:
-                    mpos = this.MPOS_OVER;
-                    break;
-                //TODO: There are more of them!
-                default:
-                    mpos = this.MPOS_UNKNOWN;
+                // Go through standalones and integrate them into db
+                for (var i=0; i<standalones.length; ++i) {
+                    var e = standalones[i];
+                    db[e[0]][3] = e[1];
+                }
+
+                // Create request for Gemse_Combining.txt
+                return HTTP.send(HTTP.open("GET", "UCD/Gemse_Combining.txt"));
             }
-            db[character] = [res[2],res[3],mpos,null];
-            // If this is the standalone version of some combining
-            // mark, remember that:
-            if (res[6]) {
-                var standaloneRes = standaloneRegex.exec(res[6]);
-                if (standaloneRes && standaloneRes[1]) {
-                    standalones.push([String.uFromCharCode(parseInt(standaloneRes[1],16)), character]);
+        ).then(
+            HTTP.only2xx
+        ).then(
+            request => request.responseText.split("\n")
+        ).then(
+            dataLines => {
+                var lineRegex = /^([^;]*);([^;]*);([^;]*)/;
+                for (var i=0; i<dataLines.length; ++i) {
+                    var l = dataLines[i];
+                    if (!l || l[0]=="#") { continue }
+                    var res = lineRegex.exec(l);
+                    if (!res) { throw new Error("Error in Gemse_Combining.txt? " + l) }
+                    var codepoint = parseInt(res[1],16);
+                    var character = String.uFromCharCode(codepoint);
+                    db[character][2] = parseInt(res[2],10);
+                    if (res[2]) {
+                        db[character][3] = String.uFromCharCode(parseInt(res[3],16));
+                    }
                 }
             }
-        }
-
-        // Go through standalones and integrate them into db
-        for (var i=0; i<standalones.length; ++i) {
-            var e = standalones[i];
-            db[e[0]][3] = e[1];
-        }
-
-        // Create request for Gemse_Combining.txt
-        var request = new XMLHttpRequest();
-        request.open("GET", "UCD/Gemse_Combining.txt", false);
-        request.overrideMimeType("text/plain");
-        request.send(null);
-        var dataLines = request.status < 300 ? request.responseText.split("\n") : [];
-        request = null;
-
-        var lineRegex = /^([^;]*);([^;]*);([^;]*)/;
-        for (var i=0; i<dataLines.length; ++i) {
-            var l = dataLines[i];
-            if (!l || l[0]=="#") { continue }
-            var res = lineRegex.exec(l);
-            if (!res) { throw new Error("Error in Gemse_Combining.txt? " + l) }
-            var codepoint = parseInt(res[1],16);
-            var character = String.uFromCharCode(codepoint);
-            db[character][2] = parseInt(res[2],10);
-            if (res[2]) {
-                db[character][3] = String.uFromCharCode(parseInt(res[3],16));
-            }
-        }
+        );
     },
 
 }

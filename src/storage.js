@@ -1,3 +1,4 @@
+import * as HTTP from "./http.js";
 
 /**
  * @class Links an equation to the document it is saved in.
@@ -106,13 +107,14 @@ FileDocStorage.prototype = {
         return Promise.resolve();
     },
     read: function() {
-        //XXX: Maybe we should not use XMLHttpRequest here?
-        var request = new XMLHttpRequest();
-        request.open("GET", this.uri, false);
-        request.send(null);
-        this.document = request.responseXML;
-        this.lastModifiedTimeOfLastSync = this.file.lastModifiedTime;
-        return Promise.resolve();
+        return HTTP.send(HTTP.open("GET", this.uri)).then(
+            HTTP.only2xx
+        ).then(
+            request => {
+                this.document = request.responseXML;
+                this.lastModifiedTimeOfLastSync = this.file.lastModifiedTime;
+            }
+        );
     },
     adoptDocument: function(doc) {
         this.document = doc;
@@ -147,22 +149,25 @@ export function XMLHttpRequestDocStorage(uri) {
 }
 XMLHttpRequestDocStorage.prototype = {
     read: function() {
-        var request = new XMLHttpRequest();
-        request.open("GET", this.uri, false);
-        request.send(null);
-        this.document = request.responseXML;
-        this.contentTypeHeader = request.getResponseHeader("Content-type");
-        return Promise.resolve();
+        return HTTP.send(HTTP.open("GET", this.uri)).then(
+            HTTP.only2xx
+        ).then(
+            request => {
+                this.document = request.responseXML;
+                this.contentTypeHeader = request.getResponseHeader("Content-type");
+            }
+        );
     },
     write: function() {
         var serializer = new XMLSerializer();
         var xmlString = serializer.serializeToString(this.document);
         //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
-        var request = new XMLHttpRequest();
-        request.open("PUT", this.uri, false);
-        request.setRequestHeader("Content-type", this.contentTypeHeader);
-        request.send(xmlString);
-        return Promise.resolve();
+        return HTTP.send(
+            HTTP.only2xx
+        ).then(
+            HTTP.open("PUT", this.uri, ["Content-type", this.contentTypeHeader]),
+            xmlString
+        );
     },
     adoptDocument: function(doc) {
         this.document = doc;
@@ -185,11 +190,13 @@ export function ReadOnlyXMLHttpRequestDocStorage(uri) {
 }
 ReadOnlyXMLHttpRequestDocStorage.prototype = {
     read: function() {
-        var request = new XMLHttpRequest();
-        request.open("GET", this.uri, false);
-        request.send(null);
-        this.document = request.responseXML;
-        return Promise.resolve();
+        return HTTP.send(HTTP.open("GET", this.uri)).then(
+            HTTP.only2xx
+        ).then(
+            request => {
+                this.document = request.responseXML;
+            }
+        );
     },
     readOlny: function() {
         return 1;
@@ -230,4 +237,3 @@ InMemoryDocStorage.prototype = {
     },
     __proto__: DocStoragePrototype
 };
-

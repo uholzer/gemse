@@ -32,6 +32,7 @@ ones in another.
 */
 
 import { elementDescriptions } from "./elementDescriptors.js";
+import * as HTTP from "./http.js";
 
 export const operatorDictionary = new OperatorDictionary();
 
@@ -94,8 +95,10 @@ function OperatorDictionary() {
     /* Private methods */
 
     this.load = function() {
-        this.loadFromFile("operatorDictionaryMathMLSpec.txt",true);
-        this.loadFromFile("operatorDictionaryUser.txt",false);
+        return Promise.all([
+            this.loadFromFile("operatorDictionaryMathMLSpec.txt",true),
+            this.loadFromFile("operatorDictionaryUser.txt",false),
+        ]);
     }
     this.loadFromFile = function(dictionaryFile, isSpec) {
         // Loads operator dictionary entries from a file. If isSpec is
@@ -128,87 +131,87 @@ function OperatorDictionary() {
             return s;
         }
 
-        // Create request
-        var request = new XMLHttpRequest();
-        request.open("GET", dictionaryFile, false);
-        request.overrideMimeType("text/plain");
-        request.send(null);
-        var dictionaryLines = request.responseText.split("\n");
-        request = null;
+        return HTTP.send(HTTP.open("GET",dictionaryFile)).then(
+            HTTP.only2xx
+        ).then(
+            request => request.responseText.split("\n")
+        ).then(
+            dictionaryLines => {
+                var entryRegex = /^ *"(([^<"]+)((<!--(([^-]|-(?!-))*)-->)([^<"]*))*)"(( +[^=]+="[^"]*")*)( +(<!--([^-]*)-->))? *$/;
+                var emptyRegex = /^\s*$/;
+                var commentRegex = /<!--(.*)-->/;
+                var attributeRegex = /([^\s=]+)="([^"]*)"/g;
 
-        var entryRegex = /^ *"(([^<"]+)((<!--(([^-]|-(?!-))*)-->)([^<"]*))*)"(( +[^=]+="[^"]*")*)( +(<!--([^-]*)-->))? *$/;
-        var emptyRegex = /^\s*$/;
-        var commentRegex = /<!--(.*)-->/;
-        var attributeRegex = /([^\s=]+)="([^"]*)"/g;
+                var match;
+                var groupingPrecedenceAuto = 1000;
+                for (var i=0; i<dictionaryLines.length; ++i) {
+                    var l = dictionaryLines[i];
+                    if (emptyRegex.test(l)) {
+                        groupingPrecedenceAuto += 1000;
+                    }
+                    else if (match = entryRegex.exec(l)) {
+                        var unparsedContent = match[1];
+                        var contentComment = "";
+                        var commentMatch;
+                        while (commentMatch = commentRegex.exec(unparsedContent)) {
+                            contentComment += ", " + commentMatch[1];
+                            unparsedContent = unparsedContent.replace(commentRegex,"");
+                        }
+                        contentComment = contentComment.slice(2);
+                        var content = resolveEntities(unparsedContent);
+                        
+                        var attributesString = match[8];
+                        var comment = match[12];
 
-        var match;
-        var groupingPrecedenceAuto = 1000;
-        for (var i=0; i<dictionaryLines.length; ++i) {
-            var l = dictionaryLines[i];
-            if (emptyRegex.test(l)) {
-                groupingPrecedenceAuto += 1000;
+                        var attributeMatch;
+                        var attributes = {};
+                        while (attributeMatch = attributeRegex.exec(attributesString)) {
+                            attributes[attributeMatch[1]] = resolveEntities(attributeMatch[2]);
+                        }
+
+                        // Extract meta information from attributes
+                        var form = attributes["form"];
+                        var description = attributes["meta:description"];
+                        var groupingPrecedence = groupingPrecedenceAuto;
+                        if (attributes["meta:grouping"]!==undefined) {
+                            groupingPrecedence = attributes["meta:grouping"];
+                        }
+                        var disamb = attributes["meta:disamb"] || null;
+                        var id = content + (disamb ? disamb : "");
+                        if (attributes["meta:id"]!==undefined) {
+                            groupingPrecedence = attributes["meta:id"];
+                        }
+                        if (!form) { throw new Error("form must always be given in operator dictionary. (Line " + (i+1) + ")") }
+                        var overloadKey = 0;
+
+                        // TODO: Remove "meta:" attributes
+
+
+                        var entry = { 
+                            content: content,
+                            form: form,
+                            id: id,
+                            disamb: disamb,
+                            contentComment: contentComment,
+                            description: description,
+                            comment: comment,
+                            attributes: attributes,
+                            groupingPrecedence: groupingPrecedence,
+                            isSpec: isSpec
+                        }
+
+                        if (!this.db[content]) { 
+                            this.db[content] = { prefix: {}, infix: {}, postfix: {} };
+                        }
+                        //if (this.db[content][form][disamb||""]) { throw new Error("You tried to overload the operator " + content + " " + form + " " + (disamb||"")) }
+                        this.db[content][form][disamb||""] = entry;
+                    }
+                    else {
+                        throw new Error("Error in operator dictionary at line " + (i+1));
+                    }
+                }
             }
-            else if (match = entryRegex.exec(l)) {
-                var unparsedContent = match[1];
-                var contentComment = "";
-                var commentMatch;
-                while (commentMatch = commentRegex.exec(unparsedContent)) {
-                    contentComment += ", " + commentMatch[1];
-                    unparsedContent = unparsedContent.replace(commentRegex,"");
-                }
-                contentComment = contentComment.slice(2);
-                var content = resolveEntities(unparsedContent);
-                
-                var attributesString = match[8];
-                var comment = match[12];
-
-                var attributeMatch;
-                var attributes = {};
-                while (attributeMatch = attributeRegex.exec(attributesString)) {
-                    attributes[attributeMatch[1]] = resolveEntities(attributeMatch[2]);
-                }
-
-                // Extract meta information from attributes
-                var form = attributes["form"];
-                var description = attributes["meta:description"];
-                var groupingPrecedence = groupingPrecedenceAuto;
-                if (attributes["meta:grouping"]!==undefined) {
-                    groupingPrecedence = attributes["meta:grouping"];
-                }
-                var disamb = attributes["meta:disamb"] || null;
-                var id = content + (disamb ? disamb : "");
-                if (attributes["meta:id"]!==undefined) {
-                    groupingPrecedence = attributes["meta:id"];
-                }
-                if (!form) { throw new Error("form must always be given in operator dictionary. (Line " + (i+1) + ")") }
-                var overloadKey = 0;
-
-                // TODO: Remove "meta:" attributes
-
-
-                var entry = { 
-                    content: content,
-                    form: form,
-                    id: id,
-                    disamb: disamb,
-                    contentComment: contentComment,
-                    description: description,
-                    comment: comment,
-                    attributes: attributes,
-                    groupingPrecedence: groupingPrecedence,
-                    isSpec: isSpec
-                }
-
-                if (!this.db[content]) { 
-                    this.db[content] = { prefix: {}, infix: {}, postfix: {} };
-                }
-                //if (this.db[content][form][disamb||""]) { throw new Error("You tried to overload the operator " + content + " " + form + " " + (disamb||"")) }
-                this.db[content][form][disamb||""] = entry;
-            }
-            else {
-                throw new Error("Error in operator dictionary at line " + (i+1));
-            }
-        }
+        );
     }
 
     this.getByContentDisamb = function() {

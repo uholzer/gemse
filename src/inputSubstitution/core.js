@@ -1,5 +1,7 @@
 /* Configuration */
 
+import * as HTTP from "./../http.js";
+
 export const inputSubstitutionActive = true;
 
 var inputSubstitutionStartSign = "&";
@@ -22,21 +24,20 @@ function inputSubstitution_loadTables() {
     }
 
     // Create request for entity declaration file
-    var request = new XMLHttpRequest();
-    request.open("GET", "inputSubstitution/entity_table.txt", false);
-    request.overrideMimeType("text/plain");
-    request.send(null);
-    // Make a copy of the response text. (Using request.resonseText
-    // later on in the while loop causes huge memory usage while this
-    // function executes, around one gigabyte. So make a copy.)
-    var lines = request.responseText.split("\n");
-    request = null;
 
-    // Parse entity declarations
-    lines.forEach(function(line) {
-        var separatorPos = line.indexOf("\t");
-        inputSubstitutionTable[line.substring(0,separatorPos)] = line.substring(separatorPos+1);
-    });
+    return HTTP.send(HTTP.open("GET", "inputSubstitution/entity_table.txt")).then(
+        HTTP.only2xx
+    ).then(
+        request => request.responseText.split("\n")
+    ).then(
+        lines => {
+            // Parse entity declarations
+            lines.forEach(function(line) {
+                var separatorPos = line.indexOf("\t");
+                inputSubstitutionTable[line.substring(0,separatorPos)] = line.substring(separatorPos+1);
+            });
+        }
+    );
 }
 
 /* Functionality */
