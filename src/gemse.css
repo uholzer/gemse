@@ -23,8 +23,7 @@ body > vbox {
 div {
     background-color: rgba(255,255,255,0.7);
     color: #000;
-    -moz-border-radius: 3px; /* Rounded corners */
-    border-radius: 3px; /* No longer prefixed in Mozilla 18 */
+    border-radius: 3px;
 }
 table {
     border-collapse: collapse;
@@ -185,8 +184,7 @@ div.documentationScreenshot {
 kbd {
     display: inline-block;
     border: 1px solid black;
-    -moz-border-radius: 3px;
-    border-radius: 3px; /* No longer prefixed in Mozilla 18 */
+    border-radius: 3px;
     padding: 1px;
     background-color: #ddd;
     color: black;
