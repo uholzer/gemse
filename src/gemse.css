@@ -14,7 +14,19 @@ body {
     flex-direction: column;
 }
 
-body > vbox {
+vbox {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+}
+
+hbox {
+    display: flex;
+    flex-direction: row;
+    flex: 0 0 auto;
+}
+
+hbox[flex="1"], vbox[flex="1"] {
     flex: 1 1 0;
 }
 
