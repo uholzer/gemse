@@ -7,8 +7,6 @@
  * but one should use the global object ucd instead.
  */
 
-import * as HTTP from "./http.js";
-
 /**
  * @class Querying the Unicode Character Database.
  */
@@ -134,10 +132,14 @@ UCD4Gemse.prototype = {
         var standalones = [];
 
         // Create request for UnicodeData.txt
-        return HTTP.send(HTTP.open("GET", "UCD/UnicodeData.txt")).then(
-            HTTP.only2xx
+        return window.fetch("UCD/UnicodeData.txt").then(
+            response => response.ok
+                ? Promise.resolve(response)
+                : Promise.reject(new Error(`Request for UCD data resulted in ${response.status}`))
         ).then(
-            request => request.responseText.split("\n")
+            response => response.text()
+        ).then(
+            responseText => responseText.split("\n")
         ).then(
             dataLines => {
                 var lineRegex = /^([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);([^;]*);/;
@@ -194,12 +196,16 @@ UCD4Gemse.prototype = {
                 }
 
                 // Create request for Gemse_Combining.txt
-                return HTTP.send(HTTP.open("GET", "UCD/Gemse_Combining.txt"));
+                return window.fetch("UCD/Gemse_Combining.txt");
             }
         ).then(
-            HTTP.only2xx
+            response => response.ok
+                ? Promise.resolve(response)
+                : Promise.reject(new Error(`Request for UCD data resulted in ${response.status}`))
         ).then(
-            request => request.responseText.split("\n")
+            response => response.text()
+        ).then(
+            responseText => responseText.split("\n")
         ).then(
             dataLines => {
                 var lineRegex = /^([^;]*);([^;]*);([^;]*)/;

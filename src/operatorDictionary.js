@@ -32,7 +32,6 @@ ones in another.
 */
 
 import { elementDescriptions } from "./elementDescriptors.js";
-import * as HTTP from "./http.js";
 
 export const operatorDictionary = new OperatorDictionary();
 
@@ -131,10 +130,14 @@ function OperatorDictionary() {
             return s;
         }
 
-        return HTTP.send(HTTP.open("GET",dictionaryFile)).then(
-            HTTP.only2xx
+        return window.fetch(dictionaryFile).then(
+            response => response.ok
+                ? Promise.resolve(response)
+                : Promise.reject(new Error(`Loading operator dictionary resulted in ${response.status} response`))
         ).then(
-            request => request.responseText.split("\n")
+            response => response.text()
+        ).then(
+            responseText => responseText.split("\n")
         ).then(
             dictionaryLines => {
                 var entryRegex = /^ *"(([^<"]+)((<!--(([^-]|-(?!-))*)-->)([^<"]*))*)"(( +[^=]+="[^"]*")*)( +(<!--([^-]*)-->))? *$/;

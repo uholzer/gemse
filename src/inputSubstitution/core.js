@@ -1,7 +1,5 @@
 /* Configuration */
 
-import * as HTTP from "./../http.js";
-
 export const inputSubstitutionActive = true;
 
 var inputSubstitutionStartSign = "&";
@@ -25,10 +23,14 @@ function inputSubstitution_loadTables() {
 
     // Create request for entity declaration file
 
-    return HTTP.send(HTTP.open("GET", "inputSubstitution/entity_table.txt")).then(
-        HTTP.only2xx
+    return window.fetch("inputSubstitution/entity_table.txt").then(
+        response => response.ok
+            ? Promise.resolve(response)
+            : Promise.reject(new Error(`Loading entity table resulted in ${response.status} response`))
     ).then(
-        request => request.responseText.split("\n")
+        response => response.text()
+    ).then(
+        responseText => responseText.split("\n")
     ).then(
         lines => {
             // Parse entity declarations

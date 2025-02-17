@@ -1,5 +1,3 @@
-import * as HTTP from "./http.js";
-
 /**
  * @class Links an equation to the document it is saved in.
  */
@@ -132,7 +130,7 @@ FileDocStorage.prototype = {
 };
 
 /**
- * @class loads files via a XMLHttpRequest and writes them via a HTTP
+ * @class loads files via Fetch API and writes them via a HTTP
  * PUT.
  * @param uri URI of the document to be loaded as string. 
  */
@@ -143,25 +141,29 @@ export function XMLHttpRequestDocStorage(uri) {
 }
 XMLHttpRequestDocStorage.prototype = {
     read: function() {
-        return HTTP.send(HTTP.open("GET", this.uri)).then(
-            HTTP.only2xx
+        return window.fetch(this.uri).then(
+            response => response.ok
+                ? Promise.resolve(response)
+                : Promise.reject(new Error(`Got ${response.status} response for GET ${this.uri}`))
         ).then(
-            request => {
-                this.document = request.responseXML;
-                this.contentTypeHeader = request.getResponseHeader("Content-type");
+            response => Promise.all([response, response.text()])
+        ).then(
+            ([response, responseText]) => {
+                const parser = new DOMParser();
+                const contentType = response.headers.get("Content-type");
+                this.document = parser.parseFromString(responseText, contentType);
+                this.contentTypeHeader = contentType;
             }
         );
     },
     write: function() {
         var serializer = new XMLSerializer();
         var xmlString = serializer.serializeToString(this.document);
-        //var xmlString = XML(serializer.serializeToString(mode.equationEnv.equation)).toXMLString();
-        return HTTP.send(
-            HTTP.only2xx
-        ).then(
-            HTTP.open("PUT", this.uri, ["Content-type", this.contentTypeHeader]),
-            xmlString
-        );
+        return window.fetch(this.uri, {
+            method: "PUT",
+            headers: {"Content-type": this.contentTypeHeader},
+            body: xmlString
+        })
     },
     adoptDocument: function(doc) {
         this.document = doc;
@@ -174,7 +176,7 @@ XMLHttpRequestDocStorage.prototype = {
 };
 
 /**
- * @class loads files via a XMLHttpRequest, but con not save it.
+ * @class loads files via a Fetch API, but cannot save it.
  * @param uri URI of the document to be loaded as string. All schemes supported
  *            by XMLHttpRequest can be used.
  */
@@ -184,11 +186,17 @@ export function ReadOnlyXMLHttpRequestDocStorage(uri) {
 }
 ReadOnlyXMLHttpRequestDocStorage.prototype = {
     read: function() {
-        return HTTP.send(HTTP.open("GET", this.uri)).then(
-            HTTP.only2xx
+        return window.fetch(this.uri).then(
+            response => response.ok
+                ? Promise.resolve(response)
+                : Promise.reject(new Error(`Got ${response.status} response for GET ${this.uri}`))
         ).then(
-            request => {
-                this.document = request.responseXML;
+            response => Promise.all([response, response.text()])
+        ).then(
+            ([response, responseText]) => {
+                const parser = new DOMParser();
+                const contentType = response.headers.get("Content-type");
+                this.document = parser.parseFromString(responseText, contentType);
             }
         );
     },
