@@ -438,12 +438,12 @@ export const commands = {
 
     insertAtBeginning(mode) {
         mode.moveCursor(mode.cursor.parentNode.firstElementChild);
-        return insertBefore(mode);
+        return commands.insertBefore(mode);
     },
 
     insertAtEnd(mode) {
         mode.moveCursor(mode.cursor.parentNode.lastElementChild);
-        return insertAfter(mode);
+        return commands.insertAfter(mode);
     },
 
     redisplay(mode) {
@@ -607,11 +607,11 @@ export const commands = {
     },
 
     saveclose(mode, instance) {
-        return save(mode, instance).then(() => commands.close(mode, instance));
+        return commands.save(mode, instance).then(() => commands.close(mode, instance));
     },
 
     savecloseAll(mode,instance) {
-        return saveAll(mode, instance).then(() => commands.closeAll(mode, instance));
+        return commands.saveAll(mode, instance).then(() => commands.closeAll(mode, instance));
     },
 
     nextEquation(mode) {
