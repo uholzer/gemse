@@ -1,7 +1,7 @@
+@namespace "http://www.w3.org/1999/xhtml";
 @namespace internal "http://www.andonyar.com/rec/2008-12/gemse/internalns";
-@namespace html     "http://www.w3.org/1999/xhtml";
 
-html|html, html|body {
+html, body {
     position: absolute;
     top: 0;
     right: 0;
@@ -9,24 +9,24 @@ html|html, html|body {
     left: 0;
 }
 
-html|body {
+body {
     display: flex;
     flex-direction: column;
 }
 
-html|body > vbox {
+body > vbox {
     flex: 1 1 0;
 }
 
 /*** Boxes and tables ***/
 
-html|div {
+div {
     background-color: rgba(255,255,255,0.7);
     color: #000;
     -moz-border-radius: 3px; /* Rounded corners */
     border-radius: 3px; /* No longer prefixed in Mozilla 18 */
 }
-html|table {
+table {
     border-collapse: collapse;
 }
 
@@ -62,7 +62,7 @@ html|table {
     text-align: center;
     font-size: small;
 }
-*[internal|viewClass="TreeView"] html|div.element {
+*[internal|viewClass="TreeView"] div.element {
     display: inline-block;
     border: 1px solid black;
     margin: 1px; padding: 1px;
@@ -70,7 +70,7 @@ html|table {
     top: 5px;
     text-align: center;
 }
-*[internal|viewClass="TreeView"] html|div.nodeValue {
+*[internal|viewClass="TreeView"] div.nodeValue {
     color: blue;
     font-size: larger;
 }
@@ -112,13 +112,13 @@ html|table {
 *[internal|viewClass="DictionaryView"] * {
     border: 1px solid black;
 }
-*[internal|viewClass="DictionaryView"] html|td:first-child {
+*[internal|viewClass="DictionaryView"] td:first-child {
     font-size: x-large;
 }
-*[internal|viewClass="DictionaryView"] html|tr.user {
+*[internal|viewClass="DictionaryView"] tr.user {
     color: #008;
 }
-*[internal|viewClass="DictionaryView"] html|tr.applied {
+*[internal|viewClass="DictionaryView"] tr.applied {
     background-color: #f88;
 }
 
@@ -175,14 +175,14 @@ html|table {
 /*** Additional rules for the documentation ***/
 
 /* the "screenshots" in the tutorial */
-html|div.documentationScreenshot {
+div.documentationScreenshot {
     border: 0.2em dashed #aaf;
     margin: 2ex 5em 2ex 5em;
     padding: 1ex 1em 1ex 1em;
 }
 
 /* what the user has to type on the keyboard */
-html|kbd {
+kbd {
     display: inline-block;
     border: 1px solid black;
     -moz-border-radius: 3px;
@@ -204,26 +204,26 @@ a border around it.*/
 
 /* Tables containg details about commands and the key sequences they
 are bound to. */
-html|table.doc_commandDetailTable {
+table.doc_commandDetailTable {
     border: 1px solid black;
     float: left;
     background-color: #ffa;
     margin: 0ex 1ex 1ex 1ex;
 }
-html|table.doc_commandDetailTable > tr {
+table.doc_commandDetailTable > tr {
     border: 1px solid black;
 }
-html|table.doc_commandDetailTable td {
+table.doc_commandDetailTable td {
     padding: 0.2ex 0.5em;
 }
 
 /* Titles of the documentation should clear such that the floating
 detail tables don't leak out */
-[internal|function="documentation"] html|h1,
-[internal|function="documentation"] html|h2,
-[internal|function="documentation"] html|h3,
-[internal|function="documentation"] html|h4,
-[internal|function="documentation"] html|div.commandDocumentation {
+[internal|function="documentation"] h1,
+[internal|function="documentation"] h2,
+[internal|function="documentation"] h3,
+[internal|function="documentation"] h4,
+[internal|function="documentation"] div.commandDocumentation {
     clear: both;
 }
 
