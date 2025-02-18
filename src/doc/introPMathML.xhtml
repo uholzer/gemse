@@ -111,62 +111,62 @@ the characters having special meaning.</p>
 <p>Let us directly look at an example:</p>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <msup>
-        <mrow><mo>(</mo><mi>a</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow>
-        <mi>n</mi>
-    </msup>
-    <mo>=</mo>
-    <munderover>
-        <mo>∑</mo>
-        <mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>
-        <mi>n</mi>
-    </munderover>
     <mrow>
-        <mo>(</mo>
-        <mfrac linethickness="0"><mi>n</mi><mi>k</mi></mfrac>
-        <mo>)</mo>
+        <msup>
+            <mrow><mo>(</mo><mi>a</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow>
+            <mi>n</mi>
+        </msup>
+        <mo>=</mo>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>
+            <mi>n</mi>
+        </munderover>
+        <mrow>
+            <mo>(</mo>
+            <mfrac linethickness="0"><mi>n</mi><mi>k</mi></mfrac>
+            <mo>)</mo>
+        </mrow>
+        <msup>
+            <mi>a</mi>
+            <mi>k</mi>
+        </msup>
+        <msup>
+            <mi>b</mi>
+            <mrow><mi>n</mi><mo>-</mo><mi>k</mi></mrow>
+        </msup>
     </mrow>
-    <msup>
-        <mi>a</mi>
-        <mi>k</mi>
-    </msup>
-    <msup>
-        <mi>b</mi>
-        <mrow><mi>n</mi><mo>-</mo><mi>k</mi></mrow>
-    </msup>
-</mrow>
 </math>
 
 <p>This formulated in MathML looks like the following:</p>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <msup>
-        <mrow><mo>(</mo><mi>a</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow>
-        <mi>n</mi>
-    </msup>
-    <mo>=</mo>
-    <munderover>
-        <mo>∑</mo>
-        <mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>
-        <mi>n</mi>
-    </munderover>
     <mrow>
-        <mo>(</mo>
-        <mfrac linethickness="0"><mi>n</mi><mi>k</mi></mfrac>
-        <mo>)</mo>
+        <msup>
+            <mrow><mo>(</mo><mi>a</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow>
+            <mi>n</mi>
+        </msup>
+        <mo>=</mo>
+        <munderover>
+            <mo>∑</mo>
+            <mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>
+            <mi>n</mi>
+        </munderover>
+        <mrow>
+            <mo>(</mo>
+            <mfrac linethickness="0"><mi>n</mi><mi>k</mi></mfrac>
+            <mo>)</mo>
+        </mrow>
+        <msup>
+            <mi>a</mi>
+            <mi>k</mi>
+        </msup>
+        <msup>
+            <mi>b</mi>
+            <mrow><mi>n</mi><mo>-</mo><mi>k</mi></mrow>
+        </msup>
     </mrow>
-    <msup>
-        <mi>a</mi>
-        <mi>k</mi>
-    </msup>
-    <msup>
-        <mi>b</mi>
-        <mrow><mi>n</mi><mo>-</mo><mi>k</mi></mrow>
-    </msup>
-</mrow>
 </math>
 ]]>
 </pre>
@@ -390,53 +390,53 @@ above and below the sign. This is done by <code>munder</code>,
 <code>mover</code> and <code>munderover</code>.</p>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <munder>
-        <mo>∑</mo>
-        <mrow><mi>i</mi><mo>∈</mo><mi>ℕ</mi></mrow>
-    </munder>
-    <mfrac>
-        <mn>1</mn>
-        <mi>i</mi>
-    </mfrac>
-</mrow>
+    <mrow>
+        <munder>
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>∈</mo><mi>ℕ</mi></mrow>
+        </munder>
+        <mfrac>
+            <mn>1</mn>
+            <mi>i</mi>
+        </mfrac>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <munder>
-        <mo>∑</mo>
-        <mrow><mi>i</mi><mo>∈</mo><mi>ℕ</mi></mrow>
-    </munder>
-    <mfrac>
-        <mn>1</mn>
-        <mi>i</mi>
-    </mfrac>
-</mrow>
+    <mrow>
+        <munder>
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>∈</mo><mi>ℕ</mi></mrow>
+        </munder>
+        <mfrac>
+            <mn>1</mn>
+            <mi>i</mi>
+        </mfrac>
+    </mrow>
 </math>
 ]]>
 </pre>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <munderover>
-        <mo>∫</mo>
-        <mi>a</mi>
-        <mi>b</mi>
-    </munderover>
-</mrow>
+    <mrow>
+        <munderover>
+            <mo>∫</mo>
+            <mi>a</mi>
+            <mi>b</mi>
+        </munderover>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <munderover>
-        <mo>∫</mo>
-        <mi>a</mi>
-        <mi>b</mi>
-    </munderover>
-</mrow>
+    <mrow>
+        <munderover>
+            <mo>∫</mo>
+            <mi>a</mi>
+            <mi>b</mi>
+        </munderover>
+    </mrow>
 </math>
 ]]>
 </pre>
@@ -447,54 +447,54 @@ value of the display attribute of the <code>math</code> element to
 <code>inline</code>:</p>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
-<mrow>
-    <munderover>
-        <mo>∫</mo>
-        <mi>a</mi>
-        <mi>b</mi>
-    </munderover>
-    <mo>,</mo>
-    <munderover>
-        <mo>∑</mo>
-        <mi>a</mi>
-        <mi>b</mi>
-    </munderover>
-    <mo>,</mo>
-    <munder>
-        <mo>lim</mo>
-        <mrow>
-            <mi>n</mi>
-            <mo>→</mo>
-            <mi>∞</mi>
-        </mrow>
-    </munder>
-</mrow>
+    <mrow>
+        <munderover>
+            <mo>∫</mo>
+            <mi>a</mi>
+            <mi>b</mi>
+        </munderover>
+        <mo>,</mo>
+        <munderover>
+            <mo>∑</mo>
+            <mi>a</mi>
+            <mi>b</mi>
+        </munderover>
+        <mo>,</mo>
+        <munder>
+            <mo>lim</mo>
+            <mrow>
+                <mi>n</mi>
+                <mo>→</mo>
+                <mi>∞</mi>
+            </mrow>
+        </munder>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
-<mrow>
-    <munderover>
-        <mo>∫</mo>
-        <mi>a</mi>
-        <mi>b</mi>
-    </munderover>
-    <mo>,</mo>
-    <munderover>
-        <mo>∑</mo>
-        <mi>a</mi>
-        <mi>b</mi>
-    </munderover>
-    <mo>,</mo>
-    <munder>
-        <mo>lim</mo>
-        <mrow>
-            <mi>n</mi>
-            <mo>→</mo>
-            <mi>∞</mi>
-        </mrow>
-    </munder>
-</mrow>
+    <mrow>
+        <munderover>
+            <mo>∫</mo>
+            <mi>a</mi>
+            <mi>b</mi>
+        </munderover>
+        <mo>,</mo>
+        <munderover>
+            <mo>∑</mo>
+            <mi>a</mi>
+            <mi>b</mi>
+        </munderover>
+        <mo>,</mo>
+        <munder>
+            <mo>lim</mo>
+            <mrow>
+                <mi>n</mi>
+                <mo>→</mo>
+                <mi>∞</mi>
+            </mrow>
+        </munder>
+    </mrow>
 </math>
 ]]>
 </pre>
@@ -510,48 +510,48 @@ the paragraph on its own line, you use <code>block</code>.</p>
 <p>For this there is the <code>mfrac</code> element.</p>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <mfrac>
-        <mn>1</mn>
-        <mn>2</mn>
-    </mfrac>
-</mrow>
+    <mrow>
+        <mfrac>
+            <mn>1</mn>
+            <mn>2</mn>
+        </mfrac>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <mfrac>
-        <mn>1</mn>
-        <mn>2</mn>
-    </mfrac>
-</mrow>
+    <mrow>
+        <mfrac>
+            <mn>1</mn>
+            <mn>2</mn>
+        </mfrac>
+    </mrow>
 </math>
 ]]></pre>
 
 <p>You can use fractions to write biniomial coefficients:</p>
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>(</mo>
-    <mfrac linethickness="0">
-      <mi>n</mi>
-      <mi>k</mi>
-    </mfrac>
-    <mo>)</mo>
-  </mrow>
+    <mrow>
+        <mo>(</mo>
+        <mfrac linethickness="0">
+            <mi>n</mi>
+            <mi>k</mi>
+        </mfrac>
+        <mo>)</mo>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>(</mo>
-    <mfrac linethickness="0">
-      <mi>n</mi>
-      <mi>k</mi>
-    </mfrac>
-    <mo>)</mo>
-  </mrow>
+    <mrow>
+        <mo>(</mo>
+        <mfrac linethickness="0">
+            <mi>n</mi>
+            <mi>k</mi>
+        </mfrac>
+        <mo>)</mo>
+    </mrow>
 </math>
 ]]></pre>
 
@@ -564,76 +564,76 @@ bar of the fraction.</p>
 obvious thing:</p>
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <msqrt>
-      <msup>
-        <mi>x</mi>
-        <mn>2</mn>
-      </msup>
-      <mo>+</mo>
-      <msup>
-        <mi>y</mi>
-        <mn>2</mn>
-      </msup>
-    </msqrt>
-  </mrow>
+    <mrow>
+        <msqrt>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <msup>
+                <mi>y</mi>
+                <mn>2</mn>
+            </msup>
+        </msqrt>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <msqrt>
-      <msup>
-        <mi>x</mi>
-        <mn>2</mn>
-      </msup>
-      <mo>+</mo>
-      <msup>
-        <mi>y</mi>
-        <mn>2</mn>
-      </msup>
-    </msqrt>
-  </mrow>
+    <mrow>
+        <msqrt>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <msup>
+                <mi>y</mi>
+                <mn>2</mn>
+            </msup>
+        </msqrt>
+    </mrow>
 </math>
 ]]></pre>
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mroot>
-      <mrow>
-        <msup>
-          <mi>x</mi>
-          <mn>2</mn>
-        </msup>
-        <mo>+</mo>
-        <msup>
-          <mi>y</mi>
-          <mn>2</mn>
-        </msup>
-      </mrow>
-      <mn>3</mn>
-    </mroot>
-  </mrow>
+    <mrow>
+        <mroot>
+            <mrow>
+                <msup>
+                    <mi>x</mi>
+                    <mn>2</mn>
+                </msup>
+                <mo>+</mo>
+                <msup>
+                    <mi>y</mi>
+                    <mn>2</mn>
+                </msup>
+            </mrow>
+            <mn>3</mn>
+        </mroot>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mroot>
-      <mrow>
-        <msup>
-          <mi>x</mi>
-          <mn>2</mn>
-        </msup>
-        <mo>+</mo>
-        <msup>
-          <mi>y</mi>
-          <mn>2</mn>
-        </msup>
-      </mrow>
-      <mn>3</mn>
-    </mroot>
-  </mrow>
+    <mrow>
+        <mroot>
+            <mrow>
+                <msup>
+                    <mi>x</mi>
+                    <mn>2</mn>
+                </msup>
+                <mo>+</mo>
+                <msup>
+                    <mi>y</mi>
+                    <mn>2</mn>
+                </msup>
+            </mrow>
+            <mn>3</mn>
+        </mroot>
+    </mrow>
 </math>
 ]]></pre>
 
@@ -644,52 +644,52 @@ the elements <code>mtable</code>, <code>mtr</code> and
 <code>mtd</code>.</p>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-  <mo>(</mo>
-  <mtable>
-    <mtr>
-      <mtd> <mn>1</mn> </mtd>
-      <mtd> <mn>0</mn> </mtd>
-      <mtd> <mn>0</mn> </mtd>
-    </mtr>
-    <mtr>
-      <mtd> <mn>0</mn> </mtd>
-      <mtd> <mn>1</mn> </mtd>
-      <mtd> <mn>0</mn> </mtd>
-    </mtr>
-    <mtr>
-      <mtd> <mn>0</mn> </mtd>
-      <mtd> <mn>0</mn> </mtd>
-      <mtd> <mn>1</mn> </mtd>
-    </mtr>
-  </mtable>
-  <mo>)</mo>
-</mrow>
+    <mrow>
+        <mo>(</mo>
+        <mtable>
+            <mtr>
+                <mtd> <mn>1</mn> </mtd>
+                <mtd> <mn>0</mn> </mtd>
+                <mtd> <mn>0</mn> </mtd>
+            </mtr>
+            <mtr>
+                <mtd> <mn>0</mn> </mtd>
+                <mtd> <mn>1</mn> </mtd>
+                <mtd> <mn>0</mn> </mtd>
+            </mtr>
+            <mtr>
+                <mtd> <mn>0</mn> </mtd>
+                <mtd> <mn>0</mn> </mtd>
+                <mtd> <mn>1</mn> </mtd>
+            </mtr>
+        </mtable>
+        <mo>)</mo>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-  <mo>(</mo>
-  <mtable>
-    <mtr>
-      <mtd> <mn>1</mn> </mtd>
-      <mtd> <mn>0</mn> </mtd>
-      <mtd> <mn>0</mn> </mtd>
-    </mtr>
-    <mtr>
-      <mtd> <mn>0</mn> </mtd>
-      <mtd> <mn>1</mn> </mtd>
-      <mtd> <mn>0</mn> </mtd>
-    </mtr>
-    <mtr>
-      <mtd> <mn>0</mn> </mtd>
-      <mtd> <mn>0</mn> </mtd>
-      <mtd> <mn>1</mn> </mtd>
-    </mtr>
-  </mtable>
-  <mo>)</mo>
-</mrow>
+    <mrow>
+        <mo>(</mo>
+        <mtable>
+            <mtr>
+                <mtd> <mn>1</mn> </mtd>
+                <mtd> <mn>0</mn> </mtd>
+                <mtd> <mn>0</mn> </mtd>
+            </mtr>
+            <mtr>
+                <mtd> <mn>0</mn> </mtd>
+                <mtd> <mn>1</mn> </mtd>
+                <mtd> <mn>0</mn> </mtd>
+            </mtr>
+            <mtr>
+                <mtd> <mn>0</mn> </mtd>
+                <mtd> <mn>0</mn> </mtd>
+                <mtd> <mn>1</mn> </mtd>
+            </mtr>
+        </mtable>
+        <mo>)</mo>
+    </mrow>
 </math>
 ]]></pre>
 
@@ -707,12 +707,12 @@ for this row. Otherwise, it works just like <code>mtr</code>.</p>
 <code>mo</code> elements. For example</p>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-  <mfenced><mi>x</mi><mi>y</mi><mi>z</mi></mfenced>
+    <mfenced><mi>x</mi><mi>y</mi><mi>z</mi></mfenced>
 </math>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-  <mfenced><mi>x</mi><mi>y</mi><mi>z</mi></mfenced>
+    <mfenced><mi>x</mi><mi>y</mi><mi>z</mi></mfenced>
 </math>
 ]]></pre>
 
@@ -720,17 +720,17 @@ for this row. Otherwise, it works just like <code>mtr</code>.</p>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-  <mo>(</mo>
     <mrow>
-      <mi>x</mi>
-      <mo>,</mo>
-      <mi>y</mi>
-      <mo>,</mo>
-      <mi>z</mi>
+        <mo>(</mo>
+        <mrow>
+            <mi>x</mi>
+            <mo>,</mo>
+            <mi>y</mi>
+            <mo>,</mo>
+            <mi>z</mi>
+        </mrow>
+        <mo>)</mo>
     </mrow>
-  <mo>)</mo>
-</mrow>
 </math>
 ]]></pre>
 
@@ -750,190 +750,190 @@ transcribed from <q>The Not So Short Introduction To LateX2e</q> using
 Gemse.</p>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <munder>
-        <mi>lim</mi>
-        <mrow>
+    <mrow>
+        <munder>
+            <mi>lim</mi>
+            <mrow>
+                <mi>n</mi>
+                <mo>→</mo>
+                <mi>∞</mi>
+            </mrow>
+        </munder>
+        <munderover>
+            <mo>∑</mo>
+            <mrow>
+                <mi>k</mi>
+                <mo>=</mo>
+                <mi>1</mi>
+            </mrow>
             <mi>n</mi>
-            <mo>→</mo>
-            <mi>∞</mi>
-        </mrow>
-    </munder>
-    <munderover>
-        <mo>∑</mo>
-        <mrow>
-            <mi>k</mi>
-            <mo>=</mo>
-            <mi>1</mi>
-        </mrow>
-        <mi>n</mi>
-    </munderover>
-    <mfrac>
-        <mn>1</mn>
-        <msup>
-            <mi>k</mi>
-            <mn>2</mn>
-        </msup>
-    </mfrac>
-    <mo>=</mo>
-    <mfrac>
-        <msup>
-            <mi>π</mi>
-            <mn>2</mn>
-        </msup>
-        <mn>6</mn>
-    </mfrac>
-</mrow>
+        </munderover>
+        <mfrac>
+            <mn>1</mn>
+            <msup>
+                <mi>k</mi>
+                <mn>2</mn>
+            </msup>
+        </mfrac>
+        <mo>=</mo>
+        <mfrac>
+            <msup>
+                <mi>π</mi>
+                <mn>2</mn>
+            </msup>
+            <mn>6</mn>
+        </mfrac>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mrow>
-    <munder>
-        <mi>lim</mi>
-        <mrow>
+    <mrow>
+        <munder>
+            <mi>lim</mi>
+            <mrow>
+                <mi>n</mi>
+                <mo>→</mo>
+                <mi>∞</mi>
+            </mrow>
+        </munder>
+        <munderover>
+            <mo>∑</mo>
+            <mrow>
+                <mi>k</mi>
+                <mo>=</mo>
+                <mi>1</mi>
+            </mrow>
             <mi>n</mi>
-            <mo>→</mo>
-            <mi>∞</mi>
-        </mrow>
-    </munder>
-    <munderover>
-        <mo>∑</mo>
+        </munderover>
+        <mfrac>
+            <mn>1</mn>
+            <msup>
+                <mi>k</mi>
+                <mn>2</mn>
+            </msup>
+        </mfrac>
+        <mo>=</mo>
+        <mfrac>
+            <msup>
+                <mi>π</mi>
+                <mn>2</mn>
+            </msup>
+            <mn>6</mn>
+        </mfrac>
+    </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mo>∀</mo>
         <mrow>
-            <mi>k</mi>
-            <mo>=</mo>
-            <mi>1</mi>
+            <mi>x</mi>
+            <mo>∈</mo>
+            <mi>ℝ</mi>
         </mrow>
-        <mi>n</mi>
-    </munderover>
-    <mfrac>
-        <mn>1</mn>
+        <mo>:</mo>
+        <mrow>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>≥</mo>
+            <mn>0</mn>
+        </mrow>
+    </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mo>∀</mo>
+        <mrow>
+            <mi>x</mi>
+            <mo>∈</mo>
+            <mi>ℝ</mi>
+        </mrow>
+        <mo>:</mo>
+        <mrow>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>≥</mo>
+            <mn>0</mn>
+        </mrow>
+    </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
         <msup>
-            <mi>k</mi>
+            <mi>ℯ</mi>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+        </msup>
+        <mo>≠</mo>
+        <msup>
+            <msup>
+                <mi>ℯ</mi>
+                <mi>x</mi>
+            </msup>
             <mn>2</mn>
         </msup>
-    </mfrac>
-    <mo>=</mo>
-    <mfrac>
+    </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
         <msup>
-            <mi>π</mi>
+            <mi>ℯ</mi>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+        </msup>
+        <mo>≠</mo>
+        <msup>
+            <msup>
+                <mi>ℯ</mi>
+                <mi>x</mi>
+            </msup>
             <mn>2</mn>
         </msup>
-        <mn>6</mn>
-    </mfrac>
-</mrow>
+    </mrow>
 </math>
 ]]></pre>
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>∀</mo>
     <mrow>
-      <mi>x</mi>
-      <mo>∈</mo>
-      <mi>ℝ</mi>
+        <mover>
+            <mrow>
+                <mi>m</mi>
+                <mo>+</mo>
+                <mi>n</mi>
+            </mrow>
+            <mo>¯</mo>
+        </mover>
     </mrow>
-    <mo>:</mo>
-    <mrow>
-      <msup>
-        <mi>x</mi>
-        <mn>2</mn>
-      </msup>
-      <mo>≥</mo>
-      <mn>0</mn>
-    </mrow>
-  </mrow>
 </math>
 
 <pre><![CDATA[
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>∀</mo>
     <mrow>
-      <mi>x</mi>
-      <mo>∈</mo>
-      <mi>ℝ</mi>
+        <mover>
+            <mrow>
+                <mi>m</mi>
+                <mo>+</mo>
+                <mi>n</mi>
+            </mrow>
+            <mo>¯</mo>
+        </mover>
     </mrow>
-    <mo>:</mo>
-    <mrow>
-      <msup>
-        <mi>x</mi>
-        <mn>2</mn>
-      </msup>
-      <mo>≥</mo>
-      <mn>0</mn>
-    </mrow>
-  </mrow>
-</math>
-]]></pre>
-
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <msup>
-      <mi>ℯ</mi>
-      <msup>
-        <mi>x</mi>
-        <mn>2</mn>
-      </msup>
-    </msup>
-    <mo>≠</mo>
-    <msup>
-      <msup>
-        <mi>ℯ</mi>
-        <mi>x</mi>
-      </msup>
-      <mn>2</mn>
-    </msup>
-  </mrow>
-</math>
-
-<pre><![CDATA[
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <msup>
-      <mi>ℯ</mi>
-      <msup>
-        <mi>x</mi>
-        <mn>2</mn>
-      </msup>
-    </msup>
-    <mo>≠</mo>
-    <msup>
-      <msup>
-        <mi>ℯ</mi>
-        <mi>x</mi>
-      </msup>
-      <mn>2</mn>
-    </msup>
-  </mrow>
-</math>
-]]></pre>
-
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow>
-<mover>
-  <mrow>
-    <mi>m</mi>
-    <mo>+</mo>
-    <mi>n</mi>
-  </mrow>
-  <mo>¯</mo>
-</mover>
-</mrow>
-</math>
-
-<pre><![CDATA[
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow>
-<mover>
-  <mrow>
-    <mi>m</mi>
-    <mo>+</mo>
-    <mi>n</mi>
-  </mrow>
-  <mo>¯</mo>
-</mover>
-</mrow>
 </math>
 ]]></pre>
 
@@ -944,534 +944,534 @@ specification does not contain the overline, but declares the macron
 to be stretchy. So it is best to use the macron.</p>
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <munder accentunder="true">
-      <mrow>
-        <mi>a</mi>
-        <mo>+</mo>
-        <mi>b</mi>
-        <mo>+</mo>
-        <mo>⋯</mo>
-        <mo>+</mo>
-        <mi>z</mi>
-      </mrow>
-      <mo>⏟</mo>
-    </munder>
-  </mrow>
-</math>
-
-<pre><![CDATA[
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <munder accentunder="true">
-      <mrow>
-        <mi>a</mi>
-        <mo>+</mo>
-        <mi>b</mi>
-        <mo>+</mo>
-        <mo>⋯</mo>
-        <mo>+</mo>
-        <mi>z</mi>
-      </mrow>
-      <mo>⏟</mo>
-    </munder>
-  </mrow>
-</math>
-]]></pre>
-
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mover accent="true">
-      <mrow>
-        <mi>A</mi>
-        <mi>B</mi>
-      </mrow>
-      <mo>→</mo>
-    </mover>
-  </mrow>
-</math>
-
-<pre><![CDATA[
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mover accent="true">
-      <mrow>
-        <mi>A</mi>
-        <mi>B</mi>
-      </mrow>
-      <mo>→</mo>
-    </mover>
-  </mrow>
-</math>
-]]></pre>
-
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>(</mo>
-    <mfrac linethickness="0">
-      <mi>n</mi>
-      <mi>k</mi>
-    </mfrac>
-    <mo>)</mo>
-  </mrow>
-</math>
-
-<pre><![CDATA[
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>(</mo>
-    <mfrac linethickness="0">
-      <mi>n</mi>
-      <mi>k</mi>
-    </mfrac>
-    <mo>)</mo>
-  </mrow>
-</math>
-]]></pre>
-
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>∫</mo>
     <mrow>
-      <msub>
-        <mi>f</mi>
-        <mi>N</mi>
-      </msub>
-      <mo>(</mo>
-      <mi>x</mi>
-      <mo>)</mo>
+        <munder accentunder="true">
+            <mrow>
+                <mi>a</mi>
+                <mo>+</mo>
+                <mi>b</mi>
+                <mo>+</mo>
+                <mo>⋯</mo>
+                <mo>+</mo>
+                <mi>z</mi>
+            </mrow>
+            <mo>⏟</mo>
+        </munder>
     </mrow>
-    <mover>
-      <mo>=</mo>
-      <mo>!</mo>
-    </mover>
-    <mn>1</mn>
-  </mrow>
 </math>
 
 <pre><![CDATA[
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>∫</mo>
     <mrow>
-      <msub>
-        <mi>f</mi>
-        <mi>N</mi>
-      </msub>
-      <mo>(</mo>
-      <mi>x</mi>
-      <mo>)</mo>
+        <munder accentunder="true">
+            <mrow>
+                <mi>a</mi>
+                <mo>+</mo>
+                <mi>b</mi>
+                <mo>+</mo>
+                <mo>⋯</mo>
+                <mo>+</mo>
+                <mi>z</mi>
+            </mrow>
+            <mo>⏟</mo>
+        </munder>
     </mrow>
-    <mover>
-      <mo>=</mo>
-      <mo>!</mo>
-    </mover>
-    <mn>1</mn>
-  </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mover accent="true">
+            <mrow>
+                <mi>A</mi>
+                <mi>B</mi>
+            </mrow>
+            <mo>→</mo>
+        </mover>
+    </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mover accent="true">
+            <mrow>
+                <mi>A</mi>
+                <mi>B</mi>
+            </mrow>
+            <mo>→</mo>
+        </mover>
+    </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mo>(</mo>
+        <mfrac linethickness="0">
+            <mi>n</mi>
+            <mi>k</mi>
+        </mfrac>
+        <mo>)</mo>
+    </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mo>(</mo>
+        <mfrac linethickness="0">
+            <mi>n</mi>
+            <mi>k</mi>
+        </mfrac>
+        <mo>)</mo>
+    </mrow>
+</math>
+]]></pre>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mo>∫</mo>
+        <mrow>
+            <msub>
+                <mi>f</mi>
+                <mi>N</mi>
+            </msub>
+            <mo>(</mo>
+            <mi>x</mi>
+            <mo>)</mo>
+        </mrow>
+        <mover>
+            <mo>=</mo>
+            <mo>!</mo>
+        </mover>
+        <mn>1</mn>
+    </mrow>
+</math>
+
+<pre><![CDATA[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+    <mrow>
+        <mo>∫</mo>
+        <mrow>
+            <msub>
+                <mi>f</mi>
+                <mi>N</mi>
+            </msub>
+            <mo>(</mo>
+            <mi>x</mi>
+            <mo>)</mo>
+        </mrow>
+        <mover>
+            <mo>=</mo>
+            <mo>!</mo>
+        </mover>
+        <mn>1</mn>
+    </mrow>
 </math>
 ]]></pre>
 
 <p>Look what happens when we do not use an <code>mrow</code> element:</p>
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>∫</mo>
-      <msub>
-        <mi>f</mi>
-        <mi>N</mi>
-      </msub>
-      <mo>(</mo>
-      <mi>x</mi>
-      <mo>)</mo>
-    <mover>
-      <mo>=</mo>
-      <mo>!</mo>
-    </mover>
-    <mn>1</mn>
-  </mrow>
+    <mrow>
+        <mo>∫</mo>
+        <msub>
+            <mi>f</mi>
+            <mi>N</mi>
+        </msub>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+        <mover>
+            <mo>=</mo>
+            <mo>!</mo>
+        </mover>
+        <mn>1</mn>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mo>∫</mo>
-      <msub>
-        <mi>f</mi>
-        <mi>N</mi>
-      </msub>
-      <mo>(</mo>
-      <mi>x</mi>
-      <mo>)</mo>
-    <mover>
-      <mo>=</mo>
-      <mo>!</mo>
-    </mover>
-    <mn>1</mn>
-  </mrow>
+    <mrow>
+        <mo>∫</mo>
+        <msub>
+            <mi>f</mi>
+            <mi>N</mi>
+        </msub>
+        <mo>(</mo>
+        <mi>x</mi>
+        <mo>)</mo>
+        <mover>
+            <mo>=</mo>
+            <mo>!</mo>
+        </mover>
+        <mn>1</mn>
+    </mrow>
 </math>
 ]]></pre>
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mi>X</mi>
-    <mo>=</mo>
-    <mo>(</mo>
-    <mtable>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mrow>
-              <mn>1</mn>
-              <mn>1</mn>
-            </mrow>
-          </msub>
-        </mtd>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mrow>
-              <mn>1</mn>
-              <mn>2</mn>
-            </mrow>
-          </msub>
-        </mtd>
-        <mtd>
-          <mo>⋯</mo>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mrow>
-              <mn>2</mn>
-              <mn>1</mn>
-            </mrow>
-          </msub>
-        </mtd>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mrow>
-              <mn>2</mn>
-              <mn>2</mn>
-            </mrow>
-          </msub>
-        </mtd>
-        <mtd>
-          <mo>⋯</mo>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <mo>⋮</mo>
-        </mtd>
-        <mtd>
-          <mo>⋮</mo>
-        </mtd>
-        <mtd>
-          <mo>⋱</mo>
-        </mtd>
-      </mtr>
-    </mtable>
-    <mo>)</mo>
-  </mrow>
+    <mrow>
+        <mi>X</mi>
+        <mo>=</mo>
+        <mo>(</mo>
+        <mtable>
+            <mtr>
+                <mtd>
+                    <msub>
+                        <mi>x</mi>
+                        <mrow>
+                            <mn>1</mn>
+                            <mn>1</mn>
+                        </mrow>
+                    </msub>
+                </mtd>
+                <mtd>
+                    <msub>
+                        <mi>x</mi>
+                        <mrow>
+                            <mn>1</mn>
+                            <mn>2</mn>
+                        </mrow>
+                    </msub>
+                </mtd>
+                <mtd>
+                    <mo>⋯</mo>
+                </mtd>
+            </mtr>
+            <mtr>
+                <mtd>
+                    <msub>
+                        <mi>x</mi>
+                        <mrow>
+                            <mn>2</mn>
+                            <mn>1</mn>
+                        </mrow>
+                    </msub>
+                </mtd>
+                <mtd>
+                    <msub>
+                        <mi>x</mi>
+                        <mrow>
+                            <mn>2</mn>
+                            <mn>2</mn>
+                        </mrow>
+                    </msub>
+                </mtd>
+                <mtd>
+                    <mo>⋯</mo>
+                </mtd>
+            </mtr>
+            <mtr>
+                <mtd>
+                    <mo>⋮</mo>
+                </mtd>
+                <mtd>
+                    <mo>⋮</mo>
+                </mtd>
+                <mtd>
+                    <mo>⋱</mo>
+                </mtd>
+            </mtr>
+        </mtable>
+        <mo>)</mo>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mi>X</mi>
-    <mo>=</mo>
-    <mo>(</mo>
-    <mtable>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mrow>
-              <mn>1</mn>
-              <mn>1</mn>
-            </mrow>
-          </msub>
-        </mtd>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mrow>
-              <mn>1</mn>
-              <mn>2</mn>
-            </mrow>
-          </msub>
-        </mtd>
-        <mtd>
-          <mo>⋯</mo>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mrow>
-              <mn>2</mn>
-              <mn>1</mn>
-            </mrow>
-          </msub>
-        </mtd>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mrow>
-              <mn>2</mn>
-              <mn>2</mn>
-            </mrow>
-          </msub>
-        </mtd>
-        <mtd>
-          <mo>⋯</mo>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <mo>⋮</mo>
-        </mtd>
-        <mtd>
-          <mo>⋮</mo>
-        </mtd>
-        <mtd>
-          <mo>⋱</mo>
-        </mtd>
-      </mtr>
-    </mtable>
-    <mo>)</mo>
-  </mrow>
+    <mrow>
+        <mi>X</mi>
+        <mo>=</mo>
+        <mo>(</mo>
+        <mtable>
+            <mtr>
+                <mtd>
+                    <msub>
+                        <mi>x</mi>
+                        <mrow>
+                            <mn>1</mn>
+                            <mn>1</mn>
+                        </mrow>
+                    </msub>
+                </mtd>
+                <mtd>
+                    <msub>
+                        <mi>x</mi>
+                        <mrow>
+                            <mn>1</mn>
+                            <mn>2</mn>
+                        </mrow>
+                    </msub>
+                </mtd>
+                <mtd>
+                    <mo>⋯</mo>
+                </mtd>
+            </mtr>
+            <mtr>
+                <mtd>
+                    <msub>
+                        <mi>x</mi>
+                        <mrow>
+                            <mn>2</mn>
+                            <mn>1</mn>
+                        </mrow>
+                    </msub>
+                </mtd>
+                <mtd>
+                    <msub>
+                        <mi>x</mi>
+                        <mrow>
+                            <mn>2</mn>
+                            <mn>2</mn>
+                        </mrow>
+                    </msub>
+                </mtd>
+                <mtd>
+                    <mo>⋯</mo>
+                </mtd>
+            </mtr>
+            <mtr>
+                <mtd>
+                    <mo>⋮</mo>
+                </mtd>
+                <mtd>
+                    <mo>⋮</mo>
+                </mtd>
+                <mtd>
+                    <mo>⋱</mo>
+                </mtd>
+            </mtr>
+        </mtable>
+        <mo>)</mo>
+    </mrow>
 </math>
 ]]></pre>
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mfrac>
-      <mrow>
-        <munderover>
-          <mo>∑</mo>
-          <mrow>
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>n</mi>
-        </munderover>
-        <mrow>
-          <mo>(</mo>
-          <mrow>
-            <msub>
-              <mi>x</mi>
-              <mi>i</mi>
-            </msub>
-            <mo>-</mo>
-            <mover>
-              <mi>x</mi>
-              <mo>¯</mo>
-            </mover>
-          </mrow>
-          <mo>)</mo>
-          <mo>(</mo>
-          <mrow>
-            <msub>
-              <mi>y</mi>
-              <mi>i</mi>
-            </msub>
-            <mo>-</mo>
-            <mover>
-              <mi>y</mi>
-              <mo>¯</mo>
-            </mover>
-          </mrow>
-          <mo>)</mo>
-        </mrow>
-      </mrow>
-      <mrow>
-        <msup>
-          <mrow>
-            <mo>[</mo>
+    <mrow>
+        <mfrac>
             <mrow>
-              <munderover>
-                <mo>∑</mo>
+                <munderover>
+                    <mo>∑</mo>
+                    <mrow>
+                        <mi>i</mi>
+                        <mo>=</mo>
+                        <mn>1</mn>
+                    </mrow>
+                    <mi>n</mi>
+                </munderover>
                 <mrow>
-                  <mi>i</mi>
-                  <mo>=</mo>
-                  <mn>1</mn>
+                    <mo>(</mo>
+                    <mrow>
+                        <msub>
+                            <mi>x</mi>
+                            <mi>i</mi>
+                        </msub>
+                        <mo>-</mo>
+                        <mover>
+                            <mi>x</mi>
+                            <mo>¯</mo>
+                        </mover>
+                    </mrow>
+                    <mo>)</mo>
+                    <mo>(</mo>
+                    <mrow>
+                        <msub>
+                            <mi>y</mi>
+                            <mi>i</mi>
+                        </msub>
+                        <mo>-</mo>
+                        <mover>
+                            <mi>y</mi>
+                            <mo>¯</mo>
+                        </mover>
+                    </mrow>
+                    <mo>)</mo>
                 </mrow>
-                <mi>n</mi>
-              </munderover>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <msub>
-                    <mi>x</mi>
-                    <mi>i</mi>
-                  </msub>
-                  <mo>-</mo>
-                  <mover>
-                    <mi>x</mi>
-                    <mo>¯</mo>
-                  </mover>
-                  <mo>)</mo>
-                </mrow>
-                <mn>2</mn>
-              </msup>
             </mrow>
             <mrow>
-              <munderover>
-                <mo>∑</mo>
-                <mrow>
-                  <mi>i</mi>
-                  <mo>=</mo>
-                  <mn>1</mn>
-                </mrow>
-                <mi>n</mi>
-              </munderover>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <msub>
-                    <mi>y</mi>
-                    <mi>i</mi>
-                  </msub>
-                  <mo>-</mo>
-                  <mover>
-                    <mi>y</mi>
-                    <mo>¯</mo>
-                  </mover>
-                  <mo>)</mo>
-                </mrow>
-                <mn>2</mn>
-              </msup>
+                <msup>
+                    <mrow>
+                        <mo>[</mo>
+                        <mrow>
+                            <munderover>
+                                <mo>∑</mo>
+                                <mrow>
+                                    <mi>i</mi>
+                                    <mo>=</mo>
+                                    <mn>1</mn>
+                                </mrow>
+                                <mi>n</mi>
+                            </munderover>
+                            <msup>
+                                <mrow>
+                                    <mo>(</mo>
+                                    <msub>
+                                        <mi>x</mi>
+                                        <mi>i</mi>
+                                    </msub>
+                                    <mo>-</mo>
+                                    <mover>
+                                        <mi>x</mi>
+                                        <mo>¯</mo>
+                                    </mover>
+                                    <mo>)</mo>
+                                </mrow>
+                                <mn>2</mn>
+                            </msup>
+                        </mrow>
+                        <mrow>
+                            <munderover>
+                                <mo>∑</mo>
+                                <mrow>
+                                    <mi>i</mi>
+                                    <mo>=</mo>
+                                    <mn>1</mn>
+                                </mrow>
+                                <mi>n</mi>
+                            </munderover>
+                            <msup>
+                                <mrow>
+                                    <mo>(</mo>
+                                    <msub>
+                                        <mi>y</mi>
+                                        <mi>i</mi>
+                                    </msub>
+                                    <mo>-</mo>
+                                    <mover>
+                                        <mi>y</mi>
+                                        <mo>¯</mo>
+                                    </mover>
+                                    <mo>)</mo>
+                                </mrow>
+                                <mn>2</mn>
+                            </msup>
+                        </mrow>
+                        <mo>]</mo>
+                    </mrow>
+                    <mfrac bevelled="true">
+                        <mn>1</mn>
+                        <mn>2</mn>
+                    </mfrac>
+                </msup>
             </mrow>
-            <mo>]</mo>
-          </mrow>
-          <mfrac bevelled="true">
-            <mn>1</mn>
-            <mn>2</mn>
-          </mfrac>
-        </msup>
-      </mrow>
-    </mfrac>
-  </mrow>
+        </mfrac>
+    </mrow>
 </math>
 
 <pre><![CDATA[
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow>
-    <mfrac>
-      <mrow>
-        <munderover>
-          <mo>∑</mo>
-          <mrow>
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>n</mi>
-        </munderover>
-        <mrow>
-          <mo>(</mo>
-          <mrow>
-            <msub>
-              <mi>x</mi>
-              <mi>i</mi>
-            </msub>
-            <mo>-</mo>
-            <mover>
-              <mi>x</mi>
-              <mo>¯</mo>
-            </mover>
-          </mrow>
-          <mo>)</mo>
-          <mo>(</mo>
-          <mrow>
-            <msub>
-              <mi>y</mi>
-              <mi>i</mi>
-            </msub>
-            <mo>-</mo>
-            <mover>
-              <mi>y</mi>
-              <mo>¯</mo>
-            </mover>
-          </mrow>
-          <mo>)</mo>
-        </mrow>
-      </mrow>
-      <mrow>
-        <msup>
-          <mrow>
-            <mo>[</mo>
+    <mrow>
+        <mfrac>
             <mrow>
-              <munderover>
-                <mo>∑</mo>
+                <munderover>
+                    <mo>∑</mo>
+                    <mrow>
+                        <mi>i</mi>
+                        <mo>=</mo>
+                        <mn>1</mn>
+                    </mrow>
+                    <mi>n</mi>
+                </munderover>
                 <mrow>
-                  <mi>i</mi>
-                  <mo>=</mo>
-                  <mn>1</mn>
+                    <mo>(</mo>
+                    <mrow>
+                        <msub>
+                            <mi>x</mi>
+                            <mi>i</mi>
+                        </msub>
+                        <mo>-</mo>
+                        <mover>
+                            <mi>x</mi>
+                            <mo>¯</mo>
+                        </mover>
+                    </mrow>
+                    <mo>)</mo>
+                    <mo>(</mo>
+                    <mrow>
+                        <msub>
+                            <mi>y</mi>
+                            <mi>i</mi>
+                        </msub>
+                        <mo>-</mo>
+                        <mover>
+                            <mi>y</mi>
+                            <mo>¯</mo>
+                        </mover>
+                    </mrow>
+                    <mo>)</mo>
                 </mrow>
-                <mi>n</mi>
-              </munderover>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <msub>
-                    <mi>x</mi>
-                    <mi>i</mi>
-                  </msub>
-                  <mo>-</mo>
-                  <mover>
-                    <mi>x</mi>
-                    <mo>¯</mo>
-                  </mover>
-                  <mo>)</mo>
-                </mrow>
-                <mn>2</mn>
-              </msup>
             </mrow>
             <mrow>
-              <munderover>
-                <mo>∑</mo>
-                <mrow>
-                  <mi>i</mi>
-                  <mo>=</mo>
-                  <mn>1</mn>
-                </mrow>
-                <mi>n</mi>
-              </munderover>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <msub>
-                    <mi>y</mi>
-                    <mi>i</mi>
-                  </msub>
-                  <mo>-</mo>
-                  <mover>
-                    <mi>y</mi>
-                    <mo>¯</mo>
-                  </mover>
-                  <mo>)</mo>
-                </mrow>
-                <mn>2</mn>
-              </msup>
+                <msup>
+                    <mrow>
+                        <mo>[</mo>
+                        <mrow>
+                            <munderover>
+                                <mo>∑</mo>
+                                <mrow>
+                                    <mi>i</mi>
+                                    <mo>=</mo>
+                                    <mn>1</mn>
+                                </mrow>
+                                <mi>n</mi>
+                            </munderover>
+                            <msup>
+                                <mrow>
+                                    <mo>(</mo>
+                                    <msub>
+                                        <mi>x</mi>
+                                        <mi>i</mi>
+                                    </msub>
+                                    <mo>-</mo>
+                                    <mover>
+                                        <mi>x</mi>
+                                        <mo>¯</mo>
+                                    </mover>
+                                    <mo>)</mo>
+                                </mrow>
+                                <mn>2</mn>
+                            </msup>
+                        </mrow>
+                        <mrow>
+                            <munderover>
+                                <mo>∑</mo>
+                                <mrow>
+                                    <mi>i</mi>
+                                    <mo>=</mo>
+                                    <mn>1</mn>
+                                </mrow>
+                                <mi>n</mi>
+                            </munderover>
+                            <msup>
+                                <mrow>
+                                    <mo>(</mo>
+                                    <msub>
+                                        <mi>y</mi>
+                                        <mi>i</mi>
+                                    </msub>
+                                    <mo>-</mo>
+                                    <mover>
+                                        <mi>y</mi>
+                                        <mo>¯</mo>
+                                    </mover>
+                                    <mo>)</mo>
+                                </mrow>
+                                <mn>2</mn>
+                            </msup>
+                        </mrow>
+                        <mo>]</mo>
+                    </mrow>
+                    <mfrac bevelled="true">
+                        <mn>1</mn>
+                        <mn>2</mn>
+                    </mfrac>
+                </msup>
             </mrow>
-            <mo>]</mo>
-          </mrow>
-          <mfrac bevelled="true">
-            <mn>1</mn>
-            <mn>2</mn>
-          </mfrac>
-        </msup>
-      </mrow>
-    </mfrac>
-  </mrow>
+        </mfrac>
+    </mrow>
 </math>
 ]]></pre>
 
