@@ -28,43 +28,85 @@
 <p>Mathematicians usually have good knowledge of LaTeX. Because this
 is probably not true for MathML and because I want mathematicians to
 be able to use Gemse, I give here a very short introduction to
-Presentation MathML. This introdcution however, scratches only the
+Presentation MathML. However, this introduction scratches only the
 surface of Presentation MathML, so you want to look into the 
-<a href="http://www.w3.org/TR/MathML3/chapter3.html">MathML specification</a>
-afterwards. Additionally, there is always the <kbd>:help element</kbd>
-command to open the specification for a specific element.</p>
+<a href="http://www.w3.org/TR/MathML3/">MathML specification</a>
+afterwards. Additionally, there is the <kbd>:help element</kbd>
+command to open the specification for the element under the cursor.
+To look up the specification for a specific element, say
+<code>mrow</code>, use <kbd>:help element mrow</kbd>.</p>
 
-<p>While it is quite practical to write LaTeX with a text editor, to
-write MathML is not. This is the reason why there is Gemse.</p>
+<h2>MathML</h2>
 
-<h2>Tree concepts</h2>
+<p>MathML is a markup language based on XML stanardized by the W3C. It
+consists of two complementary parts, Presentation Markup and Content Markup.
+If we want to refer to the Presentation Markup of MathML we often just call
+it Presentation MathML. Similarly, we often call the Content Markup simply
+Content MathML.</p>
 
-<p>We will often use the words child, descendant, parent,
-ancestor and sibling. You should know what they mean.</p>
+<p>The Presentation Markup captures the structure of a written formula. It
+describes which characters are identifiers, operators, and numbers and
+defines how they visually relate to each other. The Presentation Markup might
+for instance say that there is a fraction and above the bar of the fraction is
+an identifier "a" and below is the number 2. The exact rendering may differ from
+device to device. The formulas might be read aloud by a text to speech system or
+a part of them might be copy-pasted into another application. A formula can be
+integrated in an HTML document on a website. Its appearance (font, colour,
+background, borders) can be influenced with CSS the same way an HTML document is
+styled. Finally, the formula can be made interactive
+using JavaScript.</p>
 
-<p>A mathematical formula is basically a tree structure. This
-immediately yields the idea to encode it with XML. What the heck is
-XML you may ask. You will see. Usually, one learns the basics of XML
-by learning something else. In this case, the something else is
-MathML.</p>
+<p>The Content Markup captures the actual meaning of a formula as opposed
+to its visual appearance. For instance,
+<m:math><m:msub><m:mi>f</m:mi><m:mi>x</m:mi></m:msub></m:math> 
+might denote the function with index <m:math><m:mi>x</m:mi></m:math> 
+of a set of functions in some documents while it denotes the derivative in
+<m:math><m:mi>x</m:mi></m:math>
+in other texts. The Content Markup explicitely and precisely tells
+which meaning is intended, making it clearly understandable to
+mathematical software. But the Content Markup does not tell how to write the
+formula down, giving no instructions on how to present the formula
+to a human.
+Content Markup cannot easily be converted to Presentation Markup because how
+a formula is written very much depends on the context and conventions
+established in a document or field of research. However, it is possible to
+formulate rules for such a conversion, albeit not with MathML itself.</p>
+
+<p>For comparison, LaTeX is a complete typesetting system. The LaTeX code we
+write is an actual program that outputs a typeset document. The output is
+usually a PDF which precisely describes the shape and location of each
+character to reproduce it exactly the same in print as on screen.
+MathML is much more verbose than LaTeX as it has to capture
+more information which LaTeX figures out on its own. On the other hand,
+MathML can be used in many more diverse ways than just displaying and
+printing. The cost of this is that MathML is more of a nuisance to author.
+Writing MathML by hand with a plain text editor is not advisable.</p>
 
 <h2>Unicode</h2>
 
-<p>To represent text in a computer, you have to use a mapping between
-numbers and characters. Unicode is an approach to do that. It is a
-mapping between numbers and characters of many scripts used on earth.
-Unicode includes a huge amount of mathematical signs. A text file is
-basically a sequence of such characters. LaTeX files are also text
-files, but they use traditionally ASCII instead of Unicode. ASCII maps
-characters to exactly one byte, which can obviously not be enough.
-This means that in a LaTeX file you have to write <code>\phi</code>
-instead of writing <code>φ</code> directly. In MathML, we will write
-every Character directly. (One has to add, that LaTeX is able to
-handle Unicode files, but it needs an additional effort.)</p>
+<p>In order to store and process text on a computer, one needs a convention
+on how to represent text inside the memory of the computer. The most
+popular convention is the <a href="https://home.unicode.org/">Unicode</a>
+standard. It assigns to each character
+a unique number, called the Unicode code point. Unicode includes Latin
+characters but also characters
+from almost all scripts used around the world. This includes the Greek
+alphabet and a plethora of mathematical symbols. For example, the
+rightward arrow <code>→</code> is assigned the number 8594 (or 0x2192 in
+hexadecimal notation). Instead of giving
+names to characters (e.g. <code>\rightarrow</code> as you would do in LaTeX),
+MathML directly uses the characters from Unicode. As a consequence, you will often
+come into contact with Unicode while using Gemse. For example, if there is no
+easier way, Gemse will always allow you to insert any character by entering its
+Unicode code point, which you can lookup in the
+<a href="http://www.unicode.org/charts/">Character Code Charts</a> of the Unicode
+standard. Additionally, Gemse obtains information about characters
+(e.g. if its an operator or identifier) from the Unicode standard.</p>
 
 <h2>Tags and Elements</h2>
 
-<p>If you know XML, you can skip this section.</p>
+<p>MathML builds on XML. An XML document is simply a text file with some of
+the characters having special meaning.</p>
 
 <p>Let us directly look at an example:</p>
 
@@ -131,57 +173,73 @@ handle Unicode files, but it needs an additional effort.)</p>
 
 <p>Those parts that begin with a <code>&lt;</code> and end with the
 next <code>&gt;</code> are called tags. There are two sorts of tags:
-Opening tags and closing tags. Those that begin with
-<code>&lt;/</code> are the closing ones, the others are opening tags.
-For example, <code>&lt;mrow&gt;</code> is an opening tag and
-<code>&lt;/mrow&gt;</code> is a closing one. (There is also a sort of
-tags which are of both kinds at the same time, opening and closing.
+Start tags and end tags. Those that begin with
+<code>&lt;/</code> are the end tags, the others are start tags.
+For example, <code>&lt;mrow&gt;</code> is a start tag and
+<code>&lt;/mrow&gt;</code> is an end tag. (There is also an
+empty-element tag, which is a start and an end tag at the same time.
 Such a tag is for example <code>&lt;mrow /&gt;</code>.)</p>
 
-<p>Every opening tag must have a corresponging end tag. Together with
+<p>Every start tag must have a corresponding end tag. Together with
 the text between them, they form an element. The text between the tags
 is called the content of the element. The content can consist of other
 elements or plain text. The name of the element is given by the tags. Consider
 <code><![CDATA[<mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>]]></code>.
 This is an element with the name <code>mrow</code>. It contains three
 elements which have the names <code>mi</code>, <code>mo</code> and
-<code>mi</code>. We will call an element with the a name
-<code>A</code> an <code>A</code> element.</p>
+<code>mn</code>. We will call an element with the a name
+<code>A</code> an <code>A</code> element: Our <code>mrow</code> element
+contains an <code>mi</code>, an <code>mo</code> and an <code>mn</code>
+element.</p>
 
-<p>I hope you see now that the elements form a tree structure. Indeed,
+<p>We can see now that the elements form a tree structure. Indeed,
 in the case of
 <code><![CDATA[<mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>]]></code>,
-We have an <code>mrow</code> element with 3 children. Please be aware
-that the order of the children does matter. Changing their order does
-change the meaning. This is important for MathML as we will later see.</p>
+we have an <code>mrow</code> element as the root of the tree.
+It has 3 children, an <code>mi</code> element, an <code>mn</code> element,
+and an <code>mn</code> element. The children are ordered and changing
+their order changes the meaning. The <code>mrow</code> element is called
+the parent of the <code>mi</code>, <code>mo</code>, and <code>mn</code> elements.
+The children of an element, their children, as well as all further ones
+below are called descendants of the element. The parent, grandparent, and any
+further ones above are called ancestors of the element. In the example above,
+the <code><![CDATA[<mo>∑</mo>]]></code> is called a descendant of the
+<code>munderover</code> element it is contained in because it is its child.
+It is also a descendant of the outermost <code>mrow</code> element.
+On the other hand, <code>munderover</code> element is an ancestor of the
+<code><![CDATA[<mo>∑</mo>]]></code> and so is the outermost <code>mrow</code>
+element. The <code>math</code> element is the root and therefore an ancestor
+of all other elements and all other elements are its descendants.</p>
 
 <p>But there is more: Every element can have attributes. Attributes
-are just key/value pairs. A key must not turn up in more than one
-attribute. Unlike for children of an element, the order of the
-attributes does not matter. An attribute has the form
-<code>key="value"</code> and is placed in the starting tag of the
+are just key-value pairs. The same key can only be used in one
+of the attributes on the same element. Unlike for children of an element, the
+order of the attributes does not matter. An attribute has the form
+<code>key="value"</code> and is placed in the start tag of the
 element. In the example you can spot an <code>mfrac</code> element
 wich has a <code>linethickness</code> attribute with value
 <code>0</code>.</p>
 
 <h2>Identifiers, operators and numbers</h2>
 
-<p>In LaTeX, if we want to have a φ, we can write a φ, without a
-special containment. In MathML this is not possible. We have to put
+<p>In LaTeX, if we want to have a φ, we can write a φ, without marking it in a special way.
+LaTeX then figures out on its own that it has to set the φ as a variable, not as an operator.
+In MathML, we have to be explicit: We must put
 the φ into an <code>mi</code> element, like this:
 <code>&lt;mi&gt;φ&lt;/mi&gt;</code>. For an identifier we use an
 <code>mi</code> element. For an operator we have to use an
 <code>mo</code> element. The <code>mn</code> element is for literal
-numbers. (With <q>literal</q>, I want to stress that
-an <code>mn</code> element is not suited for <m:math><m:mi>a</m:mi></m:math> 
+numbers. (<q>Literal</q> means written number such as 0, 1, and 3.141.
+An <code>mn</code> element is not suited for a variable
+<m:math><m:mi>a</m:mi></m:math> 
 even if <m:math><m:mi>a</m:mi><m:mo>∈</m:mo><m:mi>ℝ</m:mi></m:math>.
 In this case, you must use <code>mi</code>.)</p>
 
 <p>The <code>mo</code> element is very powerful. It is not only used
 for operators like <code>+</code>, <code>·</code> and the like, but it
 is also used for fences, arrows, separators and more. It is even used for accents
-like a hat over a variable. The <code>mo</code> element has a huge
-amount of attributes which control the behaviour of the operators.
+like a hat over a variable. The <code>mo</code> element has many
+attributes which control the behaviour of the operators.
 However, these attributes have default values depending on the content
 of the <code>mo</code> element. Every MathML renderer has an operator
 dictionary which tells it the default values if it encounters an
@@ -189,7 +247,7 @@ dictionary which tells it the default values if it encounters an
 that you wish to change these defaults or that you have to set them
 because you use an operator that is not found in the dictionary. You
 can look up the 
-<a href="http://www.w3.org/TR/MathML3/appendixb.html">operator 
+<a href="https://www.w3.org/TR/MathML3/appendixc.html">operator 
 dictionary in the MathML specification</a>. You can read about the
 attributes in the 
 <a href="http://www.w3.org/TR/MathML3/chapter3.html#presm.mo">section
@@ -289,7 +347,7 @@ has three children.</p>
 ]]>
 </pre>
 
-<p>But the full power you can get with the <code>mmultipscripts</code>
+<p>But you can get the full power with the <code>mmultipscripts</code>
 element. It can not only place multiple subscripts and superstcripts
 behind a base but also before it:</p>
 
@@ -385,7 +443,7 @@ above and below the sign. This is done by <code>munder</code>,
 
 <p>Look how <code>munder</code>, <code>mover</code> and
 <code>munderover</code> change their behaviour when you change the
-value of the display attribute of the MathML element to
+value of the display attribute of the <code>math</code> element to
 <code>inline</code>:</p>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
@@ -587,7 +645,7 @@ the elements <code>mtable</code>, <code>mtr</code> and
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
-  <mo> ( </mo>
+  <mo>(</mo>
   <mtable>
     <mtr>
       <mtd> <mn>1</mn> </mtd>
@@ -605,14 +663,14 @@ the elements <code>mtable</code>, <code>mtr</code> and
       <mtd> <mn>1</mn> </mtd>
     </mtr>
   </mtable>
-  <mo> ) </mo>
+  <mo>)</mo>
 </mrow>
 </math>
 
 <pre><![CDATA[
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mrow>
-  <mo> ( </mo>
+  <mo>(</mo>
   <mtable>
     <mtr>
       <mtd> <mn>1</mn> </mtd>
@@ -630,7 +688,7 @@ the elements <code>mtable</code>, <code>mtr</code> and
       <mtd> <mn>1</mn> </mtd>
     </mtr>
   </mtable>
-  <mo> ) </mo>
+  <mo>)</mo>
 </mrow>
 </math>
 ]]></pre>
@@ -676,7 +734,7 @@ for this row. Otherwise, it works just like <code>mtr</code>.</p>
 </math>
 ]]></pre>
 
-<p>I hope you get the idea. The <code>mfenced</code> element has three
+<p>The <code>mfenced</code> element has three
 attributes which control what operators are used: The attribute
 <code>open</code> declares which operator is used at the beginning. It
 is <code>(</code> by default. <code>close</code> is for the operator
@@ -1416,6 +1474,15 @@ to be stretchy. So it is best to use the macron.</p>
   </mrow>
 </math>
 ]]></pre>
+
+<h2>Conclusion</h2>
+
+<p>You've reached the end of the introduction. You are now ready to read the
+rest of Gemse's documentation. You might also want to look into the
+<a href="https://www.w3.org/TR/MathML3/">MathML specification</a>.
+More speicifically, you might want to look at the
+<a href="https://www.w3.org/TR/MathML3/chapter3.html">Presentation Markup</a>
+chapter. Good luck.</p>
 
 </body>
 
