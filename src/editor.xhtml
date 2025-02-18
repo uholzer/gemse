@@ -8,13 +8,21 @@
     xmlns:internal="http://www.andonyar.com/rec/2008-12/gemse/internalns"
     title="Gemse">
     <head>
-        <script type="module"><![CDATA[
-            import { GemsePEditor } from "./gemseBase.js";
-
+        <script><![CDATA[
             var editor;
 
             window.start = function () {
-                editor = new GemsePEditor(editorsetup);
+                // Instead of using a top-level module with attribute
+                // `type="module"` on the script tag and an import statement
+                // like
+                //   import { GemsePEditor } from "./gemseBase.js";
+                // We import the module dynamically. This is because
+                // Chrome does not support script elements with
+                // `type="module"` in XHTML.
+                // https://issues.chromium.org/issues/40518469
+                import("./gemseBase.js").then(function (module) {
+                    editor = new module.GemsePEditor(window.editorsetup);
+                });
             }
             window.editorsetup = function (editor) {
                 editor.inputElement.focus();
