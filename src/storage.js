@@ -96,29 +96,50 @@ FileDocStorage.prototype = {
     write: function() {
         var serializer = new XMLSerializer();
         var serialized = serializer.serializeToString(this.document);
-        var blob = new Blob([serialized], {type: "application/octet-stream"});
-        var url = URL.createObjectURL(blob);
-        window.setTimeout(function () { URL.revokeObjectURL(url) }, 600000);
-        window.location = url;
+        if (this.handle) {
+            this.handle.createWritable().then(writable => {
+                console.log("writable", writable);
+                writable.write(serialized);
+                writable.close();
+            });
+        }
+        else {
+            var blob = new Blob([serialized], {type: "application/octet-stream"});
+            var url = URL.createObjectURL(blob);
+            window.setTimeout(function () { URL.revokeObjectURL(url) }, 600000);
+            window.location = url;
+        }
     },
     read: function() {
-        this.fileInputElement.click();
-
-        return (new Promise(resolve => {
-            // TODO: This promise does never get resolved if the user cancels
-            // the dialog.
-            this.fileInputElement.addEventListener(
-                "change",
-                () => { resolve(this.fileInputElement.files[0]); },
-                {once: true}
-            );
-        })).then(
-            file => file.text()
+        return filePicker().then(
+            ([handle, file]) => Promise.all([handle, file.text()])
         ).then(
-            (s) => {
+            ([handle, s]) => {
+                this.handle = handle;
                 this.document = new DOMParser().parseFromString(s, "application/xml");
             }
         );
+
+        function filePicker() {
+            if (window.showOpenFilePicker) {
+                return window.showOpenFilePicker().then(
+                    ([handle]) => Promise.all([handle, handle.getFile()])
+                );
+            }
+            else {
+                return (new Promise(resolve => {
+                    // TODO: This promise does never get resolved if the user cancels
+                    // the dialog.
+                    this.fileInputElement.addEventListener(
+                        "change",
+                        () => { resolve(this.fileInputElement.files[0]); },
+                        {once: true}
+                    );
+                })).then(
+                    file => ([null, file])
+                );
+            }
+        }
     },
     adoptDocument: function(doc) {
         this.document = doc;
