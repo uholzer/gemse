@@ -778,9 +778,7 @@ OthersView.prototype = {
     },
     createEventHandler: function(editor, index) {
         return function() {
-            // Only do something if the current mode is the editMode and
-            // the input buffer is empty!
-            if (editor.equations[editor.focus].mode instanceof EditMode && editor.inputBuffer.length == 0) {
+            if (editor.equations[editor.focus].mode.name == "edit" && editor.inputBuffer.length == 0) {
                 editor.moveFocusTo(index);
             }
             else {
