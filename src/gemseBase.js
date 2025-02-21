@@ -1512,6 +1512,14 @@ GemsePEditor.prototype = {
         return this.loadURI(uri,null,"(//m:math|//om:OMOBJ|//o:notation)[not(ancestor::m:math|ancestor::om:OMOBJ|ancestor::o:notation)]");
     },
     /**
+     * Load all equations of a document.
+     * Loads a local file and locates all math elements in it, which all get
+     * loaded.
+     */
+    loadAllFile: function() {
+        return this.loadFile(null,"(//m:math|//om:OMOBJ|//o:notation)[not(ancestor::m:math|ancestor::om:OMOBJ|ancestor::o:notation)]");
+    },
+    /**
      * Moves the focus to another equation.
      * @dest {Integer}
      */

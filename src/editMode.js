@@ -577,7 +577,12 @@ export const commands = {
         return mode.editor.loadURI(uri,null,xpathString);
     },
     loadAll(mode, instance) {
-        return mode.editor.loadAll(instance.argument);
+        if (instance.argument == '-') {
+            return mode.editor.loadAllFile();
+        }
+        else {
+            return mode.editor.loadAll(instance.argument);
+        }
     },
 
     save(mode, instance) {
