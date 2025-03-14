@@ -159,15 +159,6 @@ table {
     clear: both;
 }
 
-/*** NTNView ***/
-
-*[internal|viewClass="NTNView"] {
-    border: 1px solid black;
-    text-align: center;
-    font-size: x-large;
-}
-
-
 /*** The input box ***/
 
 #input {
