@@ -44,16 +44,16 @@ table {
 
 /*** Common for all views: cursors, selections, etc. ***/
 
-*[internal|selected="editcursor"]                { background-color: yellow; color: red;   }
-*[internal|selected="attributeCursor"]           { background-color: black;  color: white; }
-*[internal|selected="parent"]                    { background-color: #ddd;                 }
-*[internal|selected="userSelection"]             { background-color: #7af;                 }
-*[internal|selected="userSelectionCursor"]       { background-color: #66f;                 }
-*[internal|selected="attributeCursor selection"] { background-color: #227;   color: white; }
-*[internal|selected="insertCursorIn"]            { background-color: #dfd;                 }
-*[internal|selected="insertCursorBefore"]        { border-left:  3px solid #050 !important }
-*[internal|selected="insertCursorAfter"]         { border-right: 3px solid #050 !important }
-*[internal|selected="referenced"]                { background-color: #faa;                 }
+*|*[internal|selected="editcursor"]                { background-color: yellow; color: red;   }
+*|*[internal|selected="attributeCursor"]           { background-color: black;  color: white; }
+*|*[internal|selected="parent"]                    { background-color: #ddd;                 }
+*|*[internal|selected="userSelection"]             { background-color: #7af;                 }
+*|*[internal|selected="userSelectionCursor"]       { background-color: #66f;                 }
+*|*[internal|selected="attributeCursor selection"] { background-color: #227;   color: white; }
+*|*[internal|selected="insertCursorIn"]            { background-color: #dfd;                 }
+*|*[internal|selected="insertCursorBefore"]        { border-left:  3px solid #050 !important }
+*|*[internal|selected="insertCursorAfter"]         { border-right: 3px solid #050 !important }
+*|*[internal|selected="referenced"]                { background-color: #faa;                 }
 
 
 /*** the equation ***/
