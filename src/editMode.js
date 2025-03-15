@@ -556,10 +556,10 @@ export const commands = {
 
     load(mode, instance) {
         if (instance.argument == '-') {
-            return mode.editor.loadFile();
+            return mode.editor.loadAllFile();
         }
         else {
-            return mode.editor.loadURI(instance.argument);
+            return mode.editor.loadAll(instance.argument);
         }
     },
     loadById(mode, instance) {
@@ -575,14 +575,6 @@ export const commands = {
         var uri = inf[1];
         var xpathString = inf[2];
         return mode.editor.loadURI(uri,null,xpathString);
-    },
-    loadAll(mode, instance) {
-        if (instance.argument == '-') {
-            return mode.editor.loadAllFile();
-        }
-        else {
-            return mode.editor.loadAll(instance.argument);
-        }
     },
 
     save(mode, instance) {

@@ -372,13 +372,6 @@ export const editModeCommands = {
         argument: "newlineTerminated",
         implementation: commands.loadByXPath
     },
-    ":loadall": {
-        category: "action",
-        type: "long",
-        repeating: "prevent",
-        argument: "newlineTerminated",
-        implementation: commands.loadAll
-    },
     ":save": {
         category: "action",
         type: "long",
